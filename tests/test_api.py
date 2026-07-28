@@ -16,12 +16,12 @@ import pytest
 import yaml
 from fastapi.testclient import TestClient
 
-from src.api.config import Settings, settings
-from src.api.errors import NotFoundError
-from src.api.main import app
-from src.api.service import font_service, output_service
-from src.api.service.output_service import OutputService
-from src.shared.interfaces.google_fonts_catalog import GoogleFontMetadata
+from ThemeTree.api.config import Settings, settings
+from ThemeTree.api.errors import NotFoundError
+from ThemeTree.api.main import app
+from ThemeTree.api.service import font_service, output_service
+from ThemeTree.api.service.output_service import OutputService
+from ThemeTree.shared.interfaces.google_fonts_catalog import GoogleFontMetadata
 
 FIXTURE_APPS = Path(__file__).resolve().parent / "data" / "apps"
 APP = "demo"

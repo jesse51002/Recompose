@@ -24,10 +24,10 @@ RUN pip install "poetry>=2.0,<3.0"
 COPY pyproject.toml poetry.lock ./
 RUN poetry install --only main --no-root
 
-# Source packages (src/ incl. src/core + src/api/schema; top-level schema/) and
+# Source packages (ThemeTree/ incl. ThemeTree/core + ThemeTree/api/schema; top-level schema/) and
 # the served assets. resources/ is tiny and copied as cheap insurance for any
-# transitive read from src/core.
-COPY src/ ./src/
+# transitive read from ThemeTree/core.
+COPY ThemeTree/ ./ThemeTree/
 COPY schema/ ./schema/
 COPY resources/ ./resources/
 COPY apps/ ./apps/
@@ -40,4 +40,4 @@ COPY apps/ ./apps/
 #    empty to serve relative/local paths (dev only — bytes aren't baked here).
 #  - CORS_ORIGINS is optional (defaults to ["*"]).
 EXPOSE 8000
-CMD ["python", "-m", "uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python", "-m", "uvicorn", "ThemeTree.api.main:app", "--host", "0.0.0.0", "--port", "8000"]

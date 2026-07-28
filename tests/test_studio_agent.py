@@ -28,16 +28,16 @@ from pydantic_ai.models.function import AgentInfo, FunctionModel
 from pydantic_ai.models.test import TestModel
 
 from schema import Customization
-from src.studio.agent import brief_agent_service as agent_module
-from src.studio.agent.brief_agent_service import (
+from ThemeTree.studio.agent import brief_agent_service as agent_module
+from ThemeTree.studio.agent.brief_agent_service import (
     SAVED_FALLBACK_REPLY,
     SYSTEM_PROMPT_PATH,
     BriefAgentService,
 )
-from src.studio.main import app
-from src.studio.schema.agent_output import AgentQuestion
-from src.studio.schema.agent_turn import AgentTurnRequest
-from src.studio.service.brief_service import BriefService
+from ThemeTree.studio.main import app
+from ThemeTree.studio.schema.agent_output import AgentQuestion
+from ThemeTree.studio.schema.agent_turn import AgentTurnRequest
+from ThemeTree.studio.service.brief_service import BriefService
 
 # The five-field contract, nested exactly as `Customization` declares it.
 _BRIEF: dict[str, Any] = {

@@ -16,7 +16,7 @@ description: >-
   missing the icons", "I added a slot, generate just it", "resume" → fill the
   not-yet-done slots via scripts/expand/run.py; or "regenerate the whole run",
   "re-roll everything", "redo this run from scratch in place" → a full in-place
-  re-run via the normal pipeline (src/cli.py) pointed at the existing run folder
+  re-run via the normal pipeline (ThemeTree/cli.py) pointed at the existing run folder
   with --run-name, regenerating EVERY slot (incl. images) and overwriting the
   folder. regen preserves every slot you don't name and harmonises the ones you
   do; edit_customization re-validates the brief before writing; expand only
@@ -48,7 +48,7 @@ re-generation); the fourth IS a full re-generation, in place.
    declared in `app.yaml` but absent from `output.yaml` (resume a partial run,
    or add a slot to the dir's `app.yaml` and fill just it). Everything already
    present is preserved.
-4. **Full in-place re-run** — a normal pipeline run (`src/cli.py`) pointed at
+4. **Full in-place re-run** — a normal pipeline run (`ThemeTree/cli.py`) pointed at
    the existing run folder via `--run-name`: regenerates **every slot, images
    included**, and overwrites the folder. This is "regenerate the whole run
    based on what it has". See Lever D.
@@ -65,7 +65,7 @@ everything.
 Change an existing run **only** through the scripts: `regen` (slots),
 `edit_customization` (brief), `expand` (fill missing), `regen_image` (images),
 `remove_bg` (re-strip an image slot's background — Lever E), or a full pipeline
-run (`src/cli.py`).
+run (`ThemeTree/cli.py`).
 
 **Never hand-edit a produced artifact** — do not open `output.yaml` and change
 a value, do not rename/overwrite a file in `final_images/` / `images/` /
@@ -197,10 +197,10 @@ spend if nothing is missing, and appends an `expand` entry to
 ## Lever D — full in-place re-run (regenerate the whole run)
 "Regenerate this run from what it has." Unlike A–C, this re-makes **every slot,
 images included**, and **overwrites the whole folder**. It's just a normal
-pipeline run (`src/cli.py`) whose `--run-name` is the existing run id, so it
+pipeline run (`ThemeTree/cli.py`) whose `--run-name` is the existing run id, so it
 lands back in the same directory:
 ```
-poetry run python -m src \
+poetry run python -m ThemeTree \
     --app-yaml apps/<app_id>/<run_id>/app.yaml \
     --customization-yaml apps/<app_id>/<run_id>/customization.yaml \
     --run-name <run_id>
@@ -268,7 +268,7 @@ poetry run python scripts/regen_image/run.py \
   invocation.** Every named slot regenerates in a single pass; all others are
   preserved verbatim. The pass is **internally capped at 5 modules in-flight**
   (the pipeline's one run-wide semaphore, `MAX_CONCURRENT_MODULES` in
-  `src/executor/orchestrator.py`) and it **topologically orders dependency
+  `ThemeTree/executor/orchestrator.py`) and it **topologically orders dependency
   chains** itself (e.g. `single_point` before `points_stars_image` / `giftbox`;
   `rank_belt` before `next_rank_belt_image`). So you do **not** hand-split many
   slots into waves of 5 — the cap and the ordering are automatic. (The ≤5 rule

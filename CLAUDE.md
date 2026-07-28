@@ -44,7 +44,7 @@ by hand**. To change anything in an existing run you use the scripts:
 `scripts/regen` (re-make colour/font/text/icon slots, or `category`),
 `scripts/regen_image` (images), `scripts/edit_customization` (a validated,
 targeted edit of the brief `customization.yaml`), or a full pipeline run
-(`src/cli.py`). The brief is the one editable *input* — and even it goes
+(`ThemeTree/cli.py`). The brief is the one editable *input* — and even it goes
 through `edit_customization` (which re-validates), not raw text munging;
 `app.yaml` is architect-owned.
 
@@ -119,8 +119,8 @@ only makes sense for one app, push back — it belongs in YAML.
 ## Async everywhere
 
 Every service and module method is `async`. The pipeline core is provider- and
-transport-agnostic; the CLI (`src/cli.py`) and the studio app
-(`src/studio/`, see below) are two entrypoints over the same async core. Do
+transport-agnostic; the CLI (`ThemeTree/cli.py`) and the studio app
+(`ThemeTree/studio/`, see below) are two entrypoints over the same async core. Do
 not introduce blocking I/O — use async clients (`litellm.acompletion` /
 `litellm.aimage_generation`) and `await` everything. Keep modules
 independently awaitable so they can be gathered concurrently later without a
@@ -132,11 +132,11 @@ refactor.
 one, the run reports itself as it happens; given none (the CLI's default),
 nothing is emitted and the run behaves exactly as it always has.
 
-- `src/executor/progress_event.py` — `ProgressEventKind` (run started /
+- `ThemeTree/executor/progress_event.py` — `ProgressEventKind` (run started /
   level started / node started / node finished / node failed / run
   finished) and the `ProgressEvent` model that carries them.
-- `src/executor/progress_sink.py` — the `ProgressSink` ABC. It lives beside
-  the executor, **not** in `src/shared/interfaces/` (that holds the
+- `ThemeTree/executor/progress_sink.py` — the `ProgressSink` ABC. It lives beside
+  the executor, **not** in `ThemeTree/shared/interfaces/` (that holds the
   *provider* contracts — LLM, image generation, fonts, icons); a sink is an
   observer, not a provider.
 
@@ -145,7 +145,7 @@ Two rules hold the design together:
 - **The sink is an interface, never a transport.** The executor knows
   nothing about HTTP, SSE, JSON or FastAPI; it hands a Pydantic model to
   whatever it was given. Anything wire-shaped belongs in the caller
-  (`src/studio/`), never here.
+  (`ThemeTree/studio/`), never here.
 - **A sink must not raise.** An emit failure would abort a paid run over a
   display concern. Swallow and log inside the sink.
 
@@ -176,7 +176,7 @@ with zero module changes. A module that loops slots or returns a
 **Progress is the same rule.** Because the executor owns iteration, it is
 also the only place that can know a level started, a node started, a node
 took 4.2 s, or the whole run took six minutes — so *all* progress
-emission lives in `src/executor/orchestrator.py` and **no module carries
+emission lives in `ThemeTree/executor/orchestrator.py` and **no module carries
 any progress code**. Do not add a callback, a listener, or a "notify"
 parameter to a node or a sub-service; if something isn't observable from
 the executor, that is a signal about where the loop lives, not a reason
@@ -194,14 +194,14 @@ and so on.
 The one node whose output is a **run-wide scalar** rather than a group is
 `CategoryNode → CategoryOutput` (= the top-level `category` string). Its
 return model is a thin carrier that lives with the module
-(`src/modules/categories/category_models.py`), **not** under `schema/output/`
+(`ThemeTree/modules/categories/category_models.py`), **not** under `schema/output/`
 — the run gains no new output group, only a value for a field the artifact
 already has. `CategoryOutput.value` is exactly that field, so the seed
 round-trip below holds unchanged. Anything a carrier holds beyond it (the
 model's `reason`) is call-local and is not serialized.
 
 **Why this is a hard invariant, not a style note:** the `expand` flow
-(`scripts/expand/run.py`, `src/executor/seed.py`) reconstructs the
+(`scripts/expand/run.py`, `ThemeTree/executor/seed.py`) reconstructs the
 executor's start-state by validating each saved `output.yaml` group
 straight back into the model its node returns, then seeds the DAG with the
 done nodes and runs only what's missing. A module that returned less than
@@ -260,7 +260,7 @@ run-wide scalar goes on `Output` directly.
 This directory is a Python package, but it also hosts the two **client runtimes**
 that consume the API it serves. Neither is Python; neither is part of the poetry
 project, the test suite, or the Docker image (both are in `.dockerignore`, and
-the `Dockerfile` only `COPY`s `src/ schema/ resources/ apps/`).
+the `Dockerfile` only `COPY`s `ThemeTree/ schema/ resources/ apps/`).
 
 - **`ThemeFlutter/`** — the `theme_flutter` Dart package. A path dep of
   `../CRM` and `../MobileApp`.
@@ -290,25 +290,25 @@ breakage the `.venv/bin/*` scripts hit when this package was renamed.
 
 ## Two FastAPI apps, and why they are separate
 
-- **`src/api/`** — the read-only output API. Deployed (App Runner, :8001
+- **`ThemeTree/api/`** — the read-only output API. Deployed (App Runner, :8001
   locally). Serves *finished* runs.
-- **`src/studio/`** — the local launch surface. `make studio`, bound to
+- **`ThemeTree/studio/`** — the local launch surface. `make studio`, bound to
   **127.0.0.1:8002**, never deployed. Writes a brief, starts a run, streams
   its progress.
 
-**Never merge the studio into `src/api/`.** Both `Settings` classes
-instantiate at import time, and `src/api/config.py` deliberately needs only
+**Never merge the studio into `ThemeTree/api/`.** Both `Settings` classes
+instantiate at import time, and `ThemeTree/api/config.py` deliberately needs only
 `APPS_ROOT` / `CORS_ORIGINS` / `ASSETS_CDN_BASE_URL` / `GOOGLE_FONTS_API_KEY`
-— `src/api/` **never imports `src.core.config`**, which is exactly what lets
+— `ThemeTree/api/` **never imports `src.core.config`**, which is exactly what lets
 the deployed container boot without the four provider keys. Importing the
 pipeline into the read API destroys that property. The studio imports the
 pipeline freely; it runs on a laptop that has the keys.
 
-Rules that hold inside `src/studio/`:
+Rules that hold inside `ThemeTree/studio/`:
 
 - **Nothing wire-shaped leaks down.** The studio owns SSE framing, JSONL,
   HTTP status mapping; the executor owns `ProgressEvent`. Anything
-  transport-flavoured belongs here, never in `src/executor/`.
+  transport-flavoured belongs here, never in `ThemeTree/executor/`.
 - **State lives in `.studio/`, never in a run directory.** One append-only
   `.studio/runs/<run_id>.jsonl` per launch, and committed briefs under
   `.studio/briefs/`. Writing anything into `apps/<app_id>/<run_id>/` would
@@ -319,18 +319,56 @@ Rules that hold inside `src/studio/`:
 - **One run at a time, globally**, refused with 409 rather than queued: the
   providers rate-limit and concurrent runs get throttled
   (`.claude/skills/brand-brief/SKILL.md`). This guards the studio only; a
-  `python -m src` in a terminal is invisible to it.
+  `python -m ThemeTree` in a terminal is invisible to it.
 - **Briefs never overwrite `apps/<app_id>/customization.yaml`.** That is a
   checked-in input and what `make run` generates from. The brief contract is
   `schema/customization.py` — **five** fields, `extra="forbid"` — and
   `BriefRequest.build` runs that model, so there is exactly one definition of
   a valid brief. Never add a sixth field.
+- **One commit path, two callers.** The plain form (`POST /briefs`) and the
+  conversational agent (`POST /brief-agent`) both write through
+  `BriefService.commit`. The agent is a *caller* of that path, never a second
+  one — `BriefRequest.from_brief` is the only flattening it does, and it lives
+  beside `build()` so the two directions can't disagree.
+- **The agent authors; code commits.** `ThemeTree/studio/agent/` holds a Pydantic AI
+  agent with **ZERO tools**: it converses to propose a `Customization`, ask a
+  multiple-choice `AgentQuestion`, or reply in text, and it writes nothing.
+  The accept path (`accepted_brief` in the POST body) runs the deterministic
+  commit FIRST, then re-runs the agent on a short outcome note so it can
+  acknowledge — a brief is never reported saved because a model said so. If
+  that post-save call throws, the turn degrades to a fixed reply rather than
+  propagating: the save already succeeded. **Never give this agent a tool** —
+  a tool would be a second way to write a brief, around `BriefService`.
+- **The agent is stateless and optional.** The client holds the transcript and
+  posts it back each turn (serialized with Pydantic AI's
+  `ModelMessagesTypeAdapter`); there is no session store to expire. And when
+  `ANTHROPIC_API_KEY` is empty the agent is simply **not built** — the studio
+  boots, launches runs and commits form briefs exactly as before, and only
+  `POST /brief-agent` fails (503). Keep that property: an unconfigured
+  optional feature must never take the app down with it.
+- **Two LLM libraries, one boundary.** litellm drives every *pipeline* call
+  (`ThemeTree/modules/`, `ThemeTree/shared/services/`); Pydantic AI drives the studio's
+  conversational agent and nothing else. Its model id is a **bare** Anthropic
+  name from `ThemeTree/studio/config.py` (`brief_agent_model`) — never a litellm
+  `provider/model` string — because the agent names its provider explicitly.
+  The key is read from `src.core.config` rather than redeclared on the studio
+  settings: the studio already imports the pipeline, so one secret keeps one
+  definition and one env var.
+- **The system prompt is a file, never a literal.** It lives at
+  `ThemeTree/studio/agent/prompts/brief_agent_system.md` and is read at use, like
+  every other prompt in this package. It is the web-app port of the
+  `brand-brief` skill (`.claude/skills/brand-brief/`) — the same ≤10-question,
+  one-at-a-time, multiple-choice-by-default interview, and the same hard rules
+  (stylised never photoreal, brand-not-app prose, no colour values, only
+  contrast-satisfiable palettes). **When that skill's rules change, change
+  this prompt in the same edit**, and vice versa; they are one interview with
+  two front doors.
 
 ---
 
 ## Production deployment (read-only API)
 
-The read-only API (`src/api/main.py`, `make api`, port 8001 locally) ships to **AWS App
+The read-only API (`ThemeTree/api/main.py`, `make api`, port 8001 locally) ships to **AWS App
 Runner** as a Docker image at `https://theme.combatden.net`. See
 `../DEPLOYMENT.md` for the full runbook (ARNs, DNS, redeploy, pause/resume).
 
@@ -339,11 +377,11 @@ Runner** as a Docker image at `https://theme.combatden.net`. See
   `output.yaml` metadata is copied (`.dockerignore` excludes
   `apps/**/{images,final_images,icons}/`; `COPY apps/` then brings just the
   yaml). `ASSETS_CDN_BASE_URL` **defaults to the prod CDN in code**
-  (`src/api/config.py`), so the API always emits absolute CDN URLs and the byte
+  (`ThemeTree/api/config.py`), so the API always emits absolute CDN URLs and the byte
   endpoints 307-redirect there — no App Runner env var required (a relative path
   would 404 now that the bytes are de-baked). Set it empty to serve relative
-  paths + local files in the dev loop. See `src/core/asset_urls.py` +
-  `src/api/schema/output_response.py`.
+  paths + local files in the dev loop. See `ThemeTree/core/asset_urls.py` +
+  `ThemeTree/api/schema/output_response.py`.
 - Cache-busting stays `?v=<content-hash>` (already stamped by the Writer);
   CloudFront is configured to include `v` in the cache key, so a regenerated
   asset busts the CDN with no invalidation. **Never serve via the CDN without
@@ -359,7 +397,7 @@ Runner** as a Docker image at `https://theme.combatden.net`. See
 - **Bytes → S3:** `make sync-assets` (`scripts/sync_assets/`) mirrors every
   `final_images/` + `icons/` file to the bucket (backfill + repair, skips
   unchanged). New runs self-upload from the `Writer` when `ASSET_UPLOAD_ENABLED=1`
-  (opt-in; off locally) — see `src/core/asset_uploader.py`. boto3 is an
+  (opt-in; off locally) — see `ThemeTree/core/asset_uploader.py`. boto3 is an
   upload-only dep, imported lazily so the read path/tests don't need it.
 - Runtime env (App Runner vars, never baked): `GOOGLE_FONTS_API_KEY` (required,
   font delivery). `ASSETS_CDN_BASE_URL` is **optional** — it defaults to the prod
@@ -367,7 +405,7 @@ Runner** as a Docker image at `https://theme.combatden.net`. See
   (or empty for local serving). `CORS_ORIGINS` optional.
 - `make docker-build` / `make ecr-push` build + push + trigger a redeploy;
   `make pause` / `make resume` toggle the demo (App Runner Pause/Resume).
-- Only the **read path** is containerized. The pipeline (`src/cli.py`, scripts,
+- Only the **read path** is containerized. The pipeline (`ThemeTree/cli.py`, scripts,
   `make sync-assets`) is not — it stays a local tool.
 
 ---

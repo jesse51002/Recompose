@@ -11,19 +11,19 @@ import pytest
 from pydantic import ValidationError
 
 from schema import AppFormat, Customization, TextSet, TextSlot
-from src.core.run_context import RunContext
-from src.core.util import load_yaml
-from src.modules.base import DependencyKind
-from src.modules.texts.text_generation_service import (
+from ThemeTree.core.run_context import RunContext
+from ThemeTree.core.util import load_yaml
+from ThemeTree.modules.base import DependencyKind
+from ThemeTree.modules.texts.text_generation_service import (
     MAX_RETRIES,
     TEXT_PROMPT_PATH,
     TextGenerationService,
 )
-from src.modules.texts.text_models import (
+from ThemeTree.modules.texts.text_models import (
     LLMTextResponse,
     build_text_response_model,
 )
-from src.modules.texts.text_node import TextNode
+from ThemeTree.modules.texts.text_node import TextNode
 
 # Committed fixture tree (the same demo app every module test uses).
 _FIXTURE_APP = Path(__file__).resolve().parent / "data" / "apps" / "demo"

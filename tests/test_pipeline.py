@@ -22,26 +22,26 @@ from schema import (
     Output,
     RunCost,
 )
-from src.core.errors import PipelineError, ProviderError
-from src.core.run_context import RunContext
-from src.executor import orchestrator
-from src.executor.orchestrator import Pipeline, PipelineResult
-from src.executor.progress_event import ProgressEvent, ProgressEventKind
-from src.executor.progress_sink import ProgressSink
-from src.executor.seed import build_seed
-from src.executor.writer import (
+from ThemeTree.core.errors import PipelineError, ProviderError
+from ThemeTree.core.run_context import RunContext
+from ThemeTree.executor import orchestrator
+from ThemeTree.executor.orchestrator import Pipeline, PipelineResult
+from ThemeTree.executor.progress_event import ProgressEvent, ProgressEventKind
+from ThemeTree.executor.progress_sink import ProgressSink
+from ThemeTree.executor.seed import build_seed
+from ThemeTree.executor.writer import (
     APP_PROVENANCE_NAME,
     CUSTOMIZATION_PROVENANCE_NAME,
     Writer,
 )
-from src.modules.colors.color_models import LLMSlotResponse
-from src.modules.fonts.font_models import LLMFontResponse
-from src.modules.formats.format_models import LLMFormatResponse
-from src.modules.icons.icon_models import LLMIconPrompt, LLMIconResponse
-from src.modules.images.image_models import ImageComplexity, ImagePrompt
-from src.modules.texts.text_models import LLMTextResponse
-from src.shared.interfaces.google_fonts_catalog import GoogleFontMetadata
-from src.shared.interfaces.icon_set_catalog import IconSetCatalogEntry
+from ThemeTree.modules.colors.color_models import LLMSlotResponse
+from ThemeTree.modules.fonts.font_models import LLMFontResponse
+from ThemeTree.modules.formats.format_models import LLMFormatResponse
+from ThemeTree.modules.icons.icon_models import LLMIconPrompt, LLMIconResponse
+from ThemeTree.modules.images.image_models import ImageComplexity, ImagePrompt
+from ThemeTree.modules.texts.text_models import LLMTextResponse
+from ThemeTree.shared.interfaces.google_fonts_catalog import GoogleFontMetadata
+from ThemeTree.shared.interfaces.icon_set_catalog import IconSetCatalogEntry
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
 
@@ -862,7 +862,7 @@ def test_writer_writes_run_cost_breakdown(tmp_path, monkeypatch):
 def test_run_with_full_seed_generates_nothing(tmp_path, monkeypatch):
     """A second pass seeded with a complete prior run runs no node and
     reassembles the identical Output (the expand no-op: no spend)."""
-    from src.executor.seed import build_seed
+    from ThemeTree.executor.seed import build_seed
 
     ctx = _run_ctx(tmp_path)
     _patch_services(
@@ -888,7 +888,7 @@ def test_run_with_seed_injects_done_dep_into_generated_node(
     consumes the seeded colour palette as its input. If the seeded colour
     weren't injected, the image node's run() would fail on a missing dep —
     so a clean run proves the injection."""
-    from src.executor.seed import build_seed
+    from ThemeTree.executor.seed import build_seed
 
     ctx = _run_ctx(tmp_path)
     _patch_services(
@@ -914,7 +914,7 @@ def test_font_partial_regen_preserves_siblings_and_steers(tmp_path, monkeypatch)
     the font node re-runs, 'body' is kept verbatim, 'display' carries the
     steering, and no other slot regenerates."""
     from schema import OverwriteSpecs
-    from src.executor.seed import build_seed
+    from ThemeTree.executor.seed import build_seed
 
     ctx = _run_ctx(tmp_path)
     _patch_services(
@@ -950,7 +950,7 @@ def test_color_partial_regen_preserves_siblings_and_steers(
     steering — the deterministic-preservation guarantee that keeps every
     image keyed to the untouched colours valid."""
     from schema import OverwriteSpecs
-    from src.executor.seed import build_seed
+    from ThemeTree.executor.seed import build_seed
 
     ctx = _run_ctx(tmp_path)
     _patch_services(
@@ -1271,7 +1271,7 @@ def test_write_expansion_preserves_cost_and_appends_ledger(
     """write_expansion keeps output.yaml's original cost untouched and
     records this pass's spend + generated keys in expansion_cost.yaml."""
     from schema import ExpansionCostLog, ExpansionKind, OverwriteSpecs
-    from src.executor.seed import build_seed
+    from ThemeTree.executor.seed import build_seed
 
     ctx = _run_ctx(tmp_path)
     _patch_services(
@@ -1418,7 +1418,7 @@ def test_full_rerun_reclassifies_and_prior_is_only_a_fallback(
     the prior run's value before the pipeline clears output.yaml, but it is
     now a FALLBACK: an app with a declared vocabulary re-classifies through
     the node, so the produced value wins."""
-    import src.cli as cli
+    import ThemeTree.cli as cli
 
     ctx = _run_ctx(tmp_path)
     _patch_services(
@@ -1620,7 +1620,7 @@ def test_output_back_compat_ignores_removed_fields():
     # hand-built LLMPalette so it stays contract-valid as the math
     # evolves.
     from schema import ColorMode
-    from src.modules.colors.color_models import LLMSlotResponse, LLMPalette
+    from ThemeTree.modules.colors.color_models import LLMSlotResponse, LLMPalette
     from tests.colour_helpers import assemble_color_palette
 
     roles = {

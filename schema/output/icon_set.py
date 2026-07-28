@@ -9,7 +9,7 @@ additive change, never another breaking reshape.
 
 Not to be confused with the *catalog* concept "icon set" (the curated
 source library): that is ``IconSetCatalogEntry`` /
-``IconSetCatalog`` under ``src/shared/``. This is the produced output
+``IconSetCatalog`` under ``ThemeTree/shared/``. This is the produced output
 group only.
 """
 

@@ -23,10 +23,10 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any
 
-from src.core.asset_urls import ICON_SUFFIX, IMAGE_SUFFIX, icon_key, image_key
-from src.core.asset_uploader import s3_client, upload_file
-from src.core.config import settings
-from src.core.run_context import FINAL_IMAGES_DIRNAME, ICONS_DIRNAME
+from ThemeTree.core.asset_urls import ICON_SUFFIX, IMAGE_SUFFIX, icon_key, image_key
+from ThemeTree.core.asset_uploader import s3_client, upload_file
+from ThemeTree.core.config import settings
+from ThemeTree.core.run_context import FINAL_IMAGES_DIRNAME, ICONS_DIRNAME
 
 logger = logging.getLogger(__name__)
 

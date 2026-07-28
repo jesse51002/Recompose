@@ -38,9 +38,9 @@ _REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
-from src.core.run_context import FINAL_IMAGES_DIRNAME, IMAGES_DIRNAME
-from src.modules.images.background_service import BackgroundService
-from src.shared.services.background_remover import RecraftBackgroundRemover
+from ThemeTree.core.run_context import FINAL_IMAGES_DIRNAME, IMAGES_DIRNAME
+from ThemeTree.modules.images.background_service import BackgroundService
+from ThemeTree.shared.services.background_remover import RecraftBackgroundRemover
 
 RULE = "=" * 72
 # The raw the image node writes for a slot, and the deliverable's extension.

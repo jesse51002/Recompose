@@ -18,14 +18,14 @@ import pytest
 from pydantic import ValidationError
 
 from schema import AppFormat, ColorRole, OklchColor
-from src.core.errors import SchemaValidationError
-from src.modules.colors.color_correction_service import ColorCorrectionService
-from src.modules.colors.color_models import (
+from ThemeTree.core.errors import SchemaValidationError
+from ThemeTree.modules.colors.color_correction_service import ColorCorrectionService
+from ThemeTree.modules.colors.color_models import (
     MIN_CONTRAST_AA,
     LLMSlotResponse,
     build_color_response_model,
 )
-from src.shared.services.llm_client import LiteLLMClient
+from ThemeTree.shared.services.llm_client import LiteLLMClient
 
 # Aliases for readability — every helper lives on the service class now.
 _clamp = ColorCorrectionService._clamp_bg_lightness

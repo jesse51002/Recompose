@@ -22,53 +22,53 @@ from schema import (
     OklchColor,
     OverwriteSpecs,
 )
-from src.core.errors import ProviderError
-from src.core.run_context import RunContext
-from src.core.util import load_yaml
-from src.modules.base import DependencyKind
-from src.modules.categories.category_models import (
+from ThemeTree.core.errors import ProviderError
+from ThemeTree.core.run_context import RunContext
+from ThemeTree.core.util import load_yaml
+from ThemeTree.modules.base import DependencyKind
+from ThemeTree.modules.categories.category_models import (
     CategoryOutput,
     build_category_selection_model,
 )
-from src.modules.categories.category_node import (
+from ThemeTree.modules.categories.category_node import (
     CATEGORY_SLOT_ID,
     CategoryNode,
 )
-from src.modules.categories.category_selection_service import (
+from ThemeTree.modules.categories.category_selection_service import (
     CATEGORY_PROMPT_PATH,
     CategorySelectionService,
 )
-from src.modules.colors.color_models import LLMSlotResponse, build_color_response_model
-from src.modules.colors.color_node import ColorNode
-from src.modules.colors.color_models import LLMPalette
-from src.modules.formats.format_models import (
+from ThemeTree.modules.colors.color_models import LLMSlotResponse, build_color_response_model
+from ThemeTree.modules.colors.color_node import ColorNode
+from ThemeTree.modules.colors.color_models import LLMPalette
+from ThemeTree.modules.formats.format_models import (
     LLMFormatResponse,
     build_format_response_model,
 )
-from src.modules.formats.format_node import FormatNode
-from src.modules.formats.format_selection_service import (
+from ThemeTree.modules.formats.format_node import FormatNode
+from ThemeTree.modules.formats.format_selection_service import (
     FORMAT_PROMPT_PATH,
     FormatSelectionService,
 )
-from src.modules.images.background_service import (
+from ThemeTree.modules.images.background_service import (
     BG_MAX_ATTEMPTS,
     BackgroundService,
 )
-from src.modules.icons.icon_models import (
+from ThemeTree.modules.icons.icon_models import (
     LLMIconPrompt,
     LLMIconResponse,
     build_icon_match_model,
 )
-from src.modules.icons.icon_node import IconNode
-from src.shared.services.recraft_icon_generator import (
+from ThemeTree.modules.icons.icon_node import IconNode
+from ThemeTree.shared.services.recraft_icon_generator import (
     RECRAFT_PRICE_USD,
     RecraftIconGenerator,
 )
-from src.modules.images.complexity_service import ComplexityClassifier
-from src.modules.images.image_models import ImageComplexity, ImagePrompt
-from src.modules.images.image_node import ImageNode
+from ThemeTree.modules.images.complexity_service import ComplexityClassifier
+from ThemeTree.modules.images.image_models import ImageComplexity, ImagePrompt
+from ThemeTree.modules.images.image_node import ImageNode
 from schema import AbsolutePath
-from src.shared.interfaces.icon_set_catalog import IconSetCatalogEntry
+from ThemeTree.shared.interfaces.icon_set_catalog import IconSetCatalogEntry
 
 _COLOR = DependencyKind.COLOR.value
 
@@ -361,7 +361,7 @@ def test_color_prompt_is_data_driven(tmp_path: Path) -> None:
     # pipeline split into schema → correction → derivation services —
     # the node is now a thin orchestrator with no prompt logic of its
     # own. Test the schema service's prompt builder directly.
-    from src.modules.colors.color_scheme_service import (
+    from ThemeTree.modules.colors.color_scheme_service import (
         COLOR_PROMPT_PATH,
         ColorSchemeService,
     )
@@ -629,7 +629,7 @@ def test_image_prompt_is_app_agnostic_and_theme_fixed(
     palette = _full_palette(ctx)
     slot = ctx.app.images[0]
 
-    from src.modules.images.image_node import (
+    from ThemeTree.modules.images.image_node import (
         IMAGE_PROMPT_PATH,
         THEME_BG_DARK,
         THEME_BG_LIGHT,
@@ -889,7 +889,7 @@ def test_image_no_dependency_block_absent(tmp_path: Path) -> None:
 def _fake_catalog():
     """Tiny in-memory catalog with two well-known families."""
     from schema import FontSet  # noqa: F401  (touch import to fail fast)
-    from src.shared.interfaces.google_fonts_catalog import GoogleFontMetadata
+    from ThemeTree.shared.interfaces.google_fonts_catalog import GoogleFontMetadata
 
     class _C:
         def __init__(self) -> None:
@@ -929,11 +929,11 @@ def test_font_node_run_returns_fontset_keyed_by_slot(tmp_path: Path) -> None:
     """FontNode resolves every slot, lifts each pick into a FontOutput
     with the catalog-supplied canonical family and category."""
     from schema import FontSet
-    from src.modules.fonts.font_models import (
+    from ThemeTree.modules.fonts.font_models import (
         LLMFontResponse,
         build_font_response_model,
     )
-    from src.modules.fonts.font_node import FontNode
+    from ThemeTree.modules.fonts.font_node import FontNode
 
     ctx = _run_ctx(tmp_path)
     catalog = _fake_catalog()
@@ -972,7 +972,7 @@ def test_font_response_model_rejects_unknown_family() -> None:
     ValidationError when any picked family isn't in the catalog
     snapshot — exactly what makes the existing complete_structured
     retry loop re-ask the LLM, with no new retry code."""
-    from src.modules.fonts.font_models import (
+    from ThemeTree.modules.fonts.font_models import (
         LLMFontResponse,
         build_font_response_model,
     )
@@ -1002,7 +1002,7 @@ def test_font_prompt_is_data_driven(tmp_path: Path) -> None:
     """The .md template is app-agnostic — no slot description, no
     brand name baked in. The built prompt substitutes brand brief
     fields + every requested font slot's description."""
-    from src.modules.fonts.font_selection_service import (
+    from ThemeTree.modules.fonts.font_selection_service import (
         FONT_PROMPT_PATH,
         FontSelectionService,
     )
@@ -1317,7 +1317,7 @@ def test_build_icon_match_model_rejects_non_member() -> None:
 
 
 # --------------------------------------------------------------------------
-# Classification node (src/modules/categories)
+# Classification node (ThemeTree/modules/categories)
 # --------------------------------------------------------------------------
 
 
@@ -1446,7 +1446,7 @@ def test_category_out_of_vocabulary_is_reasked_not_written(
 
     import litellm
 
-    from src.shared.services.llm_client import LiteLLMClient
+    from ThemeTree.shared.services.llm_client import LiteLLMClient
 
     ctx = _run_ctx(tmp_path)
     replies = [
@@ -1484,7 +1484,7 @@ def test_category_service_requires_a_vocabulary(tmp_path: Path) -> None:
         )
 
 
-# --- formats: the layout-format node (src/modules/formats/) ---------------
+# --- formats: the layout-format node (ThemeTree/modules/formats/) ---------------
 
 
 class _FormatStubLLM:
@@ -1658,7 +1658,7 @@ def test_format_out_of_vocabulary_is_reasked_not_written(
 
     import litellm
 
-    from src.shared.services.llm_client import LiteLLMClient
+    from ThemeTree.shared.services.llm_client import LiteLLMClient
 
     ctx = _run_ctx(tmp_path)
     good = {

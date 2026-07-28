@@ -391,7 +391,7 @@ SETS: list[IconSet] = [
         source="https://khushmeen.com/icons.html",
         kind=KIND_GITHUB,
         github="svatsa159/react-doodle-icons@b51da0371e992b5d03e768fd1f570e8e9500c617",
-        svg_subdir="src/icons",
+        svg_subdir="ThemeTree/icons",
         recursive=True,
         vibe=(
             "Hand-drawn doodle icons: loose, sketchy strokes with a warm, human, "

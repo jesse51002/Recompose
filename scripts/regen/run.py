@@ -40,11 +40,11 @@ if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
 from schema import ExpansionKind, OverwriteSpecs
-from src.core.errors import PipelineError
-from src.core.run_context import RunContext, load_run
-from src.executor.orchestrator import Pipeline
-from src.executor.seed import all_slot_ids, build_seed
-from src.executor.writer import Writer
+from ThemeTree.core.errors import PipelineError
+from ThemeTree.core.run_context import RunContext, load_run
+from ThemeTree.executor.orchestrator import Pipeline
+from ThemeTree.executor.seed import all_slot_ids, build_seed
+from ThemeTree.executor.writer import Writer
 
 RULE = "=" * 72
 

@@ -35,7 +35,7 @@ class Output(BaseModel):
     the app declares under ``categories`` in its ``app.yaml`` (the code
     is app-agnostic: it supports "classification", the class values are
     the app's own). It is produced by the pipeline's classification node
-    (``src/modules/categories/``) and validated against that declared
+    (``ThemeTree/modules/categories/``) and validated against that declared
     vocabulary before the ``Writer`` dumps it. The style picker REQUIRES
     it (an uncategorised run is never listed by
     ``GET /apps/{id}/styles``), but the field is ``None``-able here so

@@ -55,8 +55,8 @@ byte-for-byte what it always was.
 
 Because the **executor** owns iteration, that is where every emission lives:
 the modules carry no progress code at all. The sink is an interface
-(`src/executor/progress_sink.py`) over a plain Pydantic event
-(`src/executor/progress_event.py`) — the pipeline core stays
+(`ThemeTree/executor/progress_sink.py`) over a plain Pydantic event
+(`ThemeTree/executor/progress_event.py`) — the pipeline core stays
 transport-agnostic and knows nothing of HTTP or SSE. The `studio` app is
 the one implementation today (see *The studio* below).
 
@@ -87,7 +87,7 @@ flowchart TD
   class Reg,Writer io
 ```
 
-> Entry point: `src/executor/orchestrator.py`. Provider choices (which
+> Entry point: `ThemeTree/executor/orchestrator.py`. Provider choices (which
 > model, which provider) are architecture, not pipeline logic — each
 > call's model id is a per-call constant at the top of the module that
 > makes the call, not a config/env knob; only secrets (API keys) stay in
@@ -386,8 +386,8 @@ writes a brief, launches a run, and streams that run's progress to a
 browser. It is the launch surface; the read-only API (`make api`, :8001) is
 still the thing that serves finished themes.
 
-It is a **separate app from `src/api/`, deliberately.** Both `Settings`
-classes instantiate at import time, and `src/api/` never imports
+It is a **separate app from `ThemeTree/api/`, deliberately.** Both `Settings`
+classes instantiate at import time, and `ThemeTree/api/` never imports
 `src.core.config` — which is exactly what lets the deployed App Runner
 container boot with only `GOOGLE_FONTS_API_KEY` set. Pulling the pipeline
 into the read API would drag the four provider keys in with it and break
@@ -399,6 +399,7 @@ that has the keys.
 | | |
 | --- | --- |
 | `POST /briefs` | Validate the five brief fields and write `.studio/briefs/<slug>.yaml`. |
+| `POST /brief-agent` | One turn of the conversational brief interview — and, when the turn carries an accepted brief, the commit. |
 | `POST /runs` | Start a run from a brief + a **new** run name. Returns a `run_id` immediately — it never blocks on generation. |
 | `GET /runs/{id}/events` | Server-Sent Events: the run, live. |
 | `GET /runs/{id}` | The same records as one snapshot (the poll fallback). |
@@ -420,7 +421,7 @@ forever. There is no `sse-starlette` and no npm dependency on either side;
 **One run at a time, globally.** The pipeline hits rate-limited LLM / image
 providers and concurrent runs get throttled, so a second launch is refused
 with **409** carrying the active run's id/app/name rather than queued. This
-guards the studio only — someone running `python -m src` in a terminal at
+guards the studio only — someone running `python -m ThemeTree` in a terminal at
 the same time is invisible to it.
 
 **The launch path only ever CREATES a run directory.** A name that already
@@ -460,10 +461,53 @@ that file is a checked-in input and what `make run` generates from, so
 writing it here would silently change what a plain `make run` does. A launch
 consumes either an inline `brief` or a saved `brief_slug` — exactly one.
 
-> A conversational (Pydantic AI) agent that authors this brief is a planned
-> follow-up. It is not built here on purpose; when it lands its accept path
-> calls the same `BriefService.commit`, so the form and the agent share one
-> validate-and-commit path rather than growing two.
+### The brief agent — the same brief, by conversation
+
+`POST /brief-agent` is a **Pydantic AI** agent that interviews someone about
+their brand and proposes the brief for them. It is the web port of the
+`brand-brief` skill (`.claude/skills/brand-brief/`): the same ≈10-question,
+one-at-a-time, multiple-choice-by-default interview, held to the same rules
+(stylised never photoreal, brand prose that never names app screens, colour
+kept to mood / hue-family / saturation / mode, and only palettes the pipeline's
+contrast contract can actually satisfy). The skill is bound to Claude Code's
+interactive tooling and can't run from a browser — which is the whole reason
+this exists.
+
+**The agent authors; code commits.** It has **zero tools** and writes nothing.
+Each turn it emits exactly one of three things:
+
+- **text** — its next question, or a short acknowledgement;
+- a **question** — `{question, options (2–6), multi_select}`, rendered as
+  chips, whose selection becomes the next turn's message;
+- a **proposal** — a short chat message **plus** the finished five-field brief.
+  The message is required: a proposal never lands in the review panel without
+  a word in the conversation.
+
+**Accept is the same endpoint.** When the owner accepts, the browser posts the
+reviewed brief back as `accepted_brief`; the server runs the deterministic
+`BriefService.commit` **first** — the same call the plain form makes — and only
+then re-runs the agent on a short "it was saved" note so it can acknowledge and
+invite more changes. A brief is never reported saved because a model said so,
+and if that post-save call fails the turn still reports the save. The response
+carries where it landed, so the browser can launch a run from that `brief_slug`
+without re-deriving the filename.
+
+**No sessions.** The client holds the transcript and posts it back each turn
+(serialized with Pydantic AI's own message adapter), so there is nothing to
+store and nothing to expire — the studio can restart mid-interview.
+
+**Optional by construction.** With no `ANTHROPIC_API_KEY` the agent is never
+built: everything else in the studio works exactly as before and only
+`POST /brief-agent` answers 503. The model is a bare Anthropic name in
+`ThemeTree/studio/config.py` (`brief_agent_model`, override with `BRIEF_AGENT_MODEL`);
+the key comes from the pipeline config the studio already imports, so that one
+secret keeps a single definition.
+
+> This is the one place Pydantic AI is used. Every *pipeline* call still goes
+> through litellm; the agent is conversational, so it gets the conversational
+> library. Its system prompt is a file
+> (`ThemeTree/studio/agent/prompts/brief_agent_system.md`) read at use, like every
+> other prompt here.
 
 ---
 
@@ -510,7 +554,7 @@ codebase/CustomizationService/
 │   │                    #   IconOutput (+ IconAttribution),
 │   │                    #   *Set wrappers (ColorPalette has mode),
 │   │                    #   Output, RunCost
-├── src/
+├── ThemeTree/
 │   ├── __main__, cli    # CLI entrypoint
 │   ├── core/            # config, errors, run_context, logging, util
 │   ├── executor/        # orchestrator (the DAG), registry, writer,
@@ -537,9 +581,11 @@ codebase/CustomizationService/
 │   ├── api/             # read-only FastAPI over output.yaml (deployed)
 │   └── studio/          # local launch surface: POST a brief, launch a
 │                        #   run, stream it (SSE) — routers, schema/,
-│                        #   service/ (registry, launcher, reader, briefs)
+│                        #   service/ (registry, launcher, reader, briefs),
+│                        #   agent/ (Pydantic AI brief interviewer +
+│                        #   prompts/) — the one non-litellm LLM caller
 ├── tests/               # core, modules, executor, pipeline, services,
-│                        #   api, studio
+│                        #   api, studio, studio agent (no key, no network)
 ├── scripts/             # expand, regen, regen_image, edit_customization, …
 ├── .studio/             # gitignored: run logs (jsonl) + committed briefs
 └── apps/
@@ -551,5 +597,5 @@ codebase/CustomizationService/
 to end, `make smoke` does the same on `apps/smoketest/` (the one app that
 exercises all six modules); `make api` serves the read-only output API and
 `make studio` serves the local launch surface. Entry point:
-`src/executor/orchestrator.py`. Read the schemas for the exact YAML shapes;
+`ThemeTree/executor/orchestrator.py`. Read the schemas for the exact YAML shapes;
 read `apps/combatden/` for a worked example.

@@ -1,7 +1,7 @@
 [project]
-name = "themeservice"
+name = "recompose"
 version = "0.1.0"
-description = "App-agnostic AI customization pipeline: brand brief -> customized app (colors + images)."
+description = "Recompose — agentic full visual redesign for white-labeled apps. Brand brief in, store-ready branded app out."
 requires-python = ">=3.13,<4.0"
 dependencies = [
     "httpx (>=0.27,<1.0)",
@@ -15,12 +15,13 @@ dependencies = [
     "networkx (>=3.6.1,<4.0.0) ; python_version >= \"3.13\" and python_full_version != \"3.14.1\" and python_version < \"4.0\"",
     "coloraide (>=8.8.1,<9.0.0)",
     "boto3 (>=1.43.18,<2.0.0)",
+    "pydantic-ai-slim[anthropic] (>=2.18.0,<3.0.0)",
 ]
 
 [tool.poetry]
 # Two top-level packages (neither matches the project name) -> list explicitly.
 packages = [
-    { include = "src" },
+    { include = "ThemeTree" },
     { include = "schema" },
 ]
 

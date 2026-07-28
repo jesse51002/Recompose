@@ -7,7 +7,7 @@ This file guides Claude Code when working in this package.
 `theme-react` is the **React mirror of `../ThemeFlutter`**. Two things live here,
 and the boundary between them is load-bearing:
 
-- **`src/lib/`** — the white-label theme **runtime**, the library. It fetches a
+- **`ThemeTree/lib/`** — the white-label theme **runtime**, the library. It fetches a
   tenant's resolved branding from the ThemeService API, keeps a last-good copy
   in `localStorage`, and exposes brand-overridable resolvers. It is
   **runtime + resolvers only** — no screens, no bundled assets. This is the
@@ -30,20 +30,20 @@ and the boundary between them is load-bearing:
   | `react/` | *(no counterpart — Flutter uses `ListenableBuilder`)* |
   | `motion/` | `theme/animation/*.dart` |
 
-  `src/lib/index.ts` is the ONLY export surface; nothing else is importable.
+  `ThemeTree/lib/index.ts` is the ONLY export surface; nothing else is importable.
 
   **`models/themeFontFace.ts` ports nothing, and `ThemeConfig` carries three
   fields the Dart one does not** — `category`, `fontFaces` and
   `imageComplexity`. All three come off wire sections ThemeFlutter's
   `ThemeConfig.fromJson` never reads (`category`, `font_set`, `image_set`),
   because Flutter needs only a family name to call `GoogleFonts.getFont` and
-  only a URL to fetch an image. This runtime reads them because `src/app/`'s
+  only a URL to fetch an image. This runtime reads them because `ThemeTree/app/`'s
   artifact inspector renders the pipeline's own reasoning, which nothing on
   the Flutter side does. The divergence is additive: every field the Dart
   model has, this one still has, parsed the same lossy-tolerant way.
-- **`src/app/`** — the **standalone theme browser**: the public, unauthenticated
+- **`ThemeTree/app/`** — the **standalone theme browser**: the public, unauthenticated
   page that pages ThemeService's catalog and previews each design inside a phone
-  frame. It is a *consumer* of `src/lib`, exactly as `../../CRM` is a consumer of
+  frame. It is a *consumer* of `ThemeTree/lib`, exactly as `../../CRM` is a consumer of
   `theme_flutter`.
 
   Like the library, it is a PORT — of the CRM's theme surfaces and the landing
@@ -204,9 +204,9 @@ detail screen resolves three of its fields per-FIELD instead.** A
 `instructorImageUrl` as OPTIONAL — the bundled tier has all three for every
 group (extracted from `VideoService/gyms/*.yaml`, which is also where the rest
 of that file came from), and the fetched tier declares them (`str | None` on
-`FastApiBackend/src/theme/schema/theme_schema.py`) but serves NULL for every
+`FastApiBackend/ThemeTree/theme/schema/theme_schema.py`) but serves NULL for every
 one, because its source
-`FastApiBackend/src/theme/showcase_defaults/theme_showcase_defaults.yaml` was
+`FastApiBackend/ThemeTree/theme/showcase_defaults/theme_showcase_defaults.yaml` was
 ported from the CRM constants that predate the fields, and says so in its own
 header. A per-tier ladder therefore lets the fetched nulls hide the richer
 bundled copy whenever `:8000` is up. `showcase/classdetail/classDetail.ts`
@@ -244,8 +244,8 @@ findings in review and misleads the next contributor.
 These mirror `../ThemeFlutter/CLAUDE.md`'s own Hard rules, because the two
 packages are the same runtime in two languages.
 
-- **The library is app-agnostic by construction.** `src/lib/` must NEVER import
-  from `src/app/`. The only app-specific inputs are the arguments passed into
+- **The library is app-agnostic by construction.** `ThemeTree/lib/` must NEVER import
+  from `ThemeTree/app/`. The only app-specific inputs are the arguments passed into
   `initializeTheme` / `<ThemeProvider>` (`appId`, `designId`, the five
   `expected*` slot lists). If you need an app constant, take it as a parameter
   or add it to `EngineTokens` — never reach into the app.
@@ -254,8 +254,8 @@ packages are the same runtime in two languages.
   the loaded theme via the resolvers. The only hardcoded values are the CombatDen
   fallbacks used when nothing has loaded. **Resolvers never throw** — every one
   degrades to its fallback.
-- **No bundled assets in the library.** `src/lib/` ships no images. The showcase's
-  bundled fallback PNGs live in `src/app/`, which owns them.
+- **No bundled assets in the library.** `ThemeTree/lib/` ships no images. The showcase's
+  bundled fallback PNGs live in `ThemeTree/app/`, which owns them.
 - **The two token systems never meet.** The app chrome (`GW` + the CRM's light
   `DesignConstants` values) and the showcase island (`ShowcaseTokens`) share token
   NAMES with different VALUES — `radiusBig` is **12** in the chrome and **32** in
@@ -265,10 +265,10 @@ packages are the same runtime in two languages.
     IMPORT STRING, so a token module's filename is part of the enforcement —
     rename one and add the new spelling to the gate in the same change.
 - **The chrome's tokens live twice, and the test keeps them honest.**
-  `src/app/tokens/` is the source of truth (the ported `GWNav` / `GWButton` keep
+  `ThemeTree/app/tokens/` is the source of truth (the ported `GWNav` / `GWButton` keep
   their verbatim inline `style={{}}` objects and read it directly);
-  `src/app/styles/tokens.css` republishes the same values as CSS variables for
-  every CSS Module. `src/app/__tests__/tokens.test.ts` parses the sheet and
+  `ThemeTree/app/styles/tokens.css` republishes the same values as CSS variables for
+  every CSS Module. `ThemeTree/app/__tests__/tokens.test.ts` parses the sheet and
   fails if the two drift.
 
 ## `<ThemeProvider>` is a gate, not a value carrier
@@ -313,7 +313,7 @@ context so a value can reach somewhere, the resolver already reaches there.
   throws "The result of getSnapshot should be cached" and loops forever if the
   store returns a fresh object literal per call. Build one frozen snapshot inside
   `notify()` and return the same reference until the next change. Both
-  `ThemeStore` and `StylesPager` do; `src/lib/__tests__/themeStore.test.ts` and
+  `ThemeStore` and `StylesPager` do; `ThemeTree/lib/__tests__/themeStore.test.ts` and
   `stylesPager.test.ts` each pin it.
 - **`eslint-plugin-react-hooks` v7 turns on the React Compiler rules, and
   `--max-warnings 0` makes every one of them fatal.** `set-state-in-effect`,
@@ -339,7 +339,7 @@ context so a value can reach somewhere, the resolver already reaches there.
 - **CSS scroll anchoring fights a collapsing header.** The library's title
   collapses out of the flow as the page scrolls; Chrome compensates for that
   height change by moving the scroll offset, which shoves it straight back
-  across the collapse threshold and flickers. `src/app/styles/base.css` turns
+  across the collapse threshold and flickers. `ThemeTree/app/styles/base.css` turns
   anchoring off for the document, and that line is load-bearing — the Flutter
   original cannot hit this because its collapsing chrome sits OUTSIDE the
   scrollable.
@@ -380,18 +380,18 @@ context so a value can reach somewhere, the resolver already reaches there.
   that this is not a device, and iOS's overlay bar occupies no layout.
 - **A `.css` import returns `''` under vitest, `?raw` included.** `test.css`
   defaults to false, so the CSS plugin hands back an empty module and an
-  assertion against it passes vacuously. `src/app/__tests__/tokens.test.ts`
+  assertion against it passes vacuously. `ThemeTree/app/__tests__/tokens.test.ts`
   reads the sheet off disk with `node:fs` instead.
 - **An app test is typechecked by `tsconfig.app.json`, not `tsconfig.test.json`.**
   The test project reaches its subject through a project REFERENCE, which
   resolves via emitted declarations, and the app project is `noEmit` — so an app
-  test there fails with TS6307. `tsconfig.test.json` excludes `src/app/**` for
+  test there fails with TS6307. `tsconfig.test.json` excludes `ThemeTree/app/**` for
   that reason; the app project's own `include` already covers them.
 
 ## The dev server port is pinned on purpose
 
 `vite.config.ts` pins `:8080` with `strictPort: true`. `../../FastApiBackend`'s
-CORS allowlist (`src/core/config.py`) contains `8081`, `8082`, `3000`, `8080` —
+CORS allowlist (`ThemeTree/core/config.py`) contains `8081`, `8082`, `3000`, `8080` —
 but **not** Vite's default `5173`. On any other port
 `GET /api/v1/theme/showcase-defaults` fails CORS. Pinning is what keeps this a
 zero-backend-change frontend; don't "fix" the port.
@@ -406,15 +406,15 @@ zero-backend-change frontend; don't "fix" the port.
   127.0.0.1 and never deployed. Only `?view=studio` talks to it: launch a run,
   stream its progress, read a finished image mid-run.
 
-`src/lib/config.ts` resolves the first two through an override → Vite env →
-default ladder. **The studio's base URL is resolved in `src/app/studio/`
-instead, not there** — `src/lib/` is the runtime a consumer installs, and a
+`ThemeTree/lib/config.ts` resolves the first two through an override → Vite env →
+default ladder. **The studio's base URL is resolved in `ThemeTree/app/studio/`
+instead, not there** — `ThemeTree/lib/` is the runtime a consumer installs, and a
 laptop-only tool that spends money starting generation runs has no business in
 a published package. The ladder is mirrored, not imported, on purpose.
 
 ## Local dev needs internet unless you opt out
 
-`../src/api/config.py` defaults `assets_cdn_base_url` to `https://cdn.combatden.net`
+`../ThemeTree/api/config.py` defaults `assets_cdn_base_url` to `https://cdn.combatden.net`
 and `../.env` does not override it — so **even a locally-running ThemeService
 returns absolute prod-CDN URLs** for every image and icon. To work fully offline,
 set `ASSETS_CDN_BASE_URL=` (empty) in `../.env`; the API then returns relative
@@ -442,7 +442,7 @@ Run from this directory, or from `..` via the `react-*` Makefile targets.
 - `npm run test` — vitest, configured by `vitest.config.ts` (kept separate from
   the app's `vite.config.ts`). Runs on **jsdom**, because the fallback ladder is
   defined in terms of `localStorage` and the asset warmer in terms of `Image`.
-  `src/lib/__tests__/setup.ts` installs an in-memory `Storage` when the
+  `ThemeTree/lib/__tests__/setup.ts` installs an in-memory `Storage` when the
   environment's is unusable — Node 22+ ships its own `globalThis.localStorage`
   that is `undefined` without `--localstorage-file` and shadows jsdom's.
 - `npm run build` — app bundle, then the ES + UMD library bundles, then types.

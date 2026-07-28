@@ -7,8 +7,8 @@ Two things live in one package:
 
 | Path | What |
 |---|---|
-| `src/lib/` | **The library** (`theme-react`). Fetches a tenant's resolved branding from the ThemeService API, keeps a last-good copy in `localStorage`, exposes resolvers that never throw. No screens, no bundled assets. |
-| `src/app/` | **The standalone theme browser.** The public page that pages the catalog and previews each design in a phone frame. A consumer of `src/lib`, exactly as the CRM is a consumer of `theme_flutter`. |
+| `ThemeTree/lib/` | **The library** (`theme-react`). Fetches a tenant's resolved branding from the ThemeService API, keeps a last-good copy in `localStorage`, exposes resolvers that never throw. No screens, no bundled assets. |
+| `ThemeTree/app/` | **The standalone theme browser.** The public page that pages the catalog and previews each design in a phone frame. A consumer of `ThemeTree/lib`, exactly as the CRM is a consumer of `theme_flutter`. |
 
 ## Status
 
@@ -18,7 +18,7 @@ alongside the toolchain, the library/app split, the architecture gates and the
 build outputs.
 
 The app carries three top-level views, switched by the tab bar and reachable by
-URL (`?view=`, `src/app/appUrl.ts`):
+URL (`?view=`, `ThemeTree/app/appUrl.ts`):
 
 | `?view=` | What |
 |---|---|
@@ -50,7 +50,7 @@ From `ThemeService/` there are Makefile shortcuts: `make react-install`,
 ### Offline
 
 Local dev reaches `cdn.combatden.net` for images and icons even with a local
-API, because `../src/api/config.py` defaults `assets_cdn_base_url` to the prod
+API, because `../ThemeTree/api/config.py` defaults `assets_cdn_base_url` to the prod
 CDN. To work fully offline, set `ASSETS_CDN_BASE_URL=` (empty) in `../.env` —
 the API then returns relative paths this client absolutises against
 `localhost:8001`.
@@ -74,8 +74,8 @@ npm run build          # app bundle + ES/UMD library bundles + types
 `npm run lint` carries three architecture gates that fail the build rather than
 drifting:
 
-1. `src/lib/` may not import from `src/app/` — the library is app-agnostic.
-2. `src/app/showcase/` may not import the app-chrome tokens.
+1. `ThemeTree/lib/` may not import from `ThemeTree/app/` — the library is app-agnostic.
+2. `ThemeTree/app/showcase/` may not import the app-chrome tokens.
 3. The app chrome may not import `ShowcaseTokens`.
 
 Gates 2 and 3 exist because the two token systems share names with different

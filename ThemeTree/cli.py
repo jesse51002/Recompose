@@ -1,0 +1,126 @@
+"""CLI entrypoint — the only user-facing surface over the async core."""
+
+from __future__ import annotations
+
+import argparse
+import logging
+from pathlib import Path
+
+from pydantic import ValidationError
+
+from ThemeTree.core.errors import PipelineError
+from ThemeTree.core.logging_setup import configure_logging
+from ThemeTree.core.run_context import OUTPUT_ROOT_DIRNAME, RunContext
+from ThemeTree.core.util import load_yaml
+from ThemeTree.executor.orchestrator import Pipeline
+from ThemeTree.executor.writer import Writer
+from schema import AppFormat, Customization, PathSegment
+
+logger = logging.getLogger(__name__)
+
+# Default output root: <package parent>/apps -> apps/<app_id>/<run_id>/
+DEFAULT_OUT_ROOT = Path(__file__).resolve().parent.parent / OUTPUT_ROOT_DIRNAME
+
+
+def _existing_category(output_path: Path) -> str | None:
+    """The ``category`` on a pre-existing run's ``output.yaml``, if any.
+
+    A full run pointed at an existing dir overwrites its ``output.yaml`` (the
+    pipeline clears the file up front), so the prior value has to be read
+    before that happens. It is the writer's **fallback**, not an override: an
+    app that declares a ``categories`` vocabulary re-classifies through the
+    pipeline's classification node like every other slot, and this value is
+    used only if that produced nothing — the app declares no vocabulary, or
+    the node failed. Either way the re-run keeps the theme in the picker
+    instead of dropping it.
+
+    Returns ``None`` when there is no prior run, the file is unreadable /
+    malformed, or it carries no ``category``.
+    """
+    if not output_path.is_file():
+        return None
+    try:
+        data = load_yaml(output_path)
+    except PipelineError:
+        return None
+    category = data.get("category")
+    return category if isinstance(category, str) else None
+
+
+def _run_name(value: str) -> str:
+    """argparse type: validate ``--run-name`` is one safe folder segment.
+
+    The rule itself is the shared ``PathSegment`` primitive (the studio's
+    launch names a run folder the same way) — this only translates its
+    ``ValueError`` into the exception argparse renders.
+    """
+    try:
+        return str(PathSegment(value))
+    except ValidationError as exc:
+        raise argparse.ArgumentTypeError(
+            f"run name: {exc.errors()[0]['msg']}"
+        ) from None
+
+
+def _parse_args(argv: list[str] | None) -> argparse.Namespace:
+    """Define and parse the CLI arguments."""
+    parser = argparse.ArgumentParser(
+        prog="ThemeTree",
+        description="Customize an app from a brand brief (colors + images).",
+    )
+    parser.add_argument(
+        "--app-yaml",
+        required=True,
+        type=Path,
+        help="Path to the app slot manifest (app.yaml).",
+    )
+    parser.add_argument(
+        "--customization-yaml",
+        required=True,
+        type=Path,
+        help="Path to the brand brief (customization.yaml).",
+    )
+    parser.add_argument(
+        "--out-root",
+        type=Path,
+        default=DEFAULT_OUT_ROOT,
+        help=f"Output root (default: {DEFAULT_OUT_ROOT}).",
+    )
+    parser.add_argument(
+        "--run-name",
+        type=_run_name,
+        default=None,
+        help=(
+            "Name the run folder (default: a UTC timestamp). Pointing it at an "
+            "existing run does a full in-place re-run, overwriting that "
+            "folder's produced artifacts."
+        ),
+    )
+    return parser.parse_args(argv)
+
+
+async def main(argv: list[str] | None = None) -> int:
+    """Run the pipeline and return a process exit code."""
+    args = _parse_args(argv)
+    configure_logging()
+
+    # Read + validate inline (load_yaml is the only reusable bit); the run
+    # context then carries the models + paths everywhere downstream.
+    run_ctx = RunContext(
+        AppFormat.model_validate(load_yaml(args.app_yaml)),
+        Customization.model_validate(load_yaml(args.customization_yaml)),
+        args.out_root,
+        run_id=args.run_name,
+    )
+
+    # A full run pointed at an existing dir overwrites its output.yaml, so
+    # capture the prior run's category BEFORE the pipeline clears that file.
+    # The writer uses it only as a fallback (the classification node produces
+    # the category now); see Writer._resolve_category.
+    prior_category = _existing_category(run_ctx.output_path())
+
+    result = await Pipeline().run(run_ctx)
+    Writer().write(result, run_ctx, prior_category=prior_category)
+
+    logger.debug("done: %s", run_ctx.output_path())
+    return 0
