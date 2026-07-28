@@ -11,10 +11,10 @@ change to the node's orchestration only needs mirroring here.
 from __future__ import annotations
 
 from schema import ColorPalette
-from src.modules.colors.color_derivation_service import ColorDerivationService
-from src.modules.colors.color_models import LLMPalette
-from src.modules.colors.color_node import ColorNode
-from src.modules.colors.color_surface_service import ColorSurfaceService
+from ThemeTree.modules.colors.color_derivation_service import ColorDerivationService
+from ThemeTree.modules.colors.color_models import LLMPalette
+from ThemeTree.modules.colors.color_node import ColorNode
+from ThemeTree.modules.colors.color_surface_service import ColorSurfaceService
 
 
 def assemble_color_palette(schema: LLMPalette) -> ColorPalette:

@@ -8,8 +8,8 @@ from pathlib import Path
 
 import pytest
 
-from src.core.errors import ProviderError
-from src.shared.services.local_icon_set_catalog import LocalIconSetCatalog
+from ThemeTree.core.errors import ProviderError
+from ThemeTree.shared.services.local_icon_set_catalog import LocalIconSetCatalog
 
 
 def _write_set(

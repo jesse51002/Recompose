@@ -123,8 +123,8 @@ colour scheme explicitly approved by the user before writing.
 
 Tell the user *why* colour stays general, so the limit is not arbitrary: the
 pipeline owns precise values and enforces rules a hardcoded colour would fight.
-Cite `src/modules/colors/prompts/color_palette_rule.md` and the deterministic
-contract enforced in `src/modules/colors/color_models.py` (the
+Cite `ThemeTree/modules/colors/prompts/color_palette_rule.md` and the deterministic
+contract enforced in `ThemeTree/modules/colors/color_models.py` (the
 `build_color_response_model` validator, `MIN_CONTRAST_AA = 4.5`):
 
 - background & text must be low-chroma (≈0.003–0.04) with a faint brand tint,
@@ -406,7 +406,7 @@ Then:
    generate the app, including a `--run-name` so the run folder is named up
    front instead of a UTC timestamp:
    ```
-   poetry run python -m src \
+   poetry run python -m ThemeTree \
        --app-yaml apps/<app_id>/app.yaml \
        --customization-yaml apps/<app_id>/customization.yaml \
        --run-name <suggested-name>

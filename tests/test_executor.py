@@ -31,14 +31,14 @@ from schema import (
     RunCost,
     TextOutput,
 )
-from src.core.errors import GraphError
-from src.core.run_context import RunContext
-from src.executor.orchestrator import Pipeline
-from src.executor.registry import ModuleRegistry
-from src.executor.writer import Writer
-from src.executor.seed import all_slot_ids, build_seed, node_slots
-from src.modules.base import DependencyKind
-from src.modules.colors.color_node import ColorNode
+from ThemeTree.core.errors import GraphError
+from ThemeTree.core.run_context import RunContext
+from ThemeTree.executor.orchestrator import Pipeline
+from ThemeTree.executor.registry import ModuleRegistry
+from ThemeTree.executor.writer import Writer
+from ThemeTree.executor.seed import all_slot_ids, build_seed, node_slots
+from ThemeTree.modules.base import DependencyKind
+from ThemeTree.modules.colors.color_node import ColorNode
 
 _COLOR = DependencyKind.COLOR.value
 _FONT = DependencyKind.FONT.value
@@ -228,7 +228,7 @@ def _palette(ctx: RunContext) -> ColorPalette:
     round-trips through the writer, so we just need a fully-populated one.
     """
     from schema import ColorRole, OklchColor
-    from src.modules.colors.color_models import LLMSlotResponse, LLMPalette
+    from ThemeTree.modules.colors.color_models import LLMSlotResponse, LLMPalette
     from tests.colour_helpers import assemble_color_palette
 
     roles = {s.id: s.role for s in ctx.app.colors}
@@ -305,7 +305,7 @@ def test_assemble_color_failure_yields_valid_empty_output(
     assert out.text_set.texts == {}
 
 
-# --- expand: seed reconstruction (src/executor/seed.py) --------------------
+# --- expand: seed reconstruction (ThemeTree/executor/seed.py) --------------------
 
 
 def test_node_slots_mirrors_built_graph(tmp_path: Path) -> None:

@@ -9,7 +9,7 @@ from typing import Any
 
 import pytest
 
-from src.shared.services.google_fonts_catalog import HttpxGoogleFontsCatalog
+from ThemeTree.shared.services.google_fonts_catalog import HttpxGoogleFontsCatalog
 
 
 # Minimal Google Fonts API response shape — only the fields the
@@ -78,7 +78,7 @@ class _FakeResponse:
 @pytest.fixture
 def _httpx(monkeypatch: pytest.MonkeyPatch) -> type[_FakeAsyncClient]:
     """Swap httpx.AsyncClient inside the catalog module for the fake."""
-    import src.shared.services.google_fonts_catalog as module
+    import ThemeTree.shared.services.google_fonts_catalog as module
 
     # Reset class-level counters per test.
     _FakeAsyncClient.calls = 0

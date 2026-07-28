@@ -63,7 +63,7 @@ flowchart TD
   class Reg,Writer io
 ```
 
-> Entry point: `src/executor/orchestrator.py`. Provider choices (which
+> Entry point: `ThemeTree/executor/orchestrator.py`. Provider choices (which
 > model, which provider) are architecture, not pipeline logic — each
 > call's model id is a per-call constant at the top of the module that
 > makes the call, not a config/env knob; only secrets (API keys) stay in
@@ -303,7 +303,7 @@ theme lands classified without any manual step. Until it exists, stamping the
 `category` line is part of producing a new named style. Once a run is stamped,
 every in-place lever carries the stamp forward — `regen`, `regen_image` and
 `expand` thread it through `Writer.write_expansion`, and a full in-place re-run
-(`src/cli.py` pointed at an existing dir) captures the prior `output.yaml`'s
+(`ThemeTree/cli.py` pointed at an existing dir) captures the prior `output.yaml`'s
 `category` before the pipeline clears the file and re-stamps it via
 `Writer.write` — so re-touching a run never silently drops the theme from the
 picker.
@@ -349,7 +349,7 @@ codebase/CustomizationService/
 │   │                    #   IconOutput (+ IconAttribution),
 │   │                    #   *Set wrappers (ColorPalette has mode),
 │   │                    #   Output, RunCost
-├── src/
+├── ThemeTree/
 │   ├── __main__, cli    # CLI entrypoint
 │   ├── core/            # config, errors, run_context, logging, util
 │   ├── executor/        # orchestrator (the DAG), registry, writer
@@ -381,5 +381,5 @@ codebase/CustomizationService/
 `make test` runs the suite; `make run` customizes `apps/combatden/` end
 to end, `make smoke` does the same on `apps/smoketest/` (the one app that
 exercises all six modules); `make api` serves the read-only output API.
-Entry point: `src/executor/orchestrator.py`. Read the schemas for the
+Entry point: `ThemeTree/executor/orchestrator.py`. Read the schemas for the
 exact YAML shapes; read `apps/combatden/` for a worked example.

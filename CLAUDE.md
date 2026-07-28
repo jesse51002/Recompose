@@ -43,7 +43,7 @@ by hand**. To change anything in an existing run you use the scripts:
 `scripts/expand` (fill not-yet-done slots), `scripts/regen` (re-make
 colour/font/text/icon slots), `scripts/regen_image` (images),
 `scripts/edit_customization` (a validated, targeted edit of the brief
-`customization.yaml`), or a full pipeline run (`src/cli.py`). The brief is the
+`customization.yaml`), or a full pipeline run (`ThemeTree/cli.py`). The brief is the
 one editable *input* — and even it goes through `edit_customization` (which
 re-validates), not raw text munging; `app.yaml` is architect-owned.
 
@@ -148,7 +148,7 @@ to fetch the rest. The node-return-type ⇄ output-group mapping is 1:1:
 and so on.
 
 **Why this is a hard invariant, not a style note:** the `expand` flow
-(`scripts/expand/run.py`, `src/executor/seed.py`) reconstructs the
+(`scripts/expand/run.py`, `ThemeTree/executor/seed.py`) reconstructs the
 executor's start-state by validating each saved `output.yaml` group
 straight back into the model its node returns, then seeds the DAG with the
 done nodes and runs only what's missing. A module that returned less than
@@ -205,7 +205,7 @@ breakage the `.venv/bin/*` scripts hit when this package was renamed.
 
 ## Production deployment (read-only API)
 
-The read-only API (`src/api/main.py`, `make api`, port 8001 locally) ships to **AWS App
+The read-only API (`ThemeTree/api/main.py`, `make api`, port 8001 locally) ships to **AWS App
 Runner** as a Docker image at `https://theme.combatden.net`. See
 `../DEPLOYMENT.md` for the full runbook (ARNs, DNS, redeploy, pause/resume).
 
@@ -214,11 +214,11 @@ Runner** as a Docker image at `https://theme.combatden.net`. See
   `output.yaml` metadata is copied (`.dockerignore` excludes
   `apps/**/{images,final_images,icons}/`; `COPY apps/` then brings just the
   yaml). `ASSETS_CDN_BASE_URL` **defaults to the prod CDN in code**
-  (`src/api/config.py`), so the API always emits absolute CDN URLs and the byte
+  (`ThemeTree/api/config.py`), so the API always emits absolute CDN URLs and the byte
   endpoints 307-redirect there — no App Runner env var required (a relative path
   would 404 now that the bytes are de-baked). Set it empty to serve relative
-  paths + local files in the dev loop. See `src/core/asset_urls.py` +
-  `src/api/schema/output_response.py`.
+  paths + local files in the dev loop. See `ThemeTree/core/asset_urls.py` +
+  `ThemeTree/api/schema/output_response.py`.
 - Cache-busting stays `?v=<content-hash>` (already stamped by the Writer);
   CloudFront is configured to include `v` in the cache key, so a regenerated
   asset busts the CDN with no invalidation. **Never serve via the CDN without
@@ -234,7 +234,7 @@ Runner** as a Docker image at `https://theme.combatden.net`. See
 - **Bytes → S3:** `make sync-assets` (`scripts/sync_assets/`) mirrors every
   `final_images/` + `icons/` file to the bucket (backfill + repair, skips
   unchanged). New runs self-upload from the `Writer` when `ASSET_UPLOAD_ENABLED=1`
-  (opt-in; off locally) — see `src/core/asset_uploader.py`. boto3 is an
+  (opt-in; off locally) — see `ThemeTree/core/asset_uploader.py`. boto3 is an
   upload-only dep, imported lazily so the read path/tests don't need it.
 - Runtime env (App Runner vars, never baked): `GOOGLE_FONTS_API_KEY` (required,
   font delivery). `ASSETS_CDN_BASE_URL` is **optional** — it defaults to the prod
@@ -242,7 +242,7 @@ Runner** as a Docker image at `https://theme.combatden.net`. See
   (or empty for local serving). `CORS_ORIGINS` optional.
 - `make docker-build` / `make ecr-push` build + push + trigger a redeploy;
   `make pause` / `make resume` toggle the demo (App Runner Pause/Resume).
-- Only the **read path** is containerized. The pipeline (`src/cli.py`, scripts,
+- Only the **read path** is containerized. The pipeline (`ThemeTree/cli.py`, scripts,
   `make sync-assets`) is not — it stays a local tool.
 
 ---

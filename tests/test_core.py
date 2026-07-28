@@ -7,9 +7,9 @@ from pathlib import Path
 import pytest
 
 from schema import AppFormat, Customization
-from src.core.errors import PipelineError
-from src.core.run_context import RunContext
-from src.core.util import load_yaml
+from ThemeTree.core.errors import PipelineError
+from ThemeTree.core.run_context import RunContext
+from ThemeTree.core.util import load_yaml
 
 # Committed fixture tree — never the live ``apps/`` production runs.
 _FIXTURE_APP = Path(__file__).resolve().parent / "data" / "apps" / "demo"

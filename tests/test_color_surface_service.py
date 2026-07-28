@@ -8,7 +8,7 @@ decimals.
 from __future__ import annotations
 
 from schema import OklchColor
-from src.modules.colors.color_surface_service import (
+from ThemeTree.modules.colors.color_surface_service import (
     ColorSurfaceService,
     SharedSurfaces,
 )

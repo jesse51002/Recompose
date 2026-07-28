@@ -21,7 +21,7 @@ _ID_PATTERN = re.compile(r"^[a-z][a-z0-9_]*$")
 # rejected: a node's resolved-input dict is keyed by these, so an image
 # named "color" would shadow the palette. Source of truth for the values
 # is ``src.modules.base.DependencyKind`` (kept local so schema/ imports no
-# src/ — same reason ColorRole lives in schema/). ``font``, ``text`` and
+# ThemeTree/ — same reason ColorRole lives in schema/). ``font``, ``text`` and
 # ``icon`` are reserved for the same keyspace reason even though no image
 # module depends on any of them today, so a future ``depends_on: font`` /
 # ``depends_on: text`` / ``depends_on: icon`` doesn't get shadowed.

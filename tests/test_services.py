@@ -12,11 +12,11 @@ import litellm
 import pytest
 from pydantic import BaseModel
 
-from src.core.errors import ProviderError, SchemaValidationError
-from src.shared.services.background_remover import RecraftBackgroundRemover
-from src.shared.services.litellm_image_generator import LiteLLMImageGenerator
-from src.shared.services.llm_client import LiteLLMClient, _loggable
-from src.shared.services.provider_keys import provider_api_key
+from ThemeTree.core.errors import ProviderError, SchemaValidationError
+from ThemeTree.shared.services.background_remover import RecraftBackgroundRemover
+from ThemeTree.shared.services.litellm_image_generator import LiteLLMImageGenerator
+from ThemeTree.shared.services.llm_client import LiteLLMClient, _loggable
+from ThemeTree.shared.services.provider_keys import provider_api_key
 
 
 # litellm.acompletion is monkeypatched in every test, but _completion_kwargs
@@ -96,7 +96,7 @@ def test_complete_structured_raises_after_retries(monkeypatch):
             )
         )
     # llm_max_retries extra attempts + the first => total attempts.
-    from src.core.config import settings
+    from ThemeTree.core.config import settings
 
     assert calls["n"] == settings.llm_max_retries + 1
 
@@ -152,7 +152,7 @@ def test_loggable_elides_base64_image_but_keeps_text():
 
 
 def test_provider_api_key_routes_by_prefix():
-    from src.core.config import settings
+    from ThemeTree.core.config import settings
 
     assert (
         provider_api_key("openai/gpt-image-2") == settings.openai_api_key

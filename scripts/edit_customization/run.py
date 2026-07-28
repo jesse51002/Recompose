@@ -36,8 +36,8 @@ if str(_REPO_ROOT) not in sys.path:
 
 from schema import Customization
 from schema.color_mode import ColorMode
-from src.core.errors import PipelineError
-from src.core.util import load_yaml
+from ThemeTree.core.errors import PipelineError
+from ThemeTree.core.util import load_yaml
 
 RULE = "=" * 72
 
