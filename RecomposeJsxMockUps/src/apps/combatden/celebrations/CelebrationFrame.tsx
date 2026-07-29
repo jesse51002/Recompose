@@ -9,13 +9,15 @@
 // rearrange together, without ../showcaseScreen.tsx (the shared registration
 // file all of them are registered in) ever learning that the slot exists.
 //
-// FOUR CARDS HERE, FIVE IN THE MEMBER APP. `MobileApp`'s five
-// `PostClassScaffold` consumers are wins / points / rewards / streak / rank; the
-// Flutter preview this island ports (`CRM/lib/showcase/`) never carried a rank
-// celebration, so there are four to rearrange here: ../WinsShowcase.tsx,
-// ../PointsShowcase.tsx, ../RewardsCardShowcase.tsx and ../StatsShowcase.tsx
-// (streak). ../BookingShowcase.tsx is NOT one of them — it clones
-// `ClassBookedScreen`, a class-detail surface, which is `ClassFormat`'s.
+// FIVE CARDS, matching the member app's five `PostClassScaffold` consumers:
+// ../StatsShowcase.tsx (streak), ../RankShowcase.tsx, ../PointsShowcase.tsx,
+// ../RewardsCardShowcase.tsx and ../WinsShowcase.tsx. The rank card was the
+// last to arrive — the Flutter preview this island originally ported
+// (`CRM/lib/showcase/`) never carried one — so anything describing this frame
+// as having four consumers predates it.
+//
+// ../BookingShowcase.tsx is NOT one of them: it clones `ClassBookedScreen`,
+// the post-reservation celebration, and belongs to the app asset.
 //
 // THE INVARIANT: an arrangement changes ARRANGEMENT ONLY. The member app's
 // layouts place four slots — header, body, close and exactly one primary action.

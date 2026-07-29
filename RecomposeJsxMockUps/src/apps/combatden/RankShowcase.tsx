@@ -13,7 +13,7 @@
 // asks for and what makes a rank read as status rather than as a firework.
 
 import { useEffect, useState } from 'react';
-import { ThemedImage, useThemeText } from 'recompose-react';
+import { ThemedImage } from 'recompose-react';
 
 import { CelebrationFrame } from './celebrations/CelebrationFrame';
 import { CountUpText } from './celebrations/CountUpText';
@@ -27,7 +27,7 @@ import { usePrefersReducedMotion } from './usePrefersReducedMotion';
 const RANK_NAME = 'Blue Belt';
 const RANK_SUBTITLE = 'Rank achieved';
 const CLASSES_AT_RANK = 48;
-const CLASSES_LABEL = 'classes to earn it';
+const CLASSES_LABEL = 'classes in rank';
 
 /** `_kRankHold` — how long the settled card holds before a loop replays it. */
 const HOLD_MS = 2600;
@@ -74,8 +74,11 @@ export function RankShowcase({ loop = true, onCycleComplete }: RankShowcaseProps
 
 /** `_RankContent` — the belt, the rank it names, and what it cost. */
 function RankContent() {
-  const subtitle = useThemeText('wins_subtitle', RANK_SUBTITLE);
-
+  // NOT themed. `rank_body.dart` has no ThemeText call at all — the rank name
+  // and its sub-label come from the live profile, not from a copy slot. The
+  // first version of this file read `wins_subtitle`, which belongs to the
+  // trophy card; borrowing another card's slot would have re-labelled this one
+  // whenever a tenant's wins copy changed.
   return (
     <div className={styles.content} style={showcaseStyle(MOTION_VARS)}>
       <div className={styles.hero}>
@@ -88,7 +91,7 @@ function RankContent() {
       </div>
       <div className={styles.caption}>
         <span className={styles.rank}>{RANK_NAME}</span>
-        <span className={styles.subtitle}>{subtitle}</span>
+        <span className={styles.subtitle}>{RANK_SUBTITLE}</span>
       </div>
       <div className={styles.tally}>
         <span className={styles.tallyValue}>

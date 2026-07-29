@@ -39,13 +39,15 @@
 }
 
 .rank {
-  font: var(--sc-h1);
+  font: var(--sc-type-h1);
+  letter-spacing: var(--sc-type-h1-ls);
   color: var(--sc-text);
   text-align: center;
 }
 
 .subtitle {
-  font: var(--sc-body);
+  font: var(--sc-type-h2);
+  letter-spacing: var(--sc-type-h2-ls);
   color: var(--sc-text-2nd);
   text-align: center;
 }
@@ -61,12 +63,14 @@
 }
 
 .tallyValue {
-  font: var(--sc-h2);
-  color: var(--sc-accent);
+  font: var(--sc-type-big1);
+  letter-spacing: var(--sc-type-big1-ls);
+  color: var(--sc-text);
 }
 
 .tallyLabel {
-  font: var(--sc-caption);
+  font: var(--sc-type-big2);
+  letter-spacing: var(--sc-type-big2-ls);
   color: var(--sc-text-2nd);
 }
 

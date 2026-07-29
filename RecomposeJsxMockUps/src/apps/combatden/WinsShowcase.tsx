@@ -87,7 +87,19 @@ export function WinsShowcase({ loop = true, onCycleComplete }: WinsShowcaseProps
   const [cycle, setCycle] = useState(0);
 
   useEffect(() => {
-    if (!loop || reduceMotion) return;
+    // Settle FIRST, then decide whether to keep looping. The guard used to sit
+    // above this, so a card rendered with `loop={false}` — which is exactly how
+    // the celebration flow renders it — never reported settling and its CTA
+    // stayed hidden forever. The sibling cards all fire the callback ahead of
+    // their own guard for this reason.
+    if (!loop) {
+      onCycleComplete?.();
+      return;
+    }
+    if (reduceMotion) {
+      onCycleComplete?.();
+      return;
+    }
     const id = window.setInterval(() => {
       onCycleComplete?.();
       setCycle((current) => current + 1);
