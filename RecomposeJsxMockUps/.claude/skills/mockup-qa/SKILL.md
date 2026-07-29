@@ -143,6 +143,28 @@ $B console --errors
 
 ---
 
+### When a stylesheet you just rewrote appears to do nothing
+
+**Suspect the dev server's cache before you suspect your CSS.** A rewritten
+`.module.css` can compile to an EMPTY module — Vite serves
+`__vite__css = ""` and `export default {}` — after enough HMR churn on that
+file. Every `styles.x` in the component is then `undefined`, which React renders
+as no class at all, so the element arrives completely unstyled. It looks exactly
+like the Guardrail 2 trap of naming a class the stylesheet does not define, and
+it is not: the file on disk is correct.
+
+Check the class map rather than the CSS text, because `?direct` will happily
+show you a file that the module build dropped:
+
+```bash
+curl -s "http://localhost:8081/src/apps/<app>/<path>.module.css" | tail -c 300
+```
+
+If `export default {}` is empty, restart the harness with a clean cache
+(`rm -rf node_modules/.vite`) and re-check before changing a single declaration.
+This cost a real misdiagnosis here — a correct flex row was rewritten twice on
+the theory that the selector was wrong.
+
 ## Pass 1b — every element is somewhere it MEANS something
 
 **The inventory check is necessary and not sufficient.** It asks "is this
@@ -461,6 +483,39 @@ larger one. Cramped is a defect a reader feels immediately and attributes to the
 product being cheap; slightly loose is at worst a missed opportunity, and on a
 390pt screen it usually reads as calm rather than empty. Almost every spacing
 finding in this package has been "not enough", and none has been "too much".
+
+**2b. Is a row of DISTINCT things packed, with a void at one end?** Guardrail 15.
+Different from rule 2 above: every gap can come from the scale, be identical to
+every other, and the row still be wrong — because consistency is not
+distribution.
+
+Find rows whose content stops well short of the width they have:
+
+```bash
+$B js "(()=>{const s=document.querySelector('[class*=_screen_]');const W=s.getBoundingClientRect();
+const bad=[];s.querySelectorAll('*').forEach(e=>{const c=getComputedStyle(e);
+if(!c.display.includes('flex')||c.flexDirection!=='row')return;
+const kids=[...e.children].filter(k=>k.getBoundingClientRect().width>8);
+if(kids.length<3)return;
+const r=e.getBoundingClientRect();if(r.width<W.width*0.5)return;
+const last=kids[kids.length-1].getBoundingClientRect();
+const slack=Math.round((r.right-last.right)/r.width*100);
+if(slack>18)bad.push(String(e.className).slice(0,30)+' n='+kids.length+' unused right '+slack+'%');});
+return bad.length?JSON.stringify(bad.slice(0,6)):'no packed rows';})()"
+```
+
+**A hit is a prompt to look, not a verdict.** It is CORRECT for a row to stop
+early when its children are one semantic group (a photograph and the name beside
+it) or when the row is genuinely a left-aligned list of two things. It is a
+FINDING when the children are semantically distinct — separate facts, separate
+controls — and they are bunched at one edge with a third of the row empty.
+
+**Do not "fix" this by centring things.** Left alignment is correct for anything
+scanned, and wrapping text must be left aligned. The fix is to DISTRIBUTE the
+distinct entities across the width they occupy — equal columns, `space-between`,
+or a deliberately larger uniform gap — while keeping each entity's own internal
+gap tight. Re-read Guardrail 15 before changing anything here; over-applying it
+produces centred layouts that are worse than what they replaced.
 
 **3. Does the spacing GROUP?** This is the half no script can check, and it is
 the half that decides whether a screen reads. **Related things sit closer

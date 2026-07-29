@@ -1,34 +1,40 @@
 /*
- * Styles for ./RankHeader.tsx — the medallion the thread passes through.
+ * Styles for ./RankHeader.tsx — the member's current rank.
  * `--sc-*` only — see ../ShowcaseThemeVars.tsx.
  *
- * THE ONE MEASUREMENT THIS SHARES WITH EVERY NODE IN THE APP: the line's CENTRE
- * is `--sc-thread-x` + half `--sc-thread-width`, because the rail is positioned
- * by its left edge. The disc is placed by that centre and pulled back half its
- * own width, exactly as ../shell/Thread.module.css places a node — so it stays
- * on the line whatever either measurement becomes.
+ * A PLAIN ROW: the belt, a gap, the rank's name. It used to be a two-column
+ * grid that placed the disc on the old thread's centre and started the text in
+ * the second column — and when the thread was removed, the column collapsed to
+ * the page margin while the disc stayed centred on it, so the belt sat ON TOP
+ * of the rank name. A flex row cannot express that bug: the gap is a gap.
+ *
+ * THE BELT AND THE RANK NAME ARE ONE OBJECT AT RANK 1 on this screen
+ * (`mockup-redesign-combatden`'s emphasis ranking), which is why they share a
+ * row and why the belt is sized to hold its own beside the name rather than
+ * sitting under it as a bullet.
  */
 
 /*
- * The same two columns every region on this screen uses, so the rank name
- * begins on the one left edge the whole app aligns to.
+ * The page margin is applied HERE because this block is not wrapped in a
+ * `<Region>` — every other section on the screen gets the margin from that
+ * component, and without it the belt sat hard against the screen's left edge
+ * while every heading around it began 24px in. One element out of the column is
+ * more visible than a whole screen in the wrong place.
  */
 .header {
-  display: grid;
-  grid-template-columns: var(--sc-thread-inset) 1fr;
+  display: flex;
   align-items: center;
+  gap: var(--sc-spacing-large);
+  padding-inline: var(--sc-thread-inset);
 }
 
 .medallion {
-  grid-column: 1;
-  justify-self: start;
-  margin-left: calc(var(--sc-thread-x) + var(--sc-thread-width) / 2);
-  transform: translateX(-50%);
   display: block;
+  flex: 0 0 auto;
 }
 
 .names {
-  grid-column: 2;
+  min-width: 0;
 }
 
 /*

@@ -498,6 +498,68 @@ The check: squint at the screenshot, or look at it for one second and look away.
 **What did you see first?** If it is not that screen's rank 1, the hierarchy is
 inverted no matter how good each individual choice was.
 
+## GUARDRAIL 15 — group first, then DISTRIBUTE. Packing is the defect, not alignment
+
+Two questions get conflated here, and only the second one is usually wrong:
+
+1. **What is this row made OF?** — semantic grouping.
+2. **How is it spread across the width it has?** — distribution.
+
+### Grouping: what counts as one entity
+
+**A thing and what belongs to IT are ONE entity** — an icon and its value, a
+photograph and its name, a figure and its unit, an avatar and the name beside
+it. The gap INSIDE an entity is small, because a small gap is what says "these
+are one object". That is not a violation of anything below; it is the point.
+
+**Semantically DISTINCT entities** are things a member could act on, read, or
+care about independently: rank, streak, points and a QR pass are four separate
+facts that happen to share a row. So are four filter chips, or a price and a
+button.
+
+### Distribution: the actual rule
+
+**When a row holds several DISTINCT entities and has width to spare, spread them
+across that width.** Equal columns, `space-between`, or a deliberately generous
+uniform gap — any of those. What fails is a row of distinct things packed
+against one edge behind one small gap, leaving a void at the other end that no
+entity claims. It reads as unfinished, or as a layout that ran out of content.
+
+Shipped here: `apps/vinyasaflow/`'s head put the rank belt, the streak, the
+points total and the pass in a row with a single `--sc-spacing-large` between
+them. Four unrelated facts bunched into the left third of the screen with the
+right third empty. Every gap was "from the scale" and the row was still wrong,
+because consistency is not distribution.
+
+### LEFT ALIGNMENT IS NOT THE PROBLEM, AND IS USUALLY RIGHT
+
+**Read this part carefully, because the rule above is easy to over-apply.**
+
+- **Text that wraps must be left aligned.** Always. Centred paragraphs are a
+  legibility defect, not a style.
+- **Anything scanned is left aligned**: lists, schedules, headings, body copy,
+  form labels, rows of items. A member's eye returns to one left edge; taking
+  that away costs them real time.
+- **A design that is entirely left aligned is a good design.** Most of the best
+  mobile apps are. Do not read this guardrail as pressure toward centred
+  layouts — it is about the GAPS BETWEEN distinct entities, not about which
+  edge things start from. A left-aligned row can and should still be evenly
+  distributed.
+
+**Centre alignment is right for a single focal object with nothing to scan** —
+a celebration hero and its one line, an empty state, a confirmation, a splash.
+One thing, centred, with its caption. Never a list, never running copy.
+
+**Right alignment is right for numerals that should line up on their digits** in
+a column, and for a trailing action or value at the end of a row.
+
+### The check
+
+Cover the content with your hand and look only at the gaps. Are the gaps between
+distinct entities roughly equal? Is there a void at one end that nothing claims?
+If a row's entities occupy two thirds of the width and the last third is empty,
+either distribute them or give the row a reason to stop where it stops.
+
 ## GUARDRAIL 12 — invent the look, not the interaction
 
 **Be creative within industry standards.** A member must be able to use the app

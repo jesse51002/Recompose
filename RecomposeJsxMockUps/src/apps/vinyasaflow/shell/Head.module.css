@@ -65,10 +65,25 @@
  * `--sc-spacing-large` above it because it is a separate object from the
  * masthead — Guardrail 13's grouping rule.
  */
+/*
+ * FOUR SEMANTICALLY DISTINCT FACTS, SO THEY ARE DISTRIBUTED, NOT PACKED.
+ * Guardrail 15. Rank, streak, points and the pass have nothing to do with each
+ * other beyond sharing a row, and behind a single small gap they bunched into
+ * the left third of the screen with the right third empty — every gap correctly
+ * off the scale, and the row still wrong, because consistency is not
+ * distribution.
+ *
+ * `space-between` across the full measure, so the eye reads four things rather
+ * than one clump. Each item keeps its OWN gap tight (see `.carryItem`), which is
+ * what still says "this mark and this number are one fact".
+ *
+ * This is not an argument for centring anything: the row stays left-anchored at
+ * the page margin like everything else on the screen.
+ */
 .carry {
   display: flex;
   align-items: center;
-  gap: var(--sc-spacing-large);
+  justify-content: space-between;
   margin-top: var(--sc-spacing-large);
 }
 

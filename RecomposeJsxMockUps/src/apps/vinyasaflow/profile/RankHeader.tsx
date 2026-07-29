@@ -39,13 +39,17 @@ import { MintedDisc } from '../shell/Photo';
 import { Title } from '../shell/Figure';
 import { showcaseAsset } from '../showcaseAssets';
 import { SLOT_RANK_BELT } from '../showcaseSlots';
-import { SC } from '../showcaseTokens';
 
 import { RANK_PART } from './rankParts';
 import styles from './RankHeader.module.css';
 
 /** The app's own circle, centred on the app's own line. See the header. */
-const MEDALLION = SC.navDisc;
+/*
+ * The belt is rank 1 on this screen TOGETHER WITH the rank's name, so it is
+ * sized to hold its own beside a display-size word rather than to match the
+ * navigation's glyph, which is what it borrowed before.
+ */
+const MEDALLION = 56;
 
 export interface RankHeaderProps {
   rankTitle: string;
