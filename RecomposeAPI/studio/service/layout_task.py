@@ -21,10 +21,10 @@ So this file owns four things and no more:
    folder,
 4. pump its stdout into the session as it goes.
 
-**The contract with the agent is one argument.** The configured argv gets one
-final element appended: the launch prompt, in absolute paths. Nothing here needs
-to know how the agent works, and the agent needs to know nothing about this
-service.
+**The contract with the agent is one argument.** The configured argv gets the
+effort flag and then one final element: the launch prompt, in absolute paths.
+Nothing here needs to know how the agent works, and the agent needs to know
+nothing about this service.
 
 **Why a folder copy and not a branch.** A design is a sibling directory under
 ``RecomposeJsxMockUps/src/apps/``, so ``ls`` is the list of designs and the undo
@@ -235,6 +235,19 @@ class SubprocessLayoutTask(_LayoutTaskBase):
     def _live_design_ids(self) -> set[str]:
         return {design_id for design_id, _ in self._running.values()}
 
+    def _argv(self, app: str, theme_run: str, target: Path) -> list[str]:
+        """The whole command line: configured argv, effort, then the prompt.
+
+        The prompt goes LAST and stays one element, so nothing in it can be
+        read as a flag or a command however it is punctuated.
+        """
+        effort = settings.layout_agent_effort.strip()
+        return [
+            *self._command,
+            *(["--effort", effort] if effort else []),
+            self._prompt(app, theme_run, target),
+        ]
+
     async def start(self, *, app: str, theme_run: str) -> str:
         self._refuse_if_running(f"{GENERATED_PREFIX}{theme_run}")
         design_id, target = await self._prepare(app, theme_run)
@@ -248,11 +261,18 @@ class SubprocessLayoutTask(_LayoutTaskBase):
         # process we hold a handle to would leave the expensive half of the
         # tree running, reparented to init and invisible.
         proc = await asyncio.create_subprocess_exec(
-            *self._command,
-            self._prompt(app, theme_run, target),
+            *self._argv(app, theme_run, target),
             cwd=settings.layout_agent_cwd,
             env=self._env(),
             start_new_session=True,
+            # NOTHING IS EVER TYPED AT THIS AGENT. A coding-agent CLI reads
+            # stdin for piped input and waits when it is a terminal it will
+            # never receive anything on — and a child inherits this server's
+            # stdin, which is whichever terminal `make api` was started from.
+            # DEVNULL is what makes the agent start working immediately
+            # instead of stalling on input that is never coming, and stops two
+            # agents from ever competing to read the operator's keystrokes.
+            stdin=asyncio.subprocess.DEVNULL,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.STDOUT,
         )

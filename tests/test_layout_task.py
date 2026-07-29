@@ -309,3 +309,34 @@ def test_a_second_agent_on_one_design_is_refused(tmp_path: Path) -> None:
             await task.stop()
 
     asyncio.run(scenario())
+
+
+def test_the_effort_flag_is_passed_as_argv_not_a_slash_command(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """Effort is a FLAG, and that is a deliberate choice over `/effort`.
+
+    The prompt already opens with `/goal`. Whether a second slash command on a
+    later line is parsed as a command or read as prose is not something worth
+    betting a two-hour run on, and the flag is unambiguous — the CLI even
+    validates it and warns on an unknown value.
+    """
+    task = _sleeper_task(tmp_path)
+    monkeypatch.setattr(settings, "layout_agent_effort", "medium")
+
+    argv = task._argv("combatden", RUN, tmp_path / "target")
+
+    assert argv[-3:-1] == ["--effort", "medium"]
+    # The prompt stays LAST and stays one element, so nothing in it can be
+    # read as a flag however it is punctuated.
+    assert argv[-1].startswith("/goal ")
+
+
+def test_an_empty_effort_omits_the_flag(tmp_path: Path, monkeypatch) -> None:
+    """For a configured command that does not accept `--effort` at all."""
+    task = _sleeper_task(tmp_path)
+    monkeypatch.setattr(settings, "layout_agent_effort", "")
+
+    argv = task._argv("combatden", RUN, tmp_path / "target")
+
+    assert "--effort" not in argv

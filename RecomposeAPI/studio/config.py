@@ -55,6 +55,17 @@ class Settings(BaseSettings):
     # `apps/<app>/<run>/` and the folder it writes lives in
     # `RecomposeJsxMockUps/src/apps/`, and only their common root sees both.
     layout_agent_cwd: Path = _ROOT
+    # How hard the layout agent thinks, as `--effort <level>` appended to the
+    # command. A FLAG rather than an `/effort` line in the prompt: the prompt
+    # already opens with `/goal`, and whether a second slash command on a later
+    # line is parsed as a command or read as prose is not something to bet a
+    # two-hour run on. The flag is unambiguous.
+    #
+    # Medium by default because a redesign is long and mostly mechanical once
+    # the direction is fixed — the expensive thinking is in the first step,
+    # which the skill front-loads anyway. Valid: low, medium, high, xhigh, max.
+    # Empty omits the flag entirely, for a command that does not accept it.
+    layout_agent_effort: str = "medium"
     # Raw text appended to every launch prompt. The one steering seam: the
     # layout agent has more context than this service (it opens the generated
     # images, reads the palette, loads its own skills), so the studio does not

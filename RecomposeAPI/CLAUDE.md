@@ -89,6 +89,17 @@ the work runs, not the shape of the request.
   out before, and re-copying would delete the last agent's work. What is
   exclusive is the AGENT, not the folder — a second one on the same design is a
   409, because two agents editing one tree lose each other's writes.
+- **Effort is a FLAG, not an `/effort` line in the prompt.**
+  `layout_agent_effort` (default `medium`) is appended as `--effort <level>`.
+  The prompt already opens with `/goal`; whether a second slash command on a
+  later line parses as a command or reads as prose is not worth betting a
+  two-hour run on, and the CLI validates the flag and warns on a bad value.
+  Set it empty for a command that does not accept it.
+- **The agent's stdin is `DEVNULL`.** A coding-agent CLI reads stdin for piped
+  input and waits when it is a terminal that will never send any — and a child
+  inherits this server's stdin, whichever terminal `make api` was started from.
+  Without this an agent stalls before it starts, and two of them would compete
+  for the operator's keystrokes.
 - **Which account pays for it is a decision, not an accident.** A coding-agent
   CLI bills to `ANTHROPIC_API_KEY` when it finds one in its environment and to
   its own logged-in subscription when it does not. `layout_agent_inherit_api_key`
