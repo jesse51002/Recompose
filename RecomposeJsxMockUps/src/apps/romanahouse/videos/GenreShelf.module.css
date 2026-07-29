@@ -1,0 +1,118 @@
+/* Styles for ./GenreShelf.tsx. `--sc-*` only. */
+
+.shelf {
+  padding-top: 28px;
+}
+
+/* Title, a rule that eats the slack, then the action. */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-inline: var(--sc-sheet-pad);
+  padding-bottom: 11px;
+}
+
+.title {
+  margin: 0;
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text);
+  flex: 0 0 auto;
+}
+
+.rule {
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--sc-rule-hair);
+}
+
+.viewAll {
+  flex: 0 0 auto;
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-accent);
+}
+
+/*
+ * The run scrolls horizontally, as the base's carousel does. `overflow-y` is
+ * spelled out rather than left visible: a visible sibling of a scrolling axis
+ * computes to `auto`, which would give the shelf a vertical scrollbar it never
+ * uses.
+ */
+.run {
+  margin: 0;
+  padding: 0 var(--sc-sheet-pad);
+  list-style: none;
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  border-top: 1px solid var(--sc-rule-hair);
+  padding-top: 13px;
+}
+
+.run::-webkit-scrollbar {
+  display: none;
+}
+
+.item {
+  flex: 0 0 auto;
+  width: 148px;
+}
+
+.plate {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+.caption {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  column-gap: 8px;
+  padding-top: 9px;
+}
+
+.ordinal {
+  font: var(--sc-type-fig-sm);
+  letter-spacing: var(--sc-type-fig-sm-ls);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-primary);
+}
+
+.captionText {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.itemTitle {
+  font: var(--sc-type-prose-sm);
+  letter-spacing: var(--sc-type-prose-sm-ls);
+  line-height: 1.3;
+  color: var(--sc-text);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+.itemMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}

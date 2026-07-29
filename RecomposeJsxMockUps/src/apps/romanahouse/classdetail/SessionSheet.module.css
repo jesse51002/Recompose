@@ -1,0 +1,128 @@
+/* Styles for ./SessionSheet.tsx. `--sc-*` only. */
+
+.sheet {
+  padding-inline: var(--sc-sheet-pad);
+  padding-block: 20px 26px;
+}
+
+/*
+ * THE PLATE. 4:3 and inset from both margins — never full-bleed. The base
+ * bleeds this photograph edge to edge; here the paper margin around it is what
+ * makes it a plate rather than a banner, and what keeps a cool daylight
+ * photograph from becoming the screen's ground.
+ */
+.photo {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+}
+
+/*
+ * The caption, outside the frame. It is the class name, doing the job a plate
+ * caption does in a book — which is why there is no separate title above the
+ * photograph.
+ */
+.caption {
+  margin: 0;
+  padding-block: 11px 14px;
+  font: var(--sc-type-title-lg);
+  letter-spacing: var(--sc-type-title-lg-ls);
+  line-height: 1.2;
+  color: var(--sc-text);
+  border-bottom: 2px solid var(--sc-rule-solid);
+}
+
+/* The session's facts, as label/value rows divided by hairlines. */
+.spec {
+  margin: 0;
+}
+
+.specRow {
+  display: grid;
+  grid-template-columns: 78px 1fr;
+  gap: 12px;
+  align-items: baseline;
+  padding-block: 9px;
+  border-bottom: 1px solid var(--sc-rule-hair);
+}
+
+.specLabel {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+}
+
+.specValue {
+  margin: 0;
+  font: var(--sc-type-prose-sm);
+  letter-spacing: var(--sc-type-prose-sm-ls);
+  color: var(--sc-text);
+}
+
+.attending {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.attendingIcon {
+  flex: 0 0 auto;
+  color: var(--sc-accent);
+}
+
+/* A section opens on a tracked label over a hairline. */
+.section {
+  padding-top: 26px;
+}
+
+.sectionTitle {
+  margin: 0 0 11px;
+  padding-bottom: 7px;
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+  border-bottom: 1px solid var(--sc-rule-hair);
+}
+
+.prose {
+  margin: 0;
+  font: var(--sc-type-prose);
+  letter-spacing: var(--sc-type-prose-ls);
+  /* Set AFTER `font`, which resets line-height to normal. Crimson Text's own
+     metrics are tight for a paragraph; prose in this design gets real leading
+     because it is the one place the serif is asked to be read at length. */
+  line-height: 1.52;
+  color: var(--sc-text-2nd);
+}
+
+/*
+ * The portrait leads the bio, square rather than circular. A circle is a shape
+ * this design does not have anywhere else, and one would read as a component
+ * borrowed from another app.
+ */
+.instructor {
+  display: grid;
+  grid-template-columns: 74px 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.portrait {
+  width: 74px;
+  height: 92px;
+}
+
+.map {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+}
+
+.address {
+  margin: 0;
+  padding-top: 9px;
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+}

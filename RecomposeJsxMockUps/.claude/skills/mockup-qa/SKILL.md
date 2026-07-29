@@ -1,6 +1,6 @@
 ---
 name: mockup-qa
-description: Exhaustively QA a mock asset in a live browser — screenshot every screen, click every transition, prove no screen is a dead end, and check every rendered screen against the app's inventory. Use after editing a mock, after a design agent produces a redesign, before shipping a mock to a tenant, or whenever asked to test, verify, check or sign off the mockups. This is a full sweep, not a smoke test: every screen, every route, every affordance, every time.
+description: Exhaustively QA a mock asset in a live browser — screenshot every screen, click every transition, prove no screen is a dead end, and check every rendered screen against the app's inventory. Use after editing a mock, after a design agent produces a redesign, before shipping a mock to a tenant, or whenever asked to test, verify, check or sign off the mockups. This is a full sweep, not a smoke test: every screen, every route, every affordance, every time. Always fan the per-screen passes out as a workflow (one agent per screen) and keep the transition and dead-end walks serial.
 ---
 
 # Mock asset QA — the full sweep
@@ -43,7 +43,8 @@ $B viewport 1280x900
 $B goto http://localhost:8081/
 ```
 
-`?asset=<id>` deep-links each asset.
+`?app=<id>&asset=<id>` deep-links straight to an asset, which is what makes the
+per-screen half of this sweep parallelisable — see below.
 
 **Re-snapshot after every navigation.** `browse` refs (`@e3`) are captured at
 the last snapshot and go stale the moment a route changes. Clicking a stale ref
@@ -55,6 +56,36 @@ has already caused a false "the button does nothing" finding.
 step() { ref=$($B snapshot -i | grep -v UNTRUSTED | grep -m1 "\"$1" |
   sed -E 's/^ *(@[ec][0-9]+).*/\1/'); [ -n "$ref" ] && $B click "$ref"; sleep 2; }
 ```
+
+## Running the sweep as a workflow
+
+**Always fan this out.** Walking a dozen screens serially in one context is the
+slowest part of a redesign, and most of it does not need to be serial: a
+screen's own render is independent of every other screen's.
+
+Split it by what each pass actually needs:
+
+| passes | needs | how to run |
+| --- | --- | --- |
+| **1, 2, 2b, 5** — renders styled, affordances hittable, overflow/centring, states and edges | one screen, loaded directly | **one agent per screen, in parallel** |
+| **3, 4** — every transition both ways, the dead-end walk | continuity across screens | **one agent, serially** |
+| the themed-image checklist and the cross-screen coherence read | the whole app at once | **one agent, serially** |
+
+A parallel agent can prove *its* screen renders, is styled, and has nothing
+hanging off an edge. It cannot prove you can get from that screen to another
+and back out — that is a walk, and a walk is one session by definition. Trying
+to parallelise passes 3 and 4 produces agents that each re-derive half the
+route table and still miss the trap.
+
+Give the per-screen agents a **schema** so they return findings rather than
+prose. A dozen free-text reports is a dozen things for you to read and
+reconcile; a dozen structured finding lists is one merged list. Each agent
+should report its screen, the defect, the evidence (a screenshot path), and
+whether it is a blocker.
+
+Then **look at the screenshots yourself**. The fan-out buys wall-clock, not
+judgement — and "does this look right" is the one question that cannot be
+delegated to twelve agents who have each seen a single screen.
 
 ---
 

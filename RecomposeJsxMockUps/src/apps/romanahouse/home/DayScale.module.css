@@ -1,0 +1,54 @@
+/* Styles for ./DayScale.tsx. `--sc-*` only. */
+
+.scale {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  /* Opaque: a sticky element paints no box of its own, and the entries scroll
+     under this one. */
+  background: var(--sc-background);
+  border-bottom: 1px solid var(--sc-rule-hair);
+  /* Tighter than the sheet inset. Five graduations on a 332px sheet is the
+     one place in the app where the margin has to give. */
+  padding-inline: 10px;
+}
+
+.mark {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
+}
+
+/*
+ * The graduations are UNIFORM — that is what makes this a scale rather than a
+ * set of chips. Selection is the block below, not a bigger tick.
+ */
+.tick {
+  height: 7px;
+  width: 1px;
+  margin-inline: auto;
+  background: var(--sc-rule-mid);
+}
+
+.label {
+  font: var(--sc-type-tick);
+  letter-spacing: var(--sc-type-tick-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+  text-align: center;
+  padding-block: 7px 8px;
+  padding-inline: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* THE STOP. The selected day is seated in solid walnut, ivory on top of it. */
+.marked .label {
+  background: var(--sc-rule-solid);
+  color: var(--sc-primary-button-text);
+}

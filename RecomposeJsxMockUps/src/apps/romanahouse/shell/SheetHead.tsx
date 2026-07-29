@@ -1,0 +1,133 @@
+// THE SHEET HEAD — the letterhead and the spec block.
+//
+// Replaces ../support/ShowcaseTopbar.tsx's rendering (which stacks a big
+// centred mark over a centred gym name over four evenly-spread stat cells).
+// The elements are the SAME four plus the name and its chevron, and every
+// theme slot they resolve is the same:
+//
+//   `logo_primary`  the mark — which now lives at the head of the rail
+//                   (./RomanaRail.tsx), on exactly the screens that drew it in
+//                   the topbar before. Moved, not dropped.
+//   `rank_belt`     the rank cell
+//   `streak_icon`   the streak cell
+//   `single_point`  the points cell
+//   `icon_qrcode`   the pass cell
+//
+// What changed is the form. The name goes left and becomes a letterhead in the
+// serif; under a 2px walnut rule the four stats become a SPEC BLOCK — four
+// cells divided by vertical hairlines, each a tracked 9px label over its
+// object and its figure. It is the specification panel on a technical drawing,
+// which is where the design keeps facts that are true of the member rather than
+// of the screen.
+//
+// The tracked labels are static chrome, in the same sense the nav's "Home" /
+// "Rank" / "Reward" / "Videos" are: they name a value already on screen rather
+// than introducing one. No cell shows anything the base's info bar did not.
+
+import { ThemedImage } from 'recompose-react';
+
+import { showcaseAsset } from '../showcaseAssets';
+import {
+  SLOT_ICON_QRCODE,
+  SLOT_RANK_BELT,
+  SLOT_SINGLE_POINT,
+  SLOT_STREAK_ICON,
+} from '../showcaseSlots';
+import { ExpandMoreIcon } from '../support/icons';
+
+import styles from './SheetHead.module.css';
+
+export interface SheetHeadProps {
+  gymName: string;
+  streakDays: number;
+  pointsLabel: string;
+  /** Bundled belt art, behind the theme's `rank_belt` slot. */
+  rankBadgeAsset: 'icon_rank_belt.png';
+  /**
+   * The way off a screen that carries no rail.
+   *
+   * `class` has no bottom nav in the member app and no rail here, so this IS
+   * its only exit. An unwired back control on that screen is a trap rather
+   * than a cosmetic gap, and it has been one — see Guardrail 4.
+   */
+  onBack?: (() => void) | undefined;
+}
+
+export function SheetHead({
+  gymName,
+  streakDays,
+  pointsLabel,
+  rankBadgeAsset,
+  onBack,
+}: SheetHeadProps) {
+  return (
+    <header className={styles.head}>
+      {onBack !== undefined && (
+        <button type="button" className={styles.back} onClick={onBack}>
+          <svg
+            className={styles.backIcon}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.6}
+            strokeLinecap="square"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path d="M14 5.5 L7.5 12 L14 18.5" />
+          </svg>
+          <span className={styles.backLabel}>Back</span>
+        </button>
+      )}
+      <div className={styles.letterhead}>
+        <span className={styles.gymName}>{gymName}</span>
+        <ExpandMoreIcon className={styles.chevron} />
+      </div>
+      <div className={styles.spec}>
+        <SpecCell label="Rank">
+          <ThemedImage
+            className={styles.object}
+            slot={SLOT_RANK_BELT}
+            fallbackSrc={showcaseAsset(rankBadgeAsset)}
+            alt=""
+          />
+        </SpecCell>
+        <SpecCell label="Streak">
+          <ThemedImage
+            className={styles.objectTall}
+            slot={SLOT_STREAK_ICON}
+            fallbackSrc={showcaseAsset('streak_icon.png')}
+            alt=""
+          />
+          <span className={styles.figure}>{String(streakDays)}</span>
+        </SpecCell>
+        <SpecCell label="Points">
+          <ThemedImage
+            className={styles.object}
+            slot={SLOT_SINGLE_POINT}
+            fallbackSrc={showcaseAsset('single_point.png')}
+            alt=""
+          />
+          <span className={styles.figure}>{pointsLabel}</span>
+        </SpecCell>
+        <SpecCell label="Pass">
+          <ThemedImage
+            className={styles.object}
+            slot={SLOT_ICON_QRCODE}
+            fallbackSrc={showcaseAsset('icon_qrcode.png')}
+            alt=""
+          />
+        </SpecCell>
+      </div>
+    </header>
+  );
+}
+
+function SpecCell({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className={styles.cell}>
+      <span className={styles.cellLabel}>{label}</span>
+      <span className={styles.cellValue}>{children}</span>
+    </div>
+  );
+}

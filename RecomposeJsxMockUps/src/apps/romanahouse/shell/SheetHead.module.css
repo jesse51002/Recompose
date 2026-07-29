@@ -1,0 +1,136 @@
+/* Styles for ./SheetHead.tsx. `--sc-*` only. */
+
+.head {
+  flex: 0 0 auto;
+  padding-top: calc(var(--phone-status-inset, 0px) + 18px);
+  padding-inline: var(--sc-sheet-pad);
+  /* The head closes on a hairline, and the body opens under it. */
+  border-bottom: 1px solid var(--sc-rule-hair);
+}
+
+/*
+ * The way back, on the screens with no rail. A tracked label beside a square
+ * chevron, hard against the left margin — the same place the rail's notches
+ * sit on every other screen, so the exit is always in the same column.
+ */
+.back {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 14px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--sc-primary);
+  cursor: pointer;
+}
+
+.backIcon {
+  width: 13px;
+  height: 13px;
+  flex: 0 0 auto;
+}
+
+.backLabel {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: inherit;
+}
+
+/* The letterhead. Left, not centred — the mark is on the rail. */
+.letterhead {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding-bottom: 12px;
+}
+
+.gymName {
+  font: var(--sc-type-title-lg);
+  letter-spacing: var(--sc-type-title-lg-ls);
+  color: var(--sc-text);
+  /* One line, always: the letterhead is a fixed rung of the sheet and a
+     two-line gym name would push the spec block down the page. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chevron {
+  flex: 0 0 auto;
+  width: var(--sc-icon-sm);
+  height: var(--sc-icon-sm);
+  color: var(--sc-text-3rd);
+  align-self: center;
+}
+
+/*
+ * THE SPEC BLOCK. Four cells, hairline dividers between them, opened by the
+ * one 2px walnut rule on the screen.
+ */
+/*
+ * The columns are NOT equal, and a spec panel's never are: two cells carry an
+ * object alone and two carry an object and a figure. Four equal columns clipped
+ * "3.4k" to "3…", which loses the member's points balance to tidiness.
+ */
+.spec {
+  display: grid;
+  grid-template-columns: 0.82fr 1.02fr 1.28fr 0.88fr;
+  border-top: 2px solid var(--sc-rule-solid);
+}
+
+.cell {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-block: 9px 11px;
+  padding-inline: 7px;
+  min-width: 0;
+}
+
+/* Every cell but the first carries the divider, so the block never opens or
+   closes on a stray rule. */
+.cell + .cell {
+  border-left: 1px solid var(--sc-rule-hair);
+}
+
+.cellLabel {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+}
+
+.cellValue {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+}
+
+.object {
+  width: 21px;
+  height: 21px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+/* The streak object is a stack of springs and is taller than it is wide. */
+.objectTall {
+  width: 16px;
+  height: 23px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+.figure {
+  font: var(--sc-type-fig-md);
+  letter-spacing: var(--sc-type-fig-md-ls);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-text);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -1,0 +1,34 @@
+/*
+ * Styles for ./WinsTileRow.tsx
+ * (ports CRM/lib/showcase/celebrations/wins_tile_row.dart).
+ * `--sc-*` only — see ../ShowcaseThemeVars.tsx.
+ */
+
+/* `Row(crossAxisAlignment: start, spacing: spacingMedium)`. */
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  /*
+   * A ruled data block, not three cards: the cells are divided by hairlines and
+   * opened by one walnut rule, so three figures read as one measured record.
+   */
+  border-top: 2px solid var(--sc-rule-solid);
+  width: 100%;
+}
+
+/*
+ * `Expanded` — every tile takes an equal share of the row regardless of how
+ * long its caption is. `flex-basis: 0` is what makes the share EQUAL rather
+ * than proportional to content, and `min-width: 0` lets a long caption wrap
+ * inside its share instead of widening it.
+ */
+.cell {
+  flex: 1 1 0;
+  min-width: 0;
+  border-bottom: 1px solid var(--sc-rule-hair);
+}
+
+.cell + .cell {
+  border-left: 1px solid var(--sc-rule-hair);
+}

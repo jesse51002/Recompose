@@ -1,0 +1,111 @@
+/* Styles for ./Catalogue.tsx. `--sc-*` only. */
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 2px solid var(--sc-rule-solid);
+}
+
+.entry {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  column-gap: 13px;
+  align-items: start;
+  padding-block: 14px;
+  border-bottom: 1px solid var(--sc-rule-hair);
+}
+
+.plate {
+  width: 54px;
+  height: 54px;
+  margin-top: 2px;
+}
+
+.column {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* Name, leader, figure — the price-list line. */
+.line {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  min-width: 0;
+}
+
+.title {
+  font: var(--sc-type-prose);
+  letter-spacing: var(--sc-type-prose-ls);
+  color: var(--sc-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 0 1 auto;
+}
+
+/*
+ * THE LEADER. It grows to fill whatever the name and the figure leave, which
+ * is what ties a long title and a short one to the same right margin.
+ */
+.leader {
+  flex: 1 1 auto;
+  min-width: 8px;
+  height: 0;
+  border-bottom: 1px solid var(--sc-rule-hair);
+  transform: translateY(-4px);
+}
+
+.leaderFaint {
+  flex: 1 1 auto;
+  min-width: 8px;
+}
+
+.cost {
+  flex: 0 0 auto;
+  font: var(--sc-type-fig-md);
+  letter-spacing: var(--sc-type-fig-md-ls);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-text);
+}
+
+.price {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+  flex: 0 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.unit {
+  flex: 0 0 auto;
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+}
+
+/*
+ * The action. A ruled box rather than a filled pill — the walnut fill is
+ * reserved for the ONE action a screen commits to, and on the store that is
+ * nothing: the base's Redeem is a no-op too.
+ */
+.redeem {
+  align-self: flex-start;
+  margin-top: 7px;
+  padding: 5px 11px;
+  border: 1px solid var(--sc-rule-mid);
+  border-radius: 0;
+  background: none;
+  color: var(--sc-primary);
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  cursor: pointer;
+}

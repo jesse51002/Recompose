@@ -1,0 +1,126 @@
+/*
+ * Styles for ./BookingShowcase.tsx — the post-reservation record.
+ *
+ * `--sc-*` for the design tokens (see ./ShowcaseThemeVars.tsx); `--bk-*` for
+ * this screen's motion values, which the component derives from the ported
+ * arithmetic and writes inline, so no timing is restated as a literal here.
+ *
+ * THE MOTION DIRECTION, applied: the cut-out settles up into place with a
+ * grounding shadow under it, the rule SCRIBES from one end, and the headline
+ * WIPES up from behind that rule under a mask. Nothing fades and nothing
+ * scales the type, because this is a typographic screen and a headline caught
+ * mid-fade is a headline rendered wrong.
+ */
+
+.screen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-inline: var(--sc-sheet-pad);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* What this sheet is, before what it says. */
+.stamp {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+  padding-bottom: 26px;
+}
+
+/*
+ * The cut-out FLOATS — no mount, no frame — because it is one of the studio's
+ * own generated objects rather than a photograph. ./shell/Plate.module.css
+ * carries the rule that separates the two.
+ */
+.celebration {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  animation: settle var(--bk-image-scale-ms) var(--bk-ease) both;
+}
+
+.celebrationImg {
+  max-width: 74%;
+  max-height: 290px;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 22px rgb(0 0 0 / 14%));
+}
+
+/* The scribed rule. It draws from one end, as a line is ruled. */
+.rule {
+  width: 100%;
+  height: 2px;
+  margin-block: 30px 18px;
+  background: var(--sc-rule-solid);
+  transform-origin: left center;
+  animation: scribe var(--bk-reveal-ms) var(--bk-ease) var(--bk-reveal-delay-ms) both;
+}
+
+/*
+ * The mask the headline wipes up from behind. `overflow: hidden` on a box the
+ * height of the line is what turns a translate into a wipe.
+ */
+.headlineMask {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+}
+
+.headline {
+  margin: 0;
+  font: var(--sc-type-statement);
+  letter-spacing: var(--sc-type-statement-ls);
+  text-transform: uppercase;
+  line-height: 1.16;
+  text-align: center;
+  color: var(--sc-text);
+  animation: wipe var(--bk-reveal-ms) var(--bk-ease) var(--bk-reveal-delay-ms) both;
+}
+
+@keyframes settle {
+  from {
+    transform: translateY(18px) scale(var(--bk-start-scale));
+  }
+  to {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes scribe {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes wipe {
+  from {
+    transform: translateY(105%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/*
+ * `prefers-reduced-motion` lands everything at rest. The screen must still be
+ * COMPLETE — an entrance that never runs may not leave an element off it.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .celebration,
+  .rule,
+  .headline {
+    animation: none;
+  }
+}

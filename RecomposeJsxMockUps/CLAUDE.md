@@ -62,6 +62,9 @@ src/
       layout_brief.yaml  the brief this layout came from — REQUIRED
     zenbjj/            a REDESIGN of the base — a sibling folder, see below
       layout_brief.yaml
+    romanahouse/       a second redesign, for the ReformerClassical run
+      layout_brief.yaml
+      shell/             its OWN chrome: rail, sheet, head, action band, plate
     index.ts           MOCK_APPS: every app, for a host that names none
   index.ts             the ONLY export surface
 ```
@@ -131,19 +134,54 @@ A redesign folder carries its own `layout_brief.yaml` naming the design it was
 made for. The base's names the base — it belongs to no run, and it is what
 every fork starts from.
 
-**`apps/zenbjj/` is the first one**, and it is the worked example: same two
-assets, same eleven screens, same element set as `apps/combatden/`, rearranged
-for a design whose direction is "calm on the surface, deep power underneath".
-Read its `layout_brief.yaml` for what it argues and why. Two things it shows
-that are worth copying:
+**There are two forks, and they are worked examples of different things.**
 
-- **It changes no shared machinery.** Every difference is a value in one of its
-  own stylesheets, a different arrangement prop passed to a shared component, or
-  one new treatment file beside the one it sits next to. Nothing in `src/kit/`
-  and nothing in `apps/combatden/` moved.
-- **It renames its own surface component** (`ZenBjjSurface`, where the base has
-  `CombatDenSurface`) and nothing else. A fork's token root is still its own
-  `provider`; the file name is the only part of it that belongs to the design.
+**`apps/zenbjj/`** was the first: same two assets, same eleven screens, same
+element set as `apps/combatden/`, rearranged for a design whose direction is
+"calm on the surface, deep power underneath". What it shows is how LITTLE a fork
+has to touch — every difference is a value in one of its own stylesheets, a
+different arrangement prop passed to a shared component, or one new treatment
+file beside the one it sits next to. Nothing in `src/kit/` and nothing in
+`apps/combatden/` moved. It also renames its own surface component
+(`ZenBjjSurface`, where the base has `CombatDenSurface`) and nothing else: a
+fork's token root is still its own `provider`, and the file name is the only
+part of it that belongs to the design.
+
+It is also the cautionary half. It passes every mechanical gate and still reads
+as the base with the spacing tuned, because it adjusted gutters, weights and
+radii rather than committing to a different world. That is the failure mode
+`mockup-redesign-start` exists to prevent.
+
+**`apps/romanahouse/`** is the second, built for the theme produced at
+`apps/combatden/ReformerClassical/`, and it shows how far a fork MAY go under
+the same invariant. Its direction (read `layout_brief.yaml`) is the studio's
+apparatus chart: a walnut rail down the left edge replaces the bottom tab bar,
+an ivory sheet beside it is structured by scribed rules instead of cards, the
+grotesque is the display face carrying tabular figures and 9px tracked labels
+while the serif is prose only, and every photograph is a mounted plate captioned
+outside its frame. Same eleven screens, same element set, same routes. Three
+things it establishes that a later fork should know:
+
+- **A fork owns its own `shell/`.** It replaces the base's `support/Showcase*`
+  chrome outright — `RomanaRail` for the bottom nav, `Sheet` for the scaffold,
+  `SheetHead` for the topbar, `ActionBand` for the primary button, `Plate` for
+  every photograph — rather than restyling the base's. Its own folder, so
+  nothing shared moved.
+- **A fork MAY replace its bundled fallbacks**, and this one does where zenbjj
+  does not. Its `showcaseTokens.ts` fallback colours, its two font families and
+  its bundled cut-out art are the produced run's, not CombatDen's. The reason is
+  in the file: the direction is committed to a light canvas, and the harness
+  opens UNTHEMED — against CombatDen's near-black canvas the whole arrangement
+  is invisible. A fork whose direction is palette-agnostic should still inherit.
+  A fork that replaces them must also update its own `showcaseTokens.test.ts`,
+  which pins them.
+- **`--sc-*` may be EXTENDED by a fork, in its own `showcaseTokens.ts`.**
+  Romana House adds rule weights, a plate veil, the rail width and two type
+  registers the ported ramp has no rung for. Guardrail 2's sweep still holds
+  because every `var(--sc-…)` any of its stylesheets reads is a string in that
+  one file. **Do not add a numeric `line-height` to anything containing a
+  `CountUpText`** — a line box shorter than the font's own makes adjacent digit
+  cells overlap through the reel's clip, which is a bug this fork shipped once.
 
 ## Assets, not screens
 
@@ -156,6 +194,8 @@ through. Not a gallery of stills behind a picker.
 | combatden | `celebration` | the post-class flow | streak, rank, points, rewards, wins |
 | zenbjj | `app` | the same member app, redesigned | the same six |
 | zenbjj | `celebration` | the same post-class flow, redesigned | the same five |
+| romanahouse | `app` | the same member app, redesigned again | the same six |
+| romanahouse | `celebration` | the same post-class flow, redesigned again | the same five |
 
 A redesign's rows are the base's rows, and that is the point: **the asset and
 route sets are the thing a fork may not change.** If a fork ever needs a row of

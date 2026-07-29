@@ -1,0 +1,102 @@
+/*
+ * Styles for ./RomanaRail.tsx — the walnut rail.
+ *
+ * `--sc-*` only. Everything here is either a brand colour, the fork's own
+ * rule/figure tokens (../showcaseTokens.ts) or a plain length, and the lengths
+ * are the rail's own geometry rather than tokens: the rail is one object in one
+ * design, and a "rail notch height" token would be a vocabulary of one.
+ */
+
+.rail {
+  flex: 0 0 auto;
+  width: var(--sc-rail-width);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background: var(--sc-primary);
+  /* The rail is a solid object with a hard edge, not a panel with a shadow. */
+  overflow: hidden;
+}
+
+/*
+ * The maker's plate. Ivory, square, flush to the rail's top and both edges —
+ * the one place the sheet's own colour appears inside the walnut, which is
+ * what makes it read as a plate let into the rail rather than a button on it.
+ */
+.plate {
+  flex: 0 0 auto;
+  height: var(--sc-rail-width);
+  margin-top: var(--phone-status-inset, 0px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--sc-background);
+}
+
+.mark {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+/*
+ * The four notches, hung from a fixed distance below the plate rather than
+ * centred in the rail. A fixed offset is what keeps them in the same place on
+ * every screen; centring would let a screen's own height move the navigation.
+ */
+.stack {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding-top: 44px;
+}
+
+.notch {
+  position: relative;
+  flex: 0 0 auto;
+  height: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  /* No radius, no fill, no hover surface. Selection is the stop, and only the
+     stop — a second active affordance would be a second bright fitting. */
+}
+
+.label {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: inherit;
+  text-align: center;
+}
+
+/*
+ * THE CARRIAGE STOP. A brass bar on the rail's inner edge, drawn only for the
+ * active notch. It slides between destinations along the rail's own axis, which
+ * is the single moving object in the whole shell (../../layout_brief.yaml).
+ */
+.stop {
+  position: absolute;
+  inset-block: 12px;
+  right: 0;
+  width: 3px;
+  background: var(--sc-accent);
+  transform: scaleY(0);
+  transform-origin: center;
+  transition: transform 420ms cubic-bezier(0.16, 0.84, 0.3, 1);
+}
+
+.notchActive .stop {
+  transform: scaleY(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stop {
+    transition: none;
+  }
+}

@@ -1,0 +1,51 @@
+/*
+ * Styles for ./TimeframeSelector.tsx — the plot's window, as a ruled index.
+ *
+ * `--sc-*` only. Pills become tracked labels divided by hairlines, with the
+ * active window seated in solid walnut. Same four labels, same selection.
+ */
+
+.row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  margin: 12px var(--sc-sheet-pad) 0;
+  border: 1px solid var(--sc-rule-hair);
+}
+
+/*
+ * The four layout classes are applied ALONGSIDE `.row`, so none of them may set
+ * `display` — a later rule at equal specificity would silently beat the grid
+ * above and drop the whole selector into an inline pile. (It did exactly that
+ * once: `display: contents` here left "1W1M1Y ALL" crammed under the plot.)
+ * This design has one arrangement, so they carry only the row's own inset.
+ */
+.pills,
+.inline,
+.segmented,
+.tile,
+.tileRow {
+  min-width: 0;
+}
+
+.pill {
+  padding-block: 9px;
+  text-align: center;
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pill + .pill {
+  border-left: 1px solid var(--sc-rule-hair);
+}
+
+.pillActive {
+  background: var(--sc-rule-solid);
+  color: var(--sc-primary-button-text);
+}

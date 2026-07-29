@@ -1,0 +1,104 @@
+/*
+ * Styles for ./StreakWeekStrip.tsx
+ * (ports CRM/lib/showcase/support/streak_week_strip.dart).
+ *
+ * `--sc-*` for the design tokens (see ../ShowcaseThemeVars.tsx); `--sw-*` for
+ * the two per-badge motions, written inline by the component from the ported
+ * stagger arithmetic so no delay is a literal here.
+ */
+
+/*
+ * THE WEEK, AS A SCALE. The base draws seven rounded pills; this draws seven
+ * graduations hung from one rule — the same seven days, the same two states,
+ * marked the way the day selector on home marks its window. A week is a
+ * measurement here, not a row of chips.
+ */
+.strip {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  align-items: stretch;
+  width: 100%;
+  border-top: 1px solid var(--sc-rule-hair);
+}
+
+/* `StaggeredReveal(delay)` — the outer of the two motions. */
+.reveal {
+  flex: 0 0 auto;
+  animation: streakBadgeReveal var(--sw-reveal-ms) var(--sw-ease) var(--sw-delay-ms) both;
+}
+
+/*
+ * `Container(padding: (h: spacingMedium, v: paddingSmall), borderRadius:
+ * radiusSmall)` over `Column(min, spacing: spacingSmall)`.
+ *
+ * The narrow horizontal padding is deliberate (Dart says so in place): it is
+ * what lets all seven day-pills fit the device width without overflowing, while
+ * the taller vertical padding keeps the pill proportion.
+ */
+.badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding-block: 11px 12px;
+  border-radius: 0;
+  color: var(--sc-text-3rd);
+}
+
+/*
+ * A day the member trained. The base tints the pill; here the graduation is
+ * FILLED — solid walnut with ivory on it — which is the same distinction the
+ * home scale draws between the selected day and the rest. `_PulseOnLand`'s
+ * scale 0.9 → 1 lands on the same beat as the reveal above it.
+ */
+.completed {
+  background: var(--sc-rule-solid);
+  color: var(--sc-primary-button-text);
+  animation: streakBadgePulse var(--sw-pulse-ms) var(--sw-ease) var(--sw-delay-ms) both;
+}
+
+.label {
+  font: var(--sc-type-label-lg);
+  letter-spacing: var(--sc-type-label-lg-ls);
+  text-transform: uppercase;
+  color: inherit;
+}
+
+/* `Icon(weight: iconWeight, size: iconSizeSm)` at the badge's own colour. */
+.glyph {
+  flex: 0 0 auto;
+  color: inherit;
+}
+
+/* `StaggeredReveal`: opacity 0 -> 1 with a 12px slide up, ease-out-quart. */
+@keyframes streakBadgeReveal {
+  from {
+    opacity: 0;
+    transform: translateY(var(--sw-reveal-offset));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* `_PulseOnLand`: `scale: 0.9 + 0.1 * easeOutQuart(t)`. */
+@keyframes streakBadgePulse {
+  from {
+    transform: scale(0.9);
+  }
+
+  to {
+    transform: none;
+  }
+}
+
+/* `MediaQuery.disableAnimationsOf` — the strip renders landed. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .completed {
+    animation: none;
+  }
+}

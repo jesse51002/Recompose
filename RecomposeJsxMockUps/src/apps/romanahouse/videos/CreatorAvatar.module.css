@@ -1,0 +1,16 @@
+/*
+ * Styles for ./CreatorAvatar.tsx.
+ *
+ * SQUARE, not circular. A circle is a shape this design does not have anywhere
+ * else, and a round avatar inside a sheet of ruled rectangles reads as a
+ * component borrowed from another app. It also carries the same hairline every
+ * other framed image on the sheet does.
+ */
+
+.avatar {
+  flex: 0 0 auto;
+  object-fit: cover;
+  border-radius: 0;
+  box-shadow: inset 0 0 0 1px var(--sc-rule-hair);
+  filter: saturate(0.72) contrast(1.04);
+}

@@ -196,16 +196,76 @@ Hand off to:
 - **The app's own skill**, PART TWO — the gotchas.
 - **`mockup-qa`** at the end. Not optional.
 
-## Build it in passes, each with one job
+## Build AND verify as a workflow, one agent per screen
 
-A full redesign does not land in one sweep of the codebase. Work through it in
-order, and finish each pass before starting the next:
+**Always use a workflow for both halves — building the screens and sweeping
+them.** Doing a dozen screens one after another in a single context is
+punishingly slow, and unnecessary: once the direction and the shared layer are
+fixed, screens are independent to build, and each one's own render is
+independent to check. Fan both out.
 
-1. **Structure** — every screen rebuilt in the new world. Ugly is acceptable
-   here; the wrong *shape* is not, because everything after this inherits it.
+What each pass does stays the same; the workflow is how they are run:
+
+1. **Structure** — the screen rebuilt in the new world. Ugly is acceptable
+   here; the wrong *shape* is not, because everything after inherits it.
 2. **Craft** — `impeccable`'s quality floor: rhythm, alignment, type, detail.
 3. **Motion** — the motion direction, applied.
 4. **Sweep** — `mockup-qa`, fix what it finds, re-sweep.
+
+### The shape
+
+```js
+// 1. FOUNDATION — one agent, before any fan-out. Nothing is parallel yet.
+//    Token module, the surface/token root, and the shared chrome every screen
+//    renders. Freeze it here.
+await agent('From layout_brief.yaml, build the token module, the surface and ' +
+            'the shared chrome. Do not touch any screen.')
+
+// 2. SCREENS — one agent each, structure then craft, no barrier between them.
+//    A screen reaching craft while another is still in structure is the point.
+const built = await pipeline(SCREENS,
+  s => agent(`Rebuild the ${s} screen in the committed world. ${BRIEF}`,
+             {label: `structure:${s}`, phase: 'Structure'}),
+  (_, s) => agent(`Craft pass on ${s}: impeccable's quality floor. ${BRIEF}`,
+             {label: `craft:${s}`, phase: 'Craft'}),
+)
+
+// 3. MOTION — after every screen exists; it is judged across a whole asset.
+await agent(`Apply the motion direction across both assets. ${BRIEF}`)
+
+// 4. SWEEP — fan out the per-screen checks, then walk the flows serially.
+//    See mockup-qa's own "Running the sweep as a workflow" for the split.
+const findings = await parallel(SCREENS.map(s => () =>
+  agent(`mockup-qa passes 1, 2, 2b and 5 on the ${s} screen only.`,
+        {label: `qa:${s}`, phase: 'Sweep', schema: FINDINGS})))
+await agent('mockup-qa passes 3 and 4: walk every transition and every flow ' +
+            'end to end, in one session. Then the cross-screen coherence read.')
+```
+
+### The rules that make it work
+
+- **Never fan out the direction.** STEPS 1–3 are one decision made once. Ask
+  four agents to choose a world and you get four worlds, and no amount of later
+  craft reconciles them.
+- **Freeze the shared layer before fan-out.** Tokens, the surface, the chrome.
+  Skip this and every screen agent invents its own spacing scale and type ramp
+  in parallel — the most expensive possible way to produce an incoherent app.
+- **Hand every screen agent the `layout_brief.yaml` verbatim.** It is the only
+  thing holding the parallel work together. Summarising it per agent is how
+  drift starts.
+- **Scope each agent to its own screen's files, and name them.** Screens live
+  in separate folders; that is what makes this safe. Two agents editing one
+  file is lost work.
+- **No worktree isolation.** Because the file sets do not overlap, agents can
+  share the checkout — and isolating them would just create merges to do by
+  hand afterwards.
+- **Anything judged ACROSS screens stays serial.** Motion, every transition,
+  the dead-end walk, and your own look at the result. A per-screen agent can
+  prove its screen renders and that nothing on it overflows; only a walk proves
+  you can get from one screen to another and back out.
+- **Make the fanned-out agents return findings, not prose.** Give the QA agents
+  a schema so the results merge into one list instead of a dozen reports you
+  have to read and reconcile.
 
 Between passes, screenshot and look. `make check` proves the code compiles; it
 proves nothing about the design, and it passes cleanly on screens that render
