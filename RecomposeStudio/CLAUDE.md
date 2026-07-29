@@ -36,6 +36,9 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
 - `studio/` — the Studio view: brief authoring and run watching, against `ThemeTree/studio`'s local API.
 - `chrome/`, `widgets/`, `tokens/`, `styles/` — the app shell and its own UI vocabulary. **This is the studio's design system, not the product's** — it is admin chrome, deliberately plain, and must never leak into the mockups.
 - `data/` — defaults and fixtures the views fall back to.
+- `design/` — **static hi-fi mockups, not code.** Eleven HTML files proposing a
+  full redesign of this package; see their `README.md`. They sit outside `src/`
+  so no check touches them, and nothing imports them.
 
 ## Rules
 

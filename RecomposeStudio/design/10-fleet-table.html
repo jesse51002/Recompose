@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Studio redesign — 10 Fleet</title>
+<link rel="stylesheet" href="tokens.css">
+<style>
+  .page { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
+
+  .fhead { padding: 22px 26px 18px; border-bottom: 1px solid var(--sh-line); }
+  .fhead h1 { margin: 0; font: 600 20px/1.2 var(--sans); letter-spacing: -.02em; }
+  .fhead p { margin: 6px 0 0; font-size: 12.5px; line-height: 1.6; color: var(--ink-3); max-width: 640px; }
+  .fhead p b { color: var(--ink-2); font-weight: 500; }
+
+  .kpis { display: flex; gap: 0; border-bottom: 1px solid var(--sh-line); }
+  .kpi { flex: 1; padding: 15px 26px; border-right: 1px solid var(--sh-line); }
+  .kpi:last-child { border-right: 0; }
+  .kpi b { display: block; font: 600 25px/1 var(--sans); letter-spacing: -.03em; }
+  .kpi u { display: block; text-decoration: none; font: 400 10.5px/1 var(--mono); letter-spacing: .07em; text-transform: uppercase; color: var(--ink-4); margin-top: 7px; }
+  .kpi.alert b { color: var(--fail); }
+
+  .tbl { flex: 1; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left; padding: 10px 26px; font: 500 9.5px/1 var(--mono);
+    letter-spacing: .1em; text-transform: uppercase; color: var(--ink-4);
+    border-bottom: 1px solid var(--sh-line); font-weight: 500;
+  }
+  th.n, td.n { text-align: right; }
+  td { padding: 13px 26px; border-bottom: 1px solid var(--sh-line); font-size: 12.5px; vertical-align: middle; }
+  tr:hover td { background: var(--sh-panel); }
+
+  .app-cell b { display: block; font: 500 13px/1.3 var(--sans); color: var(--ink); }
+  .app-cell u { display: block; text-decoration: none; font: 400 10.5px/1.4 var(--mono); color: var(--ink-4); margin-top: 2px; }
+
+  .num { font: 400 13px/1 var(--mono); color: var(--ink); }
+  .dim { font: 400 12px/1 var(--mono); color: var(--ink-4); }
+
+  .state { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; color: var(--ink-2); }
+  .state .p { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .state.sync .p { background: var(--ink-3); }
+  .state.work .p { background: var(--ink); box-shadow: 0 0 0 3px rgba(232,236,242,.15); }
+  .state.work { color: var(--ink); font-weight: 500; }
+  .state.bad .p { background: var(--fail); }
+  .state.bad { color: var(--fail); }
+
+  .queue { font: 400 13px/1 var(--mono); color: var(--ink-4); }
+  .queue.has { color: var(--ink); }
+  .queue.has::after { content: ' waiting'; font-size: 10.5px; color: var(--ink-4); }
+
+  .foot { padding: 14px 26px; border-top: 1px solid var(--sh-line); background: var(--sh-panel); font-size: 11.5px; color: var(--ink-3); line-height: 1.6; }
+  .foot b { color: var(--ink-2); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<div class="mock-caption">
+  <b>10 · Fleet — the table</b>
+  <span>every platform · uat/main sync · what a human still has to look at</span>
+</div>
+
+<div class="app">
+
+  <div class="top">
+    <div class="brand"><i></i> Recompose</div>
+    <nav class="nav">
+      <a href="#">Generate</a>
+      <a href="#" class="on">Fleet</a>
+    </nav>
+    <div class="right">
+      <span>6 platforms</span>
+      <span class="kbd">⌘K</span>
+    </div>
+  </div>
+
+  <div class="page">
+
+    <div class="fhead">
+      <h1>Fleet</h1>
+      <p>Every platform we hold a fork of, and every design derived from it.
+         A redesign is a transformation <b>re-applied</b> on each upstream
+         release, never a branch left to drift — so the only number that grows
+         with the fleet is the review queue.</p>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi"><b>6</b><u>platforms</u></div>
+      <div class="kpi"><b>143</b><u>designs live</u></div>
+      <div class="kpi"><b>4</b><u>agents running</u></div>
+      <div class="kpi"><b>7</b><u>awaiting review</u></div>
+      <div class="kpi alert"><b>1</b><u>failed re-derive</u></div>
+    </div>
+
+    <div class="tbl">
+      <table>
+        <thead>
+          <tr>
+            <th>Platform</th>
+            <th class="n">Designs</th>
+            <th>Their main</th>
+            <th>uat ↔ main</th>
+            <th>Agents</th>
+            <th class="n">Review queue</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="app-cell"><b>CombatDen</b><u>combatden/member-app</u></td>
+            <td class="n"><span class="num">24</span></td>
+            <td><span class="dim">2h ago · 8f3c1ad</span></td>
+            <td><span class="state sync"><i class="p"></i> level</span></td>
+            <td><span class="state work"><i class="p"></i> 1 designing</span></td>
+            <td class="n"><span class="queue has">2</span></td>
+          </tr>
+          <tr>
+            <td class="app-cell"><b>Loopwell</b><u>loopwell/creator-app</u></td>
+            <td class="n"><span class="num">38</span></td>
+            <td><span class="dim">6h ago · 41b90cc</span></td>
+            <td><span class="state sync"><i class="p"></i> level</span></td>
+            <td><span class="dim">—</span></td>
+            <td class="n"><span class="queue">0</span></td>
+          </tr>
+          <tr>
+            <td class="app-cell"><b>Northgate Fit</b><u>northgate/members</u></td>
+            <td class="n"><span class="num">31</span></td>
+            <td><span class="dim">18m ago · d0a7e52</span></td>
+            <td><span class="state work"><i class="p"></i> re-deriving 31</span></td>
+            <td><span class="state work"><i class="p"></i> 2 syncing</span></td>
+            <td class="n"><span class="queue has">3</span></td>
+          </tr>
+          <tr>
+            <td class="app-cell"><b>Cadence Studios</b><u>cadence/studio-app</u></td>
+            <td class="n"><span class="num">19</span></td>
+            <td><span class="dim">4d ago · 6ce1b83</span></td>
+            <td><span class="state sync"><i class="p"></i> level</span></td>
+            <td><span class="dim">—</span></td>
+            <td class="n"><span class="queue">0</span></td>
+          </tr>
+          <tr>
+            <td class="app-cell"><b>Bellwether</b><u>bellwether/community</u></td>
+            <td class="n"><span class="num">12</span></td>
+            <td><span class="dim">1d ago · 2f44a19</span></td>
+            <td><span class="state sync"><i class="p"></i> level</span></td>
+            <td><span class="dim">—</span></td>
+            <td class="n"><span class="queue has">1</span></td>
+          </tr>
+          <tr>
+            <td class="app-cell"><b>Harborline</b><u>harborline/app</u></td>
+            <td class="n"><span class="num">9</span></td>
+            <td><span class="dim">3h ago · b7d2f60</span></td>
+            <td><span class="state bad"><i class="p"></i> 1 fork behind</span></td>
+            <td><span class="state bad"><i class="p"></i> re-derive failed</span></td>
+            <td class="n"><span class="queue has">1</span></td>
+          </tr>
+          <tr>
+            <td class="app-cell"><b>Atlas Collective</b><u>atlas/member</u></td>
+            <td class="n"><span class="num">7</span></td>
+            <td><span class="dim">5d ago · 91ea4d7</span></td>
+            <td><span class="state sync"><i class="p"></i> level</span></td>
+            <td><span class="dim">—</span></td>
+            <td class="n"><span class="queue">0</span></td>
+          </tr>
+          <tr>
+            <td class="app-cell"><b>Verity Wellness</b><u>verity/wellness-app</u></td>
+            <td class="n"><span class="num">3</span></td>
+            <td><span class="dim">32m ago · 55c8b1e</span></td>
+            <td><span class="state work"><i class="p"></i> re-deriving 3</span></td>
+            <td><span class="state work"><i class="p"></i> 1 syncing</span></td>
+            <td class="n"><span class="queue">0</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="foot">
+      <b>143 designs, 7 things to look at.</b> That ratio is the product —
+      not that the agents are right every time, but that when they are wrong it
+      surfaces in <b>UAT</b> as a queue rather than in production as an incident.
+      Nothing on this page is a pull request into a customer's repository;
+      there is never one.
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

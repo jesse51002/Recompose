@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Studio redesign — 07 Productionalize</title>
+<link rel="stylesheet" href="tokens.css">
+<style>
+  .gymhead.left { flex-direction: row; align-items: center; gap: 10px; padding: 8px 16px 12px; }
+  .gymhead.left .logo { width: 34px; height: 34px; border-radius: 9px; font-size: 12px; }
+  .gymhead.left .col { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+  .gymhead.left .gymname { font-size: 14px; }
+  .gymhead.left .infobar { margin: 0; gap: 10px; }
+  .hero { margin: 4px 14px 12px; border-radius: 14px; overflow: hidden; background: var(--t-primary); color: var(--t-surface); }
+  .hero .img { height: 104px; background: #6f8a78; }
+  .hero .pad { padding: 11px 13px 13px; }
+  .hero .eyebrow { font: 500 8.5px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; opacity: .82; }
+  .hero h3 { margin: 5px 0 2px; font: 600 17px/1.15 var(--sans); letter-spacing: -.01em; }
+  .hero .sub { font-size: 10.5px; opacity: .85; }
+  .hero .cta { margin-top: 11px; background: var(--t-surface); color: var(--t-primary); border-radius: 7px; text-align: center; padding: 8px; font: 600 11.5px/1 var(--sans); }
+  .spinehead { padding: 0 16px 6px; font: 500 8.5px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--t-muted); }
+  .spine { flex: 1; overflow: hidden; padding: 0 14px; }
+  .srow { display: flex; gap: 11px; padding: 9px 0; border-bottom: 1px solid var(--t-line); }
+  .srow:last-child { border-bottom: 0; }
+  .srow .t { width: 40px; flex: none; text-align: right; }
+  .srow .t b { display: block; font: 600 12px/1.25 var(--sans); }
+  .srow .t u { display: block; text-decoration: none; font-size: 9px; color: var(--t-muted); }
+  .srow .bar { width: 2px; border-radius: 1px; background: var(--t-line); flex: none; }
+  .srow.on .bar { background: var(--t-accent); }
+  .srow .d { min-width: 0; flex: 1; }
+  .srow .d b { display: block; font: 600 12.5px/1.35 var(--sans); }
+  .srow .d u { display: block; text-decoration: none; font-size: 10.5px; color: var(--t-muted); }
+
+  /* Shipped summary, beside the finished app. */
+  .ship { width: 360px; display: flex; flex-direction: column; gap: 12px; }
+  .ship .head b { display: block; font: 600 17px/1.2 var(--sans); letter-spacing: -.015em; }
+  .ship .head u { display: block; text-decoration: none; font-size: 12px; color: var(--ink-3); margin-top: 4px; line-height: 1.5; }
+  .repo { border: 1px solid var(--sh-line-2); border-radius: var(--r); background: var(--sh-panel); overflow: hidden; }
+  .repo .path { padding: 11px; font: 400 11.5px/1 var(--mono); color: var(--ink); display: flex; align-items: center; gap: 9px; border-bottom: 1px solid var(--sh-line); }
+  .repo .path .g { width: 13px; height: 13px; border: 1.5px solid var(--ink-3); border-radius: 50%; flex: none; }
+  .repo .body { padding: 4px 0; }
+  .repo .act { padding: 10px 11px; border-top: 1px solid var(--sh-line); display: flex; gap: 7px; }
+  .stat { display: flex; gap: 12px; padding: 6px 11px; font-size: 11.5px; }
+  .stat span { width: 122px; flex: none; color: var(--ink-4); font: 400 10.5px/1.6 var(--mono); }
+  .stat div { color: var(--ink-2); }
+  .stat div b { color: var(--ink); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<div class="mock-caption">
+  <b>07 · Production — repo created</b>
+  <span>the end of the story · productionalize wrote real code, not a mock</span>
+</div>
+
+<div class="app">
+
+  <div class="top">
+    <div class="brand"><i></i> Recompose</div>
+    <nav class="nav">
+      <a href="#" class="on">Generate</a>
+      <a href="#">Fleet</a>
+    </nav>
+    <div class="right">
+      <span>combatden / stillwater-pilates</span>
+      <span class="kbd">⌘K</span>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <aside class="chat">
+      <div class="phead">Conversation <span class="push"></span> <span class="tag">complete</span></div>
+      <div class="msgs">
+        <div class="msg">
+          <div class="who">Validator</div>
+          <p>Attempt 3 accepted. Eleven of eleven screens pass, including the
+             empty, loading, error and long-string states.</p>
+        </div>
+        <div class="msg you">
+          <div class="who">You</div>
+          <p>Approved. Ship it.</p>
+        </div>
+        <div class="msg">
+          <div class="who">Recompose</div>
+          <p>Productionalizing — the approved arrangement goes back into real
+             Flutter, carrying the invariant. The JSX mock was never the
+             deliverable; it was the thing you looked at.</p>
+        </div>
+
+        <div class="card">
+          <h4>Design fork created</h4>
+          <div class="rows">
+            <div class="krow"><span>repo</span><div>recompose/combatden-stillwater</div></div>
+            <div class="krow"><span>branches</span><div>uat, main</div></div>
+            <div class="krow"><span>base</span><div>shared fork @ 8f3c1ad</div></div>
+            <div class="krow"><span>files</span><div>14 changed, 0 added, 0 deleted</div></div>
+          </div>
+          <div class="act">
+            <button class="btn pri">View repo</button>
+            <button class="btn">Diff vs base</button>
+          </div>
+        </div>
+
+        <div class="msg">
+          <div class="who">Recompose</div>
+          <p>It lands on <strong>uat</strong>. It does not go near your trunk,
+             and there is no pull request into your repository — there never is.</p>
+        </div>
+      </div>
+      <div class="composer">
+        <div class="box">
+          Message Recompose…
+          <span class="send">↵ to send</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="canvas">
+
+      <div class="stages">
+        <div class="pre"><span class="tick">✓</span> <b>combatden</b> tokenized &amp; mirrored</div>
+        <div class="stage done"><div class="dot">4</div><span>Brief</span></div>
+        <div class="stage done"><div class="dot">5</div><span>Assets</span></div>
+        <div class="stage done"><div class="dot">6</div><span>Design</span></div>
+        <div class="stage done"><div class="dot">7</div><span>Validate</span></div>
+        <div class="stage done"><div class="dot">8</div><span>Approve</span></div>
+        <div class="stage now"><div class="dot">9</div><span>Production</span></div>
+      </div>
+
+      <div class="pickers">
+        <div class="picker"><em>Mockup</em> <b>combatden-stillwater</b> <span class="caret">▾</span></div>
+        <div class="picker"><em>Theme</em> <span class="swatch" style="background:#c2663b"></span> <b>Stillwater Pilates</b> <span class="caret">▾</span></div>
+        <div class="push"></div>
+        <div class="meter">
+          <span>total <b>$1.34</b></span>
+          <span>brief → repo <b>21m 06s</b></span>
+        </div>
+      </div>
+
+      <div class="stagearea">
+        <div class="oracle" style="display:flex;gap:34px;align-items:center">
+
+          <div class="phone theme">
+            <div class="statusbar"><span>9:41</span><span class="sig"><i style="height:5px"></i><i style="height:7px"></i><i style="height:9px"></i><i style="height:11px"></i></span></div>
+            <div class="gymhead left">
+              <div class="logo">SP</div>
+              <div class="col">
+                <div class="gymname">Stillwater Pilates</div>
+                <div class="infobar"><span><i class="belt"></i> Bronze</span><span><b>12</b></span><span><b>2,480</b> pts</span></div>
+              </div>
+              <span style="font-size:10px;color:var(--t-muted)">QR</span>
+            </div>
+            <div class="hero">
+              <div class="img"></div>
+              <div class="pad">
+                <div class="eyebrow">Next up · Tue 15</div>
+                <h3>Reformer Flow</h3>
+                <div class="sub">6:00 · 50 min · Marguerite Oyelaran</div>
+                <div class="cta">Reserve</div>
+              </div>
+            </div>
+            <div class="spinehead">Later today</div>
+            <div class="spine">
+              <div class="srow on"><div class="t"><b>7:15</b><u>45m</u></div><div class="bar"></div><div class="d"><b>Mat Fundamentals</b><u>Devi Ramanathan</u></div></div>
+              <div class="srow"><div class="t"><b>12:00</b><u>50m</u></div><div class="bar"></div><div class="d"><b>Power Reformer</b><u>Tobias Lindqvist</u></div></div>
+              <div class="srow"><div class="t"><b>5:30</b><u>60m</u></div><div class="bar"></div><div class="d"><b>Prenatal Pilates</b><u>Amara Nwachukwu</u></div></div>
+              <div class="srow"><div class="t"><b>6:45</b><u>45m</u></div><div class="bar"></div><div class="d"><b>Barre Sculpt</b><u>Priya Venkataraman</u></div></div>
+              <div class="srow"><div class="t"><b>8:00</b><u>60m</u></div><div class="bar"></div><div class="d"><b>Restorative Flow</b><u>Joaquín Ferreira</u></div></div>
+            </div>
+            <div class="bottomnav">
+              <a href="#" class="on"><i></i>Home</a>
+              <a href="#"><i></i>Rank</a>
+              <a href="#"><i></i>Rewards</a>
+              <a href="#"><i></i>Videos</a>
+            </div>
+          </div>
+
+          <div class="ship">
+            <div class="head">
+              <b>Stillwater Pilates is production code.</b>
+              <u>Brief to branch in twenty-one minutes, for a dollar thirty-four.
+                 One person reviews this; they do not build it.</u>
+            </div>
+
+            <div class="repo">
+              <div class="path"><span class="g"></span> recompose/combatden-stillwater</div>
+              <div class="body">
+                <div class="stat"><span>screens changed</span><div><b>11</b> of 11</div></div>
+                <div class="stat"><span>files</span><div><b>14</b> changed · 0 added · 0 deleted</div></div>
+                <div class="stat"><span>API surface</span><div><b>identical</b> to base — diffable</div></div>
+                <div class="stat"><span>assets</span><div><b>18</b> images · 4 icons · 2 fonts</div></div>
+                <div class="stat"><span>branches</span><div>uat <b>ahead 1</b> · main level with base</div></div>
+              </div>
+              <div class="act">
+                <button class="btn pri">View repo</button>
+                <button class="btn">Diff vs base</button>
+                <button class="btn">Open in UAT</button>
+              </div>
+            </div>
+
+            <div class="hint" style="line-height:1.65">
+              Zero files added and zero deleted is the invariant made checkable.
+              A redesign changes <b>arrangement</b>, so their own engineers can
+              confirm nothing was added or removed by reading the diff — they do
+              not have to take our word for it.
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+    <aside class="rail">
+      <div class="phead">
+        <div class="seg">
+          <button class="on">Tree</button>
+          <button>Library</button>
+        </div>
+        <span class="push"></span>
+        <span class="tag">23 / 23</span>
+      </div>
+
+      <div class="tree theme">
+        <div class="lvl">Level 0 · from the brief</div>
+        <div class="node done"><span class="pip"></span><span class="nm">color</span><span class="el">2.4s</span></div>
+        <div class="chips">
+          <span class="chip" style="background:#c2663b;color:#fffdfa">primary</span>
+          <span class="chip" style="background:#f7f2ec;color:#2a2320">background</span>
+          <span class="chip" style="background:#2a2320;color:#f7f2ec">text</span>
+          <span class="chip" style="background:#5c7a6b;color:#fffdfa">accent</span>
+        </div>
+        <div class="node done"><span class="pip"></span><span class="nm">font</span><span class="el">Fraunces · Inter</span></div>
+        <div class="node done"><span class="pip"></span><span class="nm">text</span><span class="el">5 slots</span></div>
+        <div class="node done"><span class="pip"></span><span class="nm">icon</span><span class="el">4 slots</span></div>
+        <div class="node done"><span class="pip"></span><span class="nm">category</span><span class="el">Pilates</span></div>
+
+        <div class="lvl">Level 1 · 15 images on color</div>
+        <div class="node done art"><span class="art-thumb on" style="background:#c2663b"></span><span class="nm">logo_primary</span><span class="el">14s</span></div>
+        <div class="node done art"><span class="art-thumb on" style="background:#5c7a6b"></span><span class="nm">rank_belt</span><span class="el">12s</span></div>
+        <div class="node done art"><span class="art-thumb on" style="background:#6f8a78"></span><span class="nm">class_photo_1</span><span class="el">15s</span></div>
+        <div class="node done art"><span class="art-thumb on" style="background:#e4d5c4"></span><span class="nm">single_point</span><span class="el">11s</span></div>
+        <div class="node done"><span class="pip"></span><span class="nm">class_photo_2</span><span class="el">15s</span></div>
+        <div class="node done"><span class="pip"></span><span class="nm">class_photo_3</span><span class="el">14s</span></div>
+        <div class="node done"><span class="pip"></span><span class="nm">class_photo_4</span><span class="el">16s</span></div>
+        <div class="node done"><span class="pip"></span><span class="nm">celebration_image</span><span class="el">18s</span></div>
+        <div class="node done"><span class="pip"></span><span class="nm">trophy_image</span><span class="el">16s</span></div>
+        <div class="node done"><span class="pip"></span><span class="nm">icon_qrcode</span><span class="el">9s</span></div>
+        <div class="node done"><span class="pip"></span><span class="nm">streak_icon</span><span class="el">10s</span></div>
+        <div class="node done"><span class="pip"></span><span class="nm">reward_guest_pass</span><span class="el">13s</span></div>
+        <div class="node done"><span class="pip"></span><span class="nm">reward_apparel</span><span class="el">13s</span></div>
+        <div class="node done"><span class="pip"></span><span class="nm">reward_gear</span><span class="el">14s</span></div>
+        <div class="node done"><span class="pip"></span><span class="nm">reward_session</span><span class="el">12s</span></div>
+
+        <div class="lvl">Level 2 · derived from an image</div>
+        <div class="node done child"><span class="pip"></span><span class="nm">points_stars_image</span><span class="el">13s</span></div>
+        <div class="node done child"><span class="pip"></span><span class="nm">giftbox</span><span class="el">12s</span></div>
+        <div class="node done child"><span class="pip"></span><span class="nm">next_rank_belt_image</span><span class="el">11s</span></div>
+      </div>
+
+      <div class="composer">
+        <div class="hint">
+          Every artifact stays inspectable after the run. Click a node for what
+          it produced and the prompt that produced it.
+        </div>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+</body>
+</html>
