@@ -1,13 +1,7 @@
-// The member app's POINTS STORE (`PointsStoreScreen`) — the Points Store / My
-// Rewards tabs, the sparkle "YOU EARNED — POINTS" hero over the member's
-// balance, and the store of redeemable items.
+// The member app's POINTS STORE (`PointsStoreScreen`), rebuilt on the thread.
 //
 // Ports ../../../../../MobileApp/lib/features/rewards/presentation/layouts/
-// rewards_layout.dart: this file is the FRAME plus the `rewards_format` switch,
-// exactly as `RewardsLayout` is. It was a port of `CRM/lib/showcase/
-// rewards_showcase.dart` when the store had one arrangement; the CRM clone has
-// no format seam, so the member app is now the port of record and the five
-// bodies live in ./rewards/layouts/.
+// rewards_layout.dart. This file is the FRAME; the body is ./rewards/StoreBody.tsx.
 //
 // NOT to be confused with ./RewardsCardShowcase.tsx, which ports
 // `rewards_card_showcase.dart` — the animated post-class rewards CELEBRATION.
@@ -15,55 +9,65 @@
 // a reviewer runs the two side by side. This screen is registered as `store`;
 // that one is registered as `rewards`.
 //
-// THE FRAME IS PART OF THE ARRANGEMENT, which is why the switch lives here and
-// not one level down. Dart's own note: the formats differ in whether the
-// headline scrolls away or pins, and that is a question about the frame rather
-// than about its contents. Three arrangements scroll as one surface and pass
-// `bodyScroll`; two pin their chrome and scroll only the store, so they must
-// NOT — their inner `Expanded` scroller needs a body with a definite height,
-// and a second scroller around it would fight it.
+// WHAT THE FORK CHANGED, AND WHY
 //
-// A STATIC SURFACE. `loop` / `onCycleComplete` exist on the Dart showcase
-// widget only to keep the seven screens' API uniform and are unused there; the
-// port does not take them. The one thing that animates is the hero's sparkle
-// scatter, which fires once on mount (./rewards/SparkleHero.tsx).
+// The base was a two-up grid of rounded cards sitting on a tinted `card` fill.
+// This design has no card, no panel and no tinted container — a box would be a
+// FOURTH form beside the line, the circle and the photograph
+// (../layout_brief.yaml). So the store is THREADED instead: each reward is a
+// stop on the same terracotta line every other screen hangs on, marked by a
+// coin — a `carry` node — with its cost read straight off the node in the
+// display face and the reward hanging below it.
+//
+// EVERY FIELD SURVIVES THE MOVE. Image, title, points cost, price label and the
+// one Redeem action per reward are all still there, the tabs still switch
+// between Points store and My rewards, and the member's balance still leads the
+// screen. What changed is arrangement and prominence: the cost leads and the
+// picture supports.
+//
+// THE REWARD PHOTOGRAPHY IS THE ONE SET THAT DOES NOT BELONG TO THIS WORLD —
+// loud, saturated stock frames of a different kind of gym. The brief's answer is
+// a LAYOUT answer rather than a filter: hold them small, at their own ratio,
+// with the type and the cost leading. ./rewards/RewardRow.tsx is where that
+// lands, and it is why no reward here is promoted to a full-bleed hero the way
+// the schedule's first class is.
+//
+// A STATIC SURFACE. `loop` / `onCycleComplete` exist on the Dart showcase widget
+// only to keep the seven screens' API uniform and are unused there; the port
+// does not take them. Nothing on this screen animates on its own — the entrance
+// is the thread drawing itself, which the shell owns.
 //
 // WHAT IS THE GYM'S AND WHAT IS THE MEMBER'S: see ./rewards/rewardsLayoutData.ts.
-//
-// THE HERO ESCAPES ITS BOX AND SURVIVES ANYWAY. The body clips horizontally in
-// both modes (see ./support/ShowcaseScaffold.tsx), which would have been fatal
-// for the scatter — it is `Clip.none` and reaches 172px either side of centre.
-// It survives because the hero is full-bleed: at the phone's 390 logical px the
-// farthest sparkle lands at x = 23 and x = 367, inside the body on both sides.
 
-import type { ReactElement } from 'react';
-import { SLOT_REWARDS, slotAt } from './showcaseSlots';
-
-import { RewardsCardGrid } from './rewards/layouts/RewardsCardGrid';
 import type { ShowcasePointsStoreItem } from './rewards/mockPointsStore';
 import { SHOWCASE_POINTS_STORE_DATA } from './rewards/mockPointsStore';
 import type { RewardsLayoutData } from './rewards/rewardsLayoutData';
+import { StoreBody } from './rewards/StoreBody';
+import { Head } from './shell/Head';
+import { Screen } from './shell/Screen';
+import { ThreadNav } from './shell/ThreadNav';
 import type { ShowcaseReward } from './showcaseContent';
-import { ShowcaseBottomNav } from './support/ShowcaseBottomNav';
-import { ShowcaseScaffold } from './support/ShowcaseScaffold';
+import { SLOT_REWARDS, slotAt } from './showcaseSlots';
 
 /** `RewardsShowcase.gymName`'s default. */
 const DEFAULT_GYM_NAME = 'Your Gym';
 
 /**
- * The injected gym rewards as store cards, or the bundled sample items. Ports
+ * The injected gym rewards as store items, or the bundled sample ones. Ports
  * the `rewards != null && rewards.isNotEmpty` branch in `build`.
  *
- * The card's own `imageAsset` stays absent for an injected reward, exactly as
- * Dart leaves it null: the gym's photo URL is what renders, and a dead one
- * degrades to the flat `card` rectangle (./rewards/rewardCardParts.tsx).
+ * THE THEME SLOT IS STAMPED HERE, where the list is built, and both branches
+ * get one — Guardrail 10's "stamp at the source". No row re-derives which slot
+ * it paints with, so rearranging the store cannot make a picture drift off the
+ * name it was generated from. The bundled set is stamped too: it is what
+ * renders before any theme loads.
+ *
+ * An injected reward's own `imageAsset` stays absent, exactly as Dart leaves it
+ * null: the gym's photo URL is what renders beneath the slot.
  */
 export function storeItemsFor(
   rewards: readonly ShowcaseReward[] | null | undefined,
 ): readonly ShowcasePointsStoreItem[] {
-  // The theme slot is assigned BY POSITION here, where the list is built, so
-  // no card has to re-derive which slot it paints with. The bundled fallback
-  // set gets them too — it is what renders before any theme loads.
   if (rewards === null || rewards === undefined || rewards.length === 0) {
     return SHOWCASE_POINTS_STORE_DATA.items.map((item, i) => ({
       ...item,
@@ -95,8 +99,8 @@ export function RewardsShowcase({
 }: RewardsShowcaseProps) {
   const sample = SHOWCASE_POINTS_STORE_DATA;
 
-  // One payload, handed unchanged to whichever arrangement renders. There is
-  // deliberately no second source for a variant to reach into.
+  // One payload, handed unchanged to the body. There is deliberately no second
+  // source for the arrangement to reach into.
   const data: RewardsLayoutData = {
     gymName,
     gymLogoSrc,
@@ -107,19 +111,26 @@ export function RewardsShowcase({
     items: storeItemsFor(rewards),
   };
 
-  const body: ReactElement = <RewardsCardGrid data={data} />;
-
-  // The store scrolls: it is an app surface a member browses, not a
-  // single-viewport composition.
-  const bodyScroll = true;
-
   return (
-    <ShowcaseScaffold
-      horizontalPadding="none"
-      bodyScroll={bodyScroll}
-      bottomNav={<ShowcaseBottomNav selected="reward" />}
+    <Screen
+      head={
+        <Head
+          gymName={data.gymName}
+          gymLogoSrc={data.gymLogoSrc}
+          streakDays={data.streakDays}
+          pointsLabel={data.pointsLabel}
+        />
+      }
+      // `reward` is the STORE — the four destinations are named for the CONCEPT
+      // rather than the screen, which is the Dart's own mismatch, kept so the
+      // four `nav_*` icon slots keep resolving against the names the pipeline
+      // generates them under.
+      foot={<ThreadNav selected="reward" />}
+      // The store is a surface a member browses, not a single-viewport
+      // composition, so the thread keeps descending past the fold.
+      bodyScroll
     >
-      {body}
-    </ShowcaseScaffold>
+      <StoreBody data={data} />
+    </Screen>
   );
 }

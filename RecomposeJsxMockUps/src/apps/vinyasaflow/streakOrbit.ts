@@ -1,128 +1,99 @@
-// The pure half of ./StatsShowcase.tsx, which ports
-// ../../../../../CRM/lib/showcase/stats_showcase.dart.
+// The pure half of ./StatsShowcase.tsx — the streak card's geometry and its
+// timings, kept out of the component so both can be read (and asserted) alone.
 //
-// `_StreakOrbitState` runs ONE `AnimationController` over the whole intro and
-// slices its 0–1 value into five phases inside a single `AnimatedBuilder`. That
-// makes every particle's position a function of one clock — which is exactly
-// why the port drives it with `requestAnimationFrame` instead of CSS: eight
-// icons on a shared, non-monotonic radius (grow, then collapse) around a
-// rotating ring is not a set of independent property tweens.
+// THE FILENAME IS THE LAST THING LEFT OF THE ORBIT, and it is kept only because
+// this fork does not rename files across a redesign. The base's card opened on
+// eight small streak icons expanding, spinning and collapsing to the centre
+// before a big one popped in on `easeOutBack` — a shared, non-monotonic radius
+// that needed a per-frame rAF driver, which is why an arithmetic module existed
+// at all.
 //
-// So the arithmetic lives here, as plain functions of elapsed milliseconds and
-// the measured box, and ./StatsShowcase.tsx is left with the driver and the
-// markup. It is also what a test can pin: a phase boundary that drifts is
-// invisible in a screenshot and obvious in an assertion.
+// NONE OF THAT SURVIVES THE BRIEF, on two counts. `easeOutBack` overshoots, and
+// ../layout_brief.yaml's motion direction bans overshoot by name ("nothing
+// overshoots its size and settles… there is no elastic easing anywhere in this
+// app"). And the celebration's motion is specified outright: "the closing of the
+// loop IS the animation. The line travels around the hero and meets itself, and
+// the moment it closes is the moment the card is settled and its action
+// appears." So the ring's own travel replaces the ring of icons, and the card
+// needs no driver at all — one clock, expressed as CSS animation delays off the
+// values below.
 //
-// The Dart computes its boundaries as FRACTIONS of the controller
-// (`delayEnd = d / total`) and then rebuilds phase-local clocks out of them.
-// Both steps divide by the same total, so the port works in milliseconds
-// directly and lands on identical values with one fewer round trip.
+// The orbit was an ENTRANCE, not an element: the app skill's inventory for this
+// card lists the hero, the count, the subtitle and the week strip, and nothing
+// else. Changing how a card arrives is arrangement; every element it arrives
+// with is still here.
 
-import { Curves, clamp01, phaseProgress } from './celebrations/curves';
+/**
+ * The breath, and it is the only easing curve on this card.
+ *
+ * Soft at BOTH ends — `easeInOutSine`. The brief is explicit that this is what
+ * separates this app's movement from every brisk product animation: "nothing
+ * here decelerates into a hard stop, and nothing accelerates away from one." An
+ * ease-out lands hard; this one arrives the way a breath finishes.
+ */
+export const BREATH = 'cubic-bezier(0.37, 0, 0.63, 1)';
 
-/** `_kDelay` — a beat of empty space before anything appears. */
-export const DELAY_MS = 500;
-/** `_kRingGrow` — the mini-icon ring expanding outward. */
-export const RING_GROW_MS = 600;
-/** `_kRingCollapse` — and immediately collapsing back to the centre. */
-export const RING_COLLAPSE_MS = 500;
-/** `_kIconPop` — the big streak icon's overshooting entrance. */
-export const ICON_POP_MS = 400;
-/** `_kIconHold` — it sits there. */
-export const ICON_HOLD_MS = 800;
-/** `_kIconExit` — then fades out into the stats cascade. */
-export const ICON_EXIT_MS = 250;
+/**
+ * The line's travel around the hero — "a full screen draws in about three
+ * quarters of a second, and it is allowed to take that long."
+ */
+export const LOOP_DRAW_MS = 760;
 
-/** `_kOrbitCount`. */
-export const ORBIT_COUNT = 8;
-/** `_kSpinTurns` — full turns the ring makes across the WHOLE timeline. */
-export const SPIN_TURNS = 1.6;
-/** `_kOrbitSize` — a mini icon's edge at the reference extent. */
-export const ORBIT_SIZE = 30;
-/** `_kIconSize` — the big icon's edge at the reference extent. */
-export const ICON_SIZE = 120;
-/** `_kReferenceExtent` — the box the two sizes above are quoted against. */
-export const REFERENCE_EXTENT = 280;
-/** `_kEdgePad` — how far short of the box's edge the ring stops. */
-export const EDGE_PAD = 28;
+/** The hero fades up inside the ring while the line is still going round it. */
+export const HERO_FADE_MS = 600;
 
-/** `_kStatsHold` — how long the stats statement holds before the orbit replays. */
-export const STATS_HOLD_MS = 2600;
+/**
+ * WHEN THE CARD IS SETTLED, and it is the moment the loop closes rather than
+ * the moment the last part lands. The brief: "the moment it closes is the
+ * moment the card is settled and its action appears. That gives the card a
+ * single unmistakable finish rather than a set of parts each arriving on its
+ * own schedule."
+ */
+export const SETTLE_MS = LOOP_DRAW_MS;
 
-/** `AnimationController.duration` — the intro's whole timeline. */
-export const ORBIT_TOTAL_MS =
-  DELAY_MS + RING_GROW_MS + RING_COLLAPSE_MS + ICON_POP_MS + ICON_HOLD_MS + ICON_EXIT_MS;
+/** The statement arrives as one block, on the close. Not a per-part stagger. */
+export const STATEMENT_FADE_MS = 420;
 
-/** The phase boundaries, in ms from the start. `delayEnd`, `ringGrowEnd`, … */
-export const DELAY_END_MS = DELAY_MS;
-export const RING_GROW_END_MS = DELAY_END_MS + RING_GROW_MS;
-export const RING_END_MS = RING_GROW_END_MS + RING_COLLAPSE_MS;
-export const ICON_POP_END_MS = RING_END_MS + ICON_POP_MS;
-export const ICON_HOLD_END_MS = ICON_POP_END_MS + ICON_HOLD_MS;
+/**
+ * The count's roll. "A count travels from zero to its value in tabular figures
+ * … lands inside three quarters of a second, and settles without a final tick."
+ * Shorter than `CelebrationTimings.countUpMs` (1400) on purpose.
+ */
+export const COUNT_ROLL_MS = 720;
 
-/** What `LayoutBuilder` resolves once per size — the `renderScale` block. */
-export interface OrbitLayout {
-  /** `smallerExtent / _kReferenceExtent`. */
-  readonly renderScale: number;
-  /** `_kOrbitSize * renderScale`. */
-  readonly orbitSize: number;
-  /** `_kIconSize * renderScale`. */
-  readonly iconSize: number;
-  /** `smallerExtent / 2 - _kEdgePad - orbitSize / 2`. */
-  readonly maxRadius: number;
-}
+/** The last excursion running out across the screen to gather the week. */
+export const WEEK_SWEEP_MS = 720;
 
-/** `LayoutBuilder(builder: (context, constraints) { … })`, verbatim. */
-export function orbitLayout(width: number, height: number): OrbitLayout {
-  const smallerExtent = Math.min(width, height);
-  const renderScale = smallerExtent / REFERENCE_EXTENT;
-  const orbitSize = ORBIT_SIZE * renderScale;
-  return {
-    renderScale,
-    orbitSize,
-    iconSize: ICON_SIZE * renderScale,
-    maxRadius: smallerExtent / 2 - EDGE_PAD - orbitSize / 2,
-  };
-}
+/** How long a settled card holds before it draws itself again, standalone. */
+export const HOLD_MS = 2600;
 
-/** Everything the `AnimatedBuilder` resolves for one frame. */
-export interface OrbitFrame {
-  /** `radiusFactor` — 0 → 1 (grow), 1 → 0 (collapse). Also the ring's opacity. */
-  readonly radiusFactor: number;
-  /** `maxRadius * radiusFactor`. */
-  readonly radius: number;
-  /** `t * 2 * pi * _kSpinTurns`, in radians. */
-  readonly spin: number;
-  /** `easeOutBack(iconPopT) * (1 - 0.3 * iconExitE)`. Overshoots 1 on the pop. */
-  readonly iconScale: number;
-  /** `easeOut(iconPopT) * (1 - iconExitE)`. */
-  readonly iconOpacity: number;
-}
+/**
+ * One full cycle, for the standalone `loop` mode only. The flow passes
+ * `loop={false}` and never arms it.
+ */
+export const CYCLE_MS =
+  SETTLE_MS + Math.max(STATEMENT_FADE_MS, COUNT_ROLL_MS, WEEK_SWEEP_MS) + HOLD_MS;
 
-/** The `AnimatedBuilder`'s body, as a function of elapsed ms and the box. */
-export function orbitFrame(elapsedMs: number, maxRadius: number): OrbitFrame {
-  const e = elapsedMs < 0 ? 0 : elapsedMs > ORBIT_TOTAL_MS ? ORBIT_TOTAL_MS : elapsedMs;
+/**
+ * The closing ring's diameter, in the phone's logical px.
+ *
+ * A number rather than a token because `shell/Thread.tsx`'s `<Loop size>` takes
+ * one: what a loop encircles differs per card, and a ring that does not fit its
+ * hero is worse than no ring.
+ */
+export const LOOP_PX = 232;
 
-  // Mini-icon ring: expand → collapse to centre (no hold).
-  const expandE = Curves.easeOutQuart(phaseProgress(e, DELAY_END_MS, RING_GROW_END_MS));
-  const ringCollapseE = Curves.easeInQuart(phaseProgress(e, RING_GROW_END_MS, RING_END_MS));
-  const radiusFactor = expandE * (1 - ringCollapseE);
-
-  // Big centre icon: pops only AFTER the ring has collapsed, holds, fades out.
-  const iconPopT = phaseProgress(e, RING_END_MS, ICON_POP_END_MS);
-  const iconExitE = Curves.easeInQuart(phaseProgress(e, ICON_HOLD_END_MS, ORBIT_TOTAL_MS));
-
-  return {
-    radiusFactor,
-    radius: maxRadius * radiusFactor,
-    spin: (e / ORBIT_TOTAL_MS) * 2 * Math.PI * SPIN_TURNS,
-    iconScale: Curves.easeOutBack(iconPopT) * (1 - 0.3 * iconExitE),
-    iconOpacity: clamp01(Curves.easeOut(iconPopT) * (1 - iconExitE)),
-  };
-}
-
-/** `_orbitIcon`'s offset: `Offset(cos(theta) * radius, sin(theta) * radius)`. */
-export function orbitOffset(index: number, spin: number, radius: number): { x: number; y: number } {
-  const theta = spin + (index * 2 * Math.PI) / ORBIT_COUNT;
-  return { x: Math.cos(theta) * radius, y: Math.sin(theta) * radius };
-}
+/**
+ * The hero's height. HEIGHT ONLY — the width is derived from the picture's own
+ * proportion, because `streak_icon.png` measures 468x977 (0.48) and is nothing
+ * like square. It is why this card does NOT use `shell/Photo.tsx`'s
+ * `MintedDisc`: a circle is free for the roundel and the struck coins, which
+ * are square and transparent-edged, and it would cut the top and bottom clean
+ * off this one.
+ *
+ * The ring has to clear the picture's CORNERS, not its width: at this height
+ * the half-diagonal is `hypot(176, 176 * 468 / 977) / 2` ≈ 98px against the
+ * ring's 116px radius, so the art sits inside the loop with room to spare even
+ * before its own transparent margin is counted.
+ */
+export const HERO_HEIGHT_PX = 176;

@@ -1,58 +1,96 @@
 /*
- * Styles for ./SparkleBurst.tsx
- * (ports CRM/lib/showcase/celebrations/sparkle_burst.dart).
+ * Styles for ./SparkleBurst.tsx — the bloom around the wins card's closing loop.
  *
  * `--sc-*` for the design tokens (see ../ShowcaseThemeVars.tsx); `--sp-*` for
- * this burst's own geometry and motion, which the component derives from
- * ./sparkleGeometry.ts and writes inline — so no offset, delay or point of the
- * star is restated as a literal here.
+ * this bloom's own geometry and motion, which the component derives from
+ * ./sparkleGeometry.ts and writes inline — so no offset, delay or radius is
+ * restated as a literal here.
+ *
+ * EVERY PETAL IS A CIRCLE, and that is the point rather than a simplification.
+ * This app has three forms — the line, the circle and the photograph — and the
+ * eight-point star the base drew here was a fourth (../layout_brief.yaml). The
+ * two variants below are the app's own two ways of drawing a circle: filled, and
+ * in line only.
  */
 
 /*
- * `SizedBox(width: size, height: size)` around a
- * `Stack(alignment: center, clipBehavior: Clip.none)`.
+ * The bloom takes its host's box, which is the loop's, because every petal is
+ * placed from the CENTRE and a box off-centre tilts the whole ring. Positioned
+ * here rather than by a class the caller passes, so no call site can get it
+ * wrong.
  *
- * `overflow: visible` is the `Clip.none`: particles sit up to 150px from the
- * centre and are meant to escape this box. Whatever clipping happens is the
- * HOST stack's (Flutter's `Stack` clips by default), which is why the wins hero
- * carries the `overflow: hidden` and this does not.
+ * `overflow: visible` is load-bearing: the petals sit OUTSIDE the loop by
+ * design and are meant to escape this box. Nothing in this surface's ancestry
+ * may clip (../celebrations/CelebrationFrame.module.css says the same).
  */
-.burst {
-  position: relative;
+.bloom {
+  position: absolute;
+  inset: 0;
   overflow: visible;
   pointer-events: none;
 }
 
 /*
- * One `_particle`: `Transform.translate(offset)` over `Opacity` over
- * `Transform.scale`, painted by `_SparkleStarPainter`.
+ * One petal: a filled terracotta disc, placed from the centre and drifting
+ * outward as it opens.
  *
- * The three transforms collapse into one declaration in the keyframes below.
- * Order matters and matches Dart's nesting: centre on the parent, translate to
- * the scatter offset, then scale about the star's OWN centre.
+ * The three transforms are one declaration and their ORDER matters — centre on
+ * the parent, travel out to the ring, then scale about the petal's own centre.
  */
-.particle {
+.petal {
   position: absolute;
   left: 50%;
   top: 50%;
+  box-sizing: border-box;
   width: var(--sp-size);
   height: var(--sp-size);
-  background: var(--sc-primary);
-  clip-path: var(--sp-star);
-  animation: sparkleIn var(--sp-fade-ms) var(--sp-ease) var(--sp-delay-ms) both;
+  border-radius: var(--sc-radius-circle);
+  background-color: var(--sc-primary);
+  animation-name: bloom-open;
+  animation-duration: var(--sp-fade-ms);
+  /*
+   * Soft at BOTH ends — a sine in and out, which is the brief's literal tempo:
+   * a breath begins gently and finishes gently. Nothing here decelerates into a
+   * hard stop and nothing overshoots. The same curve ../RankShowcase.module.css
+   * settles on.
+   */
+  animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  animation-fill-mode: both;
+  animation-delay: var(--sp-delay-ms);
 }
 
 /*
- * `opacity: eased * s.$4` and `scale: 0.6 + 0.4 * eased`.
- *
- * Both are LINEAR in `eased`, so interpolating each endpoint-to-endpoint under
- * the ease-out-quart timing function reproduces the Dart's per-frame value
- * exactly rather than approximating it.
+ * Drawn in LINE ONLY. Same form, same ink, no fill — the thread's own stroke
+ * bent into a circle, which is how every open node in this app is drawn. Only
+ * the larger petals wear it: a two-px ring inside a four-px box is a dot.
  */
-@keyframes sparkleIn {
+.petalOpen {
+  background-color: transparent;
+  border: var(--sc-node-ring) solid var(--sc-primary);
+}
+
+/*
+ * Sage. The quieter of the two fills, and the wreath's own leaves are that
+ * green — a few of these tie the bloom to the art it surrounds.
+ */
+.petalCalm {
+  background-color: var(--sc-accent);
+}
+
+.petalOpen.petalCalm {
+  background-color: transparent;
+  border-color: var(--sc-accent);
+}
+
+/*
+ * A petal OPENS: it fades up while drifting from just inside its settled radius
+ * out onto the ring, and grows into its size. Nothing bounces, nothing
+ * overshoots, nothing springs back.
+ */
+@keyframes bloom-open {
   from {
     opacity: 0;
-    transform: translate(-50%, -50%) translate(var(--sp-dx), var(--sp-dy))
+    transform: translate(-50%, -50%) translate(var(--sp-dx-closed), var(--sp-dy-closed))
       scale(var(--sp-start-scale));
   }
 
@@ -63,11 +101,13 @@
 }
 
 /*
- * `MediaQuery.disableAnimationsOf` — the scatter renders settled. `both` would
- * otherwise hold every particle at the `from` frame (invisible) forever.
+ * Reduced motion: the bloom is simply ALREADY OPEN. The settled opacity and
+ * transform have to be restated, because `both` would otherwise hold every
+ * petal at the `from` frame — invisible, and just inside where it belongs —
+ * forever.
  */
 @media (prefers-reduced-motion: reduce) {
-  .particle {
+  .petal {
     animation: none;
     opacity: var(--sp-opacity);
     transform: translate(-50%, -50%) translate(var(--sp-dx), var(--sp-dy));

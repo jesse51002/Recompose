@@ -72,11 +72,21 @@ heading; and a list of class rows. Each row carries the class name, its time
 range with duration, the instructor, an attending count, and a thumbnail.
 Bottom nav present, Home active.
 
-**`class`** — the class detail page. Must contain: a topbar with a **back**
-button, a full-width class photo, the class meta (name, time, duration,
-instructor, attending), a description section, an instructor section with bio,
-a location section with its map image, and exactly one **Reserve** action. No
+**`class`** — the class detail page. Must contain: a **back** control; the same
+identity and four carried items the other app screens show (gym mark, gym name
+with its chevron, rank belt, streak with its count, points total, QR
+affordance); a full-width class photo; the class meta (name, time, duration,
+instructor, attending); a description section; an instructor section with bio; a
+location section with its map image; and exactly one **Reserve** action. No
 bottom nav.
+
+**The identity and carried items are easy to miss here and this entry used to
+omit them.** `parts/ClassScreenTopbar.tsx` composes `support/ShowcaseTopbar` in
+its `nameOnly` mode, and `nameOnly` suppresses only the big MARK — every
+arrangement `TopbarStacked` builds still renders `<InfoBar>`. A redesign reading
+"a topbar with a back button" and building exactly that drops five elements and
+passes every mechanical gate. `apps/vinyasaflow/` shipped that for an afternoon
+before it was caught by reading the base rather than this list.
 
 **`booking`** — the post-reservation celebration. Must contain: the celebration
 hero image scaling in, the "Class Booked" headline (themed copy slot), and a

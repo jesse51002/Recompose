@@ -1,27 +1,40 @@
-// Ports ../../../../../../CRM/lib/showcase/support/streak_week_strip.dart — a
-// clone of MobileApp's `StreakWeekStrip`: seven day badges, Sunday through
-// Saturday, cascading in left-to-right from `baseDelayMs`.
+// THE WEEK, GATHERED ON THE LINE — seven days, Sunday through Saturday, each
+// one a circle the thread runs through.
 //
-// Two motions per badge, and Dart nests them: the outer `StaggeredReveal` fades
-// and slides the badge in, and a completed day is additionally wrapped in
-// `_PulseOnLand`, which scales 0.9 → 1 over `pulseDuration` on the SAME beat.
-// They stay two elements here for the same reason they are two widgets there —
-// one animates opacity and translate, the other scale, and a single element
-// cannot run two `transform` animations at once.
+// ../layout_brief.yaml: "Where the app needs to hold a row of things it does
+// not stack, the thread bows sideways instead, running out across the screen,
+// through what it carries, and back down. A week of days, a shelf of films, a
+// strip of point tokens: the line goes out to gather them and returns." So this
+// is a `<Bow>` — the same excursion the head's carried items and every shelf
+// use, and the only thing in the app that scrolls sideways.
 //
-// Both are CSS: each is a one-shot tween between fixed endpoints with a delay,
-// which is the case keyframes exist for.
+// A DAY IS A CIRCLE, which is one of the three forms this app is drawn from,
+// and the day's own letter sits inside it. The circle is filled with the canvas
+// for the same reason `shell/Thread.module.css`'s `carry` node is: a node that
+// holds something has to mask the line behind it, or the stroke crosses the
+// letter.
+//
+// SAGE IS WHAT MARKS AN ATTENDED DAY, and this is the design's clearest single
+// use of it — "the second fill and the quieter one… it marks a thing already
+// earned, already attended, already held." Its label is knocked out in the
+// palette's own light derivation of sage (5.03:1), never the canvas linen
+// (3.31:1), because a small fill with a word on it is still text.
+//
+// THE STAGGER IS GONE, AND THAT IS THE POINT. The base cascaded seven badges in
+// on `CelebrationTimings.badgeStagger * i`, each with a 12px slide and a
+// 0.9 → 1 pulse. The brief replaces per-element choreography with one stroke:
+// "each region arrives at the moment the line reaches it. The stagger is
+// therefore not a stagger at all — it is a consequence of one continuous stroke
+// passing each node in turn." So the whole excursion is swept in left to right
+// behind a travelling clip, and every day arrives exactly when the line reaches
+// it — for free, with no per-badge delay to keep in step.
 
-import { EASE_OUT_QUART, CelebrationTimings } from 'recompose-react';
-
+import { Bow } from '../shell/Thread';
 import { cx } from '../cx';
-import { SC, showcaseStyle } from '../showcaseTokens';
+import { showcaseStyle } from '../showcaseTokens';
+import { BREATH, WEEK_SWEEP_MS } from '../streakOrbit';
 
-import { CheckCircleIcon, CircleIcon } from './icons';
 import styles from './StreakWeekStrip.module.css';
-
-/** `StaggeredReveal.offset` — the slide the reveal travels, in px. */
-const REVEAL_OFFSET_PX = 12;
 
 /** `ShowcaseStreakDay` — one day in the strip. */
 export interface ShowcaseStreakDay {
@@ -29,54 +42,33 @@ export interface ShowcaseStreakDay {
   readonly completed: boolean;
 }
 
-/** `CelebrationTimings.badgeStagger * i`. */
-export function streakBadgeDelayMs(baseDelayMs: number, index: number): number {
-  return baseDelayMs + CelebrationTimings.badgeStaggerMs * index;
-}
-
 export interface StreakWeekStripProps {
   days: readonly ShowcaseStreakDay[];
-  /** `StreakWeekStrip.baseDelay` — when the first badge's reveal starts. */
+  /** When the line starts running out — the moment the card's loop closes. */
   baseDelayMs?: number | undefined;
 }
 
 export function StreakWeekStrip({ days, baseDelayMs = 0 }: StreakWeekStripProps) {
   return (
-    <div className={styles.strip}>
-      {days.map((day, index) => (
-        // The week is a fixed seven-slot list, so the slot index IS the day's
-        // identity — 'S' and 'T' each appear twice.
-        <StreakDayBadge
-          key={`${String(index)}-${day.label}`}
-          day={day}
-          delayMs={streakBadgeDelayMs(baseDelayMs, index)}
-        />
-      ))}
-    </div>
-  );
-}
-
-/**
- * `_StreakDayBadge`. A completed day takes the brand tint and the check; the
- * rest sit on the canvas at `text2nd`.
- */
-function StreakDayBadge({ day, delayMs }: { day: ShowcaseStreakDay; delayMs: number }) {
-  const Glyph = day.completed ? CheckCircleIcon : CircleIcon;
-  return (
     <div
-      className={styles.reveal}
+      className={styles.sweep}
       style={showcaseStyle({
-        '--sw-reveal-ms': `${String(CelebrationTimings.revealMs)}ms`,
-        '--sw-pulse-ms': `${String(CelebrationTimings.pulseMs)}ms`,
-        '--sw-delay-ms': `${String(delayMs)}ms`,
-        '--sw-reveal-offset': `${String(REVEAL_OFFSET_PX)}px`,
-        '--sw-ease': EASE_OUT_QUART,
+        '--sw-sweep-ms': `${String(WEEK_SWEEP_MS)}ms`,
+        '--sw-delay-ms': `${String(baseDelayMs)}ms`,
+        '--sw-breath': BREATH,
       })}
     >
-      <div className={cx(styles.badge, day.completed && styles.completed)}>
-        <span className={styles.label}>{day.label}</span>
-        <Glyph size={SC.iconSizeSm} className={styles.glyph} />
-      </div>
+      <Bow>
+        {days.map((day, index) => (
+          // The week is a fixed seven-slot list, so the slot index IS the day's
+          // identity — 'S' and 'T' each appear twice.
+          <div key={`${String(index)}-${day.label}`} className={styles.day}>
+            <span className={cx(styles.disc, day.completed && styles.discCalm)}>
+              <span className={styles.label}>{day.label}</span>
+            </span>
+          </div>
+        ))}
+      </Bow>
     </div>
   );
 }

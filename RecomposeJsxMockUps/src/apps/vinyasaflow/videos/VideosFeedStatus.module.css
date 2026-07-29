@@ -5,16 +5,20 @@
  */
 
 /*
- * `Padding(vertical: spacingBig) > Center(Text(message, style:
- * p.copyWith(color: text2nd)))`. The horizontal inset is this island's own: an
- * arrangement may place the status full-bleed, and a message that ran to the
- * screen edge would be the only text on the phone that does.
+ * Held at the thread's inset and set flush left, not centred.
+ *
+ * The base centred it across the screen; here the line runs down the left
+ * margin and every word on the phone begins to the right of it, so a centred
+ * message would be the one piece of type on the app that is not on the thread.
+ * The message is quiet, in the running-copy rung — the app telling a member
+ * something in its own voice, not an error plate.
  */
 .empty {
   margin: 0;
-  padding: var(--sc-spacing-big) var(--sc-screen-padding-x);
-  text-align: center;
-  font: var(--sc-type-p);
-  letter-spacing: var(--sc-type-p-ls);
+  padding-left: var(--sc-thread-inset);
+  padding-right: var(--sc-screen-padding-x);
+  padding-block: var(--sc-spacing-big);
+  font: var(--sc-type-read);
+  letter-spacing: var(--sc-type-read-ls);
   color: var(--sc-text-2nd);
 }

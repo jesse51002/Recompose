@@ -1,135 +1,45 @@
 /*
- * Styles for ./RankHeader.tsx (ports MobileApp/lib/features/profile/
- * presentation/widgets/rank_summary/{rank_header,rank_belt_band}.dart).
+ * Styles for ./RankHeader.tsx — the medallion the thread passes through.
  * `--sc-*` only — see ../ShowcaseThemeVars.tsx.
+ *
+ * THE ONE MEASUREMENT THIS SHARES WITH EVERY NODE IN THE APP: the line's CENTRE
+ * is `--sc-thread-x` + half `--sc-thread-width`, because the rail is positioned
+ * by its left edge. The disc is placed by that centre and pulled back half its
+ * own width, exactly as ../shell/Thread.module.css places a node — so it stays
+ * on the line whatever either measurement becomes.
  */
-
-/* `_line(centred: true)` — `Row(center, mainAxisSize: min, spacing: spacingLarge)`. */
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--sc-spacing-large);
-}
-
-/* `_line(centred: false)` — the same line pinned to the leading edge, full width. */
-.headerStart {
-  justify-content: flex-start;
-}
 
 /*
- * `_kBeltWidth` x `_kBeltHeight` at `BoxFit.contain`. Per-asset layout
- * dimensions, not design tokens — the Dart spells them as file-local consts too.
+ * The same two columns every region on this screen uses, so the rank name
+ * begins on the one left edge the whole app aligns to.
  */
-.belt {
-  flex: 0 0 auto;
-  width: 77px;
-  height: 50px;
-  object-fit: contain;
+.header {
+  display: grid;
+  grid-template-columns: var(--sc-thread-inset) 1fr;
+  align-items: center;
+}
+
+.medallion {
+  grid-column: 1;
+  justify-self: start;
+  margin-left: calc(var(--sc-thread-x) + var(--sc-thread-width) / 2);
+  transform: translateX(-50%);
   display: block;
 }
 
-/* `_kBeltTileWidth` x `_kBeltTileHeight` — the same aspect, board-cell sized. */
-.beltTile {
-  width: 60px;
-  height: 39px;
-}
-
-/* `Column(mainAxisSize: min, center, spacing: spacingSmall)`. */
 .names {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--sc-spacing-small);
-  min-width: 0;
+  grid-column: 2;
 }
 
-/* `CrossAxisAlignment.start` — the leading-aligned variants. */
-.namesStart {
-  align-items: flex-start;
-}
-
-/* `Text(rankTitle, style: h1)`. */
-.title {
-  font: var(--sc-type-h1);
-  letter-spacing: var(--sc-type-h1-ls);
-  color: var(--sc-text);
-}
-
-/* `Text(sub, style: h2.copyWith(color: text2nd))`. */
+/*
+ * The sub-rank. `--sc-spacing-tiny` from the name above it: they are one name in
+ * two parts, and the gap to anything else on the screen is four to sixteen
+ * times this.
+ */
 .subtitle {
-  font: var(--sc-type-h2);
-  letter-spacing: var(--sc-type-h2-ls);
+  margin-top: var(--sc-spacing-tiny);
+  margin-bottom: 0;
+  font: var(--sc-type-quiet);
+  letter-spacing: var(--sc-type-quiet-ls);
   color: var(--sc-text-2nd);
-}
-
-/* `_tile()` steps the pair down to h2 / pSmall so it fits a board cell. */
-.titleTile {
-  font: var(--sc-type-h2);
-  letter-spacing: var(--sc-type-h2-ls);
-}
-
-.subtitleTile {
-  font: var(--sc-type-p-small);
-  letter-spacing: var(--sc-type-p-small-ls);
-}
-
-/* `_tile()` — `Column(mainAxisSize: min, spacing: spacingSmall)`. */
-.tile {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--sc-spacing-small);
-  min-width: 0;
-}
-
-/*
- * `RankBeltBand` — `SizedBox(height: _kBandHeight) > Stack`. `_kBandHeight` and
- * `_kScrimTopAlpha` are the Dart's own file-local consts, not design tokens.
- */
-.band {
-  --rh-band-height: 220px;
-  --rh-scrim-top-alpha: 35%;
-
-  position: relative;
-  height: var(--rh-band-height);
-  overflow: hidden;
-}
-
-/* `Positioned.fill(child: Image(image: belt, fit: BoxFit.cover))`. */
-.beltBand {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/*
- * `Positioned.fill > DecoratedBox(LinearGradient(topCenter -> bottomCenter,
- * [background @ _kScrimTopAlpha, background]))`.
- *
- * `color-mix` is what takes a LIVE `--sc-*` colour to an alpha; writing the
- * channels here would freeze the theme's background into this stylesheet, which
- * is the one thing the token indirection exists to prevent.
- */
-.bandScrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom,
-    color-mix(in srgb, var(--sc-background) var(--rh-scrim-top-alpha), transparent),
-    var(--sc-background)
-  );
-}
-
-/*
- * `Positioned(left: paddingBig, right: paddingBig, bottom: spacingLarge)` —
- * the names over the band's foot.
- */
-.bandNames {
-  position: absolute;
-  left: var(--sc-padding-big);
-  right: var(--sc-padding-big);
-  bottom: var(--sc-spacing-large);
 }

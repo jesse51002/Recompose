@@ -19,10 +19,21 @@
 // that makes the whole layout-format idea sellable, so they are not test-only
 // decoration to be stripped.
 
+// TWO IDS THE BASE HAD ARE GONE, AND BOTH BECAUSE THIS FORK MOVED THE ELEMENT
+// INTO THE SHARED SHELL RATHER THAN BECAUSE IT DROPPED ONE (../../../CLAUDE.md:
+// a doc that outlives its truth is the exact shape of the bug it warns about):
+//
+//   * `topbar` — the screen's chrome is now ../shell/Head.tsx, composed as the
+//     `Screen`'s `head`. It is shared by every screen in the app and stamping a
+//     profile-specific attribute on it would be this folder reaching outside
+//     itself.
+//   * `nextRankTitle` — a region announces itself through ../shell/Thread.tsx's
+//     `<Region label>`, which takes the label as a STRING and draws it itself.
+//     There is no element here to stamp, and rendering a second heading purely
+//     to carry an attribute would put the words on the screen twice.
+
 export const RANK_PART = Object.freeze({
-  /** `AppTopbar` — the gym identity + stats bar. */
-  topbar: 'topbar',
-  /** `RankStreakHero` — the celebration signature, rationed to exactly one. */
+  /** `RankStreakHero` — the streak statement, rationed to exactly one. */
   streakHero: 'streakHero',
   /** `RankHeader` — the CURRENT rank: belt art, name, sub-rank name. */
   rankHeader: 'rankHeader',
@@ -34,13 +45,11 @@ export const RANK_PART = Object.freeze({
   timeframePill: 'timeframePill',
   /** `NextRankBadge` — the next rank's belt art (`next_rank_belt_image`). */
   nextRankBadge: 'nextRankBadge',
-  /** `NextRankTitle` — the "Next Rank" heading. */
-  nextRankTitle: 'nextRankTitle',
-  /** `NextRankProgress` — the ring / arc / bar / rail. */
+  /** `NextRankProgress` — the ring the thread winds around. */
   nextRankProgress: 'nextRankProgress',
   /** `NextRankProgressLabel` — the one place the screen says what it counts. */
   nextRankProgressLabel: 'nextRankProgressLabel',
-  /** `LevelUpVideosSection` — the carousel that feeds the loop back to content. */
+  /** `LevelUpVideosSection` — the shelf that feeds the loop back to content. */
   levelUpVideos: 'levelUpVideos',
 } as const);
 

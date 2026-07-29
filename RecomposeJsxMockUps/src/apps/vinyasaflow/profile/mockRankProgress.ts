@@ -42,12 +42,19 @@ export interface ShowcaseTimeframe {
   readonly days: number | null;
 }
 
-/** `RankTimeframe.values`, in declaration order. */
+/**
+ * `RankTimeframe.values`, in declaration order.
+ *
+ * `ALL` is set `All` here, and that is typography rather than a change of
+ * value: this app never sets a label in capitals (../layout_brief.yaml), and
+ * nothing reads these strings — `windowPoints` windows on `days` and the pinned
+ * selection below is an index.
+ */
 export const RANK_TIMEFRAMES: readonly ShowcaseTimeframe[] = Object.freeze([
   Object.freeze({ label: '1W', days: 7 }),
   Object.freeze({ label: '1M', days: 30 }),
   Object.freeze({ label: '1Y', days: 365 }),
-  Object.freeze({ label: 'ALL', days: null }),
+  Object.freeze({ label: 'All', days: null }),
 ]);
 
 /**
@@ -69,7 +76,10 @@ export const SHOWCASE_RANK: ShowcaseRank = Object.freeze({
   classesSinceRank: 17,
 });
 
-/** `_kSubtitle`'s neighbour on this screen — the topbar's sample chrome. */
+/**
+ * The two the head carries, and the streak the screen states in full. Sample
+ * data — see the header; the theme brands the belt art, never the member.
+ */
 export const SHOWCASE_PROFILE_STREAK_WEEKS = 3;
 export const SHOWCASE_PROFILE_POINTS_LABEL = '3.4k';
 

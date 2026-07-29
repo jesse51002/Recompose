@@ -1,52 +1,75 @@
 /*
- * Styles for ./DateTab.tsx (ports CRM/lib/showcase/home/date_tab.dart +
- * MobileApp/.../class_schedule/date_tab.dart's `DateTabStyle`).
- * `--sc-*` only — see ../ShowcaseThemeVars.tsx.
+ * Styles for ./DateTab.tsx — one day on the week's bow.
+ *
+ * Reads ONLY `--sc-*`. Never `--gw-*` / `--adm-*` (eslint Gates 2a/2b).
+ *
+ * Built to match ../shell/ThreadNav.module.css declaration for declaration —
+ * canvas fill so the stroke passes BEHIND the ring, the same ring weight, the
+ * same knocked-through solid for the one the member is standing in. The two
+ * rows are meant to be recognisably the same object at two scales, which is why
+ * they are not merged: the nav's disc is a 42px tap target with a glyph in it
+ * and this is a 26px mark with nothing in it.
  */
 
 /*
- * `Container(padding: symmetric(vertical: spacingMedium, horizontal:
- * spacingLarge), alignment: center)` with an `h2` label at `text2nd`.
- *
- * The transparent bottom border is what keeps an unselected pill exactly as
- * tall as a selected one — Dart gets that from `Border(bottom:)` only being
- * added to the decoration, which does not affect layout there.
+ * THE PADDING-TOP IS LOAD-BEARING, NOT AIR. <Bow>'s stroke runs at 50% of the
+ * row's own height, and a row whose content is "circle over label" puts its
+ * midpoint BELOW the circle — so without this the line would cross the bottom
+ * arc of every disc instead of threading it. One `--sc-spacing-large` above the
+ * disc moves the row's midpoint back onto the disc's centre (16 + 26/2 = 29
+ * against a row of 16 + 26 + 4 + ~17 = ~63, whose midpoint is ~31), which is
+ * within a pixel or two of dead centre at any label height the ramp produces.
  */
-.tab {
-  display: block;
-  padding: var(--sc-spacing-medium) var(--sc-spacing-large);
-  border: 0;
-  border-bottom: var(--sc-button-border) solid transparent;
+.day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sc-spacing-small);
+  padding-top: var(--sc-spacing-large);
+  padding-inline: 0;
+  padding-bottom: 0;
+  border: none;
   background: none;
-  font: var(--sc-type-h2);
-  letter-spacing: var(--sc-type-h2-ls);
-  color: var(--sc-text-2nd);
-  text-align: center;
+  font: inherit;
+  color: inherit;
+  /*
+   * `pointer`, matching the base's pill, even though this preview threads no
+   * handler in. The member app's date row IS a control; the no-op is the
+   * preview's limitation (see ./DateRow.tsx), and drawing it as inert here
+   * would make the mock diverge further from the app rather than less.
+   */
   cursor: pointer;
 }
 
-/* `DateTabStyle.underline` selected — `Border(bottom: primary, buttonBorder)`. */
-.selected {
-  border-bottom-color: var(--sc-primary);
-  color: var(--sc-primary);
+/*
+ * A day, drawn open — the line runs through it. The canvas fill is what makes
+ * the bow's stroke appear to pass BEHIND the ring rather than across it.
+ */
+.disc {
+  flex: 0 0 auto;
+  width: var(--sc-node-lg);
+  height: var(--sc-node-lg);
+  border-radius: var(--sc-radius-circle);
+  box-sizing: border-box;
+  background: var(--sc-background);
+  border: var(--sc-node-ring) solid var(--sc-primary);
 }
 
-/*
- * `DateTabStyle.segmented` — a bordered chip per day. The full border replaces
- * the bottom-only one, so the pill reads as a control rather than as a rail.
- */
-.segmented {
-  border: var(--sc-divider-thickness) solid var(--sc-divider);
-  border-radius: var(--sc-radius-small);
-}
-
-/*
- * Selected chip — filled with `primary`, label in `primaryButtonText` so it
- * stays legible on whatever the tenant's primary turns out to be. AFTER
- * `.selected` on purpose: it has to beat that rule's `border-bottom-color`.
- */
-.segmented.selected {
+/* The day the member is standing in — the line swelling to a filled stop. */
+.discHere {
   background: var(--sc-primary);
   border-color: var(--sc-primary);
-  color: var(--sc-primary-button-text);
+}
+
+.label {
+  font: var(--sc-type-quiet);
+  letter-spacing: var(--sc-type-quiet-ls);
+  color: var(--sc-text-2nd);
+  white-space: nowrap;
+  /* Sentence case. This app never sets a label in capitals. */
+  text-transform: none;
+}
+
+.labelHere {
+  color: var(--sc-text);
 }

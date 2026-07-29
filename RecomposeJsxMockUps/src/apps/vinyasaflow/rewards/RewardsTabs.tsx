@@ -1,76 +1,59 @@
 // Ports ../../../../../../MobileApp/lib/features/rewards/presentation/widgets/
-// rewards_tabs/{rewards_tabs,rewards_tabs_underline,rewards_tabs_segmented}.dart
-// — the two-tab selector both rewards screens carry, in its two chromes.
+// rewards_tabs/ — the two-tab selector the points store carries, redrawn as a
+// stop on the thread.
 //
-// `underline` ships: the active tab takes the accent tint and an underline, the
-// inactive one is dim and has none. `segmented` puts both tabs inside one pill
-// and fills the active one. PRESENTATION ONLY — both render the same two
-// labelled targets with the same one active, which is why a screen arrangement
-// may pick either without touching the invariant.
+// GUARDRAIL 12: THE INVENTION IS IN HOW IT IS DRAWN, NOT IN HOW IT WORKS. This
+// is still two labelled targets in a row with exactly one marked, which is the
+// pattern every phone owner already knows. What changed is that the marker is
+// the app's own stroke — a two-pixel terracotta rule under the active label, at
+// the weight of the line it hangs from — rather than a pill or a tinted
+// segment. The base's `segmented` chrome is gone with it: a filled capsule
+// wrapped around two labels is a BOX, and this design has three forms and no
+// fourth (../layout_brief.yaml).
+//
+// SENTENCE CASE. The base said "Points Store" / "My Rewards"; this app never
+// title-cases or capitalises a label, because its voice is a teacher rather
+// than an instrument panel. Same two labels, same two targets.
+//
+// THE ACTIVE TAB IS MARKED BY INK STRENGTH, NOT BY BRAND COLOUR. Fired
+// terracotta measures 4.35:1 on the linen canvas and dusty sage 3.89:1, so
+// neither may set a 15px label. The rule beneath it carries the brand instead —
+// colour lives in fills and strokes here, never in running type.
 //
 // NO TAP CALLBACKS. Dart's widget accepts `onPointsStoreTap` / `onMyRewardsTap`
 // and the store passes neither, because every showcase surface is a preview
 // inside a phone frame that takes no input. The port drops them rather than
-// carrying two props nothing can ever pass — the same call
-// ../support/ShowcaseBottomNav.tsx makes for its own nav items.
+// carrying two props nothing can ever pass.
 
 import { cx } from '../cx';
+import { Node } from '../shell/Thread';
 
 import styles from './RewardsTabs.module.css';
 
 /** `RewardsTab` — which tab is currently selected. */
 export type RewardsTab = 'pointsStore' | 'myRewards';
 
-/** `RewardsTabsLayout` — how the strip is drawn. */
-export type RewardsTabsLayout = 'underline' | 'segmented';
-
 export interface RewardsTabsProps {
   active: RewardsTab;
-  layout?: RewardsTabsLayout | undefined;
 }
 
-export function RewardsTabs({ active, layout = 'underline' }: RewardsTabsProps) {
-  if (layout === 'segmented') {
-    return (
-      // `Padding(horizontal: screenHorizontalPadding) > Container(padding:
-      // spacingSmall, color: card, borderRadius: radiusCircle) > Row(spacingSmall)`.
-      <div className={styles.segmentedOuter}>
-        <div className={styles.segmented}>
-          <Segment label="Points Store" isActive={active === 'pointsStore'} />
-          <Segment label="My Rewards" isActive={active === 'myRewards'} />
-        </div>
-      </div>
-    );
-  }
+export function RewardsTabs({ active }: RewardsTabsProps) {
   return (
-    // `Container(border: Border(bottom: text3rd @ dividerThickness), padding: …)`.
-    <div className={styles.tabs}>
-      <TabItem label="Points Store" isActive={active === 'pointsStore'} />
-      <TabItem label="My Rewards" isActive={active === 'myRewards'} />
+    <div className={styles.region}>
+      <Node kind="open" />
+      <div className={styles.tabs}>
+        <Tab label="Points store" isActive={active === 'pointsStore'} />
+        <Tab label="My rewards" isActive={active === 'myRewards'} />
+      </div>
     </div>
   );
 }
 
 /**
- * `_TabItem` — an `Expanded` cell whose own bottom border is the underline.
- * Inactive draws that border in the CANVAS colour rather than omitting it, so
- * the two tabs keep identical heights; the port keeps that (`transparent` would
- * work too, but the Dart's choice is what a reviewer sees when the canvas and
- * the card differ).
+ * One target. The inactive rule is drawn transparent rather than omitted, so
+ * both tabs keep identical heights and the active one does not appear to sit a
+ * pixel lower than its neighbour.
  */
-function TabItem({ label, isActive }: { label: string; isActive: boolean }) {
-  return (
-    <span className={cx(styles.tab, isActive && styles.active)}>
-      <span className={styles.label}>{label}</span>
-    </span>
-  );
-}
-
-/** `_Segment` — an `Expanded` pill; the active one takes the accent fill. */
-function Segment({ label, isActive }: { label: string; isActive: boolean }) {
-  return (
-    <span className={cx(styles.segment, isActive && styles.segmentActive)}>
-      <span className={styles.segmentLabel}>{label}</span>
-    </span>
-  );
+function Tab({ label, isActive }: { label: string; isActive: boolean }) {
+  return <span className={cx(styles.tab, isActive && styles.active)}>{label}</span>;
 }

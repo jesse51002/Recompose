@@ -12,3 +12,21 @@
 .marker {
   display: contents;
 }
+
+/*
+ * The streak statement: the figure and its unit are ONE object, so they share a
+ * baseline and sit a single small step apart.
+ */
+.streak {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sc-spacing-medium);
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.streakUnit {
+  font: var(--sc-type-read);
+  letter-spacing: var(--sc-type-read-ls);
+  color: var(--sc-text-2nd);
+}

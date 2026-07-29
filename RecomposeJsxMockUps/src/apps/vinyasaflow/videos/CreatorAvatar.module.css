@@ -4,13 +4,24 @@
  * `--sc-*` only — see ../ShowcaseThemeVars.tsx.
  */
 
-/* `ClipOval > Image(fit: BoxFit.cover)`. The size is set inline by the caller. */
+/*
+ * `ClipOval > Image(fit: BoxFit.cover)`. The size is set inline by the caller.
+ *
+ * A headshot is near square, so the circle costs it nothing and it joins the
+ * family every other disc in this app belongs to. `object-fit: cover` is
+ * legitimate HERE and nowhere near a video still: a square crop of a square
+ * source discards nothing.
+ */
 .avatar {
   flex: 0 0 auto;
   border-radius: var(--sc-radius-circle);
   object-fit: cover;
   display: block;
-  /* Shows through while the avatar is still in flight, so a row never flashes
-     a transparent hole against the card. */
-  background: var(--sc-card);
+  /*
+   * Shows through while the avatar is still in flight, so a row never flashes a
+   * transparent hole. The CANVAS, not the base's `--sc-card` surface: this
+   * design has no card colour to sit on, and a tinted disc waiting where a
+   * photograph will be is a container the design does not own.
+   */
+  background: var(--sc-background);
 }

@@ -1,47 +1,45 @@
 // Ports ../../../../../../MobileApp/lib/features/videos/presentation/widgets/
-// featured_video_card.dart — the big hero at the top of the videos tab: a
-// ./VideoReccCard.tsx wrapped in a card surface with a full-width, fully
-// rounded "Play" CTA underneath.
+// featured_video_card.dart — the hero the videos tab opens with:
+// ./VideoReccCard.tsx with the "Play" action waiting under it.
 //
-// The CTA's `borderRadius: 100` is the Dart's own literal rather than a token,
-// and it reads as a pill at any button height — so it ports as the island's
-// `radiusCircle` (1000), which is the same intent expressed in the token
-// system rather than a second magic number at the call site.
+// THE SCREEN'S ONE TERRACOTTA FILL IS HERE. `Action` (../shell/Action.tsx) is a
+// capsule — a line with round ends — so even the most emphatic element on the
+// screen is drawn from the two forms everything else is drawn from, rather than
+// a rounded rectangle smuggled in as a button. Exactly one of these may appear
+// per screen: with both brand colours failing AA as ink on the linen canvas, a
+// fill is the only way this palette carries emphasis, and a screen with two of
+// them has no primary action at all.
 //
-// `FeaturedVideoLayout` IS HOW THE HERO MEETS THE SCREEN EDGE, and it is the
-// only thing an arrangement gets to change about it: `card` sits inside the
-// gutter with rounded corners (shipped), `bleed` squares off and runs edge to
-// edge so the hero reads as a poster the page starts with. The caller drops its
-// own horizontal inset to match.
+// IT CARRIES NO HANDLER, AND THAT IS THE BASE'S BEHAVIOUR RATHER THAN AN
+// OVERSIGHT. There is no player screen in this asset and inventing one would be
+// adding a capability the platform's own app does not have here. The screen's
+// exit is the four destinations at the foot (Guardrail 4), which the base's
+// "Play" also relied on.
+//
+// The `FeaturedVideoLayout` prop the base carried is gone. It chose between an
+// inset rounded card and a bleeding one; this design has no card to inset, and
+// an always-`bleed` prop would be a lie about what the component does.
 
+import { Action } from '../shell/Action';
 import type { ShowcaseVideo } from '../showcaseContent';
-import { cx } from '../cx';
-import { ShowcasePrimaryButton } from '../support/ShowcasePrimaryButton';
 
 import styles from './FeaturedVideoCard.module.css';
 import { PART_ATTR, VIDEO_PARTS } from './videoParts';
 import { VideoReccCard } from './VideoReccCard';
 
-/** `FeaturedVideoLayout` — how the hero meets the screen edge. */
-export type FeaturedVideoLayout = 'card' | 'bleed';
+/** `AppPrimaryButton(text: 'Play')`. Sentence case, like every label here. */
+const PLAY_LABEL = 'Play';
 
 export interface FeaturedVideoCardProps {
   video: ShowcaseVideo;
-  layout?: FeaturedVideoLayout | undefined;
 }
 
-export function FeaturedVideoCard({ video, layout = 'card' }: FeaturedVideoCardProps) {
+export function FeaturedVideoCard({ video }: FeaturedVideoCardProps) {
   return (
-    // `Container(color: card, radiusBig, clipBehavior: hardEdge) >
-    // Column(stretch, spacing: spacingLarge)`.
-    <div
-      className={cx(styles.card, layout === 'bleed' && styles.bleed)}
-      {...{ [PART_ATTR]: VIDEO_PARTS.featured }}
-    >
+    <div className={styles.hero} {...{ [PART_ATTR]: VIDEO_PARTS.featured }}>
       <VideoReccCard video={video} />
-      {/* `Padding(paddingBig, 0, paddingBig, spacingLarge)`. */}
       <div className={styles.ctaRow} {...{ [PART_ATTR]: VIDEO_PARTS.featuredPlay }}>
-        <ShowcasePrimaryButton text="Play" fullWidth borderRadius="var(--sc-radius-circle)" />
+        <Action text={PLAY_LABEL} />
       </div>
     </div>
   );

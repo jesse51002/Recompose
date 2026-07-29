@@ -1,67 +1,65 @@
 // Ports ../../../../../../MobileApp/lib/features/videos/presentation/widgets/
-// video_category_tabs.dart — the top-filter pills for the videos tab ("All"
-// plus one per genre in the feed), on either axis.
+// video_category_tabs.dart — the scope filter for the videos tab ("All" plus
+// one per genre the loaded feed carries).
 //
-// IT SCROLLS IN THE REAL APP TOO, and for the same reason: the genre set is
-// open-ended (up to nine values), so a fixed centred row would overflow. The
-// Dart centres the row inside its scroller so a short set sits centred and a
-// long one starts at the inset; `justify-content: center` on an
-// `overflow-x: auto` flex row does exactly that, except that a centred
-// overflowing row clips its own leading edge in CSS — which is what the
-// `margin-inline: auto` on the inner row avoids.
+// BEADS ON THE STRAND, NOT PILLS. The base draws each scope as a rounded
+// container and fills the selected one; this design owns three forms and a
+// filled rounded rectangle is a fourth, so the row is rebuilt out of the two it
+// does own. The thread bows sideways (../shell/Thread.tsx's `Bow`), runs
+// through a small circle in front of every scope, and each word sits on the
+// line with the canvas behind it so the stroke passes BEHIND the word rather
+// than through it. The scope the member is standing in swells the line to a
+// filled terracotta bead and takes the heavier of the two label weights; the
+// rest are open rings the line runs through. It is the same drawing the four
+// destinations at the foot are made from, which is the point.
 //
-// THE AXIS IS THE FILTER'S ONE DEGREE OF FREEDOM. `tagRail` moves the filter
-// off the top and into a rail down the left; it is the same pills, the same
-// selection and the same open-ended set, running down instead of across. An
-// arrangement may move the filter — it may not reword it, shorten it, or drop
-// it.
+// IT STILL BEHAVES LIKE A TAB ROW, which Guardrail 12 requires: a horizontal
+// row of labels, one visibly current, scrolling sideways when the tenant's
+// genre set runs long (up to nine values). Only the drawing is new.
+//
+// IT SCROLLS IN THE REAL APP TOO. `Bow` owns that — it is the app's one
+// sideways scroller, and running the filter on it is what keeps sideways
+// movement reading as part of the sequence rather than a second axis.
 //
 // TAPS ARE NO-OPS. In the app a genre pill OPENS that genre's full list
 // (`TagVideosScreen`) rather than filtering this screen; there is no navigator
-// in a phone mock, so the pills are labels and "All" is always the active one.
-// A dead <button> would advertise an action the preview cannot take, exactly as
-// ../rewards/RewardsTabs.tsx concluded for its own two tabs.
+// in a phone mock, so the scopes are labels and "All" is always the current
+// one. A dead <button> would advertise an action the preview cannot take,
+// exactly as ../rewards/RewardsTabs.tsx concluded for its own two tabs.
 
+import { Bow } from '../shell/Thread';
 import { cx } from '../cx';
 
 import { PART_ATTR, VIDEO_PARTS } from './videoParts';
 import styles from './VideoCategoryTabs.module.css';
 
-/** `VideoCategoryTabsAxis` — how the pills are laid out. */
-export type VideoCategoryTabsAxis = 'horizontal' | 'vertical';
-
 export interface VideoCategoryTabsProps {
-  /** `['All', ...genres.map((g) => g.label)]` — already labelled. */
+  /** `['All', ...genres.map((g) => g.label)]` — already labelled, sentence case. */
   tabs: readonly string[];
   selectedIndex: number;
-  axis?: VideoCategoryTabsAxis | undefined;
 }
 
-export function VideoCategoryTabs({
-  tabs,
-  selectedIndex,
-  axis = 'horizontal',
-}: VideoCategoryTabsProps) {
-  const vertical = axis === 'vertical';
+export function VideoCategoryTabs({ tabs, selectedIndex }: VideoCategoryTabsProps) {
   return (
-    // `Padding(vertical: spacingLarge) > SingleChildScrollView(axis)`.
-    <div
-      className={cx(styles.strip, vertical && styles.stripVertical)}
-      {...{ [PART_ATTR]: VIDEO_PARTS.categoryTabs }}
-    >
-      <div className={cx(styles.row, vertical && styles.column)}>
-        {tabs.map((label, index) => (
-          <span
-            // Genre labels are distinct by construction (`genresInFeed` dedups),
-            // so the label IS the pill's identity.
-            key={label}
-            className={cx(styles.pill, index === selectedIndex && styles.active)}
-            {...{ [PART_ATTR]: VIDEO_PARTS.categoryPill }}
-          >
-            {label}
-          </span>
-        ))}
-      </div>
+    <div {...{ [PART_ATTR]: VIDEO_PARTS.categoryTabs }}>
+      <Bow>
+        {tabs.map((label, index) => {
+          const here = index === selectedIndex;
+          return (
+            <span
+              // Genre labels are distinct by construction (`genresInFeed`
+              // dedups), so the label IS the scope's identity.
+              key={label}
+              className={cx(styles.tab, here && styles.tabHere)}
+              aria-current={here ? 'true' : undefined}
+              {...{ [PART_ATTR]: VIDEO_PARTS.categoryPill }}
+            >
+              <span className={cx(styles.bead, here && styles.beadHere)} aria-hidden="true" />
+              {label}
+            </span>
+          );
+        })}
+      </Bow>
     </div>
   );
 }

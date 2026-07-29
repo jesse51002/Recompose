@@ -21,6 +21,7 @@
 // identical values with one fewer round trip. Same trade ./streakOrbit.ts makes.
 
 import { Curves, clamp01 } from './celebrations/curves';
+import { SC } from './showcaseTokens';
 
 /** `_kSphereDuration` — the swarm's whole timeline. */
 export const SPHERE_MS = 1700;
@@ -47,11 +48,52 @@ export const REFERENCE_EXTENT = 280;
 /** `edgePad`'s unscaled value — how far short of the box's edge the swarm stops. */
 export const EDGE_PAD = 28;
 
-/** `_kHeroSize` — the focused stat illustration's edge, in px. */
-export const HERO_SIZE = 238;
-
 /** `_kPointsHold` — how long the focused content holds before the sphere replays. */
 export const POINTS_HOLD_MS = 2600;
+
+// ---------------------------------------------------------------------------
+// THIS FORK'S OWN GEOMETRY — the thread, and the loop it closes into.
+// ---------------------------------------------------------------------------
+//
+// `_kHeroSize` (a 238px square edge) is gone, and deliberately: this design
+// never gives a picture a box of a chosen shape. The hero is inscribed in the
+// loop by a percentage inset and sized by `max-width`/`max-height` alone, so a
+// tenant whose `points_stars_image` arrives portrait, square or landscape is
+// scaled to fit rather than cropped to a square (Guardrail 10b — this run's is
+// 674x958, i.e. 0.70, and a 238px square would have cut the top and bottom of
+// the cascade off). See ./PointsShowcase.module.css `.heroBox` / `.hero`.
+
+/**
+ * The asset's authored width — `celebrationAsset.tsx`'s `width: 390`.
+ *
+ * Restated here rather than imported because that module imports this one's
+ * consumer, and because the size is fixed by construction: the whole package is
+ * authored at one device size and scaled by `transform` (Guardrail 9).
+ */
+const CARD_WIDTH = 390;
+
+/**
+ * THE LOOP'S DIAMETER, and it is a consequence rather than a choice.
+ *
+ * The descending thread runs at `SC.threadX`; the loop's left edge is TANGENT
+ * to it, so the line comes down the margin and meets the ring at nine o'clock
+ * rather than colliding with it. Making the diameter the card's width less that
+ * inset on BOTH sides is what puts the loop's centre exactly on the card's
+ * centre line — which is also where the sphere converges, so the swarm collapses
+ * into the ring instead of merely near it.
+ */
+export const LOOP_SIZE = CARD_WIDTH - 2 * (SC.threadX + SC.threadWidth / 2);
+
+/**
+ * How far the thread descends before it reaches the loop's top edge.
+ *
+ * Long on purpose: on a celebration card the line has arrived from the previous
+ * card and this is the stretch that says so. It also sets where the swarm's
+ * centre is — ./PointsShowcase.module.css's `.sphere` is exactly
+ * `2 x (THREAD_RISE + LOOP_SIZE / 2)` tall, so its centre and the ring's centre
+ * are the same point.
+ */
+export const THREAD_RISE = 200;
 
 /** `_buildSphere`'s `sizes` table, cycled by `i % sizes.length`. */
 export const STAR_SIZES: readonly number[] = Object.freeze([28, 36, 32, 40, 30]);

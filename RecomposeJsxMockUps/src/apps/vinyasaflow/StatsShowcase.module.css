@@ -1,130 +1,247 @@
 /*
- * Styles for ./StatsShowcase.tsx
- * (ports CRM/lib/showcase/stats_showcase.dart).
+ * Styles for ./StatsShowcase.tsx — celebration card 1 of 5, the streak.
  *
  * `--sc-*` for the design tokens (see ./ShowcaseThemeVars.tsx); `--st-*` for
- * the stats cascade's motion, written inline by the component from the ported
- * delay arithmetic.
+ * this card's motion and its two art measurements, written inline by the
+ * component from ./streakOrbit.ts so no timing is a literal here.
  *
- * THE ORBIT HAS NO MOTION HERE AT ALL. Its transforms and opacities are written
- * per frame by the driver in the component, because eight icons share one clock
- * (see ./streakOrbit.ts). What the classes below give it is only the box each
- * element sits in.
+ * EVERY GAP COMES OFF THE SCALE and the ladder is deliberate (Guardrail 13):
+ * inside the headline the count and its label are ONE object and touch, the
+ * statement's two lines sit `spacing-big` apart, and each of the card's three
+ * regions is `spacing-big` twice over from the next. Nothing here is a
+ * typed-in px value except the two art sizes, which are the picture's business
+ * rather than the layout's and live in ./streakOrbit.ts with their arithmetic.
  */
-
-/* --- The orbit ------------------------------------------------------------ */
-
-/* `SizedBox.expand > Stack(alignment: center)`. */
-.orbit {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
 
 /*
- * `Transform.translate(offset) > Opacity > _image`. Centred on the stack, then
- * moved onto the ring — the driver writes both halves as one transform. The
- * element's own size is written once, from `orbitLayout`.
+ * THE ANGLE THE LINE HAS TRAVELLED, registered so it INTERPOLATES. An
+ * unregistered custom property animates discretely — the ring would jump from
+ * nothing to whole at the halfway mark — and the whole point of this card is
+ * that the line is drawn rather than revealed.
+ *
+ * The initial value is the SETTLED one: anything that fails to run the
+ * animation (reduced motion, a browser without `@property`) lands on a closed
+ * loop rather than on no loop at all.
  */
-.orbitIcon {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  will-change: transform, opacity;
+@property --st-arc {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 360deg;
 }
 
-/* `Opacity > Transform.scale > _image` — the big centre icon. */
-.orbitCentre {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  will-change: transform, opacity;
-}
-
-/* `Image(fit: BoxFit.contain)`. */
-.streakImg {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-}
-
-/* --- The stats statement -------------------------------------------------- */
+/* --- The card ------------------------------------------------------------- */
 
 /*
- * The `Padding(vertical: spacingBig) > Center` the statement used to sit in
- * belongs to the ARRANGEMENT and now lives with it, in
- * ./celebrations/CelebrationFrame.module.css's `centerHero`. The orbit above
- * never had it (stats_showcase.dart:95) and still does not — the component
- * asks for `bleed` on that branch.
+ * The whole card, centred in the body ./celebrationAsset.tsx hands it. There is
+ * no scaffold and no scrim: the action's zone is reserved by the flow itself,
+ * so this box is exactly what is left above it.
  */
-
-/* `Column(mainAxisSize: min, spacing: spacingLarge)`, centred. */
-.stats {
+.card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--sc-spacing-large);
+  justify-content: center;
   width: 100%;
+  height: 100%;
 }
 
 /*
- * `StaggeredReveal(child: Column(min))` — the inner column carries NO spacing,
- * so the hero numeral and its unit sit directly on top of each other.
+ * The three regions. `--sc-spacing-big` between them, DOUBLED at each seam by
+ * the neighbours' own margins below — the statement's own two lines are
+ * `--sc-spacing-big` apart, so the seams have to be bigger than that or the
+ * card reads as five loose parts instead of three.
+ */
+.held {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sc-spacing-big);
+  width: 100%;
+}
+
+/* --- The loop, and the hero inside it ------------------------------------- */
+
+/*
+ * The ring and the hero are SIBLINGS in one grid cell rather than parent and
+ * child (see ./StatsShowcase.tsx) — the mask that draws the ring would sweep a
+ * child away with it.
+ */
+.halo {
+  position: relative;
+  display: grid;
+  place-items: center;
+  margin-bottom: var(--sc-spacing-big);
+}
+
+.halo > * {
+  grid-area: 1 / 1;
+}
+
+/*
+ * THE LINE TRAVELLING ROUND THE HERO AND MEETING ITSELF — the one place in this
+ * app where the stroke completes instead of leaving the edge, and the card's
+ * whole animation.
+ *
+ * The conic gradient is a MASK, so its two colours are alpha and nothing else:
+ * opaque where the line has already been drawn, clear where it has not. No
+ * `--sc-*` colour could be correct here — the ink is `shell/Thread.module.css`'s
+ * `.loop` border, which this only uncovers. `from -90deg` starts the travel at
+ * the top of the ring.
+ */
+.ring {
+  display: flex;
+  -webkit-mask-image: conic-gradient(from -90deg, rgb(0 0 0) var(--st-arc), rgb(0 0 0 / 0) 0deg);
+  mask-image: conic-gradient(from -90deg, rgb(0 0 0) var(--st-arc), rgb(0 0 0 / 0) 0deg);
+  animation-name: loopDraw;
+  animation-duration: var(--st-draw-ms);
+  animation-timing-function: var(--st-breath);
+  animation-fill-mode: both;
+}
+
+@keyframes loopDraw {
+  from {
+    --st-arc: 0deg;
+  }
+
+  to {
+    --st-arc: 360deg;
+  }
+}
+
+/*
+ * HEIGHT ONLY, WIDTH DERIVED. `streak_icon.png` measures 468x977 — a tall
+ * cut-out, not a square one — so it gets a box of its own proportion and never
+ * a circle. Guardrail 10b, and the reason this is a bare <ThemedImage> rather
+ * than `shell/Photo.tsx`'s `MintedDisc`.
+ */
+.hero {
+  display: block;
+  height: var(--st-hero-h);
+  width: auto;
+  animation-name: heroIn;
+  animation-duration: var(--st-hero-ms);
+  animation-timing-function: var(--st-breath);
+  animation-fill-mode: both;
+}
+
+@keyframes heroIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* --- The statement -------------------------------------------------------- */
+
+/*
+ * It arrives as ONE block on the close, not as a set of parts each on its own
+ * schedule — which is the brief's stated reason for the loop being the card's
+ * only animation. No slide: a translate would be a second idea about how things
+ * appear here, and there is only one.
+ */
+.statement {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sc-spacing-big);
+  animation-name: statementIn;
+  animation-duration: var(--st-statement-ms);
+  animation-timing-function: var(--st-breath);
+  animation-delay: var(--st-settle-ms);
+  animation-fill-mode: both;
+}
+
+@keyframes statementIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/*
+ * The count and the word it counts are one object, so they touch: the display
+ * face's own line box is the only gap between them, and it is smaller than
+ * every other gap on this card.
  */
 .headline {
   display: flex;
   flex-direction: column;
   align-items: center;
-  animation: statsReveal var(--st-reveal-ms) var(--st-ease) both;
-}
-
-/* `CountUpText(style: big1)` — the display slot's hero numeral. */
-.count {
-  font: var(--sc-type-big1);
-  letter-spacing: var(--sc-type-big1-ls);
-  color: var(--sc-text);
-  text-align: center;
-}
-
-/* `Text('week streak', style: big2)`. */
-.unit {
-  font: var(--sc-type-big2);
-  letter-spacing: var(--sc-type-big2-ls);
-  color: var(--sc-text);
-  text-align: center;
-}
-
-/* `StaggeredReveal(delay: subtitleDelay)` over `p` at `text2nd`. */
-.subtitle {
-  margin: 0;
-  font: var(--sc-type-p);
-  letter-spacing: var(--sc-type-p-ls);
-  color: var(--sc-text-2nd);
-  text-align: center;
-  animation: statsReveal var(--st-reveal-ms) var(--st-ease) var(--st-subtitle-delay-ms) both;
-}
-
-/* `StaggeredReveal`: opacity 0 -> 1 with a 12px slide up, ease-out-quart. */
-@keyframes statsReveal {
-  from {
-    opacity: 0;
-    transform: translateY(var(--st-reveal-offset));
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
-  }
 }
 
 /*
- * `MediaQuery.disableAnimationsOf` — the statement renders finished. The
- * component also skips the orbit entirely and never arms the loop timers.
+ * THE COUNT'S BOX, AND IT HAS TO BE A FLEX CONTAINER RATHER THAN A BLOCK.
+ *
+ * ./celebrations/CountUpText.tsx is an `inline-flex` whose first item is a
+ * clipped reel, and a clipped box has no real baseline — the browser synthesises
+ * one at its bottom edge. Left as `shell/Figure.module.css`'s block, that
+ * baseline gets aligned to the strut's, which hangs the whole odometer a full
+ * descender ABOVE the line and leaves ~19px of dead space under a 72px figure.
+ * The label then reads as detached from the number it names, which is exactly
+ * the grouping failure Guardrail 13 describes.
+ *
+ * Making the box a flex container removes the strut entirely, so the figure's
+ * box is the digits' own box. Two classes on purpose: this has to outrank
+ * `.figure`'s `display: block` on specificity rather than on stylesheet order,
+ * which no file here controls.
  */
+.headline .count {
+  display: flex;
+  justify-content: center;
+}
+
+.unit {
+  margin: 0;
+  font: var(--sc-type-say);
+  letter-spacing: var(--sc-type-say-ls);
+  color: var(--sc-text-2nd);
+  text-align: center;
+}
+
+/*
+ * What the class was worth. The figure takes the display face like every other
+ * number here; the word takes the body face. The two never trade jobs.
+ */
+.points {
+  display: flex;
+  /* Both are plain text — no count-up reel — so a real baseline exists to sit on. */
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--sc-spacing-small);
+  margin: 0;
+}
+
+.pointsUnit {
+  font: var(--sc-type-quiet);
+  letter-spacing: var(--sc-type-quiet-ls);
+  color: var(--sc-text-2nd);
+}
+
+/* --- The week ------------------------------------------------------------- */
+
+/*
+ * The line's last excursion. Pulled left by exactly `--sc-thread-x` so the
+ * stroke `shell/Thread.module.css` starts at the descent's own x begins at the
+ * card's edge instead — this card has no descent for it to leave from, because
+ * its line has already closed above.
+ */
+.week {
+  align-self: stretch;
+  margin-top: var(--sc-spacing-big);
+  margin-inline-start: calc(-1 * var(--sc-thread-x));
+}
+
+/* The card renders settled: already drawn, already closed, already there. */
 @media (prefers-reduced-motion: reduce) {
-  .headline,
-  .subtitle {
-    animation: none;
+  .ring,
+  .hero,
+  .statement {
+    animation-name: none;
   }
 }

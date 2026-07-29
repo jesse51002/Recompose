@@ -1,34 +1,38 @@
 /*
- * Styles for ./ClassItemTime.tsx
- * (ports .../class_schedule/class_item/class_item_time.dart).
- * `--sc-*` only — see ../../ShowcaseThemeVars.tsx.
+ * Styles for ./ClassItemTime.tsx — when the class runs.
+ *
+ * Reads ONLY `--sc-*`. Never `--gw-*` / `--adm-*` (eslint Gates 2a/2b).
+ *
+ * NO NUMERIC `line-height` ANYWHERE NEAR THE FIGURE. The whole ramp lines at
+ * the font's own metrics (`/normal` is spelled out in every shorthand in
+ * ../../showcaseTokens.ts), and a line box shorter than the font's makes
+ * adjacent digit cells overlap through a count-up reel's clip — a bug
+ * ../../../romanahouse shipped once.
  */
 
-/* Inline form — `Text('$timeRange ($durationMinutes min)', style: p)`. */
+/* The compact form: the whole range and its duration, on one line. */
 .meta {
-  font: var(--sc-type-p);
-  letter-spacing: var(--sc-type-p-ls);
-  color: var(--sc-text);
+  display: block;
+  font: var(--sc-type-quiet);
+  letter-spacing: var(--sc-type-quiet-ls);
+  color: var(--sc-text-2nd);
 }
 
-/* `Column(start, spacing: spacingTiny)` — the gutter form. */
-.stacked {
+/*
+ * The lead form: the start time set as a figure over the rest of the range.
+ * `--sc-spacing-tiny` because the two are ONE object — the gap DOWN to the
+ * class's name is `--sc-spacing-small` and the gap on to the next class is
+ * `--sc-spacing-big`. Guardrail 13's grouping rule, in three steps.
+ */
+.lead {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--sc-spacing-tiny);
 }
 
-/* `Text(startTime, style: h3)`. */
-.start {
-  font: var(--sc-type-h3);
-  letter-spacing: var(--sc-type-h3-ls);
-  color: var(--sc-text);
-}
-
-/* `Text('$durationMinutes min', style: pSmall.copyWith(color: text2nd))`. */
-.duration {
-  font: var(--sc-type-p-small);
-  letter-spacing: var(--sc-type-p-small-ls);
+.tail {
+  font: var(--sc-type-quiet);
+  letter-spacing: var(--sc-type-quiet-ls);
   color: var(--sc-text-2nd);
 }

@@ -1,106 +1,230 @@
-/* The rank card. Every value reads a --sc-* token: a hard-coded colour here
-   would silently survive every generated theme. */
+/*
+ * Styles for ./RankShowcase.tsx — the celebration card where the thread closes.
+ *
+ * Reads ONLY `--sc-*` (plus the `--rank-*` motion values the component writes
+ * inline). A hard-coded colour here would silently survive every generated
+ * theme, and a px value typed at a call site would fall off the spacing scale.
+ *
+ * NO NUMERIC `line-height` ANYWHERE IN THIS FILE. The tally contains a
+ * CountUpText, and a line box shorter than the font's own makes adjacent digit
+ * cells overlap through the reel's clip — a bug ../romanahouse shipped once.
+ */
 
+/*
+ * THE HELD SHAPE. Three objects on one vertical axis, centred on the loop:
+ * the medallion inside the closing line, the rank it names, and the count.
+ *
+ * The gap BETWEEN them is the scale's largest rung and the gap INSIDE each of
+ * them is its smallest, which is the only thing telling a reader that "Rank
+ * achieved" belongs to "Blue Belt" and not to the number underneath it.
+ */
 .content {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--sc-spacing-big);
+  row-gap: var(--sc-spacing-big);
   width: 100%;
   height: 100%;
+  text-align: center;
 }
 
-/* The hero arrives large and centred, then settles — `rank_belt`'s third use.
-   Scale and opacity only: nothing translates, so the belt reads as arriving at
-   the member rather than sliding in from somewhere off-screen. */
-.hero {
+/*
+ * NOTHING ON THIS CARD MAY BE SQUASHED TO FIT. A flex item shrinks by default,
+ * and a shrunk <Loop> is not a smaller circle — it is an ELLIPSE, because its
+ * width is pinned inline and only its height would give. The card measures well
+ * inside its box, so this never fires; it is here because the failure it
+ * prevents would read as the design being wrong rather than as a layout being
+ * tight.
+ */
+.content > * {
+  flex-shrink: 0;
+}
+
+/*
+ * THE CLOSING OF THE LOOP IS THE ANIMATION, and it is drawn by SUBTRACTION.
+ *
+ * ./shell/Thread.tsx draws the ring as a border, which CSS gives no way to
+ * stroke on progressively. So the ring is there from the first frame and two
+ * canvas-coloured wedges sit on top of it, each clipped to one half of the
+ * circle and each pivoting about the circle's own centre. Rotating a wedge
+ * clockwise sweeps it out of its half, uncovering the stroke behind it — the
+ * right half from twelve o'clock round to six, then the left half from six back
+ * to twelve, so the line travels once round and meets itself.
+ *
+ * The box is inset NEGATIVELY by one `--sc-spacing-small` on every side: an
+ * absolutely positioned child is laid out in the PADDING box, which stops
+ * inside the ring's own border, and a wedge that stops there would leave a
+ * hairline of undrawn stroke at the extremes of its sweep. Four px of overhang
+ * costs nothing — everything outside the ring is canvas over canvas.
+ */
+.draw {
+  position: absolute;
+  top: calc(-1 * var(--sc-spacing-small));
+  right: calc(-1 * var(--sc-spacing-small));
+  bottom: calc(-1 * var(--sc-spacing-small));
+  left: calc(-1 * var(--sc-spacing-small));
+  pointer-events: none;
+}
+
+/*
+ * One half of the circle. `overflow: hidden` is what turns a rotating rectangle
+ * into a wedge: the part of it that has swung out of this half is simply
+ * clipped away, so the boundary between "covered" and "uncovered" is always a
+ * clean radius.
+ */
+.drawHalfRight {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 50%;
+  overflow: hidden;
+}
+
+.drawHalfLeft {
+  position: absolute;
+  top: 0;
+  right: 50%;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+/*
+ * The right wedge pivots on its LEFT edge, which is the circle's centre, and
+ * runs first — on an ease-IN sine, because a breath begins gently.
+ *
+ * LONGHANDS, and here the reason is not hygiene. A shorthand carrying one
+ * unresolvable var() is dropped whole, which would leave `animation-name: none`
+ * — the wedge frozen in its COVERING position and the ring invisible for good.
+ * Split, a missing duration degrades to 0s, the sweep completes on the first
+ * frame, and the worst case is a ring that did not animate.
+ */
+.wedgeRight {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: var(--sc-background);
+  transform-origin: left center;
+  animation-name: rank-sweep;
+  animation-duration: var(--rank-draw-half-ms);
+  animation-timing-function: cubic-bezier(0.12, 0, 0.39, 0);
+  animation-fill-mode: both;
+}
+
+/*
+ * The left wedge pivots on its RIGHT edge — the same centre — and runs second,
+ * on the ease-OUT sine that is the other half of the same curve. Composed, the
+ * two are one ease-in-out across the whole circle, so the line does not stall
+ * at six o'clock where they hand over. `both` is what holds this wedge in its
+ * covering position through the first half's delay.
+ */
+.wedgeLeft {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: var(--sc-background);
+  transform-origin: right center;
+  animation-name: rank-sweep;
+  animation-duration: var(--rank-draw-half-ms);
+  animation-timing-function: cubic-bezier(0.61, 1, 0.88, 1);
+  animation-fill-mode: both;
+  animation-delay: var(--rank-draw-half-ms);
+}
+
+/*
+ * The hero the line travels around. A layer ABOVE the wedges, which is what
+ * lets them pass behind it: they are opaque, and everything they cover inside
+ * this disc is covered again by the disc itself.
+ */
+.medallion {
+  position: relative;
+  z-index: 1;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 280px;
-  height: 280px;
-  animation: rank-arrive var(--rank-arrive-ms) cubic-bezier(0.19, 1, 0.22, 1) both;
 }
 
-.beltImg {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.caption {
+/* The rank and its sub-label — one object, the card's tightest gap. */
+.naming {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--sc-spacing-small);
-  animation: rank-settle var(--rank-settle-ms) ease-out both;
-  animation-delay: var(--rank-arrive-ms);
+  row-gap: var(--sc-spacing-small);
+  animation-name: rank-arrive;
+  animation-duration: var(--rank-settle-ms);
+  animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  animation-fill-mode: both;
+  animation-delay: var(--rank-draw-ms);
 }
 
-.rank {
-  font: var(--sc-type-h1);
-  letter-spacing: var(--sc-type-h1-ls);
-  color: var(--sc-text);
-  text-align: center;
-}
-
-.subtitle {
-  font: var(--sc-type-h2);
-  letter-spacing: var(--sc-type-h2-ls);
+.sub {
+  margin: 0;
+  font: var(--sc-type-quiet);
+  letter-spacing: var(--sc-type-quiet-ls);
   color: var(--sc-text-2nd);
-  text-align: center;
 }
 
+/*
+ * The count, and its label above it. Same delay as the naming block, not one
+ * beat behind it: the moment the loop closes is the moment the whole card is
+ * settled, which is what gives it a single unmistakable finish instead of a set
+ * of parts each arriving on its own schedule.
+ */
 .tally {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--sc-spacing-small);
-  animation: rank-settle var(--rank-settle-ms) ease-out both;
-  /* One beat behind the caption, so the two land in reading order. */
-  animation-delay: calc(var(--rank-arrive-ms) + var(--rank-settle-ms));
+  row-gap: var(--sc-spacing-small);
+  animation-name: rank-arrive;
+  animation-duration: var(--rank-settle-ms);
+  animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  animation-fill-mode: both;
+  animation-delay: var(--rank-draw-ms);
 }
 
-.tallyValue {
-  font: var(--sc-type-big1);
-  letter-spacing: var(--sc-type-big1-ls);
-  color: var(--sc-text);
-}
-
-.tallyLabel {
-  font: var(--sc-type-big2);
-  letter-spacing: var(--sc-type-big2-ls);
+/* A spoken label, in the body face at reading size. Never capitals, never tracked out. */
+.say {
+  margin: 0;
+  font: var(--sc-type-say);
+  letter-spacing: var(--sc-type-say-ls);
   color: var(--sc-text-2nd);
 }
 
+@keyframes rank-sweep {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(180deg);
+  }
+}
+
+/* Opacity only. Nothing here slides, and nothing here bounces. */
 @keyframes rank-arrive {
   from {
     opacity: 0;
-    transform: scale(0.6);
   }
   to {
     opacity: 1;
-    transform: scale(1);
   }
 }
 
-@keyframes rank-settle {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-/* The card must still READ with motion off — the entrance is how it arrives,
-   never whether it is there. */
+/*
+ * Reduced motion: the line is simply ALREADY DRAWN and the card is already
+ * settled. The wedges must go rather than merely stop animating — with no
+ * animation they would sit in their opening position and hide the ring
+ * outright, which is the failure mode of drawing by subtraction.
+ */
 @media (prefers-reduced-motion: reduce) {
-  .hero,
-  .caption,
+  .draw {
+    display: none;
+  }
+
+  .naming,
   .tally {
     animation: none;
   }

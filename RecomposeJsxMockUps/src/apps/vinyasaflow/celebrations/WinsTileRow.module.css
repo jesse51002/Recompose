@@ -1,23 +1,136 @@
 /*
- * Styles for ./WinsTileRow.tsx
- * (ports CRM/lib/showcase/celebrations/wins_tile_row.dart).
- * `--sc-*` only — see ../ShowcaseThemeVars.tsx.
+ * Styles for ./WinsTileRow.tsx — the thread's last excursion, and the stem that
+ * drops it out of the closed loop.
+ *
+ * `--sc-*` for the design tokens (see ../ShowcaseThemeVars.tsx); `--wr-*` for
+ * this row's own motion and `--wt-disc` for the circle size, all written inline
+ * by the component so no measurement or timing is restated as a literal here.
  */
 
-/* `Row(crossAxisAlignment: start, spacing: spacingMedium)`. */
+/*
+ * `justify-content: space-between` over content-sized wins, NOT three equal
+ * shares. A row of equal thirds is 119px wide per cell on a 390pt phone, and
+ * "3 weeks" set at the 32px figure rung very nearly fills that — so an equal
+ * grid puts the longest value one font revision away from wrapping mid-value.
+ * Spacing them apart instead lets each win be exactly as wide as what it says
+ * and hands every spare pixel to the gaps, which is the direction this package's
+ * spacing findings have always run (Guardrail 13: when in doubt, more gap).
+ */
 .row {
+  position: relative;
   display: flex;
   align-items: flex-start;
-  gap: var(--sc-spacing-medium);
+  justify-content: space-between;
+  width: 100%;
 }
 
 /*
- * `Expanded` — every tile takes an equal share of the row regardless of how
- * long its caption is. `flex-basis: 0` is what makes the share EQUAL rather
- * than proportional to content, and `min-width: 0` lets a long caption wrap
- * inside its share instead of widening it.
+ * THE STEM. The loop above has closed; this is the line leaving it and running
+ * down to the excursion, so the card is one continuous drawing rather than a
+ * ring with a row parked beneath it.
+ *
+ * It starts one `--sc-spacing-big` above this row — which is exactly the gap
+ * ../../WinsShowcase.module.css puts between the hero and here, so the stroke
+ * meets the loop's bottom edge — and ends on the strand, half a circle down.
  */
-.cell {
-  flex: 1 1 0;
-  min-width: 0;
+.stem {
+  position: absolute;
+  left: 50%;
+  top: calc(-1 * var(--sc-spacing-big));
+  /*
+   * `--sc-thread-width-over`, not `--sc-thread-width`. This is the SAME STROKE
+   * as the loop it leaves, and ./../shell/Thread.module.css draws that ring at
+   * the heavier of the two weights — a line that changed weight at the junction
+   * would read as two lines meeting rather than as one continuing.
+   */
+  width: var(--sc-thread-width-over);
+  height: calc(var(--sc-spacing-big) + var(--wt-disc) / 2);
+  background-color: var(--sc-primary);
+  /* It draws downward, out of the loop. */
+  transform-origin: top center;
+  pointer-events: none;
+  animation-name: wins-stem-draw;
+  animation-duration: var(--wr-stem-ms);
+  /*
+   * Soft at both ends. Every duration in this app is spelled as longhands: a
+   * shorthand carrying one unresolvable var() is dropped whole, which here
+   * would leave `animation-name: none` and freeze the stem at scale 0 — an
+   * invisible line, permanently. Split, a missing duration degrades to 0s and
+   * the worst case is a stroke that did not animate.
+   */
+  animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  animation-fill-mode: both;
+  animation-delay: var(--wr-stem-delay-ms);
+}
+
+/*
+ * THE STRAND. It runs at the circles' centre so it visibly THREADS them rather
+ * than underlining them, and it opens from the middle outward because that is
+ * where the stem lands.
+ *
+ * It is pulled `--sc-screen-padding-x` past both of its own edges: the card is
+ * inset by that token (../celebrations/CelebrationFrame.module.css's
+ * `centerHero`), and a line stopping at the inset would terminate mid-screen,
+ * which the brief forbids outright. Nothing in this surface's ancestry clips, so
+ * the overhang lands exactly on the screen edges.
+ */
+.strand {
+  position: absolute;
+  top: calc(var(--wt-disc) / 2);
+  left: calc(-1 * var(--sc-screen-padding-x));
+  right: calc(-1 * var(--sc-screen-padding-x));
+  /* The stem's weight, for the stem's reason — it is still the same stroke. */
+  height: var(--sc-thread-width-over);
+  background-color: var(--sc-primary);
+  transform-origin: center;
+  pointer-events: none;
+  animation-name: wins-strand-draw;
+  animation-duration: var(--wr-strand-ms);
+  animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  animation-fill-mode: both;
+  animation-delay: var(--wr-strand-delay-ms);
+}
+
+/*
+ * The stem keeps its own centring transform in both frames — a keyframe that
+ * animated `transform` without it would drop the centring on the first frame
+ * and swing the line half its width sideways.
+ */
+@keyframes wins-stem-draw {
+  from {
+    transform: translateX(-50%) scaleY(0);
+  }
+
+  to {
+    transform: translateX(-50%) scaleY(1);
+  }
+}
+
+/* The same for the strand: the -50% is what puts the line ON the circles' centre. */
+@keyframes wins-strand-draw {
+  from {
+    transform: translateY(-50%) scaleX(0);
+  }
+
+  to {
+    transform: translateY(-50%) scaleX(1);
+  }
+}
+
+/*
+ * Reduced motion: the line is simply ALREADY DRAWN. Both strokes must be held
+ * at their settled transform explicitly — `animation: none` alone would drop
+ * the centring the keyframes were carrying and leave each one offset by half
+ * its own width.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .stem {
+    animation: none;
+    transform: translateX(-50%);
+  }
+
+  .strand {
+    animation: none;
+    transform: translateY(-50%);
+  }
 }

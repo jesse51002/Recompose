@@ -1,38 +1,45 @@
-// Ports ../../../../../../CRM/lib/showcase/home_showcase.dart — an exact visual
-// clone of the member app's HOME screen (`HomeScreen` -> `HomeBody`): the
-// big-logo topbar, the date rail, and the day-by-day class schedule under the
-// themed bottom nav.
+// THE SCHEDULE, AND THE APP ASSET'S ROOT.
 //
-// A STATIC surface: nothing here animates, which is why it takes no loop knobs.
-// It DOES scroll (`bodyScroll`) — the schedule board is a multi-day list on a
-// real device, and previewing one clipped day would sell a shorter app than the
-// one being licensed. Every arrangement keeps that one scroller, `dayPager`
-// included: its pager rides INSIDE it rather than beside it (see
-// ./layouts/HomeDayPager.tsx).
+// Ports ../../../../../../CRM/lib/showcase/home_showcase.dart — the member app's
+// HOME screen (`HomeScreen` -> `HomeBody`) — rebuilt in this fork's world. The
+// thread enters at the brand mark, bows sideways through the four things the
+// member carries, bows again through the five days of the window, and then runs
+// down the schedule putting a node beside every class before leaving through the
+// four destinations at the foot. Nothing on this screen is beside the line;
+// everything is on it.
 //
-// WHICH ARRANGEMENT IT RENDERS is the tenant's `home_format` slot, resolved by
-// `useFormat` in the store's own order — the preview override, then the theme's
-// classified pick, then `agendaList`, the value that ships. The topbar is built
-// here and handed DOWN, because it is the same in every arrangement: its own
-// layout is the tenant's `app_shell_format`, not home's, so no home layout has
-// any business changing what it is given.
+// A STATIC SURFACE: nothing here animates, which is why it takes no loop knobs.
+// It DOES scroll (`bodyScroll`) — the schedule is a multi-day board on a real
+// device, and previewing one clipped day would sell a shorter app than the one
+// being licensed.
+//
+// THE FORMAT SWITCH IS GONE. The base resolved a tenant's `home_format` slot to
+// one of five arrangements; a bounded option set reproduces the platform's own
+// design language, which is a reskin, so the machinery was removed from this
+// package (../../../CLAUDE.md, "One layout and one animation per asset"). There
+// is one schedule here and it is this one.
 //
 // `gymName` / `gymLogoSrc` are the HOST's gym identity and are NOT customization
-// slots — a theme pick must never rename the mock. `themeTabPreview` selects the
-// topbar's middle logo rung (see ../support/ShowcaseTopbar.tsx).
+// slots — a theme pick must never rename the mock. `themeTabPreview` arms the
+// middle rung of the mark's logo ladder (see ../shell/Head.tsx).
 
+import { Head } from '../shell/Head';
+import { Screen } from '../shell/Screen';
+import { ThreadNav } from '../shell/ThreadNav';
 import type { ShowcaseClassInfo } from '../showcaseContent';
-import { ShowcaseBottomNav } from '../support/ShowcaseBottomNav';
-import { ShowcaseScaffold } from '../support/ShowcaseScaffold';
-import { ShowcaseTopbar } from '../support/ShowcaseTopbar';
 
-import { HomeAgendaList } from './layouts/HomeAgendaList';
+import { DateRow } from './DateRow';
+import { DayClassGroup } from './DayClassGroup';
+import styles from './HomeShowcase.module.css';
+import { DAY_OFFSETS, dayAt } from './homeScheduleGenerator';
 
-// Dummy non-identity data: the streak / points / rank chips in the info bar.
-// Gym name + logo come from the host.
-const RANK_BADGE_ASSET = 'icon_rank_belt.png' as const;
+// Dummy non-identity data: two of the four things the member carries. The rank
+// belt and the QR pass resolve their own generated slots inside <Head>.
 const STREAK_DAYS = 3;
 const POINTS_LABEL = '3.4k';
+
+/** The day the member is standing in. Offset 0 is today. */
+const CURRENT_DAY = 0;
 
 export interface HomeShowcaseProps {
   gymName?: string;
@@ -50,25 +57,30 @@ export function HomeShowcase({
   themeTabPreview = false,
 }: HomeShowcaseProps) {
   return (
-    <ShowcaseScaffold
-      horizontalPadding="none"
+    <Screen
+      head={
+        <Head
+          gymName={gymName}
+          gymLogoSrc={gymLogoSrc}
+          themeTabPreview={themeTabPreview}
+          streakDays={STREAK_DAYS}
+          pointsLabel={POINTS_LABEL}
+        />
+      }
+      foot={<ThreadNav selected="home" />}
       bodyScroll
-      bottomNav={<ShowcaseBottomNav selected="home" />}
     >
-      <HomeAgendaList
-        classes={classes}
-        topbar={
-          <ShowcaseTopbar
-            mode="bigLogo"
-            gymName={gymName}
-            logoSrc={gymLogoSrc}
-            streakDays={STREAK_DAYS}
-            pointsLabel={POINTS_LABEL}
-            rankBadgeAsset={RANK_BADGE_ASSET}
-            themeTabPreview={themeTabPreview}
+      <div className={styles.board}>
+        <DateRow dayOffsets={DAY_OFFSETS} currentDayIndex={CURRENT_DAY} />
+        {DAY_OFFSETS.map((offset) => (
+          <DayClassGroup
+            key={offset}
+            day={dayAt(offset, classes)}
+            isToday={offset === CURRENT_DAY}
+            showBookings={false}
           />
-        }
-      />
-    </ShowcaseScaffold>
+        ))}
+      </div>
+    </Screen>
   );
 }

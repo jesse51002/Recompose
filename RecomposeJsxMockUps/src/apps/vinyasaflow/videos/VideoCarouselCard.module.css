@@ -1,83 +1,34 @@
 /*
- * Styles for ./VideoCarouselCard.tsx (ports MobileApp/lib/features/videos/
- * presentation/widgets/gym_video_carousel_card.dart + `VideoCardSize`).
+ * Styles for ./VideoCarouselCard.tsx — one film on a shelf.
  * `--sc-*` only — see ../ShowcaseThemeVars.tsx.
- *
- * `VideoCardSize.md` IS THE BASE RULE, not a modifier: it is Dart's own default
- * value and the card the shipped horizontal rows render, so `.card` /
- * `.thumbFrame` below are the 258x145 card verbatim and the other three sizes
- * are overrides on top. Writing it the other way round would have changed the
- * class list on the one shape ./__tests__/videosFormats.test.tsx pins byte for
- * byte against the arrangement that ships.
  */
 
 /*
- * `SizedBox(width: _kCardWidth) > Container(color: card, borderRadius:
- * radiusSmall, clipBehavior: Clip.hardEdge) > Column(stretch, spacing:
- * spacingLarge)`.
+ * A COLUMN, NOT A CARD: no background, no border, no radius, no clip. The frame
+ * inside it is the only rectangle, and the two lines hang under it.
  *
- * `flex: 0 0 auto` is what keeps the 258 fixed inside the carousel's flex row —
- * without it the cards would share the row's width and shrink as the feed grows.
+ * WHY 192 IS A REAL NUMBER AND NOT A TASTE CALL. `StripPhoto`
+ * (../shell/Photo.module.css) gives every frame the same 108px HEIGHT and
+ * derives its width, so a 16:9 still lands at exactly 108 x 16 / 9 = 192 and a
+ * 4:3 one at 144. Fixing the column at the 16:9 width means the text measure is
+ * identical down the shelf — a squarer frame simply sits narrower inside its
+ * own column rather than dragging its caption in with it — and no frame is ever
+ * resized to match a neighbour. That is the whole reason this design fixes one
+ * axis: the four generated slots are NOT one ratio, and cropping to make them
+ * agree would eat the titles burnt into them.
+ *
+ * `flex: 0 0 auto` keeps the width fixed inside the bow's flex row; without it
+ * the columns would share the row and shrink as a genre grows. `align-self:
+ * stretch` overrides the bow's own `align-items: center` so every card in the
+ * row starts at the same top edge — otherwise a one-line title and a two-line
+ * one would sit at different heights and the strip would go ragged.
  */
 .card {
   flex: 0 0 auto;
-  width: 258px;
+  align-self: stretch;
+  width: 192px;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  gap: var(--sc-spacing-large);
-  background: var(--sc-card);
-  border-radius: var(--sc-radius-small);
-  overflow: hidden;
-}
-
-/*
- * `lg` / `tile` / `tall` — the width-filling sizes. Dart expresses this by
- * simply NOT wrapping the card in a `SizedBox`; the CSS equivalent has to undo
- * the fixed width the base rule sets.
- */
-.fill {
-  width: 100%;
-}
-
-/* `SizedBox(height: _kThumbHeight)` over the cover image. */
-.thumbFrame {
-  flex: 0 0 auto;
-  height: 145px;
-  background: var(--sc-card);
-  overflow: hidden;
-}
-
-/*
- * `AspectRatio(aspectRatio: 16 / 9)`.
- *
- * 16:9, ALWAYS — the Dart's own comment, and it is load-bearing: YouTube serves
- * thumbnails at a fixed aspect, so a card that re-proportions the artwork
- * either crops the subject or letterboxes it. A size may make the CARD taller
- * (`tall` does, by riding a caption band over the image); the image itself is
- * not a free variable.
- */
-.thumbRatio {
-  height: auto;
-  aspect-ratio: 16 / 9;
-}
-
-/*
- * `_Captioned` — `Stack[thumbnail, Positioned(bottom: the caption band)]`. The
- * card surface sits BEHIND the artwork, not just around it: a thumbnail that is
- * still loading (or gone) has to leave a card, not a hole in the column.
- */
-.tall {
-  position: relative;
-  gap: 0;
-}
-
-/* `Positioned(left: 0, right: 0, bottom: 0) > ColoredBox(popup) > Padding(spacingMedium)`. */
-.caption {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: var(--sc-spacing-medium);
-  background: var(--sc-popup);
+  align-items: flex-start;
+  gap: var(--sc-spacing-medium);
 }

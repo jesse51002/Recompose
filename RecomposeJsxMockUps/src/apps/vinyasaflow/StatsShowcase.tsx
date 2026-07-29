@@ -1,49 +1,75 @@
-// Ports ../../../../../CRM/lib/showcase/stats_showcase.dart — an exact visual
-// clone of the member app's post-class STREAK celebration (`StreakScreen` /
-// `StreakBody`): a ring of small streak icons expands, spins and collapses back
-// to the centre, the big streak icon pops up in its place and fades out, and
-// then the week count, the caption and the week strip cascade in. It loops.
+// CELEBRATION CARD 1 OF 5 — the streak, rebuilt in this fork's world.
 //
-// TWO VIEWS, ONE SWITCH — the same shape as `_StatsShowcaseState`: the orbit
-// runs for its own timeline, hands over to the stats statement, which holds for
-// `_kStatsHold` before the whole thing restarts with a bumped `_cycle`. The
-// cycle re-keys the orbit, which is what makes it replay; here it also re-keys
-// the stats block so its CSS entrances replay with it.
+// ONE HELD SHAPE. ../layout_brief.yaml: "The celebration is where the thread
+// closes… the thread draws itself around that card's hero, comes round, and
+// CLOSES into a loop — the only place in the app where the line completes
+// rather than continuing off the edge. The hero sits inside the loop, its
+// figure set large and light beneath, and the card's action waits at the foot,
+// inside the thread's final curve, in the space it will occupy from the first
+// frame so its arrival never moves anything."
 //
-// WHY THE ORBIT IS THE ONE rAF DRIVER IN THIS ISLAND. Every other entrance is
-// one element tweening between fixed endpoints, which is a keyframe. The ring
-// is not: eight icons share ONE clock and one radius that grows and then
-// collapses, and their positions are `cos/sin(spin + i·2π/8) · radius` — a
-// value that has to be recomputed per frame from that clock. So the driver
-// writes `transform` straight to the elements' refs and never through React
-// state: eight particles at 60fps must not cost eight re-renders. The maths
-// itself is in ./streakOrbit.ts, where it can be asserted.
+// So this card is, top to bottom: the closing loop with the streak icon inside
+// it; the week count set very large and light with its spoken label beneath;
+// what the class was worth; and the week gathered on one last sideways
+// excursion of the line. The action beneath it belongs to ./celebrationAsset.tsx
+// and is laid out from the first frame, which is why nothing here reflows when
+// it appears.
 //
-// The stats half needs none of that and gets none: the count-up drives itself
-// (./celebrations/CountUpText.tsx), and the caption and week strip are CSS.
+// THE BASE'S "TWO VIEWS, ONE SWITCH" IS GONE. It ran an orbit of eight icons on
+// its own timeline, then swapped the whole subtree for a stats statement. This
+// card never swaps: every part is mounted from the first frame and arrives by
+// being DRAWN, on delays measured off one clock in ./streakOrbit.ts. That is
+// the brief's own rule — "each region arrives at the moment the line reaches
+// it… If the line has not reached a thing yet, that thing is not there yet" —
+// and it is also what makes the card impossible to catch mid-reflow.
+//
+// NO rAF DRIVER, AND NO `CelebrationFrame`. The orbit needed the first (eight
+// particles on one shared radius); the ring's own travel is a single property
+// over a single clock, which is what keyframes are for. The frame went with the
+// orbit: it composes `support/ShowcaseScaffold`, which `shell/` replaces.
+//
+// The only rAF left is inside ./celebrations/CountUpText.tsx, which drives
+// itself.
 
-import { useEffect, useRef, useState } from 'react';
-import { CelebrationTimings, EASE_OUT_QUART, ThemedImage } from 'recompose-react';
+import { useEffect, useState } from 'react';
+import { ThemedImage } from 'recompose-react';
 
-import { CelebrationFrame } from './celebrations/CelebrationFrame';
 import { CountUpText } from './celebrations/CountUpText';
+import { Figure } from './shell/Figure';
+import { Loop } from './shell/Thread';
 import { showcaseAsset } from './showcaseAssets';
 import { SLOT_STREAK_ICON } from './showcaseSlots';
 import { showcaseStyle } from './showcaseTokens';
 import type { ShowcaseStreakDay } from './support/StreakWeekStrip';
 import { StreakWeekStrip } from './support/StreakWeekStrip';
 import styles from './StatsShowcase.module.css';
-import { ORBIT_COUNT, ORBIT_TOTAL_MS, STATS_HOLD_MS, orbitFrame, orbitLayout, orbitOffset } from './streakOrbit';
+import {
+  BREATH,
+  COUNT_ROLL_MS,
+  CYCLE_MS,
+  HERO_FADE_MS,
+  HERO_HEIGHT_PX,
+  LOOP_DRAW_MS,
+  LOOP_PX,
+  SETTLE_MS,
+  STATEMENT_FADE_MS,
+} from './streakOrbit';
 import { usePrefersReducedMotion } from './usePrefersReducedMotion';
 
-// Dummy data — a clone of MobileApp's `mockStreakStats`. Not a customization
+// Dummy data — a clone of MobileApp's `buildStreakStats`. Not a customization
 // slot, and not a member's real numbers.
 /** `_kWeekCount`. */
 const WEEK_COUNT = 3;
-/** `_kSubtitle`. */
-// `buildStreakStats`: the subtitle is what the class was WORTH, not a sentence
-// about it. The old value came from `mock_stats.dart`'s dormant demo constant.
-const SUBTITLE = '+160 points';
+/** What the count is a count OF. Sentence case, like every label in this app. */
+const WEEK_UNIT = 'week streak';
+/**
+ * `_kSubtitle`, split at the space so the FIGURE can take the display face and
+ * the word can take the body face — the brief gives every number the app counts
+ * to the display slot, and this is one. The rendered string is unchanged:
+ * "+160 points".
+ */
+const SUBTITLE_FIGURE = '+160';
+const SUBTITLE_UNIT = 'points';
 /** `_kWeekDays`. */
 const WEEK_DAYS: readonly ShowcaseStreakDay[] = Object.freeze([
   Object.freeze({ label: 'S', completed: false }),
@@ -55,20 +81,17 @@ const WEEK_DAYS: readonly ShowcaseStreakDay[] = Object.freeze([
   Object.freeze({ label: 'S', completed: false }),
 ]);
 
-/** `subtitleDelay` — the caption waits out the whole count-up roll. */
-export const SUBTITLE_DELAY_MS = CelebrationTimings.countUpMs;
-/** `stripDelay` — one standard stagger after that. */
-export const STRIP_DELAY_MS = SUBTITLE_DELAY_MS + CelebrationTimings.revealStaggerMs;
-
-/** `StaggeredReveal.offset` — the slide a reveal travels, in px. */
-const REVEAL_OFFSET_PX = 12;
-
-/** The motion values the stats stylesheet reads. Theme-independent. */
-const STATS_VARS: Readonly<Record<string, string>> = Object.freeze({
-  '--st-reveal-ms': `${String(CelebrationTimings.revealMs)}ms`,
-  '--st-reveal-offset': `${String(REVEAL_OFFSET_PX)}px`,
-  '--st-subtitle-delay-ms': `${String(SUBTITLE_DELAY_MS)}ms`,
-  '--st-ease': EASE_OUT_QUART,
+/**
+ * The motion and the two art measurements the stylesheet reads.
+ * Theme-independent, so a module constant rather than a hook.
+ */
+const CARD_VARS: Readonly<Record<string, string>> = Object.freeze({
+  '--st-draw-ms': `${String(LOOP_DRAW_MS)}ms`,
+  '--st-hero-ms': `${String(HERO_FADE_MS)}ms`,
+  '--st-settle-ms': `${String(SETTLE_MS)}ms`,
+  '--st-statement-ms': `${String(STATEMENT_FADE_MS)}ms`,
+  '--st-hero-h': `${String(HERO_HEIGHT_PX)}px`,
+  '--st-breath': BREATH,
 });
 
 export interface StatsShowcaseProps {
@@ -79,138 +102,79 @@ export interface StatsShowcaseProps {
 export function StatsShowcase({ loop = true, onCycleComplete }: StatsShowcaseProps) {
   const reduceMotion = usePrefersReducedMotion();
   const [cycle, setCycle] = useState(0);
-  const [showStats, setShowStats] = useState(false);
 
   useEffect(() => {
-    if (reduceMotion) return;
-    // `_ctrl.forward().whenComplete(widget.onComplete)` → `_toStats`.
-    const toStats = window.setTimeout(() => {
-      setShowStats(true);
-    }, ORBIT_TOTAL_MS);
-    // `_hold = Timer(_kStatsHold, _restart)`, armed by `_toStats`. Collapsed
-    // into one absolute deadline here so the pair re-arms as a unit each cycle.
-    const restart = window.setTimeout(() => {
+    // GUARDRAIL 5, AND THIS FILE IS WHERE IT SHIPPED AS A BUG. The callback
+    // fires BEFORE the early return, not after it. Under a reduced-motion
+    // preference "the line is simply already drawn, every card is already
+    // settled, and every action is already present" — and the flow only reveals
+    // this card's action when the callback lands, so returning first left the
+    // celebration with no way off it at all.
+    if (reduceMotion) {
       onCycleComplete?.();
-      if (!loop) return;
-      setShowStats(false);
-      setCycle((current) => current + 1);
-    }, ORBIT_TOTAL_MS + STATS_HOLD_MS);
+      return;
+    }
+
+    // The loop closes → the card is settled → its action appears. One deadline,
+    // not a chain of them.
+    const settle = window.setTimeout(() => {
+      onCycleComplete?.();
+    }, SETTLE_MS);
+
+    // Standalone only. In the flow `loop` is false and the card holds where it
+    // landed. `cycle` re-keys the card below, which is what replays the CSS.
+    const restart = loop
+      ? window.setTimeout(() => {
+          setCycle((current) => current + 1);
+        }, CYCLE_MS)
+      : 0;
+
     return () => {
-      window.clearTimeout(toStats);
+      window.clearTimeout(settle);
       window.clearTimeout(restart);
     };
-    // `cycle` is the dependency that re-arms the pair: `_restart` bumps it, the
-    // effect tears down and re-runs, and the orbit below remounts on its key.
   }, [cycle, loop, reduceMotion, onCycleComplete]);
 
-  // Reduced motion goes straight to the finished statement: the orbit is pure
-  // motion, so there is no "end state" of it worth rendering.
-  const settled = showStats || reduceMotion;
-
   return (
-    // The celebration's arrangement — `PostClassScaffold`, resolved from the
-    // tenant's `celebration_format` (./celebrations/CelebrationFrame.tsx).
-    //
-    // `bleed` is the one asymmetry this screen ships and it is carried through
-    // rather than tidied away: the orbit is a bare `SizedBox.expand` while the
-    // statement sits inside a `Padding(vertical: spacingBig)`
-    // (stats_showcase.dart:95), so only the statement takes the arrangement's
-    // vertical inset. `centerHero` has to render exactly what ships today.
-    <CelebrationFrame bleed={!settled}>
-      {settled ? <StatsContent key={cycle} /> : <StreakOrbit key={cycle} />}
-    </CelebrationFrame>
-  );
-}
-
-/** The eight orbiting icons plus the big centre one — `_StreakOrbit`. */
-function StreakOrbit() {
-  const rootRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const root = rootRef.current;
-    if (root === null) return;
-    const orbits = [...root.querySelectorAll<HTMLElement>('[data-orbit-index]')];
-    const centre = root.querySelector<HTMLElement>('[data-orbit-centre]');
-    if (centre === null) return;
-
-    // `LayoutBuilder(constraints)`. `clientWidth/Height` and not
-    // `getBoundingClientRect`, because ../widgets/PhoneFrame.tsx scales the
-    // whole device with a CSS transform and only the former reports the
-    // LAYOUT pixels the Dart constraints are quoted in.
-    const layout = orbitLayout(root.clientWidth, root.clientHeight);
-    for (const element of orbits) {
-      element.style.width = `${String(layout.orbitSize)}px`;
-      element.style.height = `${String(layout.orbitSize)}px`;
-    }
-    centre.style.width = `${String(layout.iconSize)}px`;
-    centre.style.height = `${String(layout.iconSize)}px`;
-
-    let raf = 0;
-    let startMs = 0;
-    const frame = (now: number): void => {
-      if (startMs === 0) startMs = now;
-      const elapsed = Math.min(now - startMs, ORBIT_TOTAL_MS);
-      const f = orbitFrame(elapsed, layout.maxRadius);
-      orbits.forEach((element, index) => {
-        const { x, y } = orbitOffset(index, f.spin, f.radius);
-        element.style.transform = `translate(-50%, -50%) translate(${String(x)}px, ${String(y)}px)`;
-        // `Opacity(opacity: opacity.clamp(0, 1))` — Dart reuses the radius
-        // factor as the ring's opacity, so the icons fade with the collapse.
-        element.style.opacity = String(f.radiusFactor < 0 ? 0 : f.radiusFactor > 1 ? 1 : f.radiusFactor);
-      });
-      centre.style.transform = `translate(-50%, -50%) scale(${String(f.iconScale)})`;
-      centre.style.opacity = String(f.iconOpacity);
-      if (elapsed < ORBIT_TOTAL_MS) raf = requestAnimationFrame(frame);
-    };
-    raf = requestAnimationFrame(frame);
-    return () => {
-      cancelAnimationFrame(raf);
-    };
-  }, []);
-
-  return (
-    // `SizedBox.expand > Stack(alignment: center)`. Everything starts at
-    // opacity 0, which is what the driver's own frame 0 resolves to — so the
-    // first painted frame is already correct with no transform written yet.
-    <div ref={rootRef} className={styles.orbit}>
-      {Array.from({ length: ORBIT_COUNT }, (_, index) => (
-        <div key={index} className={styles.orbitIcon} data-orbit-index={index} style={{ opacity: 0 }}>
-          <StreakIcon />
+    <div className={styles.card} style={showcaseStyle(CARD_VARS)}>
+      {/* Re-keyed per cycle so every CSS entrance below replays with it. */}
+      <div key={cycle} className={styles.held}>
+        <div className={styles.halo}>
+          {/*
+            The ring is childless and the hero is its SIBLING, stacked on it by
+            the grid. That is deliberate: `.ring` carries the conic mask that
+            draws the line round, and a mask applies to an element's children
+            too — so a hero passed as `<Loop>`'s child would be swept away and
+            drawn back with it.
+          */}
+          <div className={styles.ring}>
+            <Loop size={LOOP_PX} />
+          </div>
+          <ThemedImage
+            className={styles.hero}
+            slot={SLOT_STREAK_ICON}
+            fallbackSrc={showcaseAsset('streak_icon.png')}
+            alt=""
+          />
         </div>
-      ))}
-      <div className={styles.orbitCentre} data-orbit-centre="" style={{ opacity: 0 }}>
-        <StreakIcon />
-      </div>
-    </div>
-  );
-}
 
-/** `_image` — the theme's `streak_icon` over the bundled fallback. */
-function StreakIcon() {
-  return (
-    <ThemedImage
-      className={styles.streakImg}
-      slot={SLOT_STREAK_ICON}
-      fallbackSrc={showcaseAsset('streak_icon.png')}
-      alt=""
-    />
-  );
-}
+        <div className={styles.statement}>
+          <div className={styles.headline}>
+            <Figure size="xl" className={styles.count}>
+              <CountUpText target={WEEK_COUNT} durationMs={COUNT_ROLL_MS} delayMs={SETTLE_MS} />
+            </Figure>
+            <p className={styles.unit}>{WEEK_UNIT}</p>
+          </div>
+          <p className={styles.points}>
+            <Figure size="xs">{SUBTITLE_FIGURE}</Figure>
+            <span className={styles.pointsUnit}>{SUBTITLE_UNIT}</span>
+          </p>
+        </div>
 
-/** `_StatsContent` — `Column(min, spacing: spacingLarge)`. */
-function StatsContent() {
-  return (
-    <div className={styles.stats} style={showcaseStyle(STATS_VARS)}>
-      {/* `StaggeredReveal` over a `Column(min)` with NO spacing of its own. */}
-      <div className={styles.headline}>
-        <span className={styles.count}>
-          <CountUpText target={WEEK_COUNT} />
-        </span>
-        <span className={styles.unit}>week streak</span>
+        <div className={styles.week}>
+          <StreakWeekStrip days={WEEK_DAYS} baseDelayMs={SETTLE_MS} />
+        </div>
       </div>
-      {/* `StaggeredReveal(delay: subtitleDelay)` over `p` at `text2nd`. */}
-      <p className={styles.subtitle}>{SUBTITLE}</p>
-      <StreakWeekStrip days={WEEK_DAYS} baseDelayMs={STRIP_DELAY_MS} />
     </div>
   );
 }

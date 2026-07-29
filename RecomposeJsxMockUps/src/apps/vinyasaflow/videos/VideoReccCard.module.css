@@ -1,10 +1,21 @@
 /*
- * Styles for ./VideoReccCard.tsx
- * (ports MobileApp/lib/shared/widgets/video_recc_card/video_recc_card.dart).
+ * Styles for ./VideoReccCard.tsx — the hero: a frame, and what is said under it.
  * `--sc-*` only — see ../ShowcaseThemeVars.tsx.
+ *
+ * NO BOX ANYWHERE IN THIS FILE. There is no card surface, no radius, no rule
+ * and no tinted container, because a box would be a fourth form in a design
+ * built from three (../layout_brief.yaml). The picture is the rectangle; the
+ * words hang off the line.
  */
 
-/* `Column(mainAxisSize: min, crossAxisAlignment: stretch, spacing: spacingLarge)`. */
+/*
+ * `Column(mainAxisSize: min, crossAxisAlignment: stretch)`.
+ *
+ * `--sc-spacing-large` from the picture to the words, against
+ * `--sc-spacing-small` between the title and its channel inside `.creatorText`.
+ * That ratio is the grouping: the three lines beneath belong to each other more
+ * than they belong to the frame above them.
+ */
 .card {
   display: flex;
   flex-direction: column;
@@ -13,29 +24,36 @@
 }
 
 /*
- * `AspectRatio(aspectRatio: 16 / 9)`. The `card` fill is Dart's
- * `errorBuilder: ColoredBox(color: card)` — it shows through while the
- * thumbnail loads and stays put when the URL is dead, because the <img> is
- * removed on error rather than left as a broken box.
+ * Everything spoken, held at the thread's own inset so it lines up with every
+ * other region's content on the screen. The picture above it is the only thing
+ * on this screen that ignores that inset, which is what makes it read as the
+ * subject rather than as the first row of a list.
  */
-.thumbFrame {
-  aspect-ratio: 16 / 9;
-  background: var(--sc-card);
-  overflow: hidden;
-}
-
-/* `Padding(horizontal: paddingSmall) > Row(center, spacing: spacingMedium)`. */
-.creatorRow {
+.below {
+  padding-left: var(--sc-thread-inset);
+  padding-right: var(--sc-screen-padding-x);
   display: flex;
-  align-items: center;
-  gap: var(--sc-spacing-medium);
-  padding-inline: var(--sc-padding-small);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sc-spacing-large);
 }
 
 /*
- * `Expanded(child: Column(start, spacing: spacingMedium))`. `min-width: 0` is
- * what makes the flex child behave like `Expanded` — without it a long title
- * refuses to shrink and pushes the avatar out of the card.
+ * `Row(spacing: spacingMedium)`. Top-aligned rather than centred: a title that
+ * wraps to two lines would otherwise drag the avatar down to the middle of the
+ * block and break the line the two share with the frame's left edge.
+ */
+.creatorRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sc-spacing-medium);
+  align-self: stretch;
+}
+
+/*
+ * `Expanded(child: Column(start))`. `min-width: 0` is what makes the flex child
+ * behave like `Expanded` — without it a long title refuses to shrink and pushes
+ * the avatar off the screen.
  */
 .creatorText {
   flex: 1 1 auto;
@@ -43,14 +61,13 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--sc-spacing-medium);
+  gap: var(--sc-spacing-small);
 }
 
 /*
- * `Text(title, style: h2)`. Dart wraps freely here (no maxLines), but a real
- * feed carries the occasional 84-character title and three lines of h2 would
- * unbalance the hero against the carousels below it, so the port caps at two —
- * the same reserve ../rewards/RewardCard.tsx makes for its own titles.
+ * The name of the thing. Dart wraps freely here (no maxLines), but the shared
+ * pool carries the occasional 84-character title and three lines of this would
+ * unbalance the hero against the shelves below it, so the port caps at two.
  */
 .title {
   display: -webkit-box;
@@ -58,14 +75,32 @@
   -webkit-line-clamp: 2;
   line-clamp: 2;
   overflow: hidden;
-  font: var(--sc-type-h2);
-  letter-spacing: var(--sc-type-h2-ls);
+  font: var(--sc-type-name);
+  letter-spacing: var(--sc-type-name-ls);
   color: var(--sc-text);
 }
 
-/* `Text(metaLabel, style: p.copyWith(color: text2nd))`. */
-.meta {
-  font: var(--sc-type-p);
-  letter-spacing: var(--sc-type-p-ls);
+/* The meta beneath a name — quieter by scale and by ink, never by case. */
+.channel {
+  font: var(--sc-type-quiet);
+  letter-spacing: var(--sc-type-quiet-ls);
+  color: var(--sc-text-2nd);
+}
+
+/*
+ * The count. Baseline-aligned so the display face's figure and the body sans'
+ * unit sit on one line rather than on two boxes' centres — which is the whole
+ * reason a figure and its unit read as one quantity.
+ */
+.views {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: var(--sc-spacing-small);
+}
+
+.viewsLabel {
+  font: var(--sc-type-quiet);
+  letter-spacing: var(--sc-type-quiet-ls);
   color: var(--sc-text-2nd);
 }

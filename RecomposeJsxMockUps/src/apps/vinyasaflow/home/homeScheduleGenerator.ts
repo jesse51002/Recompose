@@ -17,6 +17,29 @@ import { SLOT_CLASS_PHOTOS, slotAt } from '../showcaseSlots';
 import type { ShowcaseClass, ShowcaseDay } from './homeClass';
 import { SHOWCASE_CLASSES } from './homeClass';
 
+/**
+ * The preview's own window: one circle on the week's bow and one day region per
+ * day.
+ *
+ * WHY FIVE DAYS AND NOT FOURTEEN. `HomeState.initialWindowDays` is 14 and the
+ * board extends to 60 as the member scrolls — a server-paged window this
+ * preview has no server for. Five days is several viewports of real board:
+ * enough to show the screen is deep, short enough that stepping to the next
+ * preview screen never means scrolling past forty identical rows.
+ *
+ * It lives HERE rather than in a `layouts/` module because there is one home
+ * arrangement, not a vocabulary of them: the format-slot machinery the base
+ * carried was tested and rejected (../../../CLAUDE.md, "One layout and one
+ * animation per asset"), and this window is a property of the schedule the
+ * generator builds.
+ */
+export const VISIBLE_DAYS = 5;
+
+/** `0, 1, … VISIBLE_DAYS - 1` — the day offsets the board covers. */
+export const DAY_OFFSETS: readonly number[] = Object.freeze(
+  Array.from({ length: VISIBLE_DAYS }, (_, offset) => offset),
+);
+
 /** `_weekdayAbbr` — indexed by Dart's `DateTime.weekday` (1 = Monday). */
 const WEEKDAY_ABBR: readonly string[] = Object.freeze([
   '',

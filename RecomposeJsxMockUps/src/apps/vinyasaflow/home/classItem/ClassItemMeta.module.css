@@ -1,52 +1,46 @@
 /*
- * Styles for ./ClassItemMeta.tsx
- * (ports .../class_schedule/class_item/class_item_meta.dart).
- * `--sc-*` only — see ../../ShowcaseThemeVars.tsx.
+ * Styles for ./ClassItemMeta.tsx — the text of a class row.
+ *
+ * Reads ONLY `--sc-*`. Never `--gw-*` / `--adm-*` (eslint Gates 2a/2b).
  *
  * The COLUMN BOX is not here: it is the treatment's (see the component header).
- * These are the lines inside it, identical in all five treatments.
+ * These are the lines inside it, identical in both.
  */
 
-/* `Text(classData.name, style: h3)`. */
+/* The name of the class. The body face, at the register a thing in a list gets. */
 .name {
-  font: var(--sc-type-h3);
-  letter-spacing: var(--sc-type-h3-ls);
+  display: block;
+  font: var(--sc-type-name);
+  letter-spacing: var(--sc-type-name-ls);
   color: var(--sc-text);
 }
 
-/* `Text(classData.mentor, style: p.copyWith(color: text2nd))`. */
-.mentor {
-  font: var(--sc-type-p);
-  letter-spacing: var(--sc-type-p-ls);
+/*
+ * Who is teaching it, and how many are going. One line each.
+ *
+ * THEY ARE NOT SET SIDE BY SIDE, and that was measured rather than preferred: a
+ * compact row leaves ~206px beside its photograph, and "Coach Marcus Reyes" plus
+ * a separator plus "24 attending" lands within a couple of pixels of that — so
+ * some rows would wrap and some would not, on the same screen, depending on how
+ * long a tenant's instructor happens to be named. Stacking them is the version
+ * that looks the same for every tenant, and this design has the vertical room
+ * to spend.
+ */
+.quiet {
+  display: block;
+  font: var(--sc-type-quiet);
+  letter-spacing: var(--sc-type-quiet-ls);
   color: var(--sc-text-2nd);
 }
 
-/* `_BookedMark` — `Row(min, spacing: spacingSmall)`, `h3` at `text`. */
+/*
+ * The booked mark. Full ink rather than a second colour: this design spends
+ * sage on things already earned as a FILL, and a line of running copy is not
+ * a fill (both brand colours fail AA as ink on the linen canvas).
+ */
 .booked {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sc-spacing-small);
-  font: var(--sc-type-h3);
-  letter-spacing: var(--sc-type-h3-ls);
+  display: block;
+  font: var(--sc-type-quiet);
+  letter-spacing: var(--sc-type-quiet-ls);
   color: var(--sc-text);
-}
-
-.bookedIcon {
-  flex: 0 0 auto;
-  color: var(--sc-text);
-}
-
-/* `_Attendees` — the same row at `p` / `text2nd`. */
-.attending {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sc-spacing-small);
-  font: var(--sc-type-p);
-  letter-spacing: var(--sc-type-p-ls);
-  color: var(--sc-text-2nd);
-}
-
-.attendingIcon {
-  flex: 0 0 auto;
-  color: var(--sc-text-2nd);
 }

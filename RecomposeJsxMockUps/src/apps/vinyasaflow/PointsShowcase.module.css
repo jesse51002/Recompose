@@ -1,37 +1,107 @@
 /*
- * Styles for ./PointsShowcase.tsx
- * (ports CRM/lib/showcase/points_showcase.dart).
+ * Styles for ./PointsShowcase.tsx — the points celebration, rebuilt as the
+ * thread closing into a loop.
  *
  * `--sc-*` for the design tokens (see ./ShowcaseThemeVars.tsx); `--pt-*` for
- * this screen's own geometry and motion, written inline by the component from
- * the ported constants and delay arithmetic.
+ * this card's own geometry and tempo, written inline by the component from the
+ * constants in ./pointSphere.ts. No measurement is restated as a literal here,
+ * and no spacing value is typed at a call site — every gap is a rung of
+ * `--sc-spacing-*`.
  *
- * THE SPHERE HAS NO MOTION HERE AT ALL. Its transforms, opacities and stacking
- * order are written per frame by the driver in the component, because fourteen
- * stars share one spin and one converge factor (see ./pointSphere.ts). What the
- * classes below give it is only the box each element sits in.
+ * THE SWARM HAS NO MOTION IN THIS FILE AT ALL. Its transforms, opacities and
+ * stacking order are written per frame by the driver in the component, because
+ * fourteen discs share one spin and one converge factor (see ./pointSphere.ts).
+ * What the classes below give it is only the box each element sits in — and that
+ * box is the load-bearing part: it is exactly twice the distance from the top of
+ * the card to the loop's centre, so the swarm's centre and the ring's centre are
+ * the same point and the collapse lands IN the loop.
  */
 
 /*
- * The `Padding(vertical: spacingBig)` that wrapped BOTH branches here
- * (points_showcase.dart:77) belongs to the ARRANGEMENT and now lives with it,
- * in ./celebrations/CelebrationFrame.module.css's `centerHero` — which is why
- * this screen has no box of its own left.
+ * THE SWEEP ANGLE, registered so it can be animated.
+ *
+ * An unregistered custom property interpolates DISCRETELY — it would swap at the
+ * halfway mark instead of travelling — so the registration is what makes the
+ * loop close rather than appear. `initial-value: 360deg` is chosen for the
+ * failure case rather than the working one: if a renderer does not support
+ * `@property`, `var(--pt-sweep)` fails to substitute, the whole `mask-image`
+ * declaration is invalid at computed-value time (Guardrail 3's rule, working in
+ * our favour for once) and the ring is simply drawn whole.
  */
+@property --pt-sweep {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 360deg;
+}
 
-/* --- The sphere ----------------------------------------------------------- */
+/* --- The card ------------------------------------------------------------- */
 
-/* `SizedBox.expand > Stack(alignment: center)`. */
-.sphere {
+/*
+ * The whole card box, edge to edge. `position: relative` is what the descent and
+ * the swarm are positioned against; both are absolute, because neither is part
+ * of the settled column's flow.
+ */
+.card {
   position: relative;
   width: 100%;
   height: 100%;
 }
 
 /*
- * One star: `Transform.translate(offset) > Opacity > Transform.scale > Image`.
- * Centred on the stack, then moved onto the ellipsoid — the driver writes all
- * three as one transform. The element's own size is written once, from
+ * THE THREAD ENTERING THE CARD. Two pixels of terracotta at the same
+ * `--sc-thread-x` every other screen in this app uses, running from the top edge
+ * down to the loop's NINE-O'CLOCK point — which is where the loop's left edge
+ * is, because the diameter was chosen to make the two tangent
+ * (./pointSphere.ts, `LOOP_SIZE`). It therefore ends ON the ring rather than in
+ * mid-air, and the join needs no artwork.
+ *
+ * It draws itself downward, stroke-first, at the pace of a breath. It is NOT
+ * inside the swarm/settled switch, so it neither restarts when the swarm replays
+ * nor waits for it: the line is there from the first frame, and the discs orbit
+ * across it.
+ */
+.enter {
+  position: absolute;
+  top: 0;
+  left: var(--sc-thread-x);
+  width: var(--sc-thread-width);
+  height: calc(var(--pt-rise) + var(--pt-loop) / 2);
+  background: var(--sc-primary);
+  transform-origin: top center;
+  animation: ptDescend var(--pt-descend-ms) var(--pt-breath) both;
+  pointer-events: none;
+}
+
+@keyframes ptDescend {
+  from {
+    transform: scaleY(0);
+  }
+
+  to {
+    transform: scaleY(1);
+  }
+}
+
+/* --- The swarm ------------------------------------------------------------ */
+
+/*
+ * The box the sphere is projected into, and the reason it is not simply the
+ * whole card: `sphereFrame` converges every disc to the box's CENTRE, so the box
+ * has to be centred on the loop. Twice the distance from the top of the card to
+ * the loop's centre does exactly that, and leaves the swarm filling everything
+ * above and around the ring.
+ */
+.sphere {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: calc(2 * var(--pt-rise) + var(--pt-loop));
+}
+
+/*
+ * One disc: centred on the stack, then moved onto the ellipsoid — the driver
+ * writes both as one transform. The element's own size is written once, from
  * `starSize`.
  */
 .star {
@@ -41,71 +111,181 @@
   will-change: transform, opacity;
 }
 
-/* `Image(fit: BoxFit.contain)`. */
-.starImg {
+/*
+ * `single_point` is a struck terracotta disc on transparency and measures 0.99,
+ * so a square box costs it nothing and `contain` never has anything to crop.
+ */
+.tokenImg {
   width: 100%;
   height: 100%;
   object-fit: contain;
   display: block;
 }
 
-/* --- The focused statement ------------------------------------------------ */
+/* --- What it collapses into ----------------------------------------------- */
 
 /*
- * `SizedBox.expand > Column(crossAxisAlignment: center)` holding
- * `[Spacer, _FocusedContent, Spacer, _TotalCaption]`.
+ * The settled column. The tail at the foot absorbs whatever the card has left
+ * over, so the composition hangs from the top — where the thread comes in —
+ * rather than floating in the middle of a box whose height it does not know.
  */
-.points {
+.settled {
   display: flex;
   flex-direction: column;
-  align-items: center;
   height: 100%;
 }
 
-/* `Spacer()` — an `Expanded` with nothing in it. */
-.spacer {
+/* The stretch of thread above the loop. Empty: the line itself is `.enter`. */
+.rise {
+  flex: none;
+  height: var(--pt-rise);
+}
+
+.hold {
+  flex: none;
+  height: var(--pt-loop);
+}
+
+/*
+ * The loop's own box. Its left edge sits on the thread's centre line, so the
+ * descent meets the ring tangentially at nine o'clock and the two read as one
+ * stroke.
+ */
+.ringBox {
+  position: relative;
+  width: var(--pt-loop);
+  height: var(--pt-loop);
+  margin-left: calc(var(--sc-thread-x) + var(--sc-thread-width) / 2);
+}
+
+/*
+ * THE LOOP CLOSING, WHICH IS THIS CARD'S WHOLE ANIMATION.
+ *
+ * A conic wedge grown from nine o'clock (`from 270deg` — a conic gradient starts
+ * at twelve and runs clockwise) all the way round to nine o'clock again, used as
+ * a mask over the ring. The line therefore leaves the point the descent arrived
+ * at, travels over the top, round and under, and MEETS ITSELF; the instant it
+ * closes is the instant the card is settled and its action appears.
+ *
+ * `currentColor` and not a literal: a mask reads the alpha channel, so any
+ * opaque ink does the job, and taking it from the page ink keeps this file free
+ * of colour values that a theme cannot reach.
+ */
+.sweep {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  color: var(--sc-text);
+  -webkit-mask-image: conic-gradient(from 270deg, currentColor var(--pt-sweep), transparent 0deg);
+  mask-image: conic-gradient(from 270deg, currentColor var(--pt-sweep), transparent 0deg);
+  animation: ptClose var(--pt-close-ms) var(--pt-breath) both;
+}
+
+@keyframes ptClose {
+  from {
+    --pt-sweep: 0deg;
+  }
+
+  to {
+    --pt-sweep: 360deg;
+  }
+}
+
+/*
+ * THE HERO, INSCRIBED IN THE LOOP RATHER THAN BOXED BY IT.
+ *
+ * The inset is a percentage of the ring, and the picture is bounded on both axes
+ * and sized on NEITHER — `width` and `height` stay `auto` so the browser derives
+ * the whole box from the art's own proportion. There is nothing here for
+ * `object-fit` to crop, which matters because this slot is not square: this
+ * run's `points_stars_image` is a 674x958 cascade of discs with a sage sprig
+ * (0.70), and a tenant's may be square or landscape. All three inscribe; none is
+ * cut (Guardrail 10b).
+ */
+.heroBox {
+  position: absolute;
+  top: 13%;
+  right: 13%;
+  bottom: 13%;
+  left: 13%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: ptReveal var(--pt-reveal-ms) var(--pt-breath) var(--pt-hero-delay-ms) both;
+}
+
+.hero {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* --- The count, and the running total ------------------------------------- */
+
+/*
+ * The spoken label OVER a very large figure — the one heading pattern this app
+ * has. The gap INSIDE this block is `--sc-spacing-small` because the label and
+ * the number are one object; the gap from the loop above is `--sc-spacing-big`
+ * and the gap to the total below is `--sc-spacing-large`. That ladder is what
+ * does the grouping (Guardrail 13), and it is the reason none of the three is
+ * the same value.
+ */
+.count {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-small);
+  margin-top: var(--sc-spacing-big);
+  margin-left: var(--sc-thread-inset);
+  margin-right: var(--sc-screen-padding-x);
+  animation: ptReveal var(--pt-reveal-ms) var(--pt-breath) var(--pt-count-delay-ms) both;
+}
+
+/*
+ * Sentence case, body face, cork brown at reduced strength. This app never sets
+ * a label in capitals and never tracks one out — the base's "+N POINTS" is the
+ * base's voice, not this one's.
+ */
+.say {
+  margin: 0;
+  font: var(--sc-type-say);
+  letter-spacing: var(--sc-type-say-ls);
+  color: var(--sc-text-2nd);
+}
+
+/*
+ * The running total: one quiet line, and the last thing to arrive. It is a
+ * footnote about the same number rather than a second figure, so it stays in the
+ * body face at reading-adjacent size — tabular, because the digits above it are.
+ *
+ * NO NUMERIC `line-height` ON THIS OR ANY SIBLING. A line box shorter than the
+ * font's own makes adjacent digit cells overlap through the count-up reel's clip
+ * (../../CLAUDE.md).
+ */
+.total {
+  flex: none;
+  margin-top: var(--sc-spacing-large);
+  margin-bottom: 0;
+  margin-left: var(--sc-thread-inset);
+  margin-right: var(--sc-screen-padding-x);
+  font: var(--sc-type-quiet);
+  letter-spacing: var(--sc-type-quiet-ls);
+  color: var(--sc-text-2nd);
+  font-variant-numeric: tabular-nums;
+  animation: ptReveal var(--pt-reveal-ms) var(--pt-breath) var(--pt-total-delay-ms) both;
+}
+
+/* Whatever the card has left. The composition hangs from the thread, not the middle. */
+.tail {
   flex: 1 1 0;
 }
 
-/* `StaggeredReveal > Column(min, center, spacing: spacingLarge)`. */
-.focused {
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--sc-spacing-large);
-  animation: pointsReveal var(--pt-reveal-ms) var(--pt-ease) both;
-}
-
-/* `Image(width: _kHeroSize, height: _kHeroSize, fit: BoxFit.contain)`. */
-.hero {
-  width: var(--pt-hero-size);
-  height: var(--pt-hero-size);
-  object-fit: contain;
-  display: block;
-}
-
-/* `CountUpText(prefix: '+', suffix: ' points', style: big2)`. */
-.gained {
-  font: var(--sc-type-big2);
-  letter-spacing: var(--sc-type-big2-ls);
-  color: var(--sc-text);
-  text-align: center;
-}
-
-/* `StaggeredReveal(delay)` over `h3` at `text2nd`. */
-.total {
-  flex: 0 0 auto;
-  margin: 0;
-  font: var(--sc-type-h3);
-  letter-spacing: var(--sc-type-h3-ls);
-  color: var(--sc-text-2nd);
-  text-align: center;
-  animation: pointsReveal var(--pt-reveal-ms) var(--pt-ease) var(--pt-total-delay-ms) both;
-}
-
-/* `StaggeredReveal`: opacity 0 -> 1 with a 12px slide up, ease-out-quart. */
-@keyframes pointsReveal {
+/* A reveal: opacity 0 -> 1 with a short rise. Soft at both ends; never a bounce. */
+@keyframes ptReveal {
   from {
     opacity: 0;
     transform: translateY(var(--pt-reveal-offset));
@@ -118,11 +298,20 @@
 }
 
 /*
- * `MediaQuery.disableAnimationsOf` — the statement renders finished. The
- * component also skips the sphere entirely and never arms the loop timers.
+ * "Under a reduced-motion preference the line is simply already drawn, every
+ * card is already settled, and every action is already present."
+ *
+ * With the sweep's animation off, `--pt-sweep` falls back to its registered
+ * initial value of 360deg and the mask lets the whole ring through. The
+ * component also skips the swarm entirely — a spin has no end state worth
+ * rendering — and fires its settle callback before returning, which is the one
+ * thing that keeps the flow's action reachable here.
  */
 @media (prefers-reduced-motion: reduce) {
-  .focused,
+  .enter,
+  .sweep,
+  .heroBox,
+  .count,
   .total {
     animation: none;
   }

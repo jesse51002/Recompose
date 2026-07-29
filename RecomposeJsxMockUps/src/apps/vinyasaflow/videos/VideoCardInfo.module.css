@@ -1,54 +1,66 @@
 /*
- * Styles for ./VideoCardInfo.tsx (ports MobileApp/lib/features/videos/
- * presentation/widgets/cards/video_card_info.dart).
+ * Styles for ./VideoCardInfo.tsx — the line under a shelf frame.
  * `--sc-*` only — see ../ShowcaseThemeVars.tsx.
  */
 
 /*
- * `_Framed`'s `Padding(fromLTRB(spacingMedium, 0, spacingMedium, spacingLarge))`
- * around `Row(crossAxisAlignment: center)`.
+ * `Row(spacing: spacingMedium)`, top-aligned. Centring it would drop the avatar
+ * to the middle of a two-line title and break the flush top edge the avatar
+ * shares with the first line of type.
  *
- * The inset lives HERE rather than on the card because three of the four card
- * sizes are `_Framed` and hold the line at exactly this inset; the fourth
- * (`_Captioned`) pads its whole band instead and asks for `.flush`.
+ * No inset of its own: the column above already holds the shelf's measure, and
+ * a second inset here would indent the words away from the frame they belong
+ * to.
  */
 .info {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--sc-spacing-medium);
-  padding: 0 var(--sc-spacing-medium) var(--sc-spacing-large);
+  align-self: stretch;
 }
 
-/* The caption band supplies its own padding — see the component. */
-.flush {
-  padding: 0;
-}
-
-/* `Expanded > Padding(horizontal: spacingMedium) > Column(start, spacing: spacingMedium)`. */
+/*
+ * `Expanded > Column(start)`. `min-width: 0` is what makes the flex child
+ * behave like `Expanded` — without it a long title refuses to shrink and pushes
+ * the avatar out of the column.
+ */
 .text {
   flex: 1 1 auto;
   min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--sc-spacing-medium);
-  padding-right: var(--sc-spacing-medium);
+  gap: var(--sc-spacing-tiny);
 }
 
-/* `Text(title, style: p, maxLines: 1, overflow: ellipsis)`. */
+/*
+ * Two lines, then ellipsis. Dart clips to one; at this measure one line of a
+ * shared-pool title is almost always a fragment, and a fragment under a frame
+ * whose own title is BURNT INTO THE PICTURE reads as the app disagreeing with
+ * itself. Two lines is the smallest number that usually completes the thought.
+ *
+ * `--sc-type-quiet` rather than the label rung: hierarchy on this screen runs
+ * region label (15/500) over card title (13/400) over meta (11/400), so a
+ * shelf's name always outranks the names of the things on it.
+ */
 .title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  font: var(--sc-type-quiet);
+  letter-spacing: var(--sc-type-quiet-ls);
+  color: var(--sc-text);
+}
+
+/* The smallest thing on the card, and the only thing set below reading size. */
+.meta {
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font: var(--sc-type-p);
-  letter-spacing: var(--sc-type-p-ls);
-  color: var(--sc-text);
-}
-
-/* `Text(style: pSmall.copyWith(color: text2nd))`. */
-.meta {
-  font: var(--sc-type-p-small);
-  letter-spacing: var(--sc-type-p-small-ls);
+  font: var(--sc-type-fine);
+  letter-spacing: var(--sc-type-fine-ls);
   color: var(--sc-text-2nd);
 }

@@ -1,19 +1,39 @@
 /*
- * Styles for ./RankSummarySection.tsx (ports MobileApp/lib/features/profile/
- * presentation/widgets/rank_summary/rank_summary_section.dart).
+ * Styles for ./RankSummarySection.tsx.
  * `--sc-*` only — see ../ShowcaseThemeVars.tsx.
  */
 
 /*
- * `Column(mainAxisSize: min, crossAxisAlignment: center, spacing: spacingLarge)`.
- *
- * `stretch` rather than `center` on the cross axis: the plot inside runs the
- * full width behind its own gutter, and a `center` flex line would shrink it to
- * its content. The header and the pill row centre themselves.
+ * The rank and its plot are one statement, so the step between them is smaller
+ * than the step to the next region (`--sc-spacing-big`, set by the screen).
  */
 .summary {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
   gap: var(--sc-spacing-large);
+}
+
+/*
+ * THE PLOT STARTS ON THE THREAD. Same expression the nodes use — the line's
+ * centre is `--sc-thread-x` plus half its width — so the data line's first
+ * point sits exactly on the descent at any thread measurement, and the stroke
+ * reads as the same stroke turning rather than as a chart placed beside one.
+ */
+.plot {
+  margin-left: calc(var(--sc-thread-x) + var(--sc-thread-width) / 2);
+}
+
+/*
+ * The range selector goes back to the column the rest of the screen aligns to —
+ * OPTICALLY, which is why the inset is short by one step rather than exact. A
+ * chip is a capsule with `--sc-spacing-large` of its own padding inside it, so
+ * setting the box on the column would set the WORDS a step right of every other
+ * word on the screen. The reader aligns to the label, not to the capsule.
+ *
+ * `--sc-spacing-large` under the plot: bound to it, but one step looser than
+ * the plot is to its own label.
+ */
+.ranges {
+  margin-top: var(--sc-spacing-large);
+  padding-left: calc(var(--sc-thread-inset) - var(--sc-spacing-large));
 }

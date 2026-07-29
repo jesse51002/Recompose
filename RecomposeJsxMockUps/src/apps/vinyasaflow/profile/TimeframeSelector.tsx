@@ -1,18 +1,26 @@
 // Ports ../../../../../../MobileApp/lib/features/profile/presentation/widgets/
-// rank_summary/timeframe_selector.dart (and, for the pill itself,
-// `shared/widgets/pills/timeframe_pill.dart`) — the 1W / 1M / 1Y / ALL range
-// selector for the rank graph, in the four shapes the arrangements need.
+// rank_summary/timeframe_selector.dart (and, for the chip itself,
+// `shared/widgets/pills/timeframe_pill.dart`) — the 1W / 1M / 1Y / All range
+// selector for the rank graph.
 //
-// THE PILLS DO NOT WINDOW ANYTHING, and that is the island's rule rather than a
+// IT STILL READS AS A SELECTOR, and that is deliberate rather than incidental.
+// Guardrail 12: a control must look like what it is and behave the way its
+// platform behaves. Four ranges in a row with exactly one marked is the pattern
+// every phone owner already knows; what this design changes is how the mark is
+// DRAWN — a capsule in the thread's stroke, no fill, which is the same "line
+// with round ends" ../shell/Action.tsx is built from. The invention is in the
+// drawing, never in the interaction.
+//
+// THE CHIPS DO NOT WINDOW ANYTHING, and that is the island's rule rather than a
 // gap: every showcase surface is a preview inside a phone frame that takes no
 // input, which is why ../rewards/RewardsTabs.tsx dropped its callbacks and
-// ../videos/VideoCategoryTabs.tsx renders labels. ALL is the pinned selection
-// (`SHOWCASE_TIMEFRAME_INDEX`), and it is the one the plot is drawn from, so
-// the highlighted pill always names the window on screen.
+// ../videos/VideoCategoryTabs.tsx renders labels. `All` is the pinned selection
+// (`SHOWCASE_TIMEFRAME_INDEX`), and it is the one the plot is drawn from, so the
+// marked chip always names the window on screen. A live-looking <button> that
+// did nothing would advertise an action the phone cannot take.
 //
-// The four values are the same four in every layout — the Dart's own `_kRanges`
-// is a file-level const for exactly that reason. A layout moves the row,
-// stacks it, or stretches it; it never drops a range.
+// The four values are the same four in every arrangement — the Dart's own
+// `_kRanges` is a file-level const for exactly that reason.
 
 import { cx } from '../cx';
 
@@ -20,66 +28,28 @@ import { RANK_PART } from './rankParts';
 import styles from './TimeframeSelector.module.css';
 import { RANK_TIMEFRAMES, SHOWCASE_TIMEFRAME_INDEX } from './mockRankProgress';
 
-/** `TimeframeLayout`. */
-export type TimeframeLayout = 'pills' | 'inline' | 'segmented' | 'tile';
-
-const LAYOUT_CLASS: Readonly<Record<TimeframeLayout, string | undefined>> = Object.freeze({
-  pills: styles.pills,
-  inline: styles.inline,
-  segmented: styles.segmented,
-  tile: styles.tile,
-});
-
-export interface TimeframeSelectorProps {
-  /** `pills` is the loose centred row that ships. */
-  layout?: TimeframeLayout;
-}
-
-export function TimeframeSelector({ layout = 'pills' }: TimeframeSelectorProps) {
-  if (layout === 'tile') {
-    // `_tile()` — two by two. Rows rather than a wrap: a pill sizes to its
-    // label on an unbounded main axis, which is what keeps the four reading as
-    // four chips inside a board cell rather than four full-width bands.
-    const rows: (typeof RANK_TIMEFRAMES)[] = [];
-    for (let i = 0; i < RANK_TIMEFRAMES.length; i += 2) {
-      rows.push(RANK_TIMEFRAMES.slice(i, i + 2));
-    }
-    return (
-      <div className={styles.tile}>
-        {rows.map((row) => (
-          <div key={row[0]?.label ?? ''} className={styles.tileRow}>
-            {row.map((entry) => (
-              <Pill key={entry.label} label={entry.label} />
-            ))}
-          </div>
-        ))}
-      </div>
-    );
-  }
-
+export function TimeframeSelector() {
+  const selected = RANK_TIMEFRAMES[SHOWCASE_TIMEFRAME_INDEX]?.label;
   return (
-    <div className={cx(styles.row, LAYOUT_CLASS[layout])}>
+    <div className={styles.row}>
       {RANK_TIMEFRAMES.map((entry) => (
-        <Pill key={entry.label} label={entry.label} />
+        <Chip key={entry.label} label={entry.label} active={entry.label === selected} />
       ))}
     </div>
   );
 }
 
 /**
- * `TimeframePill` — `Container(height: pillHeightMd, padding: horizontal:
- * screenHorizontalPadding, borderRadius: radiusBig)` over `Text(h2)`.
- *
- * An inactive pill has NO border at all (Dart passes `null`), which is what
- * makes the selected one read as the only chip in the row.
+ * One range. The marked one wears the thread's stroke bent into a capsule and
+ * the page's full-strength ink; the rest are the same words at the second ink,
+ * with the border kept transparent so selecting one never resizes the row.
  */
-function Pill({ label }: { label: string }) {
-  const isActive = label === RANK_TIMEFRAMES[SHOWCASE_TIMEFRAME_INDEX]?.label;
+function Chip({ label, active }: { label: string; active: boolean }) {
   return (
     <span
-      className={cx(styles.pill, isActive && styles.pillActive)}
+      className={cx(styles.chip, active && styles.chipHere)}
       data-rank-part={RANK_PART.timeframePill}
-      data-rank-active={isActive ? '' : undefined}
+      data-rank-active={active ? '' : undefined}
     >
       {label}
     </span>

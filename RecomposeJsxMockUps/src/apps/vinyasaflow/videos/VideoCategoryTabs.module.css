@@ -1,137 +1,72 @@
 /*
- * Styles for ./VideoCategoryTabs.tsx (ports MobileApp/lib/features/videos/
- * presentation/widgets/video_category_tabs.dart).
+ * Styles for ./VideoCategoryTabs.tsx — the scope filter as beads on the strand.
  * `--sc-*` only — see ../ShowcaseThemeVars.tsx.
+ *
+ * The sideways scroll, the row's gap and its left inset all belong to `Bow`
+ * (../shell/Thread.module.css); nothing here re-states them. What is here is
+ * one scope: a bead and its word.
  */
 
 /*
- * `Padding(vertical: spacingLarge) > SingleChildScrollView(horizontal,
- * padding: horizontal: screenHorizontalPadding)`.
+ * One scope.
  *
- * The scrollbar is hidden for the same reason the carousels' is: a desktop
- * track drawn inside a phone mock breaks the illusion, and iOS's overlay bar
- * occupies no layout.
- */
-.strip {
-  padding-block: var(--sc-spacing-large);
-  overflow-x: auto;
-  overflow-y: hidden;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  overscroll-behavior-x: contain;
-  -webkit-overflow-scrolling: touch;
-}
-
-.strip::-webkit-scrollbar {
-  display: none;
-}
-
-/*
- * `VideoCategoryTabsAxis.vertical` — `SingleChildScrollView(padding:
- * symmetric(horizontal: spacingMedium, vertical: spacingLarge))`.
+ * THE CANVAS FILL IS THE LOAD-BEARING DECLARATION, not decoration: the bow
+ * draws its stroke straight across the row at the row's own centre, and without
+ * a fill behind the word the line would run through the middle of the letters.
+ * With it, the stroke passes BEHIND each scope and shows only in the gaps —
+ * which is the "the thread may pass behind" the brief allows, drawn rather than
+ * asserted. It is the same trick ../shell/Head.module.css's carried discs and
+ * ../shell/ThreadNav.module.css's open circles use.
  *
- * `height: 100%` is what makes the pills scroll INSIDE the rail band rather
- * than lengthening it: the band (../layouts/VideosTagRail.module.css) has a
- * fixed height, so a tenant with many genres lengthens this scroll instead of
- * the page's chrome. `overflow-x: hidden` is spelled out rather than left at
- * `visible`, which would compute to `auto` beside a scrolling axis and hand the
- * rail a sideways scrollbar it never uses (../../../CLAUDE.md).
+ * The inline padding is what gives the fill a little room past the glyphs so
+ * the line is not clipped flush against a letterform.
  */
-.stripVertical {
-  height: 100%;
-  padding: var(--sc-spacing-large) var(--sc-spacing-medium);
-  overflow-x: hidden;
-  overflow-y: auto;
-  overscroll-behavior-y: contain;
-}
-
-/*
- * `Row(mainAxisAlignment: center, spacing: spacingLarge)`.
- *
- * `width: max-content` + `margin-inline: auto` is the centring Flutter gets
- * from `mainAxisAlignment: center` inside a scroller: a SHORT row sits centred,
- * and a row wider than the viewport falls back to starting at the inset instead
- * of clipping its own leading pills, which is what a plain
- * `justify-content: center` would do to an overflowing flex row.
- */
-.row {
+.tab {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
-  gap: var(--sc-spacing-large);
-  width: max-content;
-  margin-inline: auto;
-  padding-inline: var(--sc-screen-padding-x);
-}
-
-/*
- * The vertical axis' `Column(crossAxisAlignment: stretch, spacing:
- * spacingMedium)`. `stretch` is why the pills fill the rail's width rather than
- * hugging their labels: a column of ragged chips reads as a list of links, and
- * the filled active pill is what makes the selection legible at rail width.
- */
-.column {
-  flex-direction: column;
-  align-items: stretch;
-  gap: var(--sc-spacing-medium);
-  width: auto;
-  margin-inline: 0;
-  padding-inline: 0;
-}
-
-/*
- * `_CategoryPill` — `Container(color: bg, borderRadius: radiusBig, padding:
- * symmetric(horizontal: paddingSmall, vertical: spacingMedium)) > Text(h3)`.
- *
- * INACTIVE IS THE CANVAS, NOT A TINT: Dart fills an inactive pill with
- * `backgroundColor`, so the row reads as one selected chip against the page
- * rather than a segmented control. Kept verbatim.
- */
-.pill {
-  flex: 0 0 auto;
-  padding: var(--sc-spacing-medium) var(--sc-padding-small);
-  border-radius: var(--sc-radius-big);
+  gap: var(--sc-spacing-small);
+  padding-inline: var(--sc-spacing-small);
   background: var(--sc-background);
-  font: var(--sc-type-h3);
-  letter-spacing: var(--sc-type-h3-ls);
+  font: var(--sc-type-read);
+  letter-spacing: var(--sc-type-read-ls);
   color: var(--sc-text-2nd);
   white-space: nowrap;
 }
 
 /*
- * In the rail the label WRAPS instead. Dart's `_CategoryPill` holds a plain
- * `Text`, which wraps wherever it is placed; across the top the pill can simply
- * scroll sideways, but a rail is ~96px wide and a genre like "Entertainment"
- * has to break rather than run out of the band.
+ * The scope the member is standing in. Hierarchy by WEIGHT and by ink, never by
+ * case and never by a filled container: `--sc-type-say` is the same 15px at 500
+ * where the others sit at 400, and the ink goes to full-strength cork brown.
  */
-.column .pill {
-  white-space: normal;
-  /*
-   * And BREAKS when it has to. A genre is the tenant's word, not ours, and the
-   * app's own vocabulary already carries "Entertainment" — 13 characters that
-   * do not fit a rail pill's text box at any word boundary. Wrapping alone
-   * would leave it overflowing a band that clips; breaking keeps the label
-   * readable inside the constraint the arrangement chose.
-   */
-  overflow-wrap: break-word;
+.tabHere {
+  font: var(--sc-type-say);
+  letter-spacing: var(--sc-type-say-ls);
+  color: var(--sc-text);
 }
 
 /*
- * `isActive ? primaryColor : backgroundColor`.
- *
- * ONE DELIBERATE DEVIATION, and it is a contrast fix rather than a taste call.
- * Dart writes the active label as `DesignConstants.text` — the ink tuned for
- * the BACKGROUND — on top of a `primary` fill. That holds for CombatDen's own
- * dark canvas and light primary, and breaks for any of the 76 generated themes
- * whose primary lands near its text colour; this preview exists to be switched
- * across all of them. `primary_button_text` is the theme's own AA-checked
- * `regular_text` derivation of `primary` — the service's answer to "what reads
- * on this fill" — and it is already what every other primary fill in this
- * island uses (../support/ShowcasePrimaryButton.module.css, the price tag in
- * ../rewards/RewardCard.module.css). Reproducing the hazard to stay "faithful"
- * is exactly what ../../../../CLAUDE.md's don't-inherit rule forbids; the
- * member app's own widget wants the same fix.
+ * The bead. Open by default — a ring the line runs through, with the strand
+ * visible in its middle, which is the whole metaphor.
  */
-.active {
+.bead {
+  flex: 0 0 auto;
+  width: var(--sc-node);
+  height: var(--sc-node);
+  box-sizing: border-box;
+  border-radius: var(--sc-radius-circle);
+  border: var(--sc-node-ring) solid var(--sc-primary);
+  background: transparent;
+}
+
+/*
+ * The current scope's bead: the line swelling to a filled stop.
+ *
+ * A terracotta fill, but a 13px one with no type on it — the screen's one fill
+ * large enough to set type on is the hero's Play action
+ * (../shell/Action.module.css), and that rule is about labels on a fill rather
+ * than about the colour appearing.
+ */
+.beadHere {
   background: var(--sc-primary);
-  color: var(--sc-primary-button-text);
 }

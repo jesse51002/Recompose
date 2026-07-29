@@ -1,20 +1,24 @@
+// The text of a class row: name, time range with duration, instructor,
+// attending count, and the booked mark on a page that carries one.
+//
 // Ports MobileApp/lib/features/home/presentation/widgets/class_schedule/
-// class_item/class_item_meta.dart.
+// class_item/class_item_meta.dart. IDENTICAL IN BOTH TREATMENTS — that is the
+// point of pulling it out. A treatment may re-place this column, re-scale its
+// gaps and hoist the time out of it; it may not drop a line from it.
 //
-// The text column of a class row: title, time, instructor, attendee count and
-// the booked mark. IDENTICAL IN EVERY TREATMENT — that is the point of pulling
-// it out. A treatment may re-place this column and re-scale its gaps; it may
-// not drop a line from it.
+// THE COLUMN BOX IS NOT HERE, it is the treatment's, which is what lets the
+// compact row and the lead class share these lines at two different measures
+// without either of them re-typing one.
 //
-// ONE DELIBERATE SHAPE DIFFERENCE FROM THE DART. Flutter's `tight` flag picks
-// the Column's own `spacing`; here the COLUMN BOX ITSELF (flex sizing and the
-// gap) belongs to the treatment's stylesheet, which is what lets the shipped
-// `textLeftThumbRight` row keep the exact `class="info"` element the baseline
-// fixture pins. So there is no `tight` prop: `dense` / `spine` / `card` write
-// the tighter gap in their own `.module.css`, and the flag has no other effect
-// in the Dart either.
+// TIME FIRST, THEN THE NAME. The base led with the name; a schedule is scanned
+// by time, and this design puts the figure where the eye lands first
+// (../../layout_brief.yaml). Nothing is added or removed by the reorder.
+//
+// The person and check glyphs the base drew beside the count and the booked
+// mark are gone. This app contains three forms — the line, the circle and the
+// photograph — and a small pictogram scattered through a list is none of them;
+// the count and the mark still say exactly what they said, in words.
 
-import { CheckIcon, PersonIcon } from '../../support/icons';
 import type { ShowcaseClass } from '../homeClass';
 
 import { ClassItemTime } from './ClassItemTime';
@@ -28,12 +32,12 @@ export interface ClassItemMetaProps {
    *
    * `string | undefined` rather than `string` because a CSS-module lookup is
    * exactly that under this package's `noUncheckedIndexedAccess`. The prop is
-   * still REQUIRED: a treatment cannot forget to lay out its own meta column.
+   * still REQUIRED: a treatment cannot forget to lay out its own text.
    */
   className: string | undefined;
   /**
-   * False only where the treatment hoists <ClassItemTime> into its own gutter
-   * (the spine). The time MOVES; it is never dropped.
+   * False only where the treatment hoists <ClassItemTime> above this column and
+   * sets it as a figure (the lead class). The time MOVES; it is never dropped.
    */
   showTime?: boolean;
 }
@@ -46,31 +50,15 @@ export function ClassItemMeta({
 }: ClassItemMetaProps) {
   return (
     <div className={className}>
-      <span className={styles.name}>{classData.name}</span>
       {showTime && <ClassItemTime classData={classData} />}
-      <span className={styles.mentor}>{classData.mentor}</span>
-      {classData.attending !== undefined && <BookedCount count={classData.attending} />}
-      {showBookings && classData.isBooked && <BookedConfirmation />}
+      <span className={styles.name}>{classData.name}</span>
+      <span className={styles.quiet}>{classData.mentor}</span>
+      {classData.attending !== undefined && (
+        <span className={styles.quiet}>{String(classData.attending)} attending</span>
+      )}
+      {showBookings && classData.isBooked && (
+        <span className={styles.booked}>You booked this class!</span>
+      )}
     </div>
-  );
-}
-
-/** `_BookedMark`. */
-function BookedConfirmation() {
-  return (
-    <span className={styles.booked}>
-      <CheckIcon size={16} className={styles.bookedIcon} />
-      You booked this class!
-    </span>
-  );
-}
-
-/** `_Attendees`. */
-function BookedCount({ count }: { count: number }) {
-  return (
-    <span className={styles.attending}>
-      <PersonIcon size={16} className={styles.attendingIcon} />
-      {String(count)} attending
-    </span>
   );
 }

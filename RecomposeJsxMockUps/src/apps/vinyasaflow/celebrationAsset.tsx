@@ -43,8 +43,8 @@ import { PointsShowcase } from './PointsShowcase';
 import { RankShowcase } from './RankShowcase';
 import { RewardsCardShowcase } from './RewardsCardShowcase';
 import { StatsShowcase } from './StatsShowcase';
+import { Action } from './shell/Action';
 import { SLOT_BOOK_NEXT_CLASS_CTA } from './showcaseSlots';
-import { ShowcasePrimaryButton } from './support/ShowcasePrimaryButton';
 import { WinsShowcase } from './WinsShowcase';
 
 export const ROUTE_STREAK = 'streak';
@@ -136,12 +136,12 @@ function CelebrationCard({
           a button that appears and REFLOWS the card beneath it reads as the
           card twitching, not as the button arriving. */}
       <div className={cx(styles.cta, settled && styles.ctaVisible)} aria-hidden={!settled}>
-        <ShowcasePrimaryButton
-          text={label ?? ctaLabel(route)}
-          fullWidth
-          borderRadius="var(--sc-radius-big)"
-          onPressed={settled ? advance : undefined}
-        />
+        {/*
+          The card's action, in the thread's own capsule. It waits inside the
+          loop's final curve, in the space it occupies from the first frame, so
+          its arrival never moves anything.
+        */}
+        <Action text={label ?? ctaLabel(route)} onPressed={settled ? advance : undefined} />
       </div>
     </div>
   );

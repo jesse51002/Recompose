@@ -1,46 +1,40 @@
-// Ports ../../../../../../CRM/lib/showcase/home/date_tab.dart — a clone of
-// MobileApp's `DateTab`: one date pill in the home date row — and, for the
-// second selected-state, MobileApp's own `.../class_schedule/date_tab.dart`
-// (`DateTabStyle`).
+// ONE DAY ON THE WEEK'S BOW — a circle with its name spoken beneath it.
 //
-// PRESENTATION ONLY. The tab count, the labels and the tap contract are the
-// same either way; `style` changes nothing but how the selected day marks
-// itself.
+// Ports ../../../../../../CRM/lib/showcase/home/date_tab.dart (MobileApp's
+// `DateTab`), rebuilt in this fork's vocabulary. The base drew a pill with an
+// underline under the selected day; both are fourth forms in a design that
+// contains only the line, the circle and the photograph, so the day IS a
+// circle and the day the member is standing in is the one the line swells into
+// and fills.
+//
+// IT MARKS THE SAME DAY THE SAME WAY THE FOOT MARKS THE SAME DESTINATION:
+// filled solid terracotta, its name at full ink; the rest drawn open, in line
+// only, their names at reduced strength. Five circles at the head and four at
+// the foot, threaded by one stroke — see ../shell/ThreadNav.tsx, which this is
+// deliberately the twin of.
+//
+// NO TYPE SITS ON THE FILL. `--sc-node-lg` is 26px and carries nothing, which
+// is what keeps this within the design's one-terracotta-fill-with-type-on-it
+// budget — the foot's selected destination is that one, and it is spent there.
+//
+// The button carries no handler, exactly as the base's pill did: this preview
+// has no re-selection to drive (see ./DateRow.tsx), and wiring one would add an
+// affordance the shipped screen does not have.
 
 import { cx } from '../cx';
 
 import styles from './DateTab.module.css';
 
-/** `DateTabStyle`. */
-export type DateTabStyle =
-  /** Shipped today: bare label with a rule under the selected day. */
-  | 'underline'
-  /**
-   * A filled chip per day, for formats that want the date rail to read as a
-   * control rather than as a rail.
-   */
-  | 'segmented';
-
 export interface DateTabProps {
   label: string;
   isSelected: boolean;
-  style?: DateTabStyle;
-  onTap?: (() => void) | undefined;
 }
 
-export function DateTab({ label, isSelected, style = 'underline', onTap }: DateTabProps) {
+export function DateTab({ label, isSelected }: DateTabProps) {
   return (
-    <button
-      type="button"
-      className={cx(
-        styles.tab,
-        style === 'segmented' && styles.segmented,
-        isSelected && styles.selected,
-      )}
-      aria-pressed={isSelected}
-      onClick={onTap}
-    >
-      {label}
+    <button type="button" className={styles.day} aria-pressed={isSelected}>
+      <span className={cx(styles.disc, isSelected && styles.discHere)} aria-hidden="true" />
+      <span className={cx(styles.label, isSelected && styles.labelHere)}>{label}</span>
     </button>
   );
 }

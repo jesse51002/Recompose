@@ -1,72 +1,20 @@
 /*
- * Styles for ./DateRow.tsx
- * (ports MobileApp/.../class_schedule/date_row.dart).
- * `--sc-*` only — see ../ShowcaseThemeVars.tsx.
+ * Styles for ./DateRow.tsx — the week, as the thread bowing sideways.
  *
- * Lifted unchanged from the shipped HomeNotBookedBody.module.css, so the
- * arrangement that ships keeps exactly the rail it had.
+ * Reads ONLY `--sc-*`. Never `--gw-*` / `--adm-*` (eslint Gates 2a/2b).
+ *
+ * There is almost nothing here on purpose: <Bow> owns the stroke, the scroller
+ * and the gap between circles, so this file owns only where the excursion sits
+ * in the descent. Re-declaring any of that would be a second source of truth
+ * for a measurement the shell already holds.
  */
 
 /*
- * `SliverPersistentHeader(pinned: true, delegate: DateRowHeaderDelegate)`.
- *
- * `position: sticky` IS a pinned sliver: the row scrolls up with the topbar
- * until it reaches the top of the scroller, then stays while the days move
- * under it. The opaque `background` is what makes that legible — without it the
- * class rows would show through as they pass underneath, which a sliver never
- * does because it paints its own box.
- *
- * `Container(color: backgroundColor, border bottom: text3rd, padding:
- * only(top: spacingSmall, bottom: spacingTiny))` — `date_row.dart`'s own box.
- * The horizontal inset belongs to the scroller inside it, which is what lets a
- * pill scroll all the way to the edge instead of stopping at a padding wall.
+ * The week stands off the head's own carry bow so the two excursions read as
+ * two regions rather than as one double row. The gap DOWN to the first day is
+ * the board's and is larger again — Guardrail 13's grouping rule, where the gap
+ * between two things is what says whether they belong together.
  */
-.dateStrip {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  flex: 0 0 auto;
-  width: 100%;
-  padding-top: var(--sc-spacing-small);
-  padding-bottom: var(--sc-spacing-tiny);
-  background: var(--sc-background);
-  border-bottom: var(--sc-divider-thickness) solid var(--sc-text-3rd);
-  overflow-x: auto;
-  overflow-y: hidden;
-  overscroll-behavior-x: contain;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.dateStrip::-webkit-scrollbar {
-  display: none;
-}
-
-/*
- * `SliverPersistentHeader(pinned: false)` — the rail scrolls away with the
- * content instead of holding the top. `nextUpHero`'s call, and the reason it
- * pairs that with the segmented chips: a rail that leaves has to read as a
- * control while it is there, not as a permanent index.
- */
-.unpinned {
-  position: static;
-}
-
-/*
- * `ListView.separated(scrollDirection: horizontal, padding: only(left:
- * paddingBig, right: spacingMedium), separatorBuilder: SizedBox(spacingBig))`.
- *
- * IT IS MEANT TO RUN OFF THE EDGE. The real board carries 14 days and grows to
- * 60, so this row has always been a scroller whose trailing pills sit past the
- * screen — the app centres the selected one rather than fitting them all.
- * `width: max-content` keeps the pills at their natural pitch and lets the row
- * scroll, which is the widget being ported.
- */
-.dateRow {
-  display: flex;
-  align-items: center;
-  gap: var(--sc-spacing-big);
-  width: max-content;
-  padding-left: var(--sc-padding-big);
-  padding-right: var(--sc-spacing-medium);
+.week {
+  padding-bottom: var(--sc-spacing-small);
 }

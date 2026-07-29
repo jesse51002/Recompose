@@ -1,111 +1,79 @@
 // Ports ../../../../../../MobileApp/lib/features/profile/presentation/widgets/
 // rank_summary/rank_header.dart — the member's belt art beside their rank name,
-// with the sub-rank label under it — and, folded in, the `beltBleed`
-// treatment's own `rank_belt_band.dart`. The band is fifteen lines and has
-// exactly one call site (this file's `beltBleed`), so it lands here rather than
-// in a file of its own; every other layout is a one-line difference on the same
-// row.
+// with the sub-rank label under it.
+//
+// THE MEDALLION IS A DISC THE THREAD PASSES THROUGH, and that is the whole
+// design of this element. The descent runs at `--sc-thread-x`; the disc is
+// centred on that same line and is opaque, so the stroke enters at its top edge,
+// disappears behind it, and comes out the bottom. It is not a node with a
+// picture in it and it is not a badge dropped beside the line — it IS the node
+// for this region, which is why this file draws its own row rather than reaching
+// for `<Region>`'s small ring.
+//
+// ITS DIAMETER IS DECIDED BY THE THREAD, NOT BY TASTE, and it is the app's own
+// circle rather than a number picked here. The line's centre sits
+// `--sc-thread-x` + half `--sc-thread-width` from the screen's left edge (27),
+// so a disc centred on it eats into BOTH the left margin and the content column
+// as it grows. `navDisc` is the size the design already settled on for exactly
+// that problem: the four destinations at the foot are circles centred on this
+// same line at this same distance from this same edge. Reusing it means the
+// member's own mark, the destinations they move between, and the studio mark
+// the thread starts from are all one family of circle — and a disc drawn at
+// taste rather than at that number was sitting a single pixel off the screen
+// edge, which was the first thing wrong with this screen when it was looked at.
+//
+// <MintedDisc>, NOT A PHOTOGRAPH. The belt art the pipeline produces for this
+// slot is a struck medallion — 1:1, centre-weighted, transparent-edged — so a
+// circle costs it nothing and belongs to it. Guardrail 10b is about the other
+// case, and it is why nothing landscape ever gets this treatment.
 //
 // THE BELT IS A THEME SLOT HERE, WHICH IS THE POINT. Dart's ladder is the
 // member's own `rank.image_url` (the gym's real belt art) over a bundled
 // fallback; there is no member in this browser, so the ladder starts one rung
 // lower and the ACTIVE THEME's `rank_belt` is what renders — the same rung
-// ../support/ShowcaseTopbar.tsx's info bar already uses for this slot. Switching
-// theme therefore re-belts the member, which is exactly the claim the preview
-// exists to make.
-//
-// ONE BELT, FOUR PLACEMENTS. Every arrangement renders exactly one of these and
-// changes only where it sits and how loud the names are, which is what keeps
-// `rank_format` a choice of arrangement rather than of content.
+// ../shell/Head.tsx's carried row already uses for this slot. Switching theme
+// therefore re-belts the member, which is exactly the claim the preview exists
+// to make.
 
-import { ThemedImage } from 'recompose-react';
-
-import { cx } from '../cx';
+import { MintedDisc } from '../shell/Photo';
+import { Title } from '../shell/Figure';
 import { showcaseAsset } from '../showcaseAssets';
 import { SLOT_RANK_BELT } from '../showcaseSlots';
+import { SC } from '../showcaseTokens';
 
 import { RANK_PART } from './rankParts';
 import styles from './RankHeader.module.css';
 
-/** `RankHeaderLayout`. */
-export type RankHeaderLayout = 'centred' | 'beltLeft' | 'beltBleed' | 'tile';
+/** The app's own circle, centred on the app's own line. See the header. */
+const MEDALLION = SC.navDisc;
 
 export interface RankHeaderProps {
   rankTitle: string;
   rankSubtitle?: string | undefined;
-  /** `centred` is the line that ships. */
-  layout?: RankHeaderLayout;
 }
 
-export function RankHeader({ rankTitle, rankSubtitle, layout = 'centred' }: RankHeaderProps) {
-  const tile = layout === 'tile';
-  // `_names(centred:)` — only the shipped line and the board cell centre; the
-  // leading-aligned line and the band's foot both take `centred: false`.
-  const centred = layout === 'centred' || tile;
-
-  // `_names` — `Column(mainAxisSize: min, spacing: spacingSmall)`, centred or
-  // leading-aligned, stepped down to h2 / pSmall inside a board cell.
-  const names = (
-    <div className={cx(styles.names, !centred && styles.namesStart)}>
-      <span className={cx(styles.title, tile && styles.titleTile)}>{rankTitle}</span>
-      {rankSubtitle !== undefined && rankSubtitle !== '' && (
-        <span className={cx(styles.subtitle, tile && styles.subtitleTile)}>{rankSubtitle}</span>
-      )}
-    </div>
-  );
-
-  // `_kBeltWidth` x `_kBeltHeight` at `BoxFit.contain`; the tile pair is the
-  // same aspect stepped down for a board cell, and the band takes the art at
-  // `BoxFit.cover` instead. Per-asset layout dimensions, not design tokens —
-  // the Dart spells them as file-local consts too.
-  const belt = (
-    <ThemedImage
-      className={cx(styles.belt, tile && styles.beltTile, layout === 'beltBleed' && styles.beltBand)}
-      slot={SLOT_RANK_BELT}
-      fallbackSrc={showcaseAsset('profile_rank_belt_gold.png')}
-      alt=""
-      data-rank-part={RANK_PART.rankBelt}
-    />
-  );
-
-  if (layout === 'beltBleed') {
-    return (
-      // `RankBeltBand` — `SizedBox(height: _kBandHeight) > Stack(cover art,
-      // scrim, names pinned to the foot)`.
-      //
-      // THE SCRIM IS WHAT MAKES THIS SAFE FOR A TENANT: the belt art is theirs,
-      // so the names cannot rely on it being dark enough. Dart writes
-      // `backgroundColor.withValues(alpha: _kScrimTopAlpha)` over
-      // `backgroundColor`; taking a LIVE custom property to an alpha is what
-      // `color-mix` is for, and it is the only way to do it without restating
-      // the theme colour as channels here.
-      <div className={styles.band} data-rank-part={RANK_PART.rankHeader}>
-        {belt}
-        <div className={styles.bandScrim} />
-        <div className={styles.bandNames}>{names}</div>
-      </div>
-    );
-  }
-
-  if (tile) {
-    return (
-      // `_tile()` — `Column(mainAxisSize: min, spacing: spacingSmall)`.
-      <div className={styles.tile} data-rank-part={RANK_PART.rankHeader}>
-        {belt}
-        {names}
-      </div>
-    );
-  }
-
+export function RankHeader({ rankTitle, rankSubtitle }: RankHeaderProps) {
   return (
-    // `_line()` — `Row(spacing: spacingLarge)`: centred and shrink-wrapped for
-    // `centred`, leading-aligned and full-width for `beltLeft`.
-    <div
-      className={cx(styles.header, layout === 'beltLeft' && styles.headerStart)}
-      data-rank-part={RANK_PART.rankHeader}
-    >
-      {belt}
-      {names}
+    <div className={styles.header} data-rank-part={RANK_PART.rankHeader}>
+      <span className={styles.medallion} data-rank-part={RANK_PART.rankBelt}>
+        <MintedDisc
+          slot={SLOT_RANK_BELT}
+          fallback={showcaseAsset('profile_rank_belt_gold.png')}
+          alt=""
+          size={MEDALLION}
+        />
+      </span>
+      {/*
+        The one headline that names this screen, in the display face at LIGHT
+        weight and in sentence case — the member's rank is what the screen is
+        called. The sub-rank sits under it, close, because the two are one name.
+      */}
+      <div className={styles.names}>
+        <Title>{rankTitle}</Title>
+        {rankSubtitle !== undefined && rankSubtitle !== '' && (
+          <p className={styles.subtitle}>{rankSubtitle}</p>
+        )}
+      </div>
     </div>
   );
 }

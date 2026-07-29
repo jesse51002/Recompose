@@ -70,8 +70,18 @@ export interface ShowcaseRewardsStats {
 
 /** `showcaseWinsStats`. */
 export const SHOWCASE_WINS_STATS: ShowcaseWinsStats = Object.freeze({
-  title: 'Today’s wins',
-  subtitle: 'The grind never stops',
+  // THESE TWO ARE FALLBACKS, NOT CONTENT. `wins_title` and `wins_subtitle` are
+  // the only themed copy slots on any celebration card, and ../WinsShowcase.tsx
+  // reads both through <useThemeText> — a loaded theme always wins.
+  //
+  // They carry this run's own values rather than the base's ("Today's wins" /
+  // "The grind never stops") for the reason ../showcaseTokens.ts replaces its
+  // fallback palette: the harness opens UNTHEMED, so these strings are what a
+  // reviewer actually judges, and a yoga studio's final card reading "the grind
+  // never stops" is the fork failing to be the fork. Read off
+  // `apps/combatden/VinyasaFlow/output.yaml`.
+  title: 'Your practice',
+  subtitle: 'Breath by breath, you deepen',
   heroAsset: 'stat_wins_trophy.png',
   // `buildWinsStats`, in its order. NOT `mock_stats.dart`'s `mockWinsStats`,
   // which these were copied from and which no screen renders any more: its

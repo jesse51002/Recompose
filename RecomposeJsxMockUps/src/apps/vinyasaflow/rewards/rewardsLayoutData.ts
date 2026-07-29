@@ -1,10 +1,10 @@
 // Ports ../../../../../../MobileApp/lib/features/rewards/presentation/layouts/
-// rewards_layout_data.dart — everything a points-store arrangement renders.
+// rewards_layout_data.dart — everything the points store renders.
 //
-// IDENTICAL FOR EVERY `RewardsFormat`: the topbar chrome, the member's point
-// total, and the store's rewards. An arrangement rearranges this payload; it
-// never reaches past it for data the shipped screen did not already have. That
-// is the whole invariant, and handing all five the SAME object is what makes it
+// ONE PAYLOAD, HANDED WHOLE. The head's chrome, the member's point total, and
+// the store's rewards. The arrangement rearranges this payload; it never
+// reaches past it for data the shipped screen did not already have. That is the
+// invariant, and having exactly one object to render from is what makes it
 // structural rather than a promise — there is no second source to reach for.
 //
 // WHAT IS THE GYM'S AND WHAT IS THE MEMBER'S. `gymName` / `gymLogoSrc` are the
@@ -30,14 +30,14 @@ export interface RewardsLayoutData {
   readonly streakDays: number;
   readonly pointsLabel: string;
   /**
-   * The topbar's belt art. Typed as the one filename rather than any bundled
-   * asset, because ../support/ShowcaseTopbar.tsx's own prop is that literal.
+   * The rank belt's bundled art. Typed as the one filename rather than any
+   * bundled asset because that is what the member's rank badge resolves behind
+   * the theme's `rank_belt` slot; ../shell/Head.tsx now names that fallback
+   * itself, so the store carries this only to keep the payload the shipped
+   * screen's.
    */
   readonly rankBadgeAsset: 'icon_rank_belt.png';
-  /**
-   * The member's points balance — the headline, and the yardstick
-   * ./rewardBands.ts bands against. Already on the screen today.
-   */
+  /** The member's points balance — the screen's headline figure. */
   readonly totalPoints: number;
   readonly items: readonly ShowcasePointsStoreItem[];
 }

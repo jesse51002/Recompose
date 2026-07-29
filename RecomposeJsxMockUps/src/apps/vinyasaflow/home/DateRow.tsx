@@ -1,67 +1,56 @@
+// THE WEEK, AS THE THREAD BOWING SIDEWAYS.
+//
 // Ports MobileApp/lib/features/home/presentation/widgets/class_schedule/
-// date_row.dart (+ `date_row_header_delegate.dart`, whose whole job — put the
-// row in a sliver and let the FORMAT decide whether it pins — is `pinned` here).
+// date_row.dart — five days, the current one marked — and rebuilds it in this
+// fork's own vocabulary: the descending line goes out across the screen,
+// through five circles, and back down. It is <Bow>, the same excursion the head
+// uses to gather the four things the member carries and the foot uses to thread
+// the four destinations, which is what makes sideways movement here read as
+// part of one sequence rather than as a second axis bolted on.
 //
-// One pill per window day. Lifted out of the shipped ./HomeNotBookedBody.tsx
-// unchanged so all five arrangements share one rail: `agendaList` /
-// `timeSpine` / `boardGrid` pin it, `nextUpHero` lets it scroll away as a
-// segmented control, and `dayPager` pins it AND drives the pager with it.
+// THE PILL IS GONE AND THE CIRCLE REPLACES IT. This design has three forms —
+// the line, the circle, the photograph — so a bordered chip or an underlined
+// tab would be a fourth. A day is a circle on the thread with its name spoken
+// beneath it (../layout_brief.yaml: "a day sits in a circle").
 //
-// WHY `position: sticky` IS THE PIN. A `SliverPersistentHeader(pinned: true)`
-// scrolls up with the content until it reaches the top of the scroller and then
-// stays while the days move under it; that is what sticky does, and the opaque
-// background is what makes it legible (a sliver paints its own box, an
-// unstyled sticky element does not).
-//
-// TODAY STAYS SELECTED UNLESS A FORMAT DRIVES IT. The real row re-selects as
+// TODAY STAYS SELECTED, AND NOTHING RE-SELECTS IT. The real row re-selects as
 // the member scrolls past each day heading, measured with a `GlobalKey` per day
-// and a scroll listener. Reproducing that here would mean writing state on
-// every scroll frame to drive an affordance the vertical formats have nothing
-// to do with, so their pills stay labels — the same call ../rewards/RewardsTabs.tsx
-// and ../videos/VideoCategoryTabs.tsx make for their own rows. `dayPager` is
-// the exception, and it is not a new affordance: there the rail IS the control
-// (see ./layouts/HomeDayPager.tsx), exactly as in the Dart.
+// and a scroll listener; reproducing that would mean writing state on every
+// scroll frame to drive an affordance this preview has nothing to do with. The
+// base made the same call, and the circles are the same non-driving marks its
+// pills were — no handler is threaded in, because wiring one would ADD
+// navigation the shipped screen does not have.
+//
+// It is NOT pinned. The base's rail was a `SliverPersistentHeader(pinned:true)`
+// held to the top by `position: sticky`; here the thread is the structure and a
+// row that detaches from it to float over the content below would cut the line
+// the design's one absolute says may never break.
 
-import { cx } from '../cx';
+import { Bow } from '../shell/Thread';
 
 import { DateTab } from './DateTab';
-import type { DateTabStyle } from './DateTab';
 import styles from './DateRow.module.css';
 import { formatDayLabel } from './homeScheduleGenerator';
 
 export interface DateRowProps {
-  /** The day offsets the board covers — one pill each. */
+  /** The day offsets the board covers — one circle each. */
   dayOffsets: readonly number[];
-  /** Which pill reads as selected. */
+  /** Which circle reads as the day the member is standing in. */
   currentDayIndex: number;
-  /** `SliverPersistentHeader(pinned:)`. */
-  pinned?: boolean;
-  /** How the selected day marks itself. Presentation only. */
-  tabStyle?: DateTabStyle;
-  /** Set only by the format that makes the rail its primary control. */
-  onDateTap?: ((index: number) => void) | undefined;
 }
 
-export function DateRow({
-  dayOffsets,
-  currentDayIndex,
-  pinned = true,
-  tabStyle = 'underline',
-  onDateTap,
-}: DateRowProps) {
+export function DateRow({ dayOffsets, currentDayIndex }: DateRowProps) {
   return (
-    <div className={cx(styles.dateStrip, !pinned && styles.unpinned)}>
-      <div className={styles.dateRow}>
+    <div className={styles.week}>
+      <Bow>
         {dayOffsets.map((offset) => (
           <DateTab
             key={offset}
             label={formatDayLabel(offset)}
             isSelected={offset === currentDayIndex}
-            style={tabStyle}
-            onTap={onDateTap === undefined ? undefined : () => { onDateTap(offset); }}
           />
         ))}
-      </div>
+      </Bow>
     </div>
   );
 }
