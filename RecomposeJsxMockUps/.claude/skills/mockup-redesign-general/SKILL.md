@@ -42,6 +42,16 @@ The package is an **island**: it may import `recompose-react` and itself, and
 nothing else. `cx` and `useElementSize` are duplicated from the studio rather
 than imported. Do not add the edge.
 
+**One layout and one animation per asset — there are no presets.** Format slots
+× arrangements were built, tested and rejected: a bounded option set reproduces
+the platform's own design language, which is a reskin. Layout and animation are
+changed by editing the layout and the animation, which is what this whole
+package is for.
+
+This is context, not a trap — nothing breaks if you add a switch over a
+vocabulary. You would just be rebuilding something that was deliberately
+removed, and spending the effort twice.
+
 ---
 
 ## GUARDRAIL 1 — every screen needs a token root
@@ -131,17 +141,7 @@ if (!loop || reduceMotion) return;
 if (!loop) { onCycleComplete?.(); return; }
 ```
 
-## GUARDRAIL 6 — one layout, one animation
-
-**There are no layout or animation presets.** Format slots × arrangements were
-built, tested and rejected — a bounded option set reproduces the platform's own
-design language, which is a reskin. Layout and animation are changed by
-**editing the layout and the animation**.
-
-If you find yourself adding a switch over a vocabulary, you are rebuilding what
-was deliberately removed.
-
-## GUARDRAIL 7 — tap targets live where the affordance is
+## GUARDRAIL 6 — tap targets live where the affordance is
 
 A screen's tap handler imports its route id and calls `useMockNav()` directly.
 Do **not** thread callbacks down through layout layers: a callback chain through
@@ -151,13 +151,13 @@ rearranges a screen; an imported constant is not.
 `nav.go` pushes, `nav.replace` advances a flow without leaving the old card
 behind, `nav.reset` returns to the root. Tab switches reset.
 
-## GUARDRAIL 8 — no data fetching, ever
+## GUARDRAIL 7 — no data fetching, ever
 
 Content comes from the app's bundled demo data, or is passed in through
 `useShowcaseContent`'s `real*` arguments. A `fetch` here is a bug: a screen that
 reaches the network can fail in ways a redesign cannot be judged against.
 
-## GUARDRAIL 9 — fixed size, uniform scale
+## GUARDRAIL 8 — fixed size, uniform scale
 
 Assets are authored at one device size and scaled by `transform: scale()`, never
 reflowed. `MockAssetStage` computes `min(w/W, h/H)` in JS because CSS re-derives
@@ -227,7 +227,7 @@ two answer different questions.
 
 **A screen:** build it under `src/apps/<app>/`, add a `ROUTE_*` id and a route
 entry in the asset, give it an exit (Guardrail 4), wire its tap targets
-(Guardrail 7), and walk to it in the browser.
+(Guardrail 6), and walk to it in the browser.
 
 **An asset:** only when a screen genuinely cannot be reached by tapping.
 Everything tap-reachable belongs in one asset — splitting for any other reason
