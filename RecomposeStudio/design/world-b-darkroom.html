@@ -1,0 +1,927 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recompose Studio — Darkroom</title>
+
+<!--
+  DIRECTION CONTRACT — WORLD B
+  THESIS: generation is development, so the tool is the darkroom it happens in.
+    Refuses the console-with-an-accent this category ships, and the cream
+    editorial that is its predictable opposite.
+  OWN-WORLD: amber safelight washing every surface, wet-print silver greys
+    deepening to black as the ink, enamel-tray white at the edges. Grease-pencil
+    labels and printed timer digits. Work moves through fixed stations in order.
+  STORY: an investor watches prose go into a bath and a whole branded app come
+    up out of it, and understands that the slow steps are the safe ones.
+  FIRST VIEWPORT: an unexposed easel under safelight — the repo in a grease-
+    pencil field, two stations, nothing developed. The first white light on
+    screen is the finished print.
+  FORM: darkroom safelight bay, dealt challenger, staging pinned to the
+    incumbent structure by the user. Seed 3deec2dc.
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Barlow:wght@400;500;600&family=Sometype+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&family=Petrona:wght@400;600&family=Karla:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ===========================================================================
+   WORLD B — DARKROOM SAFELIGHT BAY
+   Amber safelight, enlarger, timed baths, drying line.
+   Everything lives under the safelight except the finished print: the deck is
+   the one surface brought into white light, which is what keeps the generated
+   palette judgeable instead of drowned in amber.
+   =========================================================================== */
+
+:root {
+  --bay:     #1a1209;   /* the bay under safelight                          */
+  --bay-2:   #241809;
+  --tray:    #0f0b06;   /* the wet bath                                     */
+  --amber:   #d98a2b;   /* the safelight itself                             */
+  --amber-d: #8a5518;
+  --ink:     #f2e5d2;   /* what light there is                              */
+  --ink-2:   #b39b7c;
+  --ink-3:   #7d6a52;
+  --enamel:  #e8e2d6;   /* tray enamel, the edge white                      */
+  --rule:    rgba(217,138,43,.22);
+  --rule-2:  rgba(217,138,43,.42);
+  --fix:     #ff5f46;   /* out of tolerance                                 */
+
+  --lab: 'Barlow Condensed', system-ui, sans-serif;
+  --body: 'Barlow', system-ui, sans-serif;
+  --note: 'Sometype Mono', ui-monospace, Menlo, monospace;
+
+  --t1: 10px; --t2: 11.5px; --t3: 13.5px; --t4: 17px; --t5: 24px; --t6: 58px;
+  --seat: 0 2px 4px rgba(0,0,0,.55);
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0; color: var(--ink); font-family: var(--body); font-size: var(--t3);
+  background:
+    radial-gradient(88% 62% at 50% -8%, rgba(217,138,43,.30) 0%, rgba(217,138,43,.07) 46%, transparent 72%),
+    var(--bay);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased; overflow: hidden;
+}
+button { font-family: inherit; cursor: pointer; }
+.app { height: 100vh; display: flex; flex-direction: column; }
+
+/* The safelight bar. */
+.top {
+  height: 54px; flex: none; display: flex; align-items: stretch;
+  background: var(--tray); position: relative; z-index: 50;
+  border-bottom: 1px solid var(--rule-2);
+}
+.top .mark { display: flex; align-items: center; gap: 11px; padding: 0 18px; border-right: 1px solid var(--rule); }
+.top .mark b { font: 600 var(--t4)/1 var(--lab); letter-spacing: .04em; text-transform: uppercase; color: var(--amber); }
+.reg { width: 15px; height: 15px; border-radius: 50%; flex: none; background: var(--amber); box-shadow: 0 0 14px 3px rgba(217,138,43,.62); }
+.reg i { display: none; }
+.top .who { display: flex; align-items: center; padding: 0 16px; font: 500 var(--t1)/1 var(--note); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-3); border-right: 1px solid var(--rule); }
+.top .who.cust { color: var(--amber); }
+.top .note { display: flex; align-items: center; padding: 0 16px; font: 400 var(--t1)/1 var(--note); color: var(--ink-3); }
+.top .sw { margin-left: auto; display: flex; }
+.top .sw button { border: 0; border-left: 1px solid var(--rule); background: transparent; color: var(--ink-3); padding: 0 20px; font: 600 var(--t3)/1 var(--lab); letter-spacing: .13em; text-transform: uppercase; }
+.top .sw button.on { background: var(--amber); color: var(--tray); }
+.top .sw button:hover:not(.on) { color: var(--amber); }
+.top .rst { border: 0; border-left: 1px solid var(--rule); background: transparent; color: var(--ink-3); padding: 0 16px; font: 400 var(--t1)/1 var(--note); letter-spacing: .13em; text-transform: uppercase; }
+.top .rst:hover { color: var(--amber); }
+
+.page { flex: 1; min-height: 0; display: none; }
+.page.on { display: flex; }
+
+/* Test strip along the foot: stepped exposures, the bay's own instrument. */
+.wedge { position: fixed; left: 0; right: 0; bottom: 0; height: 15px; display: flex; z-index: 5; pointer-events: none; }
+.wedge i { flex: 1; display: block; }
+
+.chip { border-radius: 1px; box-shadow: var(--seat); display: block; }
+
+.btn {
+  border: 1px solid var(--rule-2); background: rgba(217,138,43,.09); color: var(--ink);
+  border-radius: 1px; padding: 0 16px; height: 38px;
+  font: 600 var(--t3)/1 var(--lab); letter-spacing: .1em; text-transform: uppercase;
+}
+.btn:hover { background: rgba(217,138,43,.2); }
+.btn.pri { background: var(--amber); border-color: var(--amber); color: var(--tray); }
+.btn.pri:hover { background: #eb9a37; }
+.btn:disabled { opacity: .38; cursor: default; }
+.btn.sm { height: 30px; padding: 0 11px; font-size: var(--t2); }
+
+.field { border: 1px solid var(--rule-2); border-radius: 1px; background: rgba(0,0,0,.34); padding: 9px 14px 8px; }
+.field label { display: block; font: 500 var(--t1)/1 var(--note); letter-spacing: .18em; text-transform: uppercase; color: var(--ink-3); }
+.field .v { font: 400 var(--t3)/1.4 var(--note); color: var(--ink); margin-top: 5px; }
+
+/* ── Onboard: an easel under the enlarger ─────────────────────────────── */
+#page-onboard { align-items: center; justify-content: center; padding: 40px 40px 56px; overflow-y: auto; }
+.sheet-a {
+  width: 780px; max-width: 100%; background: rgba(0,0,0,.30);
+  border: 1px solid var(--rule-2); padding: 52px 56px 40px; position: relative;
+  box-shadow: 0 0 90px -10px rgba(217,138,43,.18) inset, 0 24px 60px -18px rgba(0,0,0,.8);
+}
+.sheet-a::before, .sheet-a::after {
+  content: ''; position: absolute; width: 15px; height: 15px;
+  border-color: var(--amber-d); border-style: solid;
+}
+.sheet-a::before { top: 9px; left: 9px; border-width: 1px 0 0 1px; }
+.sheet-a::after { bottom: 9px; right: 9px; border-width: 0 1px 1px 0; }
+
+.slug { font: 500 var(--t1)/1 var(--note); letter-spacing: .22em; text-transform: uppercase; color: var(--ink-3); display: flex; gap: 14px; }
+.sheet-a h1 { margin: 16px 0 10px; font: 700 var(--t6)/.98 var(--lab); letter-spacing: -.015em; text-transform: uppercase; color: var(--ink); }
+.sheet-a .lede { margin: 0 0 26px; font-size: var(--t4); line-height: 1.55; color: var(--ink-2); max-width: 32em; }
+.sheet-a .lede b { color: var(--amber); font-weight: 600; }
+
+.urlrow { display: flex; gap: 10px; align-items: stretch; }
+.urlrow .field { flex: 1; }
+.urlrow .btn { height: auto; }
+
+/* Stations, in order. You cannot skip a bath. */
+.strip { display: flex; margin: 30px 0 22px; border: 1px solid var(--rule); }
+.stp { flex: 1; padding: 11px 14px; display: flex; align-items: baseline; gap: 10px; border-right: 1px solid var(--rule); color: var(--ink-3); }
+.stp:last-child { border-right: 0; }
+.stp .n { font: 500 var(--t1)/1 var(--note); letter-spacing: .12em; }
+.stp b { font: 600 var(--t3)/1 var(--lab); letter-spacing: .13em; text-transform: uppercase; }
+.stp.done { color: var(--ink-2); background: rgba(217,138,43,.07); }
+.stp.now { background: var(--amber); color: var(--tray); }
+
+.pnl { display: none; }
+.pnl.on { display: block; animation: emerge .7s cubic-bezier(.16,1,.3,1) both; }
+/* The signature motion: the image comes UP out of the paper. */
+@keyframes emerge { from { opacity: 0; filter: brightness(.25) contrast(.4); transform: translateY(7px); } }
+
+.read { border: 1px solid var(--rule-2); background: rgba(0,0,0,.34); display: flex; align-items: center; gap: 16px; padding: 16px 18px; }
+.read .lamp { width: 12px; height: 12px; flex: none; border-radius: 50%; background: var(--ink-3); }
+.read.live .lamp { background: var(--amber); box-shadow: 0 0 12px 2px rgba(217,138,43,.7); animation: glow 1.6s ease-in-out infinite; }
+@keyframes glow { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+.read .t { flex: 1; min-width: 0; }
+.read .t b { display: block; font: 600 var(--t5)/1.15 var(--lab); letter-spacing: .01em; text-transform: uppercase; }
+.read .t u { display: block; text-decoration: none; font: 400 var(--t2)/1.6 var(--note); color: var(--ink-3); margin-top: 6px; }
+.read .el { font: 500 var(--t4)/1 var(--note); color: var(--amber); flex: none; }
+
+.dwell { margin-top: 12px; padding: 12px 16px; background: rgba(217,138,43,.07); border: 1px solid var(--rule); font-size: var(--t2); line-height: 1.65; color: var(--ink-2); }
+.dwell b { color: var(--amber); font-weight: 600; }
+
+.tally { display: flex; margin-top: 16px; border: 1px solid var(--rule); }
+.tally div { flex: 1; padding: 13px 16px; border-right: 1px solid var(--rule); }
+.tally div:last-child { border-right: 0; }
+.tally b { display: block; font: 700 var(--t5)/1 var(--lab); color: var(--ink); }
+.tally u { display: block; text-decoration: none; font: 500 var(--t1)/1 var(--note); letter-spacing: .15em; text-transform: uppercase; color: var(--ink-3); margin-top: 8px; }
+
+.acts { margin-top: 18px; display: flex; gap: 9px; align-items: center; }
+.acts .sp { flex: 1; }
+.fine { margin-top: 30px; padding-top: 14px; border-top: 1px solid var(--rule); font: 400 var(--t2)/1.7 var(--note); color: var(--ink-3); }
+.fine b { color: var(--ink-2); font-weight: 500; }
+
+/* ── Generate ─────────────────────────────────────────────────────────── */
+#page-generate { flex-direction: row; }
+.chat { width: 372px; flex: none; background: var(--tray); display: flex; flex-direction: column; min-height: 0; border-right: 1px solid var(--rule); }
+.chat .hd { height: 42px; flex: none; display: flex; align-items: center; gap: 10px; padding: 0 16px; border-bottom: 1px solid var(--rule); font: 500 var(--t1)/1 var(--note); letter-spacing: .22em; text-transform: uppercase; color: var(--ink-3); }
+.chat .hd .sp { margin-left: auto; }
+.stamp { font: 600 var(--t2)/1 var(--lab); letter-spacing: .16em; text-transform: uppercase; border: 1px solid var(--rule-2); padding: 4px 8px; color: var(--amber); }
+.msgs { flex: 1; overflow-y: auto; padding: 18px 16px; display: flex; flex-direction: column; gap: 17px; }
+.msg { animation: emerge .6s cubic-bezier(.16,1,.3,1) both; }
+.msg .from { font: 500 var(--t1)/1 var(--note); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 7px; }
+.msg p { margin: 0; font-size: var(--t3); line-height: 1.62; color: var(--ink-2); }
+.msg strong { color: var(--ink); font-weight: 600; }
+.msg.you p { color: var(--ink); background: rgba(217,138,43,.1); padding: 11px 13px; border-left: 2px solid var(--amber); }
+.msg.sys p { font-family: var(--note); font-size: var(--t2); color: var(--ink-3); line-height: 1.7; }
+
+.opts { display: flex; flex-direction: column; margin-top: 9px; border: 1px solid var(--rule); }
+.opt { display: flex; gap: 11px; align-items: baseline; text-align: left; width: 100%; background: transparent; border: 0; border-bottom: 1px solid var(--rule); padding: 11px 13px; color: var(--ink-2); font-size: var(--t2); line-height: 1.5; }
+.opt:last-child { border-bottom: 0; }
+.opt b { font: 500 var(--t1)/1.5 var(--note); color: var(--ink-3); }
+.opt:hover { background: rgba(217,138,43,.09); color: var(--ink); }
+.opt.on { background: var(--amber); color: var(--tray); }
+.opt.on b { color: rgba(15,11,6,.6); }
+
+.spec { border: 1px solid var(--rule-2); margin-top: 4px; }
+.spec h4 { margin: 0; padding: 10px 13px; font: 500 var(--t1)/1 var(--note); letter-spacing: .18em; text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--rule); }
+.kv { display: flex; gap: 12px; padding: 8px 13px; font-size: var(--t2); line-height: 1.55; }
+.kv span { width: 76px; flex: none; font: 400 var(--t1)/1.75 var(--note); color: var(--ink-3); letter-spacing: .08em; text-transform: uppercase; }
+.kv div { color: var(--ink-2); }
+.spec .row { display: flex; gap: 8px; padding: 11px 13px; border-top: 1px solid var(--rule); }
+
+.comp { flex: none; border-top: 1px solid var(--rule); padding: 13px 16px; }
+.comp .box { border: 1px solid var(--rule); background: rgba(0,0,0,.4); padding: 12px 13px; min-height: 62px; display: flex; flex-direction: column; font-size: var(--t3); color: var(--ink-3); }
+.comp .box .k { margin-top: auto; margin-left: auto; font: 400 var(--t1)/1 var(--note); }
+
+.canvas { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.bar { height: 54px; flex: none; display: flex; align-items: center; gap: 10px; padding: 0 18px; background: var(--tray); border-bottom: 1px solid var(--rule); }
+.tabs { display: flex; border: 1px solid var(--rule-2); }
+.tabs button { border: 0; border-right: 1px solid var(--rule); background: transparent; color: var(--ink-3); padding: 8px 16px; font: 600 var(--t2)/1 var(--lab); letter-spacing: .15em; text-transform: uppercase; }
+.tabs button:last-child { border-right: 0; }
+.tabs button.on { background: var(--amber); color: var(--tray); }
+.deckbtn { display: flex; align-items: center; gap: 10px; border: 1px solid var(--rule-2); background: transparent; padding: 7px 13px 7px 8px; color: var(--ink); }
+.deckbtn:hover { background: rgba(217,138,43,.1); }
+.deckbtn .sw { width: 22px; height: 22px; flex: none; }
+.deckbtn em { font: 500 var(--t1)/1 var(--note); font-style: normal; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-3); }
+.deckbtn b { font: 600 var(--t3)/1 var(--lab); letter-spacing: .06em; }
+.bar .sp { margin-left: auto; }
+.gauge { display: flex; gap: 20px; font: 400 var(--t2)/1 var(--note); color: var(--ink-3); }
+.gauge b { color: var(--amber); font-weight: 600; }
+
+.stage { flex: 1; min-height: 0; position: relative; overflow: hidden;
+  background: radial-gradient(80% 58% at 50% -6%, rgba(217,138,43,.2) 0%, transparent 66%), var(--bay); }
+.pane { position: absolute; inset: 0; display: none; }
+.pane.on { display: block; }
+#pane-mock { display: none; place-items: center; padding: 26px; overflow: auto; }
+#pane-mock.on { display: grid; }
+.holder { position: relative; }
+.holder::before, .holder::after { content: ''; position: absolute; top: -14px; bottom: -14px; width: 1px; background: repeating-linear-gradient(to bottom, var(--rule-2) 0 7px, transparent 7px 14px); }
+.holder::before { left: -24px; } .holder::after { right: -24px; }
+
+/* WHITE LIGHT. The finished print is judged out of the safelight — which is
+   what stops the amber wash from drowning the thing being sold. */
+#pane-inspect { overflow-y: auto; padding: 26px; background: #cfcabf; }
+.deck { max-width: 1080px; margin: 0 auto; background: var(--t-bg); color: var(--t-text); font-family: var(--t-body); padding: 46px 48px 56px; box-shadow: 0 20px 54px -14px rgba(0,0,0,.5); }
+.deck .slug { color: var(--t-muted); }
+.deck h1 { margin: 15px 0 10px; font: 600 clamp(44px,5.4vw,74px)/.98 var(--t-display); letter-spacing: -.035em; }
+.deck .id { font: 400 var(--t2)/1 var(--note); color: var(--t-muted); letter-spacing: .07em; }
+.fan { display: flex; margin: 28px 0 16px; border: 1px solid var(--t-line); }
+.fan i { flex: 1; height: 54px; display: block; }
+.deck .sum { font-size: var(--t4); line-height: 1.6; color: var(--t-muted); max-width: 58ch; }
+.deck .sum b { color: var(--t-text); font-weight: 600; }
+.sec { margin-top: 46px; opacity: 0; filter: brightness(.3) contrast(.45); transition: opacity .6s ease, filter .8s ease; }
+.sec.in { opacity: 1; filter: none; }
+.sech { display: flex; align-items: baseline; gap: 14px; border-bottom: 1px solid var(--t-line); padding-bottom: 10px; margin-bottom: 22px; }
+.sech h2 { margin: 0; font: 600 var(--t4)/1 var(--t-display); }
+.sech .c { margin-left: auto; font: 400 var(--t2)/1 var(--note); color: var(--t-muted); }
+.roles { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
+.role .patch { height: 128px; border: 1px solid var(--t-line); }
+.role b { display: block; margin-top: 13px; font: 600 var(--t4)/1.25 var(--t-display); }
+.role code { display: block; font: 400 var(--t2)/1.6 var(--note); color: var(--t-muted); margin-top: 4px; }
+.role p { margin: 9px 0 0; font-size: var(--t2); line-height: 1.65; color: var(--t-muted); }
+.faces { display: grid; grid-template-columns: 1fr 1fr; gap: 34px; }
+.face .l { font: 500 var(--t1)/1 var(--note); letter-spacing: .18em; text-transform: uppercase; color: var(--t-muted); }
+.face .n { margin: 11px 0 6px; font-size: 42px; line-height: 1.05; }
+.face .s { font-size: var(--t3); line-height: 1.5; color: var(--t-muted); }
+.strings { list-style: none; margin: 0; padding: 0; }
+.strings li { display: flex; gap: 24px; padding: 15px 0; border-bottom: 1px solid var(--t-line); }
+.strings .k { width: 210px; flex: none; }
+.strings .k code { display: block; font: 400 var(--t2)/1.5 var(--note); color: var(--t-text); }
+.strings .k u { display: block; text-decoration: none; font-size: var(--t1); color: var(--t-muted); margin-top: 4px; text-transform: uppercase; }
+.strings .v { font-size: var(--t4); line-height: 1.45; }
+.plates { display: grid; grid-template-columns: repeat(6,1fr); gap: 14px; }
+.pl { border: 1px solid var(--t-line); }
+.pl .im { height: 82px; display: block; }
+.pl code { display: block; padding: 8px 9px; font: 400 var(--t1)/1.35 var(--note); color: var(--t-muted); word-break: break-all; }
+.icons { display: grid; grid-template-columns: repeat(8,1fr); gap: 14px; }
+.icons .i { border: 1px solid var(--t-line); padding: 17px; display: grid; place-items: center; }
+.icons .i span { width: 24px; height: 24px; border: 2px solid var(--t-primary); display: block; }
+.colo { margin-top: 50px; padding-top: 17px; border-top: 1px solid var(--t-line); font: 400 var(--t2)/1.8 var(--note); color: var(--t-muted); }
+.deck.blank { display: grid; place-items: center; min-height: 460px; text-align: center; }
+.deck.blank h1 { font-size: 34px; margin-bottom: 12px; }
+.deck.blank p { font-size: var(--t3); line-height: 1.7; color: var(--t-muted); max-width: 40ch; margin: 0 auto; }
+
+#approved { position: fixed; inset: 0; display: none; place-items: center; background: var(--t-bg); color: var(--t-text); text-align: center; padding: 40px; z-index: 40; }
+#approved.on { display: grid; animation: emerge .9s cubic-bezier(.16,1,.3,1) both; }
+#approved .patch { width: 68px; height: 68px; margin: 0 auto 30px; background: var(--t-primary); }
+#approved h1 { margin: 0 0 18px; font: 600 clamp(36px,5vw,58px)/1.04 var(--t-display); letter-spacing: -.035em; }
+#approved p { margin: 0 auto; font-size: 19px; line-height: 1.55; color: var(--t-muted); max-width: 30ch; }
+#approved .id { margin-top: 34px; padding-top: 18px; border-top: 1px solid var(--t-line); font: 400 var(--t2)/1.8 var(--note); color: var(--t-muted); }
+
+.scrim { position: fixed; inset: 0; background: rgba(8,5,2,.76); display: none; z-index: 60; }
+.scrim.on { display: block; }
+.rack { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 660px; max-width: calc(100vw - 40px); background: var(--bay-2); border: 1px solid var(--rule-2); z-index: 61; display: none; box-shadow: 0 30px 80px -18px rgba(0,0,0,.9); }
+.rack.on { display: block; animation: emerge .4s cubic-bezier(.16,1,.3,1) both; }
+.rack .hd { padding: 14px 17px; border-bottom: 1px solid var(--rule); display: flex; align-items: center; }
+.rack .hd b { font: 600 var(--t3)/1 var(--lab); letter-spacing: .2em; text-transform: uppercase; color: var(--amber); }
+.rack .hd .x { margin-left: auto; border: 0; background: transparent; color: var(--ink-3); font-size: var(--t4); line-height: 1; }
+.decks { padding: 17px; display: grid; grid-template-columns: repeat(3,1fr); gap: 13px; }
+.dk { border: 1px solid var(--rule); background: rgba(0,0,0,.3); padding: 0; text-align: left; }
+.dk:hover { border-color: var(--rule-2); }
+.dk.on { outline: 2px solid var(--amber); outline-offset: -1px; }
+.dk .sw { height: 60px; display: flex; }
+.dk .sw i { flex: 1; display: block; }
+.dk .lb { padding: 9px 11px; border-top: 1px solid var(--rule); }
+.dk .lb b { display: block; font: 600 var(--t3)/1.3 var(--lab); letter-spacing: .04em; color: var(--ink); }
+.dk .lb u { display: block; text-decoration: none; font: 400 var(--t1)/1.5 var(--note); color: var(--ink-3); margin-top: 3px; }
+.rack .ft { padding: 13px 17px; border-top: 1px solid var(--rule); font: 400 var(--t2)/1.65 var(--note); color: var(--ink-3); }
+
+/* ── Fleet: the drying line ───────────────────────────────────────────── */
+#page-fleet { flex-direction: column; overflow: hidden; }
+.fh { padding: 26px 30px 22px; background: var(--tray); border-bottom: 1px solid var(--rule); }
+.fh h1 { margin: 12px 0 0; font: 700 var(--t5)/1.1 var(--lab); letter-spacing: .02em; text-transform: uppercase; }
+.fh p { margin: 9px 0 0; font-size: var(--t3); line-height: 1.6; color: var(--ink-2); max-width: 66ch; }
+.fh p b { color: var(--amber); font-weight: 600; }
+.regs { flex: 1; overflow-y: auto; padding: 24px 30px 34px; display: flex; flex-direction: column; gap: 18px; }
+.rec { background: rgba(0,0,0,.3); border: 1px solid var(--rule); display: flex; align-items: stretch; position: relative; }
+.rec.live { border-color: var(--rule-2); background: rgba(217,138,43,.07); box-shadow: 0 0 40px -8px rgba(217,138,43,.32); }
+/* Pegged to the line. */
+.rec::before { content: ''; position: absolute; top: -13px; left: 40px; width: 2px; height: 13px; background: var(--amber-d); }
+.rec .swatchcol { width: 12px; flex: none; }
+.rec .idcol { width: 268px; flex: none; padding: 22px 24px; border-right: 1px solid var(--rule); }
+.rec .idcol b { display: block; font: 700 var(--t5)/1.1 var(--lab); letter-spacing: .02em; text-transform: uppercase; }
+.rec .idcol code { display: block; font: 400 var(--t2)/1.5 var(--note); color: var(--ink-3); margin-top: 8px; }
+.rec .idcol u { display: block; text-decoration: none; font: 500 var(--t1)/1 var(--note); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-3); margin-top: 12px; }
+.rec .stcol { flex: 1; min-width: 0; padding: 22px 26px; display: flex; gap: 16px; }
+.rec .lamp { width: 12px; height: 12px; flex: none; border-radius: 50%; background: var(--ink-3); margin-top: 6px; }
+.rec.live .lamp { background: var(--amber); box-shadow: 0 0 12px 2px rgba(217,138,43,.7); animation: glow 1.6s ease-in-out infinite; }
+.rec .stcol .t b { display: block; font: 600 var(--t4)/1.25 var(--lab); letter-spacing: .04em; text-transform: uppercase; }
+.rec .stcol .t p { margin: 9px 0 0; font-size: var(--t3); line-height: 1.6; color: var(--ink-2); }
+.rec .stcol .t code { display: block; font: 400 var(--t2)/1.65 var(--note); color: var(--ink-3); margin-top: 10px; }
+.rec .actcol { width: 196px; flex: none; padding: 22px 24px; border-left: 1px solid var(--rule); display: flex; flex-direction: column; gap: 8px; }
+.rec .actcol .btn { width: 100%; }
+.ff { flex: none; padding: 16px 30px; background: var(--tray); color: var(--ink-3); font-size: var(--t2); line-height: 1.7; border-top: 1px solid var(--rule); }
+.ff b { color: var(--amber); font-weight: 600; }
+
+/* ── The device. Product output; wears the theme, never the bay. ───────── */
+.phone { width: 344px; height: 726px; border-radius: 30px; background: var(--t-bg); overflow: hidden; position: relative; color: var(--t-text); font-family: var(--t-body); font-size: 12px; display: flex; flex-direction: column; box-shadow: 0 0 0 8px #100b06, 0 0 0 9px rgba(217,138,43,.3), 0 26px 60px -14px rgba(0,0,0,.85); }
+.sb { height: 30px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; font-size: 10.5px; font-weight: 600; }
+.sig { display: flex; gap: 3px; align-items: flex-end; }
+.sig i { width: 3px; border-radius: 1px; background: currentColor; display: block; }
+.gh { flex: none; padding: 6px 16px 11px; display: flex; flex-direction: column; align-items: center; gap: 6px; border-bottom: 1px solid var(--t-line); }
+.lg { width: 48px; height: 48px; border-radius: 13px; background: var(--t-primary); color: var(--t-surface); display: grid; place-items: center; font: 600 16px/1 var(--t-display); letter-spacing: .04em; }
+.lg.pend { background: transparent; border: 1px dashed var(--t-line); color: var(--t-muted); font: 400 7px/1.2 var(--note); text-align: center; padding: 3px; }
+.gn { font: 600 17px/1 var(--t-display); letter-spacing: -.015em; }
+.ib { display: flex; gap: 13px; align-items: center; font-size: 10px; color: var(--t-muted); margin-top: 2px; }
+.ib b { color: var(--t-text); font-weight: 600; }
+.blt { width: 20px; height: 12px; border-radius: 2px; background: var(--t-accent); display: block; }
+.dr { flex: none; display: flex; gap: 6px; padding: 11px 14px; }
+.dt { flex: none; width: 41px; border-radius: 9px; padding: 6px 0; text-align: center; border: 1px solid var(--t-line); color: var(--t-muted); }
+.dt u { display: block; font-size: 8.5px; text-decoration: none; letter-spacing: .09em; text-transform: uppercase; }
+.dt b { display: block; font-size: 14px; font-weight: 600; color: var(--t-text); }
+.dt.on { background: var(--t-primary); border-color: var(--t-primary); }
+.dt.on u, .dt.on b { color: var(--t-surface); }
+.cl { flex: 1; overflow: hidden; padding: 2px 14px; display: flex; flex-direction: column; gap: 8px; }
+.ci { display: flex; gap: 10px; align-items: center; padding: 8px; border-radius: 11px; background: var(--t-surface); border: 1px solid var(--t-line); }
+.th { width: 52px; height: 52px; border-radius: 9px; flex: none; background: var(--t-accent); }
+.th.pend { background: transparent; border: 1px dashed var(--t-line); color: var(--t-muted); font: 400 6.5px/1.25 var(--note); display: grid; place-items: center; text-align: center; padding: 3px; word-break: break-all; }
+.ci .m { min-width: 0; flex: 1; }
+.ci .m b { display: block; font-size: 12.5px; font-weight: 600; }
+.ci .m u { display: block; text-decoration: none; font-size: 10.5px; color: var(--t-muted); margin-top: 1px; }
+.ci .tm { text-align: right; flex: none; }
+.ci .tm b { display: block; font-size: 12px; font-weight: 600; }
+.ci .tm u { display: block; text-decoration: none; font-size: 9.5px; color: var(--t-muted); }
+.bn { flex: none; height: 58px; border-top: 1px solid var(--t-line); background: var(--t-surface); display: flex; align-items: center; padding-bottom: 8px; }
+.bn a { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--t-muted); text-decoration: none; font-size: 9px; }
+.bn a.on { color: var(--t-primary); }
+.bn i { width: 17px; height: 17px; border: 1.5px solid currentColor; border-radius: 5px; display: block; }
+.bn a.on i { background: var(--t-primary); border-color: var(--t-primary); }
+/* redesigned home */
+.gh.left { flex-direction: row; align-items: center; gap: 10px; padding: 9px 16px 12px; }
+.gh.left .lg { width: 35px; height: 35px; border-radius: 10px; font-size: 12px; }
+.gh.left .col { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.gh.left .gn { font-size: 14px; }
+.gh.left .ib { margin: 0; gap: 10px; }
+.hero { margin: 4px 14px 12px; border-radius: 14px; overflow: hidden; background: var(--t-primary); color: var(--t-surface); }
+.hero .im { height: 100px; }
+.hero .pd { padding: 12px 14px 14px; }
+.hero .ey { font-size: 8.5px; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; opacity: .82; }
+.hero h3 { margin: 6px 0 3px; font: 600 19px/1.12 var(--t-display); letter-spacing: -.02em; }
+.hero .sb2 { font-size: 10.5px; opacity: .86; }
+.hero .cta { margin-top: 12px; background: var(--t-surface); color: var(--t-primary); border-radius: 7px; text-align: center; padding: 9px; font-size: 11.5px; font-weight: 600; }
+.sph { padding: 0 16px 7px; font-size: 8.5px; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; color: var(--t-muted); }
+.spn { flex: 1; overflow: hidden; padding: 0 14px; }
+.sr { display: flex; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--t-line); }
+.sr:last-child { border-bottom: 0; }
+.sr .t { width: 42px; flex: none; text-align: right; }
+.sr .t b { display: block; font-size: 12px; font-weight: 600; }
+.sr .t u { display: block; text-decoration: none; font-size: 9px; color: var(--t-muted); }
+.sr .bar { width: 2px; border-radius: 1px; background: var(--t-line); flex: none; }
+.sr.on .bar { background: var(--t-accent); }
+.sr .d { min-width: 0; flex: 1; }
+.sr .d b { display: block; font-size: 12.5px; font-weight: 600; }
+.sr .d u { display: block; text-decoration: none; font-size: 10.5px; color: var(--t-muted); }
+
+
+@media (max-width: 1180px) {
+  .roles { grid-template-columns: repeat(2,1fr); }
+  .plates { grid-template-columns: repeat(4,1fr); }
+  .rec { flex-wrap: wrap; }
+  .rec .idcol, .rec .actcol { width: 100%; border: 0; }
+}
+</style>
+</head>
+</head>
+<body>
+
+<div class="wedge" id="wedge"></div>
+
+<div class="app">
+
+  <div class="top">
+    <div class="mark"><span class="reg"><i></i></span><b>Recompose</b></div>
+    <div class="who" id="pov">Admin</div>
+    <div class="note" id="tophint">demo · every tenant and figure is synthetic</div>
+    <div class="sw">
+      <button data-go="onboard" class="on">Onboard</button>
+      <button data-go="generate">Generate</button>
+      <button data-go="fleet">Fleet</button>
+    </div>
+    <button class="rst" id="reset">Reset</button>
+  </div>
+
+  <!-- ═══ ONBOARD ═══════════════════════════════════════════════════════ -->
+  <section class="page on" id="page-onboard">
+    <div class="sheet-a">
+      <div class="slug"><span>Sheet 01</span><span>Exposure</span></div>
+      <h1>Point us at the app.</h1>
+      <p class="lede">We never touch your code. You give us read access, we keep
+         a <b>managed fork</b>.</p>
+
+      <div class="urlrow">
+        <div class="field"><label>Repository</label><div class="v">github.com/combatden/member-app</div></div>
+        <button class="btn pri" id="obgo">Connect</button>
+      </div>
+
+      <div class="strip" id="strip">
+        <div class="stp" data-r="1"><span class="n">01</span><b>Connect</b></div>
+        <div class="stp" data-r="2"><span class="n">02</span><b>Create design fork</b></div>
+      </div>
+
+      <div class="pnl" id="ob-1">
+        <div class="read"><span class="lamp"></span>
+          <div class="t"><b>Connected</b><u>read access confirmed · nothing read, nothing written</u></div>
+          <span class="el">1.4s</span></div>
+        <div class="acts"><span class="sp"></span><button class="btn pri" id="ob-next">Create design fork</button></div>
+      </div>
+
+      <div class="pnl" id="ob-2">
+        <div class="read live" id="ag"><span class="lamp"></span>
+          <div class="t"><b>An agent is creating your design fork</b><u id="aglog">reading lib/theme/palette.dart…</u></div>
+          <span class="el" id="agel"></span></div>
+
+        <div class="dwell" id="dwell">Usually <b>30–60 minutes</b>. You can close
+          this — we'll email you when the fork is ready.</div>
+
+        <div class="tally" id="tally" style="display:none">
+          <div><b>6</b><u>screens</u></div>
+          <div><b>5</b><u>post-class cards</u></div>
+          <div><b>41</b><u>colour literals</u></div>
+          <div><b>18</b><u>asset refs</u></div>
+        </div>
+
+        <div class="acts" id="obacts" style="display:none">
+          <button class="btn sm">View repo</button>
+          <span class="sp"></span>
+          <button class="btn pri" data-go="generate">Open the customer view</button>
+        </div>
+      </div>
+
+      <div class="fine">No pull request into your repository, no branch on your
+        trunk, no library to install, no integration work on your side.
+        <b>Once per platform</b>, not once per tenant.</div>
+    </div>
+  </section>
+
+  <!-- ═══ GENERATE ══════════════════════════════════════════════════════ -->
+  <section class="page" id="page-generate">
+    <aside class="chat">
+      <div class="hd">Conversation <span class="sp"></span><span class="stamp" id="stamp">Brief</span></div>
+      <div class="msgs" id="msgs"></div>
+      <div class="comp"><div class="box">Message Recompose…<span class="k">↵ send</span></div></div>
+    </aside>
+
+    <main class="canvas">
+      <div class="bar">
+        <div class="tabs">
+          <button data-view="mock" class="on">Easel</button>
+          <button data-view="inspect">Print</button>
+        </div>
+        <button class="deckbtn" id="libbtn">
+          <span class="sw chip" id="libsw" style="background:#c2663b"></span>
+          <span><em>Batch</em><br><b id="themename">Stillwater Pilates</b></span>
+        </button>
+        <div class="sp"></div>
+        <div class="gauge" id="gauge"><span>brief not committed</span></div>
+      </div>
+
+      <div class="stage">
+        <div class="pane on" id="pane-mock"><div class="holder"><div class="phone" id="phone"></div></div></div>
+        <div class="pane" id="pane-inspect"><div class="deck" id="deck"></div></div>
+        <div id="approved">
+          <div>
+            <div class="patch chip"></div>
+            <h1>Design approved.</h1>
+            <p><b>CombatDen</b> will reach out to you when your new app is ready.</p>
+            <div class="id">Stillwater Pilates · approved 29 Jul</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </section>
+
+  <!-- ═══ FLEET ═════════════════════════════════════════════════════════ -->
+  <section class="page" id="page-fleet">
+    <div class="fh">
+      <div class="slug"><span>Sheet 03</span><span>Drying line</span></div>
+      <h1>CombatDen · prints on the line</h1>
+      <p>Every tenant we hold a design fork for, and what an agent is doing
+         about it right now. A redesign is <b>re-applied</b> on each of your
+         releases rather than left to drift, so these stay current without
+         anyone maintaining a branch.</p>
+    </div>
+    <div class="regs" id="regs"></div>
+    <div class="ff"><b>Two agents working, nothing waiting on you.</b> When an
+      agent is wrong it surfaces in UAT as a queue rather than in production as
+      an incident. None of this is a pull request into a customer's repository.</div>
+  </section>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<div class="rack" id="rack">
+  <div class="hd"><b>Prints on the line</b><button class="x" id="rackx">✕</button></div>
+  <div class="decks" id="decks"></div>
+  <div class="ft">Selecting a batch re-resolves colour, type, copy, icons and
+    imagery over whichever arrangement the easel is showing. Batch and
+    arrangement are independent.</div>
+</div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/* No standard may use the booth's own faces — a generated theme wearing the
+   tool's type would make the engine's work indistinguishable from the tool. */
+const THEMES = [
+  { id:'stillwater', name:'Stillwater Pilates', cat:'Pilates · light', display:"'Newsreader', Georgia, serif", body:"'Karla'",
+    v:{ '--t-primary':'#c2663b','--t-bg':'#f7f2ec','--t-surface':'#fffdfa','--t-text':'#2a2320','--t-accent':'#5c7a6b','--t-muted':'#8a7a6c','--t-line':'rgba(42,35,32,.13)' } },
+  { id:'apex', name:'Apex MMA', cat:'Fighting · dark', display:"'Archivo', sans-serif", body:"'Karla'",
+    v:{ '--t-primary':'#c1272d','--t-bg':'#131316','--t-surface':'#1b1b20','--t-text':'#f2f2f4','--t-accent':'#e8b93b','--t-muted':'#8e8e96','--t-line':'rgba(255,255,255,.11)' } },
+  { id:'zen', name:'Zen BJJ', cat:'Fighting · light', display:"'Newsreader', Georgia, serif", body:"'Karla'",
+    v:{ '--t-primary':'#3e5c8c','--t-bg':'#f4f6fa','--t-surface':'#ffffff','--t-text':'#1b2430','--t-accent':'#7fa1c4','--t-muted':'#78849a','--t-line':'rgba(27,36,48,.13)' } },
+  { id:'ironline', name:'Ironline', cat:'HIIT · dark', display:"'Archivo', sans-serif", body:"'Karla'",
+    v:{ '--t-primary':'#ff5a1f','--t-bg':'#101012','--t-surface':'#1a1a1d','--t-text':'#f5f5f5','--t-accent':'#ffc247','--t-muted':'#8b8b90','--t-line':'rgba(255,255,255,.11)' } },
+  { id:'verdant', name:'Verdant Yoga', cat:'Yoga · light', display:"'Petrona', Georgia, serif", body:"'Karla'",
+    v:{ '--t-primary':'#2f6b4f','--t-bg':'#f5f8f4','--t-surface':'#ffffff','--t-text':'#16241c','--t-accent':'#a8c4a0','--t-muted':'#72857a','--t-line':'rgba(22,36,28,.13)' } },
+  { id:'marlow', name:'Marlow Barre', cat:'Barre · light', display:"'Petrona', Georgia, serif", body:"'Karla'",
+    v:{ '--t-primary':'#8c5a9e','--t-bg':'#faf7fb','--t-surface':'#ffffff','--t-text':'#241a29','--t-accent':'#d4a5c4','--t-muted':'#8a7d90','--t-line':'rgba(36,26,41,.13)' } },
+];
+let theme = THEMES[0];
+
+const CLASSES = [
+  ['Reformer Flow','Marguerite Oyelaran','6:00','50 min','#6f8a78'],
+  ['Mat Fundamentals','Devi Ramanathan','7:15','45 min','#c98f63'],
+  ['Power Reformer','Tobias Lindqvist','12:00','50 min','#8a6f5c'],
+  ['Prenatal Pilates','Amara Nwachukwu','5:30','60 min','#a8b3a0'],
+  ['Barre Sculpt','Priya Venkataraman','6:45','45 min','#b8794f'],
+  ['Restorative Flow','Joaquín Ferreira','8:00','60 min','#7d8f86'],
+];
+const IMAGES = ['logo_primary','rank_belt','celebration_image','trophy_image','points_stars_image',
+  'next_rank_belt_image','giftbox','single_point','icon_qrcode','streak_icon','class_photo_1',
+  'class_photo_2','class_photo_3','class_photo_4','reward_guest_pass','reward_apparel','reward_gear','reward_session'];
+const TEXTS = [
+  ['class_booked_headline','Class detail · after reserving','You’re in. See you on the reformer.'],
+  ['reserve_cta','Class detail · primary action','Reserve my spot'],
+  ['book_next_class_cta','Post-class · final card','Book the next one'],
+  ['wins_title','Post-class · wins card','A good hour’s work.'],
+  ['wins_subtitle','Post-class · wins card','Six sessions this month, and it shows.'],
+];
+const FORK_LOG = [
+  'reading lib/theme/palette.dart…',
+  'replacing 41 colour literals with slot references',
+  'rewriting features/home/class_list_item.dart',
+  'mirroring 6 screens into feature-free JSX',
+  'stripping API calls, state and fetching from the mock',
+  'mocking empty, loading, error and overflow states',
+  'created recompose/combatden · 0 written to your repository',
+];
+
+let designed = false, generated = false, approved = false;
+
+function go(p) {
+  $$('.page').forEach((el) => el.classList.toggle('on', el.id === 'page-' + p));
+  $$('.top .sw button').forEach((b) => b.classList.toggle('on', b.dataset.go === p));
+  const cust = p === 'generate';
+  $('#pov').textContent = cust ? 'Customer' : 'Admin';
+  $('#pov').classList.toggle('cust', cust);
+  $('#tophint').textContent = cust
+    ? 'the tenant never sees the fork, the repo, or the queue'
+    : 'demo · every tenant and figure is synthetic';
+  $('#approved').classList.toggle('on', cust && approved);
+}
+$$('[data-go]').forEach((b) => b.addEventListener('click', () => go(b.dataset.go)));
+
+/* ── Onboard ───────────────────────────────────────────────────────────── */
+function strip(n, s) {
+  const el = document.querySelector(`.stp[data-r="${n}"]`);
+  el.classList.remove('now','done'); if (s) el.classList.add(s);
+}
+$('#obgo').addEventListener('click', () => {
+  const b = $('#obgo'); if (b.disabled) return;
+  b.disabled = true; b.textContent = 'Connected';
+  strip(1,'done'); $('#ob-1').classList.add('on');
+});
+$('#ob-next').addEventListener('click', async () => {
+  strip(2,'now'); $('#ob-2').classList.add('on');
+  const ag = $('#ag'), head = ag.querySelector('.t b');
+  head.dataset.live = head.dataset.live || head.textContent;
+  head.textContent = head.dataset.live;
+  ag.classList.add('live');
+  $('#dwell').style.display = 'block';
+  for (const line of FORK_LOG) { $('#aglog').textContent = line; await wait(700); }
+  ag.classList.remove('live');
+  head.textContent = 'Your design fork is ready';
+  $('#agel').textContent = '52m';
+  $('#dwell').style.display = 'none';
+  $('#tally').style.display = 'flex';
+  $('#obacts').style.display = 'flex';
+  strip(2,'done');
+});
+
+/* ── Device ────────────────────────────────────────────────────────────── */
+function applyTheme(el) {
+  Object.entries(theme.v).forEach(([k,v]) => el.style.setProperty(k,v));
+  el.style.setProperty('--t-display', theme.display);
+  el.style.setProperty('--t-body', theme.body);
+}
+const SB = `<div class="sb"><span>9:41</span><span class="sig"><i style="height:5px"></i><i style="height:7px"></i><i style="height:9px"></i><i style="height:11px"></i></span></div>`;
+const NAV = `<div class="bn"><a class="on"><i></i>Home</a><a><i></i>Rank</a><a><i></i>Rewards</a><a><i></i>Videos</a></div>`;
+
+function renderPhone() {
+  const p = $('#phone'); applyTheme(p);
+  const lg = generated ? `<div class="lg">SP</div>` : `<div class="lg pend">logo_primary</div>`;
+  const th = (c,i) => generated ? `<div class="th" style="background:${c[4]}"></div>`
+                                : `<div class="th pend">class_photo_${(i%4)+1}</div>`;
+  if (!designed) {
+    p.innerHTML = SB + `
+      <div class="gh">${lg}<div class="gn">${theme.name}</div>
+        <div class="ib"><span><i class="blt"></i> Bronze</span><span><b>12</b> day streak</span><span><b>2,480</b> pts</span><span>QR</span></div></div>
+      <div class="dr">${['Mon 14','Tue 15','Wed 16','Thu 17','Fri 18','Sat 19'].map((d,i)=>
+        `<div class="dt${i===1?' on':''}"><u>${d.split(' ')[0]}</u><b>${d.split(' ')[1]}</b></div>`).join('')}</div>
+      <div class="cl">${CLASSES.map((c,i)=>`<div class="ci">${th(c,i)}<div class="m"><b>${c[0]}</b><u>${c[1]}</u></div><div class="tm"><b>${c[2]}</b><u>${c[3]}</u></div></div>`).join('')}</div>` + NAV;
+  } else {
+    const [h,...rest] = CLASSES;
+    p.innerHTML = SB + `
+      <div class="gh left">${lg}<div class="col"><div class="gn">${theme.name}</div>
+        <div class="ib"><span><i class="blt"></i> Bronze</span><span><b>12</b></span><span><b>2,480</b> pts</span></div></div>
+        <span style="font-size:10px;color:var(--t-muted)">QR</span></div>
+      <div class="hero"><div class="im" style="background:${generated?h[4]:'var(--t-line)'}"></div>
+        <div class="pd"><div class="ey">Next up · Tue 15</div><h3>${h[0]}</h3>
+        <div class="sb2">${h[2]} · ${h[3]} · ${h[1]}</div><div class="cta">Reserve my spot</div></div></div>
+      <div class="sph">Later today</div>
+      <div class="spn">${rest.map((c,i)=>`<div class="sr${i===0?' on':''}"><div class="t"><b>${c[2]}</b><u>${c[3].replace(' min','m')}</u></div><div class="bar"></div><div class="d"><b>${c[0]}</b><u>${c[1]}</u></div></div>`).join('')}</div>` + NAV;
+  }
+}
+
+/* ── The deck ──────────────────────────────────────────────────────────── */
+function ramp() {
+  const hex = (x) => [1,3,5].map((i)=>parseInt(x.slice(i,i+2),16));
+  const mix = (a,b,t) => { const [r1,g1,b1]=hex(a),[r2,g2,b2]=hex(b);
+    const c=(u,v)=>Math.round(u+(v-u)*t).toString(16).padStart(2,'0');
+    return `#${c(r1,r2)}${c(g1,g2)}${c(b1,b2)}`; };
+  const out = [];
+  for (let i=13;i>=0;i--) out.push(mix(theme.v['--t-bg'], theme.v['--t-primary'], i/13));
+  for (let i=0;i<14;i++) out.push(mix(theme.v['--t-bg'], theme.v['--t-accent'], i/13));
+  return out;
+}
+function blankDeck() {
+  const d = $('#deck'); applyTheme(d); d.className = 'deck blank';
+  d.innerHTML = `<div><div class="slug">Sheet 02 · unexposed</div>
+    <h1>Nothing on the paper yet.</h1>
+    <p>Accept a brief and this fills as the pipeline resolves it — four colour
+       roles with their written purpose, twenty-eight derivations, both faces
+       set in themselves, the copy, the icons and every generated image.</p></div>`;
+}
+function renderDeck() {
+  const d = $('#deck'); applyTheme(d); d.className = 'deck';
+  const R = ramp();
+  const roles = [
+    ['Primary','--t-primary','The reserve action, the selected day, the hero ground. The one thing on screen that asks to be pressed.'],
+    ['Background','--t-bg','The paper the whole app sits on. Warm rather than white, because the brief asked for anything but clinical.'],
+    ['Text','--t-text','Set against the background at 12.6:1. A warm near-black that belongs to the same family as the ground.'],
+    ['Accent','--t-accent','The rank token, the spine marker, the quiet second voice. Never competes with primary for the same job.'],
+  ];
+  d.innerHTML = `
+    <div class="slug"><span>Sheet 02</span><span>Print</span></div>
+    <h1>${theme.name}</h1>
+    <div class="id">combatden · stillwater-pilates · ${theme.cat.split(' · ')[1]} · $1.34 · 4m 12s</div>
+    <div class="fan">${R.map((c)=>`<i style="background:${c}"></i>`).join('')}</div>
+    <div class="sum">Four colour roles, each carrying the sentence the pipeline
+      wrote about why it exists, and <b>28 derivations</b> computed from them.
+      Two faces chosen live from the Google Fonts catalogue. <b>Five</b> authored
+      strings, <b>four</b> icons and <b>eighteen</b> generated images.</div>
+
+    <section class="sec"><div class="sech"><h2>Colour</h2><span class="c">4 roles · 28 derived</span></div>
+      <div class="roles">${roles.map(([n,v,p])=>`<div class="role"><div class="patch" style="background:var(${v})"></div><b>${n}</b><code>${theme.v[v]}</code><p>${p}</p></div>`).join('')}</div></section>
+
+    <section class="sec"><div class="sech"><h2>Typography</h2><span class="c">2 faces</span></div>
+      <div class="faces">
+        <div class="face"><div class="l">Display</div><div class="n" style="font-family:var(--t-display)">${theme.display.split("'")[1]}</div><div class="s" style="font-family:var(--t-display)">Set in itself, at the size the app uses it.</div></div>
+        <div class="face"><div class="l">Body</div><div class="n" style="font-family:var(--t-body)">${theme.body.replace(/'/g,'')}</div><div class="s" style="font-family:var(--t-body)">Set in itself, at the size the app uses it.</div></div>
+      </div></section>
+
+    <section class="sec"><div class="sech"><h2>Copy</h2><span class="c">5 strings</span></div>
+      <ul class="strings">${TEXTS.map(([s,w,v])=>`<li><div class="k"><code>${s}</code><u>${w}</u></div><div class="v" style="font-family:var(--t-display)">${v}</div></li>`).join('')}</ul></section>
+
+    <section class="sec"><div class="sech"><h2>Icons</h2><span class="c">4 slots</span></div>
+      <div class="icons">${[0,1,2,3].map(()=>`<div class="i"><span></span></div>`).join('')}</div></section>
+
+    <section class="sec"><div class="sech"><h2>Imagery</h2><span class="c">18 slots</span></div>
+      <div class="plates">${IMAGES.map((n,i)=>`<div class="pl"><span class="im" style="background:${R[(i*3+5)%28]}"></span><code>${n}</code></div>`).join('')}</div></section>
+
+    <div class="colo">combatden / stillwater-pilates · 23 nodes over 3 levels ·
+      15 images on colour, 3 derived from another image · WCAG AA enforced as an
+      accept condition, not checked afterwards</div>`;
+}
+async function fillDeck() {
+  renderDeck();
+  const secs = $$('#deck .sec');
+  const labels = ['colour','typography','copy','icons','imagery'];
+  const cost = [0.18,0.31,0.44,0.72,1.34];
+  for (let i=0;i<secs.length;i++) {
+    await wait(i===4?1100:700);
+    secs[i].classList.add('in');
+    secs[i].scrollIntoView({behavior:'smooth',block:'center'});
+    $('#gauge').innerHTML = `<span>resolving <b>${labels[i]}</b></span><span>$<b>${cost[i].toFixed(2)}</b></span>`;
+  }
+  await wait(500);
+  $('#pane-inspect').scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ── Conversation ──────────────────────────────────────────────────────── */
+function say(from, html, cls='') {
+  const d = document.createElement('div');
+  d.className = 'msg ' + cls;
+  d.innerHTML = `<div class="from">${from}</div>${html}`;
+  $('#msgs').append(d); $('#msgs').scrollTop = $('#msgs').scrollHeight;
+  return d;
+}
+function startChat() {
+  $('#msgs').innerHTML = '';
+  say('Recompose', `<p>Tell me about the brand and I'll design the app around
+    it — palette, type, copy, imagery, then the layout itself.</p>`);
+  say('You', `<p>Stillwater Pilates. A boutique reformer studio — warm, not
+    clinical. Most studios in this space go cold white and I hate it.</p>`, 'you');
+  const q = say('Recompose', `<p>Then let's fix the ground first. Which direction
+    for the palette?</p>`);
+  const box = document.createElement('div');
+  box.className = 'opts';
+  box.innerHTML = [
+    ['A','Warm sand and clay — low saturation, light mode, a single earthy accent'],
+    ['B','Sand ground with a deeper terracotta primary and a sage accent — more contrast, still warm'],
+    ['C','Muted olive and bone, light mode, no warm hues at all'],
+  ].map(([k,t])=>`<button class="opt" data-c="${k}"><b>${k}</b><span>${t}</span></button>`).join('');
+  q.append(box);
+  box.querySelectorAll('.opt').forEach((b)=>b.addEventListener('click', () => {
+    box.querySelectorAll('.opt').forEach((x)=>x.classList.remove('on'));
+    b.classList.add('on'); propose(b.dataset.c);
+  }));
+}
+function propose(choice) {
+  if ($('#briefcard')) return;
+  say('You', `<p>${choice}</p>`, 'you');
+  const d = say('Recompose', `<p>Here's the brief. Five fields, and there is
+    never a sixth — that's the contract the pipeline validates against.</p>`);
+  const c = document.createElement('div');
+  c.className = 'spec'; c.id = 'briefcard';
+  c.innerHTML = `<h4>Proposed brief · customization.yaml</h4>
+    <div class="kv"><span>name</span><div>Stillwater Pilates</div></div>
+    <div class="kv"><span>short</span><div>A boutique reformer Pilates studio for people who want to move well, not hard.</div></div>
+    <div class="kv"><span>long</span><div>Unhurried and crafted. The brand reads like a well-made object — warm, tactile, quiet. Never clinical, never performance-obsessed.</div></div>
+    <div class="kv"><span>colours</span><div>Warm sand ground, deeper terracotta primary, sage accent. Low saturation, generous contrast, nothing cold.</div></div>
+    <div class="kv"><span>mode</span><div>light</div></div>
+    <div class="row"><button class="btn sm pri" id="accept">Accept &amp; generate</button><button class="btn sm">Keep refining</button></div>`;
+  d.append(c); $('#msgs').scrollTop = $('#msgs').scrollHeight;
+  $('#accept').addEventListener('click', runGen, {once:true});
+}
+async function runGen() {
+  $('#accept').disabled = true;
+  $('#stamp').textContent = 'Generating';
+  say('Recompose', `<p>Committed. Running <strong>23 nodes</strong> — colour,
+    type, copy, icons and classification from the brief, then 18 images.</p>`);
+  setView('inspect'); generated = true; renderPhone();
+  await fillDeck();
+  say('Recompose', `<p>Palette passes <strong>WCAG AA</strong> on every pairing.
+    The four roles fed every image prompt, which is what makes the set read as
+    one designer's work rather than eighteen separate generations.</p>`);
+  $('#gauge').innerHTML = `<span>23 / 23 slots</span><span>$<b>1.34</b></span><span><b>4m 12s</b></span>`;
+  await wait(900);
+  say('Recompose', `<p>Assets are done. Now the layout — tell me what you want,
+    or I'll take a pass on my own.</p>`);
+  const d = say('You', `<p>The home screen is a wall of identical cards. Lead
+    with the next class and let the rest of the day sit quieter underneath.</p>`, 'you');
+  const g = document.createElement('div'); g.className = 'spec';
+  g.innerHTML = `<div class="row"><button class="btn sm pri" id="design">Redesign the layout</button></div>`;
+  d.append(g); $('#msgs').scrollTop = $('#msgs').scrollHeight;
+  $('#design').addEventListener('click', runDesign, {once:true});
+}
+async function runDesign() {
+  $('#design').disabled = true;
+  $('#stamp').textContent = 'Designing';
+  setView('mock');
+  say('Recompose', `<p>Promoting the next class to a hero with its photo behind
+    it, and collapsing the rest onto a time spine. The date row goes — the day
+    selection moves onto the spine header.</p>`);
+  await wait(1500);
+  designed = true; renderPhone();
+  say('Recompose', `<p>Rewrote <strong>HomeShowcase</strong>, added
+    <strong>HomeNextUpHero</strong> and <strong>HomeTimeSpine</strong>. Same six
+    classes, same fields, same taps, <strong>same API calls</strong> — a redesign
+    changes arrangement and nothing else.</p>`);
+  say('Recompose', `<p>That took <strong>1m 40s</strong>. Designing is the fast
+    part — checking it is not.</p>`);
+  await wait(1100);
+  $('#stamp').textContent = 'Validating';
+  say('Recompose', `<p>The validator walks every screen in every state, then
+    checks the design against the functional-equivalence gate — that nothing was
+    added, merged, split or removed. It is thorough rather than quick:
+    <strong>usually 20–40 minutes</strong>. You can close this; we'll email you
+    when it's done.</p>`);
+  await wait(1000);
+  const v = say('Recompose', `<p>Validating 11 screens…</p>`, 'sys');
+  await wait(2600);
+  v.querySelector('p').innerHTML = 'Validating 11 screens… <strong>complete in 31m</strong>. 11 of 11 pass, including the empty, loading, error and long-string states.';
+  await wait(700);
+  $('#stamp').textContent = 'Review';
+  const d = say('Recompose', `<p>Ready for your sign-off.</p>`);
+  const c = document.createElement('div'); c.className = 'spec';
+  c.innerHTML = `<div class="row"><button class="btn sm pri" id="approve">Approve this design</button><button class="btn sm">Ask for changes</button></div>`;
+  d.append(c); $('#msgs').scrollTop = $('#msgs').scrollHeight;
+  $('#approve').addEventListener('click', () => {
+    $('#stamp').textContent = 'Approved';
+    say('You', `<p>Approved.</p>`, 'you');
+    approved = true; applyTheme($('#approved')); $('#approved').classList.add('on');
+  }, {once:true});
+}
+
+function setView(v) {
+  $$('.tabs button').forEach((b)=>b.classList.toggle('on', b.dataset.view===v));
+  $('#pane-mock').classList.toggle('on', v==='mock');
+  $('#pane-inspect').classList.toggle('on', v==='inspect');
+}
+$$('.tabs button').forEach((b)=>b.addEventListener('click',()=>setView(b.dataset.view)));
+
+/* ── The rack ──────────────────────────────────────────────────────────── */
+function renderRack() {
+  $('#decks').innerHTML = THEMES.map((t)=>`
+    <button class="dk${t.id===theme.id?' on':''}" data-t="${t.id}">
+      <span class="sw"><i style="background:${t.v['--t-primary']}"></i><i style="background:${t.v['--t-bg']}"></i><i style="background:${t.v['--t-text']}"></i><i style="background:${t.v['--t-accent']}"></i></span>
+      <span class="lb"><b>${t.name}</b><u>${t.cat}</u></span></button>`).join('');
+  $$('#decks .dk').forEach((b)=>b.addEventListener('click',()=>{
+    theme = THEMES.find((t)=>t.id===b.dataset.t);
+    $('#themename').textContent = theme.name;
+    $('#libsw').style.background = theme.v['--t-primary'];
+    renderPhone();
+    if (generated) { renderDeck(); $$('#deck .sec').forEach((s)=>s.classList.add('in')); } else blankDeck();
+    closeRack();
+  }));
+}
+function openRack(){ renderRack(); $('#scrim').classList.add('on'); $('#rack').classList.add('on'); }
+function closeRack(){ $('#scrim').classList.remove('on'); $('#rack').classList.remove('on'); }
+$('#libbtn').addEventListener('click', openRack);
+$('#rackx').addEventListener('click', closeRack);
+$('#scrim').addEventListener('click', closeRack);
+document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeRack(); });
+
+/* ── Register ──────────────────────────────────────────────────────────── */
+const FLEET = [
+  { name:'Stillwater Pilates', repo:'combatden-stillwater', since:'printed 29 Jul', sw:'#c2663b',
+    live:false, state:'Fixed and washed',
+    note:'uat and main are level with our fork of CombatDen. Nothing to do.',
+    log:'last re-derived 2h ago against combatden@8f3c1ad · clean' },
+  { name:'Apex MMA', repo:'combatden-apex', since:'printed 26 Jul', sw:'#c1272d',
+    live:true, state:'An agent is productionalizing this design',
+    note:'Turning the approved mock into real Flutter, carrying the arrangement-only invariant. Slow by design — it is the pass whose output ships.',
+    log:'rewriting class_screen.dart · 9 of 14 files · 34m elapsed, typically 1–2h' },
+  { name:'Ironline', repo:'combatden-ironline', since:'printed 21 Jul', sw:'#ff5a1f',
+    live:true, state:'An agent is pulling your latest UAT branch',
+    note:'CombatDen shipped a waitlist. Re-applying this design on top of it so the fork never drifts.',
+    log:'rebasing on combatden/uat@d41c907 · 3 of 11 screens · 12m elapsed' },
+];
+$('#regs').innerHTML = FLEET.map((f)=>`
+  <div class="rec${f.live?' live':''}">
+    <div class="swatchcol" style="background:${f.sw}"></div>
+    <div class="idcol"><b>${f.name}</b><code>${f.repo}</code><u>${f.since}</u></div>
+    <div class="stcol"><span class="lamp"></span><div class="t"><b>${f.state}</b><p>${f.note}</p><code>${f.log}</code></div></div>
+    <div class="actcol">
+      <button class="btn sm pri">Talk to an agent</button>
+      <button class="btn sm">View repo</button>
+      <button class="btn sm">View design</button>
+    </div>
+  </div>`).join('');
+
+/* ── Reset ─────────────────────────────────────────────────────────────── */
+$('#reset').addEventListener('click', () => {
+  designed = generated = approved = false;
+  theme = THEMES[0];
+  $('#themename').textContent = theme.name;
+  $('#libsw').style.background = theme.v['--t-primary'];
+  $('#approved').classList.remove('on');
+  $('#stamp').textContent = 'Brief';
+  $('#gauge').innerHTML = '<span>brief not committed</span>';
+  const b = $('#obgo'); b.disabled = false; b.textContent = 'Connect';
+  $$('.pnl').forEach((p)=>p.classList.remove('on'));
+  [1,2].forEach((n)=>strip(n,null));
+  ['obacts','tally'].forEach((id)=>{ $('#'+id).style.display='none'; });
+  $('#dwell').style.display = 'block';
+  const ag = $('#ag'); ag.classList.remove('live');
+  const h = ag.querySelector('.t b'); if (h.dataset.live) h.textContent = h.dataset.live;
+  $('#agel').textContent = '';
+  setView('mock'); renderPhone(); blankDeck(); startChat(); go('onboard');
+});
+
+/* A test strip: eleven stepped exposures, paper white down to full black. */
+$('#wedge').innerHTML = Array.from({length:11},(_,i)=>{
+  const t = i/10;
+  const r = Math.round(242 - 224*t), g = Math.round(229 - 218*t), b2 = Math.round(210 - 204*t);
+  return `<i style="background:rgb(${r},${g},${b2})"></i>`;
+}).join('');
+
+renderPhone(); blankDeck(); startChat(); go('onboard');
+</script>
+</body>
+</html>
