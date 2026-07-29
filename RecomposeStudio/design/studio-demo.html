@@ -77,10 +77,11 @@
   --st-you-l: oklch(.80 .118 79 / .40);
   --st-bad-l: oklch(.72 .175 26 / .42);
 
-  /* Phase hues for the transcript. The working phases each get their own so
-     the run's shape is legible, walking 305 → 262 → 218 → 193 as it advances.
-     Review and approved deliberately reuse the semantic amber and green: those
-     two ask something of a person, and that meaning outranks the progression. */
+  /* Phase hues, grouped by WHO IS WORKING rather than walked round the wheel.
+     Violet = a person is authoring. Blue = a machine is working. Amber = a
+     person must decide. Green = settled. So the transcript is legible twice
+     over: which phase, and whose turn it is. */
+  --ph-layout: oklch(.80 .128 332);
   --ph-brief:  oklch(.80 .130 305);
   --ph-gen:    oklch(.80 .130 262);
   --ph-design: oklch(.80 .126 218);
@@ -88,6 +89,8 @@
   --ph-review: var(--st-you);
   --ph-done:   var(--st-ok);
 
+  --ph-layout-w: oklch(.80 .128 332 / .13);
+  --ph-layout-l: oklch(.80 .128 332 / .40);
   --ph-brief-w:  oklch(.80 .130 305 / .13);
   --ph-gen-w:    oklch(.80 .130 262 / .13);
   --ph-design-w: oklch(.80 .126 218 / .13);
@@ -325,6 +328,7 @@ button { font-family: inherit; cursor: pointer; }
 .phead .push { margin-left: auto; }
 .tag { font: 500 var(--fs-micro)/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; border: 1px solid var(--sh-line-2); border-radius: 4px; padding: 4px 6px; color: var(--ink-3); }
 .tag.live { border-color: var(--sh-line-3); color: var(--ink); }
+.tag.p-layout { border-color: var(--ph-layout-l); background: var(--ph-layout-w); color: var(--ph-layout); }
 .tag.p-brief  { border-color: var(--ph-brief-l);  background: var(--ph-brief-w);  color: var(--ph-brief); }
 .tag.p-gen    { border-color: var(--ph-gen-l);    background: var(--ph-gen-w);    color: var(--ph-gen); }
 .tag.p-design { border-color: var(--ph-design-l); background: var(--ph-design-w); color: var(--ph-design); }
@@ -349,6 +353,7 @@ button { font-family: inherit; cursor: pointer; }
   width: 7px; height: 7px; border-radius: 50%;
   background: var(--sh-ground); border: 1px solid var(--st-wait);
 }
+.msg[data-tone="p-layout"]::before { background: var(--ph-layout); border-color: var(--ph-layout); }
 .msg[data-tone="p-brief"]::before  { background: var(--ph-brief);  border-color: var(--ph-brief); }
 .msg[data-tone="p-gen"]::before    { background: var(--ph-gen);    border-color: var(--ph-gen); }
 .msg[data-tone="p-design"]::before { background: var(--ph-design); border-color: var(--ph-design); }
@@ -371,6 +376,8 @@ button { font-family: inherit; cursor: pointer; }
   content: ''; position: absolute; left: -18px; width: 9px; height: 9px;
   border-radius: 50%; background: var(--sh-ground); border: 2px solid var(--ink-4);
 }
+.phase.p-layout { color: var(--ph-layout); }
+.phase.p-layout::before { border-color: var(--ph-layout); box-shadow: 0 0 0 3px var(--ph-layout-w); }
 .phase.p-brief  { color: var(--ph-brief); }
 .phase.p-brief::before  { border-color: var(--ph-brief);  box-shadow: 0 0 0 3px var(--ph-brief-w); }
 .phase.p-gen    { color: var(--ph-gen); }
@@ -397,14 +404,15 @@ button { font-family: inherit; cursor: pointer; }
   font-size: var(--fs-xs); color: var(--ink-2); display: flex; gap: 9px; align-items: baseline; text-align: left; width: 100%;
 }
 .choice b { font: 500 var(--fs-micro)/1.4 var(--mono); color: var(--ink-4); }
-.choice:hover { border-color: var(--sh-line-3); color: var(--ink); }
 .choice:hover { border-color: var(--sh-line-2); color: var(--ink); }
 /* The answer you picked carries the brief phase's own hue, so a choice reads
    as part of the run rather than a generic selected row. */
-.choice.on {
-  border-color: var(--ph-brief-l); background: var(--ph-brief-w); color: var(--ink);
-}
+/* A chosen answer wears the hue of the phase it was chosen in, so the brand
+   interview and the layout interview stay visually distinct in one column. */
+.choice.on { border-color: var(--ph-brief-l); background: var(--ph-brief-w); color: var(--ink); }
 .choice.on b { color: var(--ph-brief); }
+.msg[data-tone="p-layout"] .choice.on { border-color: var(--ph-layout-l); background: var(--ph-layout-w); }
+.msg[data-tone="p-layout"] .choice.on b { color: var(--ph-layout); }
 
 .card { border: 1px solid var(--sh-line-2); border-radius: 7px; background: var(--sh-raised); overflow: hidden; }
 .card h4 { margin: 0; padding: 10px 12px; font: 500 var(--fs-micro)/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--sh-line); }
@@ -1186,7 +1194,8 @@ async function fillSheet() {
 /* One place that knows which state wears which hue. The label always changes
    too — colour is the second signal here, never the only one. */
 const STAMP = {
-  brief:      'p-brief',
+  brief:        'p-brief',
+  'layout brief': 'p-layout',
   generating: 'p-gen',
   designing:  'p-design',
   validating: 'p-valid',
@@ -1212,6 +1221,40 @@ function stamp(state) {
 
 let phaseTone = '';
 
+/* One question, asked the same way whoever is asking. Brand and layout are the
+   same ritual — interview, propose, accept — because they are the same kind of
+   decision: a stylistic one with no wrong answer. */
+function ask(promptHtml, opts, onPick) {
+  const q = say('Recompose', promptHtml);
+  const box = document.createElement('div');
+  box.className = 'choices';
+  box.innerHTML = opts.map(([k, t]) =>
+    `<button class="choice" data-c="${k}"><b>${k}</b><span>${t}</span></button>`).join('');
+  q.append(box);
+  $('#msgs').scrollTop = $('#msgs').scrollHeight;
+  box.querySelectorAll('.choice').forEach((b) => b.addEventListener('click', () => {
+    if (box.dataset.done) return;
+    box.dataset.done = '1';
+    box.querySelectorAll('.choice').forEach((x) => x.classList.toggle('on', x === b));
+    onPick(b.dataset.c);
+  }));
+}
+
+/* What the layout interview produced. Drives the layout brief document. */
+const LAYOUT = { lead: 'A', density: 'B', motion: 'B' };
+const LEAD_TEXT = {
+  A: `Lead with the next class — make it the thing you see — and let the rest of
+      the day sit quieter underneath it. The schedule is the reason people open
+      this, so it should not feel like a list to get through.`,
+  B: `Show the whole day at once. Nothing is promoted above anything else; the
+      value is seeing the shape of the day rather than being told what is next.`,
+  C: `Open on where the member is — rank, streak and points — and let the
+      schedule follow. Progress is what brings them back, so it should greet
+      them first.`,
+};
+const DENSITY = { A: 'generous', B: 'balanced', C: 'dense' };
+const MOTION  = { A: 'still', B: 'restrained', C: 'expressive' };
+
 function say(who, html, cls = '') {
   const d = document.createElement('div');
   d.className = 'msg ' + cls;
@@ -1229,47 +1272,87 @@ function startConversation() {
     it — palette, type, copy, imagery, then the layout itself.</p>`);
   say('You', `<p>Stillwater Pilates. A boutique reformer studio — warm, not
     clinical. Most studios in this space go cold white and I hate it.</p>`, 'you');
-  const q = say('Recompose', `<p>Then let's fix the ground first. Which direction
-    for the palette?</p>`);
-  const box = document.createElement('div');
-  box.className = 'choices';
-  box.innerHTML = [
-    ['A','Warm sand and clay — low saturation, light mode, a single earthy accent'],
-    ['B','Sand ground with a deeper terracotta primary and a sage accent — more contrast, still warm'],
-    ['C','Muted olive and bone, light mode, no warm hues at all'],
-  ].map(([k,t]) => `<button class="choice" data-c="${k}"><b>${k}</b><span>${t}</span></button>`).join('');
-  q.append(box);
-  box.querySelectorAll('.choice').forEach((b) => b.addEventListener('click', () => {
-    box.querySelectorAll('.choice').forEach((x) => x.classList.remove('on'));
-    b.classList.add('on');
-    proposeBrief(b.dataset.c);
-  }, { once: false }));
+  ask(`<p>Then let's fix the ground first. Which direction for the palette?</p>`, [
+    ['A', 'Warm sand and clay — low saturation, light mode, a single earthy accent'],
+    ['B', 'Sand ground with a deeper terracotta primary and a sage accent — more contrast, still warm'],
+    ['C', 'Muted olive and bone, light mode, no warm hues at all'],
+  ], proposeBrief);
 }
 
 function proposeBrief(choice) {
   if ($('#briefcard')) return;
   say('You', `<p>${choice}</p>`, 'you');
-  const d = say('Recompose', `<p>I've written the brief up — it's in the
-    <strong>Brief</strong> tab, next to the mockup. Read it there; it is longer
-    than this column deserves.</p>`);
-  // The chat points at the document; it does not try to be the document.
+  const d = say('Recompose', `<p>I've written the brief up and opened it — it's
+    longer than this column deserves. Read it, change anything, then accept.</p>`);
   const c = document.createElement('div');
   c.className = 'card'; c.id = 'briefcard';
   c.innerHTML = `
-    <h4>Brief · ready</h4>
+    <h4>Brand brief · ready</h4>
     <div class="rows">
-      <div class="krow"><span>brand</span><div>5 fields · customization.yaml</div></div>
-      <div class="krow"><span>layout</span><div>4 fields · layout.yaml · provisional</div></div>
+      <div class="krow"><span>fields</span><div>5 · customization.yaml</div></div>
     </div>
     <div class="act">
-      <button class="btn sm pri" id="openbrief">Open the brief</button>
-      <button class="btn sm" id="accept">Accept &amp; generate</button>
+      <button class="btn sm pri" id="accept">Accept &amp; generate</button>
+      <button class="btn sm" id="openbrief">Open the brief</button>
     </div>`;
   d.append(c);
   $('#msgs').scrollTop = $('#msgs').scrollHeight;
-  $('#openbrief').addEventListener('click', () => setView('brief'));
+  $('#openbrief').addEventListener('click', () => { setView('brief'); showSheet('brand'); });
   $('#accept').addEventListener('click', runGeneration, { once: true });
-  setView('brief');
+  setView('brief'); showSheet('brand');
+}
+
+/* ── The layout interview. Same ritual as the brand one, and deliberately so:
+      arrangement is a stylistic decision with no wrong answer, so it gets
+      asked rather than judged. ─────────────────────────────────────────── */
+function askLayout() {
+  stamp('layout brief');
+  say('Recompose', `<p>Assets are done. The layout is a separate brief — three
+    questions, and there is no wrong answer to any of them.</p>`);
+  ask(`<p>What should the home screen lead with?</p>`, [
+    ['A', 'The next class, large — one thing to do'],
+    ['B', 'The whole day at a glance'],
+    ['C', 'Where they are — rank, streak and points first'],
+  ], (a) => {
+    LAYOUT.lead = a; say('You', `<p>${a}</p>`, 'you');
+    ask(`<p>How much room should it take?</p>`, [
+      ['A', 'Generous — few things, a lot of air'],
+      ['B', 'Balanced'],
+      ['C', 'Dense — the whole day without scrolling'],
+    ], (b) => {
+      LAYOUT.density = b; say('You', `<p>${b}</p>`, 'you');
+      ask(`<p>And how should it move?</p>`, [
+        ['A', 'Still — nothing animates unless you touch it'],
+        ['B', 'Restrained — things settle in, nothing bounces'],
+        ['C', 'Expressive — motion is part of the personality'],
+      ], (c) => {
+        LAYOUT.motion = c; say('You', `<p>${c}</p>`, 'you');
+        proposeLayout();
+      });
+    });
+  });
+}
+
+function proposeLayout() {
+  renderBrief();
+  setView('brief'); showSheet('layout');
+  const d = say('Recompose', `<p>That's the layout brief, opened next to the
+    mockup. It steers the agent; it does not constrain it to a template.</p>`);
+  const c = document.createElement('div');
+  c.className = 'card';
+  c.innerHTML = `
+    <h4>Layout brief · ready</h4>
+    <div class="rows">
+      <div class="krow"><span>fields</span><div>4 · layout.yaml · provisional</div></div>
+    </div>
+    <div class="act">
+      <button class="btn sm pri" id="design">Accept &amp; redesign</button>
+      <button class="btn sm" id="openlayout">Open the brief</button>
+    </div>`;
+  d.append(c);
+  $('#msgs').scrollTop = $('#msgs').scrollHeight;
+  $('#openlayout').addEventListener('click', () => { setView('brief'); showSheet('layout'); });
+  $('#design').addEventListener('click', runDesign, { once: true });
 }
 
 async function runGeneration() {
@@ -1288,25 +1371,17 @@ async function runGeneration() {
   $('#meter').innerHTML = `<span>23 / 23 slots</span><span>cost <b>$1.34</b></span><span>elapsed <b>4m 12s</b></span>`;
 
   await wait(900);
-  say('Recompose', `<p>Assets are done. Now the layout — tell me what you want,
-    or I'll take a pass on my own.</p>`);
-  const d = say('You', `<p>The home screen is a wall of identical cards. Lead
-    with the next class and let the rest of the day sit quieter underneath.</p>`, 'you');
-  const go = document.createElement('div');
-  go.className = 'card';
-  go.innerHTML = `<div class="act"><button class="btn sm pri" id="design">Redesign the layout</button></div>`;
-  d.append(go);
-  $('#msgs').scrollTop = $('#msgs').scrollHeight;
-  $('#design').addEventListener('click', runDesign, { once: true });
+  askLayout();
 }
 
 async function runDesign() {
   $('#design').disabled = true;
   stamp('designing');
   setView('mock');
-  say('Recompose', `<p>Promoting the next class to a hero with its photo behind
-    it, and collapsing the rest onto a time spine. The date row goes — the day
-    selection moves onto the spine header.</p>`);
+  say('Recompose', `<p>Working from the layout brief: promoting the next class
+    to a hero with its photo behind it, and collapsing the rest onto a time
+    spine. The date row goes — the day selection moves onto the spine
+    header.</p>`);
   await wait(1500);
   designed = true;
   renderPhone();
@@ -1320,11 +1395,13 @@ async function runDesign() {
   /* Validation has NO UI. It is two lines in the chat. */
   await wait(1200);
   stamp('validating');
-  say('Recompose', `<p>The validator walks every screen in every state, then
-    checks the design against the functional-equivalence gate — that nothing was
-    added, merged, split or removed. It is thorough rather than quick:
-    <strong>usually 20–40 minutes</strong>. You can close this; we'll email you
-    when it's done.</p>`);
+  say('Recompose', `<p>Now it gets checked. <strong>Not whether the design is
+    good</strong> — no arrangement is wrong, that is your call and you already
+    made it. It checks the things that can actually be wrong: that every screen
+    still does what it did, that nothing was added, merged, split or removed,
+    and that all eleven render in every state.</p>`);
+  say('Recompose', `<p>It is thorough rather than quick — <strong>usually 20–40
+    minutes</strong>. You can close this; we'll email you when it's done.</p>`);
   await wait(1000);
   const v = say('Recompose', `<p>Validating 11 screens…</p>`, 'sys');
   await wait(2600);
@@ -1352,6 +1429,8 @@ async function runDesign() {
 function reset() {
   designed = generated = approved = false;
   phaseTone = '';
+  LAYOUT.lead = 'A'; LAYOUT.density = 'B'; LAYOUT.motion = 'B';
+  renderBrief();
   theme = THEMES[0];
   $('#themename').textContent = theme.name;
   $('.chipbtn .swatch').style.background = theme.v['--t-primary'];
@@ -1404,6 +1483,11 @@ const BRIEF_BRAND = [
     that has been sitting in a warm room, not as white.</p>`],
 ];
 
+function showSheet(which) {
+  $$('#subtabs button').forEach((x) => x.classList.toggle('on', x.dataset.b === which));
+  $$('.bsheet').forEach((sh) => sh.classList.toggle('on', sh.id === 'b-' + which));
+}
+
 function renderBrief() {
   const fld = ([k, hint, cls, v]) =>
     `<div class="fld ${cls}"><div class="k">${k} <em>${hint}</em></div>
@@ -1443,30 +1527,26 @@ function renderBrief() {
         arrangement-only invariant — no screen merged or split, nothing added,
         nothing removed.</p>
       <div class="fld"><div class="k">direction <em>what the arrangement should do</em></div>
-        <div class="v"><p>Lead with the next class — make it the thing you see —
-          and let the rest of the day sit quieter underneath it. The schedule is
-          the reason people open this, so it should not feel like a list to get
-          through.</p></div></div>
+        <div class="v"><p>${LEAD_TEXT[LAYOUT.lead]}</p></div></div>
       <div class="fld short"><div class="k">density</div>
-        <div class="v pick"><span>generous</span><span class="on">balanced</span><span>dense</span></div></div>
+        <div class="v pick">${['A','B','C'].map((k) =>
+          `<span class="${LAYOUT.density === k ? 'on' : ''}">${DENSITY[k]}</span>`).join('')}</div></div>
       <div class="fld short"><div class="k">motion</div>
-        <div class="v pick"><span>still</span><span class="on">restrained</span><span>expressive</span></div></div>
+        <div class="v pick">${['A','B','C'].map((k) =>
+          `<span class="${LAYOUT.motion === k ? 'on' : ''}">${MOTION[k]}</span>`).join('')}</div></div>
       <div class="fld"><div class="k">never <em>what the agent must not do</em></div>
         <div class="v"><p>No progress rings, no streak confetti, no countdowns.
           Nothing that implies urgency or competition.</p></div></div>
       <div class="foot">
         <span class="hint">apps/combatden/stillwater-pilates/layout.yaml · provisional</span>
         <span class="sp"></span>
-        <button class="btn" id="design2">Redesign the layout</button>
+        <span class="hint">accepted from the conversation</span>
       </div>
     </section>`;
 
-  $$('#subtabs button').forEach((b) => b.addEventListener('click', () => {
-    $$('#subtabs button').forEach((x) => x.classList.toggle('on', x === b));
-    $$('.bsheet').forEach((sh) => sh.classList.toggle('on', sh.id === 'b-' + b.dataset.b));
-  }));
+  $$('#subtabs button').forEach((b) =>
+    b.addEventListener('click', () => showSheet(b.dataset.b)));
   const a = $('#accept2'); if (a) a.addEventListener('click', () => $('#accept')?.click());
-  const d = $('#design2'); if (d) d.addEventListener('click', () => $('#design')?.click());
 }
 
 /* ── Canvas view toggle ────────────────────────────────────────────────── */
