@@ -4,7 +4,10 @@
   position: relative;
   overflow: hidden;
   display: flex;
-  align-items: flex-start;
+  /* Centred both ways, as the demo is: this page is one short column and a
+     headline, and pinning it to the top would leave it floating above a very
+     large amount of nothing. */
+  align-items: center;
   justify-content: center;
   height: 100%;
   min-height: 0;
@@ -130,6 +133,9 @@
 .ractive { color: var(--st-run); background: var(--st-run-w); }
 
 .panel {
+  /* Each step appears rather than snapping in — the page is a sequence, and a
+     panel that blinks into place reads as a layout jump rather than progress. */
+  animation: var(--kf-rise) 0.4s ease both;
   margin-bottom: 16px;
   padding: 15px 16px;
   border: 1px solid var(--sh-line-2);
@@ -163,29 +169,25 @@
 
 .pulse {
   flex: none;
-  width: 9px;
-  height: 9px;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
-  background: currentcolor;
+  /* Grey until something is happening: absence is the signal for "not
+     started", exactly as it is on the fleet's KPI row. */
+  background: var(--st-wait);
 }
+
+.ok .pulse { background: var(--st-ok); }
+.running .pulse { background: var(--st-run); }
 
 .ok { color: var(--st-ok); }
 .running { color: var(--st-run); }
 
-/* The pulse is the only motion on the page, and it means one thing: an agent
-   is working right now. Stilled under reduced motion — the colour and the
-   label already carry the state, so nothing is lost. */
+/* An agent is working right now. The ring expands OUT of a dot that stays
+   solid — a fading dot would read as a dying signal rather than a live one.
+   `pulse` is defined once in ../styles/base.css and shared with the fleet. */
 .running .pulse {
-  animation: breathe 1.6s ease-in-out infinite;
-}
-
-@keyframes breathe {
-  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--st-run-w); }
-  50% { opacity: 0.55; box-shadow: 0 0 0 5px transparent; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .running .pulse { animation: none; }
+  animation: var(--kf-pulse) 1.5s ease-in-out infinite;
 }
 
 .el {

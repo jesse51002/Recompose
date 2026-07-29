@@ -13,8 +13,9 @@ import { useEffect, useState } from 'react';
 import { ThemeProvider, loadFontFamily } from 'recompose-react';
 
 import styles from './App.module.css';
+import { SHELL_CLASS } from './generate/phaseClass';
+import { cx } from './widgets/cx';
 import { INITIAL_URL_VIEW, syncViewUrl, type AppView } from './appUrl';
-import { GWNav } from './chrome/GWNav';
 import { APP_ID, SEED_DESIGN_ID } from './config';
 import {
   EXPECTED_COLORS,
@@ -27,7 +28,7 @@ import { FleetView } from './generate/FleetView';
 import { OnboardView } from './generate/OnboardView';
 import { StudioView } from './studio/StudioView';
 import { ADM } from './tokens/adminTokens';
-import { ViewTabs } from './ViewTabs';
+import { TopBar } from './TopBar';
 import { AppSpinner } from './widgets/AppSpinner';
 
 // Geist is the CHROME's typeface (the CRM's `baseFont`, the landing page's
@@ -47,9 +48,8 @@ export function App() {
   }, [view]);
 
   return (
-    <div className={styles.app}>
-      <GWNav />
-      <ViewTabs view={view} onChange={setView} />
+    <div className={cx(styles.app, SHELL_CLASS)}>
+      <TopBar view={view} onChange={setView} />
       <main className={styles.main}>
         <ThemeProvider
           appId={APP_ID}

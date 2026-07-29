@@ -148,6 +148,9 @@
 }
 
 .tag.run { color: var(--st-run); border-color: var(--st-run-l); background: var(--st-run-w); }
+/* The same ring as the onboarding agent, meaning the same thing: this one is
+   working right now. A card that is merely in sync does not move. */
+.tag.run i { animation: var(--kf-pulse) 1.5s ease-in-out infinite; }
 .tag.ok { color: var(--st-ok); border-color: oklch(0.8 0.092 165 / 0.4); background: var(--st-ok-w); }
 .tag.you { color: var(--st-you); border-color: var(--st-you-l); background: var(--st-you-w); }
 

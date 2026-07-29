@@ -60,6 +60,10 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
+  /* Each turn arrives rather than appearing. In a column that fills over an
+     hour, the entrance is what tells you something is NEW without having to
+     re-read from the top. */
+  animation: var(--kf-rise) 0.4s ease both;
 }
 
 .msg p {

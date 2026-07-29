@@ -23,16 +23,15 @@
   z-index: 31;
   overflow: hidden;
   box-shadow: 0 30px 70px -14px rgba(0, 0, 0, 0.8);
-  animation: rise 0.25s ease both;
+  /* Its OWN keyframe, not the shared `rise`: this element is centred with a
+     translate, so a shared curve that animates `translateY` alone would fight
+     the centring and drop it into the corner. Same feel, different maths. */
+  animation: popRise 0.25s ease both;
 }
 
-@keyframes rise {
+@keyframes popRise {
   from { opacity: 0; transform: translate(-50%, -46%); }
   to { opacity: 1; transform: translate(-50%, -50%); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .pop { animation: none; }
 }
 
 .head {

@@ -1,12 +1,15 @@
 /*
- * Page-level base styles for the standalone theme browser.
+ * Page-level base styles.
  *
- * The equivalent of the CRM's `MaterialApp` theme wiring: the ground colour,
- * the Geist body font (its stylesheet is injected by `loadFontFamily` from
- * theme-react — see ../App.tsx), the CRM's tabular figures, and the handful of
- * element resets a Flutter app never needs to write down.
+ * THE APP OWNS THE VIEWPORT AND THE DOCUMENT NEVER SCROLLS. Every page inside
+ * it is a fixed-height layout that scrolls its own panes — a transcript, a
+ * sheet, a card list — so a scrolling document would put a second scrollbar
+ * outside the one that matters and let the whole app drift off the top.
  *
- * Reads only the variables declared in ./tokens.css.
+ * These were the styles of a theme BROWSER: a light ground, a page that
+ * scrolled, and a stable scrollbar gutter for a frosted nav. All three are
+ * gone with it. `--adm-*` tokens survive because the Inspect sheet is still
+ * built on them.
  */
 
 *,
@@ -16,42 +19,26 @@
 }
 
 html,
-body {
+body,
+#root {
   margin: 0;
   padding: 0;
+  height: 100%;
 }
 
 body {
-  background: var(--adm-ground);
-  color: var(--adm-ink);
-  font-family: var(--adm-font);
-  font-size: var(--adm-p-size);
+  /* The shell's own void, matching design/studio-demo.html. Hard-coded rather
+     than read from the `.shell` scope: this is the element ABOVE that scope,
+     and a page that flashed light before the app mounted would be the first
+     thing anyone saw. */
+  background: #06080b;
+  color: #e8ecf2;
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overflow: hidden;
 }
 
-/* The library scrolls the page, so the frosted nav needs a stable gutter. */
-html {
-  scrollbar-gutter: stable;
-}
-
-/*
- * SCROLL ANCHORING OFF — this is load-bearing, not a nicety.
- *
- * The library's title collapses out of the flow as you scroll (see
- * ../browser/LibraryView.tsx). Chrome's scroll anchoring reacts to that height
- * change by compensating the scroll offset, which pushes the offset straight
- * back across the collapse threshold: expanding at the top instantly re-scrolls
- * to ~60px and re-collapses. That is the exact flicker the Dart widget's
- * two-threshold hysteresis exists to prevent, reintroduced by a mechanism
- * Flutter does not have (there, the collapsing chrome sits OUTSIDE the
- * scrollable, so its size can never move the scroll offset). Turning anchoring
- * off restores that independence.
- */
-body {
-  overflow-anchor: none;
-}
 
 button {
   font: inherit;
@@ -74,4 +61,62 @@ img {
 :focus-visible {
   outline: 2px solid var(--adm-sapphire);
   outline-offset: 2px;
+}
+
+/* ── The two shared animations ───────────────────────────────────────────
+ * Global, not module-scoped, because both are used from five different
+ * component stylesheets and CSS modules rename keyframes per file — five
+ * copies of one curve is how they drift apart.
+ *
+ * `rise` is the app's ONE entrance: anything that appears does so by fading
+ * up 7px. A transcript message, an onboarding panel, the brief sheet, the
+ * library and the approved screen all use it at different durations, which is
+ * what makes a fast popup and a slow, final approval feel like the same app.
+ *
+ * `pulse` is an expanding ring and means exactly one thing: an agent is
+ * working right now. It is a box-shadow rather than opacity because the dot
+ * must stay a solid, readable status colour while it pulses — a fading dot
+ * reads as a dying signal rather than a live one.
+ *
+ * THEY ARE REACHED THROUGH CUSTOM PROPERTIES, and that is not decoration.
+ * CSS Modules rewrites every `animation-name` it finds inside a `.module.css`
+ * — including names defined globally elsewhere — so `animation: rise` in a
+ * module resolves to a hashed name with no keyframes behind it. The element
+ * then reports an animationName and animates NOTHING, which is invisible
+ * until you check `document.getAnimations()`. Custom properties are not
+ * scoped, so the name survives the rewrite. Verified in the browser, because
+ * the failure mode looks exactly like success in the stylesheet.
+ */
+:root {
+  --kf-rise: rise;
+  --kf-pulse: pulse;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 oklch(0.8 0.126 218 / 0.55);
+  }
+  60% {
+    box-shadow: 0 0 0 9px oklch(0.8 0.126 218 / 0);
+  }
+}
+
+/* One place that stills everything. Each component keeps its own reduced-motion
+   rule for the transforms it owns; this covers the two shared curves. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
