@@ -1,6 +1,6 @@
 ---
 name: mockup-redesign-start
-description: RUN THIS FIRST, before any other redesign skill and before opening a single file, whenever creating a new design fork of a mock app. It is the phase that commits to a design direction — a visual world derived from the brand brief, not from the existing app — and writes it to layout_brief.yaml before any code exists. Pair with the impeccable skill, then hand off to mockup-redesign-general and the app's own skill.
+description: RUN THIS FIRST, before any other redesign skill and before opening a single file, whenever creating a new design fork of a mock app. It is the phase that commits to a design direction — a visual world derived from the already-produced theme (its generated imagery, palette and typefaces) and the brand brief, not from the existing app — and writes it to layout_brief.yaml before any code exists. Pair with the impeccable skill, then hand off to mockup-redesign-general and the app's own skill.
 ---
 
 # Starting a redesign — commit to a world before you write a line
@@ -16,26 +16,62 @@ break; `impeccable` is how you decide it well. Use its `shape` command and
 > the old look as **evidence and anti-reference**. Never split the difference
 > into polish on the discarded look.
 
-Be radical. A direction that goes too far can be pulled back; one that never
-left cannot be pushed.
+A direction that goes too far can be pulled back; one that never left cannot be pushed.
 
 ---
 
 ## STEP 1 — Decide before you look
 
-Read these, in order, and **stop before opening any `.tsx` or `.css`**:
+**The theme is already chosen and already produced.** Its run directory is the
+other half of this design, it is finished, and it is not yours to change. Your
+layout is being built *for these pixels*.
 
-1. **The app's skill, PART ONE only** — e.g. `mockup-redesign-combatden`. It is
-   a plain-prose **inventory**: every screen, everything on it, every
-   transition. It exists so you can know *what must be there* without seeing
-   *how it looks now*. Treat it as a requirements list from a client who has
-   not shown you their old app.
-2. **The brand brief** — `apps/<app>/<run>/customization.yaml` for the design
-   you are forking for. Its `design_direction` and `colors_direction` are the
-   real input: audience, voice, feel, materials, hard nos.
+Take these three inputs, in order, and **stop before opening any `.tsx` or
+`.css`**:
 
-Read the code later, when you build. Not while you are deciding what the thing
-should be — you cannot un-see it, and every edit after that anchors to it.
+### 1. The theme — `apps/<app>/<run>/`
+
+Start here, and **actually open the images**. They are the largest visual
+surface in the app and the strongest constraint on any layout you can propose.
+
+| what | where | what to take from it |
+| --- | --- | --- |
+| the generated imagery | `final_images/*.png` | Look at every one. Their subject, crop, colour and weight. |
+| the nav icons | `icons/*.svg` | Monochrome, tinted at render — their stroke weight sets a floor for how fine the rest of your chrome can be. |
+| palette, fonts, copy | `output.yaml` | `color_set` (oklch, plus `mode`), `font_set` (two real families), `text_set` (the brand's own words). |
+| the brief behind it | `customization.yaml` | `design_direction` and `colors_direction`: audience, voice, feel, materials, hard nos. |
+
+Three things to read off it that change what layouts are even available:
+
+- **Cutout vs scene.** A slot with `scene: true` in `apps/<app>/app.yaml` is a
+  photograph with its own background and edges; everything else is a cut-out
+  object on transparency. Cutouts float, overlap and composite onto any
+  surface; scenes want an edge to sit against and break when you try to float
+  them. CombatDen today is **8 scenes** — the four class photographs and the
+  four video thumbnails — against **14 cutouts**, so its photography is
+  concentrated in exactly two places and everything else is an object you can
+  put anywhere.
+- **The typefaces are real and specific.** A serif display face and a condensed
+  grotesk want different layouts. Build for the pair you were given rather than
+  a generic scale — the display face in particular should be doing visible work,
+  not sitting at 19px above body copy.
+- **Mode and chroma.** A near-black background with one low-chroma primary is a
+  different design problem from a bright surface with a saturated one. Check
+  `mode` and the actual oklch values rather than assuming.
+
+Use `make api` on :8001 to view them served, or just open the PNGs.
+
+### 2. The app's skill, PART ONE only
+
+E.g. `mockup-redesign-combatden`. A plain-prose **inventory**: every screen,
+everything on it, every transition. It exists so you can know *what must be
+there* without seeing *how it looks now*. Treat it as a requirements list from
+a client who has not shown you their old app.
+
+### 3. Nothing else
+
+Read the code later, when you build — not while you are deciding what the thing
+should be. You cannot un-see it, and every edit after that anchors to it.
 
 ---
 
@@ -50,21 +86,25 @@ two people reading your answer would build recognisably the same app:
 - **The spatial system.** The underlying structure: strict grid, single column
   with full-bleed breaks, stacked sheets, edge-to-edge with no gutters. Does
   content sit on cards, on bare canvas, in frames, behind glass?
-- **Typography as structure.** Where hierarchy comes from — scale, weight, case,
-  tracking, rules, position, colour, or omitting the heading entirely.
+- **Typography as structure**, for the two families the theme actually resolved.
+  Where hierarchy comes from — scale, weight, case, tracking, rules, position,
+  colour, or omitting the heading entirely — and what the display face is for.
 - **The navigation pattern.** See *What you may change*; this is the biggest
   lever you have.
-- **Imagery.** Full-bleed, inset, masked, duotone, tiny, absent. The generated
-  photography is the largest visual surface in the app — how it is presented
-  moves the design further than any spacing decision.
+- **Imagery, named per slot.** Full-bleed, inset, masked, duotone, tiny, absent
+  — decided against the images you actually looked at in STEP 1, not in the
+  abstract. This moves the design further than any spacing decision, and the
+  cutout/scene split is what makes a given treatment possible or impossible.
 - **Motion.** Its character in a phrase, and what it does to the user's
   understanding: reveal, settle, transport, punctuate.
 - **Three things you will deliberately NOT do**, because they are the defaults
   everyone reaches for.
 
-Judge the direction against **the brief**, and against whether a designer would
-be proud to have committed to it. Do not judge it against the base — measuring
-distance from the incumbent is how you end up next to it.
+Judge the direction against **the brief and the theme you were handed** — does
+it serve that brand, and does it make those specific images and typefaces look
+like they were chosen for it? And against whether a designer would be proud to
+have committed to it. Do not judge it against the base; measuring distance from
+the incumbent is how you end up next to it.
 
 ---
 
@@ -74,6 +114,10 @@ Author `src/apps/<new-id>/layout_brief.yaml` from the direction you committed
 to, **before** any other file exists. Contract:
 `ThemeTree/studio/schema/layout_brief.py` — `name`, `layout_direction`,
 `motion_direction`, each a `short_desc` and a `long_desc`, nothing else.
+
+Give it the **design's own name**, matching the run you designed against, so
+the two halves of the design are legible as a pair without a field pointing at
+one from the other.
 
 Write it as a **direction**: what the app IS, in the imperative, about intent.
 Not as a changelog of differences from the base. If a line of it reads "the
