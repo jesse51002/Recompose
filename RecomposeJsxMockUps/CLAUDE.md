@@ -6,6 +6,22 @@ They exist to be looked at and edited: the design agent rewrites them, and
 
 See `../CLAUDE.md` for the monorepo map.
 
+## The skills live here, with the code
+
+`.claude/skills/` in **this** package, not the repo root, because they are only
+ever true of this subsystem:
+
+| skill | when |
+| --- | --- |
+| `production-to-mockup` | porting a real app into a new mock |
+| `mockup-redesign-general` | editing any mock — the app-agnostic guardrails |
+| `mockup-redesign-combatden` | editing CombatDen's — its inventory and gotchas |
+| `mockup-qa` | the exhaustive live sweep, after any change |
+
+Load the general one plus the app's own whenever you touch a screen. They carry
+the failure modes `make check` cannot see, every one of which has shipped here
+at least once.
+
 ## The island rule — the one that matters
 
 This package may import from **`recompose-react`** and **from itself**. From
