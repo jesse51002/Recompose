@@ -196,16 +196,16 @@ Hand off to:
 - **The app's own skill**, PART TWO — the gotchas.
 - **`mockup-qa`** at the end. Not optional.
 
-## Iterating with `/loop`
+## Build it in passes, each with one job
 
-A full redesign does not land in one pass. Drive the passes with `/loop`, and
-give each one a single job:
+A full redesign does not land in one sweep of the codebase. Work through it in
+order, and finish each pass before starting the next:
 
-1. **Structure** — every screen in the new world. Ugly is acceptable here; the
-   wrong *shape* is not.
+1. **Structure** — every screen rebuilt in the new world. Ugly is acceptable
+   here; the wrong *shape* is not, because everything after this inherits it.
 2. **Craft** — `impeccable`'s quality floor: rhythm, alignment, type, detail.
 3. **Motion** — the motion direction, applied.
-4. **Sweep** — `mockup-qa`, fix, re-sweep.
+4. **Sweep** — `mockup-qa`, fix what it finds, re-sweep.
 
 Between passes, screenshot and look. `make check` proves the code compiles; it
 proves nothing about the design, and it passes cleanly on screens that render
