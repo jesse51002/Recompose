@@ -95,7 +95,7 @@ behind, `nav.reset` returns to the asset root. Tab switches reset.
 ## The deliverable: the app's own guardrail skill
 
 **A port is not done until
-`RecomposeJsxMockUps/.claude/skills/mockup-redesign-<app>/SKILL.md` exists.** This is the mechanism [[Mockup_Guardrail_Skill]] names, and it is the
+`RecomposeJsxMockUps/.claude/skills/mockup-redesign-<app>/SKILL.md` exists.** This is the mechanism [[Mockup_Skill]] names, and it is the
 step most likely to be skipped because the screens already look right.
 
 **It has TWO halves, and it is not done with only one.**
