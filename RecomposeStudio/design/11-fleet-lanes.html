@@ -11,7 +11,7 @@
   .fhead .t h1 { margin: 0; font: 600 19px/1.2 var(--sans); letter-spacing: -.02em; }
   .fhead .t p { margin: 5px 0 0; font-size: 12.5px; line-height: 1.6; color: var(--ink-3); max-width: 620px; }
   .fhead .t p b { color: var(--ink-2); font-weight: 500; }
-  .fhead .back { font: 400 11.5px/1 var(--mono); color: var(--ink-4); padding-top: 5px; }
+  .fhead .back { font: 400 12.5px/1 var(--mono); color: var(--ink-4); padding-top: 5px; }
 
   /* The upstream event that started this propagation. */
   .event {
@@ -19,7 +19,7 @@
     border: 1px solid var(--sh-line-2); border-radius: var(--r);
     background: var(--sh-panel); padding: 11px 13px;
   }
-  .event em { font: 400 9.5px/1 var(--mono); font-style: normal; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-4); }
+  .event em { font: 400 9px/1 var(--mono); font-style: normal; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-4); }
   .event b { display: block; font: 500 12.5px/1.4 var(--sans); color: var(--ink); margin-top: 6px; }
   .event u { display: block; text-decoration: none; font: 400 10.5px/1.5 var(--mono); color: var(--ink-4); margin-top: 4px; }
 
@@ -31,38 +31,38 @@
   .hop:last-child { padding-right: 0; }
   .hop::after {
     content: '→'; position: absolute; right: 6px; top: 30px;
-    color: var(--ink-4); font-size: 13px;
+    color: var(--ink-4); font-size: 15px;
   }
   .hop:last-child::after { display: none; }
-  .hop .cap { font: 500 9.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-4); }
+  .hop .cap { font: 500 9px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-4); }
   .hop .box {
     flex: 1; border: 1px solid var(--sh-line); border-radius: 9px;
     background: var(--sh-panel); padding: 13px;
   }
   .hop.theirs .box { border-style: dashed; }
-  .hop .box .big { font: 600 21px/1 var(--sans); letter-spacing: -.02em; }
-  .hop .box .sub { font-size: 11.5px; color: var(--ink-3); margin-top: 6px; line-height: 1.5; }
+  .hop .box .big { font: 600 19px/1 var(--sans); letter-spacing: -.02em; }
+  .hop .box .sub { font-size: 12.5px; color: var(--ink-3); margin-top: 6px; line-height: 1.5; }
   .hop .box .sub b { color: var(--ink); font-weight: 500; }
   .hop .rows { margin-top: 10px; border-top: 1px solid var(--sh-line); padding-top: 9px; display: flex; flex-direction: column; gap: 6px; }
-  .lrow { display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: var(--ink-3); }
+  .lrow { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-3); }
   .lrow .p { width: 7px; height: 7px; border-radius: 50%; flex: none; background: var(--ink-3); }
   .lrow.work .p { background: var(--ink); box-shadow: 0 0 0 3px rgba(232,236,242,.15); }
   .lrow.work { color: var(--ink); }
   .lrow.bad .p { background: var(--fail); }
   .lrow.bad { color: var(--fail); }
-  .lrow .n { margin-left: auto; font: 400 11px/1 var(--mono); }
+  .lrow .n { margin-left: auto; font: 400 10.5px/1 var(--mono); }
 
   .boundary { padding: 0 26px 20px; }
   .boundary .b {
     border: 1px dashed var(--sh-line-2); border-radius: var(--r);
-    padding: 10px 13px; font-size: 11.5px; line-height: 1.6; color: var(--ink-3);
+    padding: 10px 13px; font-size: 12.5px; line-height: 1.6; color: var(--ink-3);
   }
   .boundary .b b { color: var(--ink-2); font-weight: 500; }
 
   /* The exceptions. The clean ones need no row. */
   .exc { flex: 1; overflow: hidden; }
   .exc h2 {
-    margin: 0; padding: 13px 26px; font: 500 9.5px/1 var(--mono);
+    margin: 0; padding: 13px 26px; font: 500 9px/1 var(--mono);
     letter-spacing: .1em; text-transform: uppercase; color: var(--ink-4);
     border-bottom: 1px solid var(--sh-line);
   }
@@ -70,7 +70,7 @@
   .erow .nm { width: 220px; flex: none; }
   .erow .nm b { display: block; font: 500 12.5px/1.3 var(--sans); color: var(--ink); }
   .erow .nm u { display: block; text-decoration: none; font: 400 10.5px/1.4 var(--mono); color: var(--ink-4); margin-top: 2px; }
-  .erow .why { flex: 1; font-size: 12px; line-height: 1.55; color: var(--ink-3); }
+  .erow .why { flex: 1; font-size: 12.5px; line-height: 1.55; color: var(--ink-3); }
   .erow .why b { color: var(--ink-2); font-weight: 500; }
   .erow .acts { flex: none; display: flex; gap: 6px; }
   /* The clean run. Quiet on purpose — it is the majority and it needs nothing. */
@@ -79,11 +79,11 @@
 
   /* Release history: the same propagation, previous commits. */
   .rrow { display: flex; align-items: center; gap: 16px; padding: 11px 26px; border-bottom: 1px solid var(--sh-line); }
-  .rrow .c { width: 84px; flex: none; font: 400 11.5px/1 var(--mono); color: var(--ink-3); }
+  .rrow .c { width: 84px; flex: none; font: 400 12.5px/1 var(--mono); color: var(--ink-3); }
   .rrow .m { flex: 1; font-size: 12.5px; color: var(--ink); }
-  .rrow .w { width: 78px; flex: none; font: 400 11px/1 var(--mono); color: var(--ink-4); }
+  .rrow .w { width: 78px; flex: none; font: 400 10.5px/1 var(--mono); color: var(--ink-4); }
   .rrow .o { width: 250px; flex: none; }
-  .state { display: inline-flex; align-items: center; gap: 7px; font-size: 11.5px; color: var(--ink-3); }
+  .state { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--ink-3); }
   .state .p { width: 7px; height: 7px; border-radius: 50%; flex: none; background: var(--ink-3); }
   .state.work .p { background: var(--ink); box-shadow: 0 0 0 3px rgba(232,236,242,.15); }
   .state.work { color: var(--ink); }
@@ -154,7 +154,7 @@
         <div class="hop">
           <div class="cap">3 · design forks</div>
           <div class="box">
-            <div class="big">23 <span style="color:var(--ink-4);font-size:14px">/ 24</span></div>
+            <div class="big">23 <span style="color:var(--ink-4);font-size: 15px">/ 24</span></div>
             <div class="sub">Each design's arrangement re-applied over the new
               base.</div>
             <div class="rows">
