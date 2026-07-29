@@ -120,6 +120,52 @@ $B console --errors
 
 ---
 
+## Pass 1b — every element is somewhere it MEANS something
+
+**The inventory check is necessary and not sufficient.** It asks "is this
+element present?" in both directions, and a screen can answer yes for every row
+and still be wrong, because *present* is not the same as *placed*. Two shapes,
+both of which pass Pass 1 cleanly:
+
+**Orphaned by relocation.** A redesign moves an element rather than dropping it
+— correct, the invariant demands it — and then parks it somewhere it says
+nothing. The tell is a region whose entire content is one relocated item, with
+no relationship to the lane above or below it. It reads as an element in
+storage rather than an element on a screen, and it is usually the last thing in
+the scroll because that is where there was room.
+
+Live example in this package: `apps/milemarker/`'s store ends with a lane
+labelled "YOUR RANK" containing a single rank medallion and nothing else. The
+base carries that badge in the topbar, so dropping it would break the
+invariant — but a section of its own at the foot of a shop is not where it
+means anything. **Preserving an element is the floor. Placing it is the job.**
+
+**The same fact, twice.** A redesign that re-emphasises freely (which it should)
+can easily state one value in two places without noticing, because each
+placement was decided separately and both look reasonable alone. Same package:
+profile renders the same remaining-classes count as "7 TO GO" beside the
+progress label and again as "7 more classes" one lane below. Neither is wrong;
+together they are noise, and a reader assumes two different numbers were meant.
+
+How to check, per screen — this one is READING, not tooling:
+
+- For each region, ask **why is this here rather than three lanes up?** If the
+  only answer is "it had to go somewhere", that is the finding.
+- List every FIGURE on the screen. Any value appearing twice is either a
+  deliberate echo you can justify in one sentence, or a duplicate.
+- Ask whether a member would read the screen as one thing with a structure, or
+  as a correct list of parts.
+
+Report these as **misplaced element** — distinct from missing and from added,
+because the fix is different: nothing is removed and nothing is introduced, the
+arrangement is corrected. It is also the one finding class that a redesign is
+MORE likely to produce than the base, precisely because it moved things on
+purpose.
+
+
+
+---
+
 ## Pass 2 — every affordance is actually hittable
 
 A button can be visible, correctly labelled, and unclickable. Check the ones
@@ -382,6 +428,7 @@ State the scope you actually covered: **N screens of M, across K assets.**
 For each finding: the screen, what is wrong, the evidence (screenshot path,
 `BLOCKED by …`, console error), and whether it is a **dead end** (blocking), a
 **missing element**, an **added element** (both break the invariant), a
+**misplaced element** (present but meaningless where it landed — Pass 1b), a
 **mangled image** (a photograph in a box of the wrong ratio — Pass 2c), or
 **cosmetic**.
 

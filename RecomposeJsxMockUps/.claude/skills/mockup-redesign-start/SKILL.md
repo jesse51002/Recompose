@@ -8,6 +8,16 @@ description: RUN THIS FIRST, before any other redesign skill and before opening 
 Your job is to produce an app that **does not read as the base**. Same product
 truth, same screens, same information — a different piece of design.
 
+> [!important]
+> **The direction is decided ONCE, by you, alone. The screens are then BUILT BY
+> PARALLEL AGENTS, one per screen, in a workflow.** Those are not two styles of
+> working — they are the two halves of this skill, and doing either the other
+> way round is a known failure. Fanning out the direction gives you four
+> incompatible worlds; building a dozen screens serially in one context is
+> punishingly slow for no gain, because once the shared layer is frozen the
+> screens do not touch each other's files. See "Build as a workflow" below,
+> which is not optional.
+
 **Load `impeccable` now.** This skill says what to decide and what you may not
 break; `impeccable` is how you decide it well. Use its `shape` command and
 `reference/new-work.md` (the replacement-visual-world path), and its rule:
@@ -199,12 +209,25 @@ Hand off to:
 - **The app's own skill**, PART TWO — the gotchas.
 - **`mockup-qa`** at the end. Not optional.
 
-## Build as a workflow, one agent per screen
+## Build as a workflow, one agent per screen — NOT OPTIONAL
 
-**Always use a workflow to BUILD the screens.** Writing a dozen screens one
-after another in a single context is punishingly slow and unnecessary: once the
-direction and the shared layer are fixed, screens are independent to write. Fan
-them out.
+**You MUST use a workflow to build the screens, with one agent per screen.**
+This is the default and the expectation, not an optimisation to reach for when a
+redesign feels large. Writing a dozen screens one after another in a single
+context is punishingly slow and buys nothing: once the direction and the shared
+layer are fixed, the screens are independent to write and touch disjoint file
+sets. Eleven screens is eleven agents.
+
+**Reach for the `Workflow` tool.** `Agent` calls in a loop are not the same
+thing — the workflow is what gives you the pipeline (structure then craft per
+screen, with no barrier between them), the phase grouping, and a run you can
+resume after editing the script.
+
+**If your harness will not let you spawn agents**, say so in your first reply
+and ask whether to proceed serially — do not silently spend an hour doing by
+hand what the skill told you to fan out. A serial build is a fallback with a
+real cost, not an equivalent choice, and the user should get to decide whether
+to pay it.
 
 **Do not fan out the browser work.** `browse` is a single shared Chromium, so
 parallel agents navigate out from under each other and every finding needs
