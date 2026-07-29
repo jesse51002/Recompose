@@ -530,14 +530,20 @@ def test_list_styles_lists_categorised_runs_when_app_declares_no_vocabulary(
     assert [s.id for s in page.items] == ["AnyCategory"]
 
 
-def test_cdn_base_url_defaults_to_prod_cdn() -> None:
-    """The setting defaults to the prod CDN, so the de-baked container emits
-    absolute CDN URLs even when the App Runner env var is never set — a
-    relative path would 404 since the image bytes aren't baked in anymore."""
-    assert (
-        Settings.model_fields["assets_cdn_base_url"].default
-        == "https://cdn.combatden.net"
-    )
+def test_cdn_base_url_defaults_to_empty() -> None:
+    """The setting defaults to EMPTY, so the API serves image bytes off disk.
+
+    It used to default to the prod CDN, for a deployed container that did not
+    bake the image bytes. That deployment is gone, and the default outlived it:
+    every local run emitted absolute `cdn.combatden.net` URLs for bytes nothing
+    uploads any more, so a freshly generated image 404'd and every client fell
+    back to its bundled asset — which reads as "the new images do not work"
+    and is really "the API pointed somewhere else".
+
+    Asserted rather than deleted BECAUSE the old value was load-bearing once:
+    reintroducing it silently is exactly the regression worth catching.
+    """
+    assert Settings.model_fields["assets_cdn_base_url"].default == ""
 
 
 def test_get_output_emits_absolute_cdn_urls_when_configured(
