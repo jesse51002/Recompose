@@ -92,7 +92,7 @@ THEME_BG_LIGHT = "pure white (the app is in light mode)"
 # global config. Override in dev (bake-off scripts under `scripts/`);
 # production uses these. ``IMAGE_GEN_MODEL`` is provider-prefixed and the
 # generic litellm image generator routes on it (swap providers here).
-IMAGE_PROMPT_MODEL = "anthropic/claude-opus-4-8"
+IMAGE_PROMPT_MODEL = "anthropic/claude-opus-5"
 IMAGE_GEN_MODEL = "openai/gpt-image-2"
 # Bounded re-calls: image-provider moderation/infra is non-deterministic,
 # so a benign prompt can blip on one call and pass the next. There is no
