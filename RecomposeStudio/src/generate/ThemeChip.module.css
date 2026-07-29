@@ -42,3 +42,25 @@
   border: 1px solid var(--sh-line-2);
   flex: none;
 }
+
+.group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+}
+
+/* Only rendered when the loaded theme is NOT the one this run is making, so
+   its presence is itself the signal that you have strayed. */
+.revert {
+  padding: 6px 9px;
+  border: 1px solid var(--st-run-l);
+  border-radius: 6px;
+  background: var(--st-run-w);
+  color: var(--st-run);
+  font: 500 var(--fs-micro) / 1 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+}

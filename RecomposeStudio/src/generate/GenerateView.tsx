@@ -34,6 +34,13 @@ import { ThemePopup } from './ThemePopup';
 import { phaseClass, SHELL_CLASS } from './phaseClass';
 import styles from './GenerateView.module.css';
 
+/**
+ * How often to re-try loading a run's design while it does not exist yet. The
+ * first partial write lands within the first level, so this is seconds of
+ * polling, not minutes.
+ */
+const RETRY_MS = 2000;
+
 /** Which pane the canvas is showing. */
 type Pane = 'mockup' | 'inspect' | 'brief';
 
@@ -68,20 +75,36 @@ export function GenerateView({ sessionId, designName, onDone }: GenerateViewProp
   const app =
     findMockApp(appId) ?? findMockApp(view.designId) ?? MOCK_APPS[0]!;
 
-  // WHEN A RUN STARTS, SWITCH TO WHAT IT IS MAKING. Otherwise the phone sits
-  // on whatever theme was loaded before and the run appears to do nothing —
-  // the partial `output.yaml` writes exist precisely so this repaints level by
-  // level, and it can only do that if the runtime is pointed at the new design.
+  // WHEN A RUN STARTS, LOAD WHAT IT IS MAKING — and keep trying until it takes.
   //
-  // Re-attempted whenever the transcript grows, because the design is not in
-  // the catalogue until the first partial write lands: the first call after
-  // launch resolves false, a later one succeeds. `selectDesign` resolves
-  // rather than throwing, so a miss costs nothing.
+  // Two things fought this. The design is not in the catalogue until the first
+  // partial `output.yaml` lands, so the call right after launch resolves false;
+  // and a theme picked by hand is STICKY (the store persists the selection and
+  // prefers it on boot), so without an explicit override the run would generate
+  // into a design nobody was looking at. The generated theme wins.
+  //
+  // It polls rather than firing once, because "the run has started" and "the
+  // design exists" are seconds apart and nothing announces the second. It stops
+  // on the first success, so a person can switch away afterwards and stay
+  // switched — the override is for the moment the run begins, not a lock.
   const themeId = view.themeId;
   useEffect(() => {
     if (themeId === null) return;
-    void selectDesign(themeId);
-  }, [themeId, records.length]);
+    let stopped = false;
+    let timer: number | undefined;
+    const attempt = (): void => {
+      if (stopped) return;
+      void selectDesign(themeId).then((ok) => {
+        if (stopped || ok) return;
+        timer = window.setTimeout(attempt, RETRY_MS);
+      });
+    };
+    attempt();
+    return () => {
+      stopped = true;
+      if (timer !== undefined) window.clearTimeout(timer);
+    };
+  }, [themeId]);
 
   /** Every write shares one guard: one in flight, and failures are shown. */
   const act = (work: () => Promise<void>): void => {
@@ -147,7 +170,7 @@ export function GenerateView({ sessionId, designName, onDone }: GenerateViewProp
               <Seg now={pane} me="brief" set={setPane} label="Brief" />
             </div>
             <MockupChip app={app} onOpen={() => setMockups(true)} />
-            <ThemeChip onOpen={() => setLibrary(true)} />
+            <ThemeChip onOpen={() => setLibrary(true)} generatedId={themeId} />
             <span className={styles.push} />
             <RunMeter runId={view.runId} />
             <button
