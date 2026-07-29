@@ -167,6 +167,33 @@ that ships. A host that already scales passes `fit="none"`.
 
 ---
 
+## The bar is "does it look right" — and you have to actually check
+
+You have **full freedom over arrangement**. That freedom is the product, so
+almost nothing here is a prohibition — resizing, re-proportioning, cropping and
+rescaling are all fair game when the result looks right.
+
+The one thing that is not optional is **looking at it and judging honestly**.
+The failures that get through are not illegal moves; they are moves that were
+reasonable in the abstract and wrong on the screen. Two real ones, offered as
+things to notice rather than rules to obey:
+
+- A thumbnail re-proportioned to fit a taller card. The source art has a fixed
+  shape, so the card gained its height by squashing the picture — the layout was
+  fine, the image was wrong. There was a way to get the same card shape without
+  touching the artwork.
+- A hero uniformly scaled down to fit a tighter slot. Type and decoration do not
+  shrink at the same rate to the eye, so the result read as a *squashed copy*
+  rather than a smaller one.
+
+Both look correct in code and only fail as pixels. So the question to ask of any
+resize is not "am I allowed to" but **"having looked at it, is this better?"** —
+and if an element only fits because it was shrunk to, consider whether the
+arrangement wanted more room rather than a smaller element.
+
+Screenshot it and decide. If you are unsure whether something reads correctly,
+that uncertainty is the finding — say so rather than shipping it quietly.
+
 ## Verification — the part that is not optional
 
 `make -C RecomposeJsxMockUps check` proves typecheck, lint and tests. **It
