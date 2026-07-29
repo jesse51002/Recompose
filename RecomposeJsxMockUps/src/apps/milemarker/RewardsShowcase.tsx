@@ -97,6 +97,24 @@ export function RewardsShowcase({
       shortSky
       sky={
         <Sky
+          lead={
+            /*
+              The rank medallion belongs WITH the balance, which is where the
+              base has it — its topbar carries rank and points on one row. It
+              shipped as a lane of its own at the foot of the shop, which
+              preserved the element and told the member nothing: a badge in a
+              section by itself is an element in storage. `mockup-qa` Pass 1b.
+            */
+            <span className={styles.standing}>
+              <Disc
+                size={26}
+                slot={SLOT_RANK_BELT}
+                src={showcaseAsset(sample.rankBadgeAsset)}
+                object
+              />
+              <span className={styles.standingLabel}>Your rank</span>
+            </span>
+          }
           label="You earned"
           headline={formatThousands(sample.totalPoints)}
           aside="Points"
@@ -131,17 +149,6 @@ export function RewardsShowcase({
         {items.map((item, i) => (
           <StoreEntry key={`${item.title}-${String(i)}`} item={item} first={i === 0} />
         ))}
-      </Lane>
-
-      {/* The rank badge the base's topbar carries. */}
-      <Lane label="Your rank">
-        {/* A disc, correctly: the rank medallion is a 0.99 cut-out. */}
-        <Disc
-          size={56}
-          slot={SLOT_RANK_BELT}
-          src={showcaseAsset(sample.rankBadgeAsset)}
-          object
-        />
       </Lane>
     </Screen>
   );

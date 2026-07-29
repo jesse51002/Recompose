@@ -115,3 +115,22 @@
   align-items: baseline;
   gap: var(--sc-spacing-small);
 }
+
+/*
+ * The member's standing, in the sky's lead row — the rank medallion beside the
+ * balance, which is the pairing the base's topbar has. Knockout, because this
+ * row sits on the saturated field.
+ */
+.standing {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-small);
+  min-height: 32px;
+}
+
+.standingLabel {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-sky-ink-2nd);
+}

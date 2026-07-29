@@ -1,5 +1,5 @@
-// The pure half of the Profile screen (../profile/mockRankProgress.ts) and the
-// next-rank arithmetic (../profile/NextRankSection.tsx), which port
+// The pure half of the Profile screen — the rank data, the graph maths and the
+// next-rank arithmetic, all in ../profile/mockRankProgress.ts, which port
 // `MobileApp/lib/features/profile/data/rank_progress_selectors.dart`,
 // `_RatingGraphPainter` and `NextRankSection.build`.
 //
@@ -9,12 +9,12 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { nextRankProgress } from '../profile/NextRankSection';
 import type { ShowcaseRankPoint } from '../profile/mockRankProgress';
 import {
   RANK_TIMEFRAMES,
   SHOWCASE_RANK,
   SHOWCASE_RANK_POINTS,
+  nextRankProgress,
   plottableSeries,
   ratingGraphPath,
   windowPoints,

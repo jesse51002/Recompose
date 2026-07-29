@@ -16,6 +16,13 @@
 // all still on the screen. A ring measures nothing in this design — progress
 // fills a lane at a constant rate and stops flat against its mark, which is what
 // the motion direction asks for and what a track can show and a ring cannot.
+//
+// THE NEXT-RANK REGION IS ONE LANE, and it is one deliberately. It shipped as
+// two — a "Progress" lane and a "Next rank" lane — and the split stated the
+// remaining count twice, once as an aside and once as a headline, in two
+// different phrasings. Nothing was missing and nothing was added, so the
+// inventory check passed in both directions and the screen was still wrong.
+// `mockup-qa` Pass 1b is the check that catches it.
 
 import { showcaseAsset } from '../showcaseAssets';
 import type { ShowcaseVideo } from '../showcaseContent';
@@ -35,6 +42,7 @@ import {
   SHOWCASE_RANK,
   SHOWCASE_RANK_POINTS,
   SHOWCASE_TIMEFRAME_INDEX,
+  nextRankProgress,
 } from './mockRankProgress';
 import { RatingGraph } from './RatingGraph';
 import styles from './RecordLane.module.css';
@@ -58,13 +66,24 @@ export function ProfileShowcase({
 }: ProfileShowcaseProps) {
   const rank = SHOWCASE_RANK;
   const levelUp = levelUpVideos(videos);
-  // `classesSinceRank / classesTillNextStep`, clamped — the same two numbers the
-  // base's circular badge divides.
-  const ratio =
-    rank.classesTillNextStep === 0
-      ? 0
-      : Math.min(1, Math.max(0, rank.classesSinceRank / rank.classesTillNextStep));
-  const remaining = Math.max(0, rank.classesTillNextStep - rank.classesSinceRank);
+  // The base's own arithmetic, not a local re-derivation. It also carries the
+  // top-of-the-ladder case: with no target the track reads empty and the label
+  // names the state rather than printing "17 / 0 classes".
+  const { progress, label } = nextRankProgress(rank);
+  // `label` is the base's "17 / 24 classes" — the SAME two numbers this lane
+  // already sets as figures, so printing both says one thing twice. The figures
+  // are this design's treatment of it (the largest thing in a region is a
+  // number), and the string is kept for the one state they cannot express: at
+  // the top of the ladder there is no target, and the label reads "Top of the
+  // ladder." instead.
+  const atTop = rank.classesTillNextStep <= 0;
+  // ONE DELIBERATE ECHO, recorded so a Pass 1b sweep does not re-litigate it:
+  // the target (24) is set as a figure here AND appears as the rating graph's
+  // y-axis maximum below, because the graph plots progress toward that same
+  // threshold. They are the member's target and the plot's scale — different
+  // roles, and a plot without its scale is unreadable. The base avoids the
+  // collision only because it never promotes the target to a standalone
+  // number; this design does, and that is the trade it makes on purpose.
 
   return (
     <Screen
@@ -84,24 +103,15 @@ export function ProfileShowcase({
       }
       foot={<LastLane selected="rank" />}
     >
-      <Lane first label="Progress" labelAside={`${String(remaining)} to go`}>
-        <div className={styles.progressRow}>
-          <span className={styles.stat}>
-            <span className={styles.figure}>{rank.classesSinceRank}</span>
-            <span className={styles.unit}>Classes in rank</span>
-          </span>
-          <span className={styles.stat}>
-            <span className={styles.figure}>{rank.classesTillNextStep}</span>
-            <span className={styles.unit}>Needed</span>
-          </span>
-        </div>
-        <div className={styles.track}>
-          <span className={styles.fill} style={{ width: `${String(ratio * 100)}%` }} />
-          <span className={styles.mark} style={{ left: `${String(ratio * 100)}%` }} />
-        </div>
-      </Lane>
-
-      <Lane label="Next rank">
+      {/*
+        ONE region, not two. This was split into a "Progress" lane and a "Next
+        rank" lane, and the split silently stated the same fact twice — the
+        remaining count appeared as an aside on one and as the headline of the
+        other. The base has a single next-rank section carrying exactly three
+        things: the belt preview, the progress, and the `done / target` label.
+        That is what this is.
+      */}
+      <Lane first label="Next rank" labelAside={atTop ? label : undefined}>
         <div className={styles.nextRow}>
           <Disc
             size={64}
@@ -110,9 +120,21 @@ export function ProfileShowcase({
             object
           />
           <span className={styles.rankCol}>
-            <span className={styles.rankName}>{remaining} more classes</span>
-            <span className={styles.rankSub}>Until your next promotion</span>
+            <span className={styles.progressRow}>
+              <span className={styles.stat}>
+                <span className={styles.figure}>{rank.classesSinceRank}</span>
+                <span className={styles.unit}>Classes in rank</span>
+              </span>
+              <span className={styles.stat}>
+                <span className={styles.figure}>{rank.classesTillNextStep}</span>
+                <span className={styles.unit}>Needed</span>
+              </span>
+            </span>
           </span>
+        </div>
+        <div className={styles.track}>
+          <span className={styles.fill} style={{ width: `${String(progress * 100)}%` }} />
+          <span className={styles.mark} style={{ left: `${String(progress * 100)}%` }} />
         </div>
       </Lane>
 

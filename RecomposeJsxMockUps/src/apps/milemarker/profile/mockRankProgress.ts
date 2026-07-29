@@ -232,3 +232,31 @@ export function ratingGraphPath(
 function round(value: number): number {
   return Math.round(value * 1000) / 1000;
 }
+
+
+// ---------------------------------------------------------------------------
+// The next-rank arithmetic.
+// ---------------------------------------------------------------------------
+//
+// MOVED HERE FROM `./NextRankSection.tsx`, which this fork replaced. The
+// component went; the maths is the member app's and stays, so it lives with the
+// rest of the rank data rather than being kept alive inside a dead file that
+// nothing rendered.
+
+export const NEXT_RANK_TITLE = 'Next Rank';
+
+/**
+ * `NextRankSection.build`'s arithmetic, verbatim: at the top of the ladder
+ * there is no target, so the ring reads empty and the label names the state
+ * instead of printing "17 / 0 classes".
+ */
+export function nextRankProgress(rank: ShowcaseRank): { progress: number; label: string } {
+  const target = rank.classesTillNextStep;
+  const done = rank.classesSinceRank;
+  if (target <= 0) return { progress: 0, label: 'Top of the ladder.' };
+  const raw = done / target;
+  return {
+    progress: raw < 0 ? 0 : raw > 1 ? 1 : raw,
+    label: `${String(done)} / ${String(target)} classes`,
+  };
+}
