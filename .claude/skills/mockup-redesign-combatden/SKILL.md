@@ -1,6 +1,6 @@
 ---
 name: mockup-redesign-combatden
-description: CombatDen-specific facts for editing or redesigning its mock assets — which screens exist, how each one exits, the celebration order, the nav tab mapping, and which upstream sources have gone stale. Load alongside mockup-redesign-general (which carries the rules that hold for every app) whenever touching src/apps/combatden/.
+description: CombatDen's mock assets in full — every screen and everything it must contain, every transition between them, how each screen exits, plus the gotchas (celebration order, concept-vs-screen nav names, stale upstream sources, unported gaps). Load alongside mockup-redesign-general (which carries the rules that hold for every app) whenever touching src/apps/combatden/ or reviewing a redesign of it.
 ---
 
 # CombatDen mock assets — app specifics
@@ -12,6 +12,12 @@ only what is true about CombatDen.
 Source of truth for the real app: `/var/home/jm/Documents/CombatDen/codebase/MobileApp/`.
 
 ---
+
+# PART ONE — the inventory
+
+Everything the mock must contain, in prose, so nothing can be missed by someone
+who cannot run it. If an element is not listed here, a redesign can drop it and
+nobody will notice.
 
 ## Two assets, and why exactly two
 
@@ -47,6 +53,86 @@ that had outlived its reason.
 
 A **tap anywhere on a still-animating celebration card** skips to settled, so a
 slow entrance never strands anyone. The last card wraps to the first.
+
+## Every screen, and what it must contain
+
+### Asset `app`
+
+**`home`** — the schedule, and the asset's root. Must contain: the branded
+topbar (gym mark, gym name with its chevron, and the four-item info bar —
+rank belt, streak with its icon and count, points total, QR affordance); a
+horizontal date row of five days with the active day marked; a "TODAY" section
+heading; and a list of class rows. Each row carries the class name, its time
+range with duration, the instructor, an attending count, and a 16:9 thumbnail.
+Bottom nav present, Home active.
+
+**`class`** — the class detail page. Must contain: a topbar with a **back**
+button, a full-width class photo, the class meta (name, time, duration,
+instructor, attending), a description section, an instructor section with bio,
+a location section with its map image, and exactly one **Reserve** action. No
+bottom nav.
+
+**`booking`** — the post-reservation celebration. Must contain: the celebration
+hero image scaling in, the "Class Booked" headline (themed copy slot), and a
+**Continue** CTA that fades in beneath it. No bottom nav.
+
+**`store`** — the points store. Must contain: the topbar with rank badge and
+points, the member's points headline, the reward category tabs, and a grid of
+reward cards each with its image, title, points cost and price label. Bottom
+nav present, Reward active.
+
+**`video`** — the video library. Must contain: the topbar, the scope tabs, a
+featured hero video card, and one carousel row per genre, each with a section
+header and horizontally-scrolling cards. Bottom nav present, Videos active.
+
+**`profile`** — the member's rank and progress. Must contain: the topbar, the
+rank header with the current belt, a rank summary, a next-rank section with its
+circular progress badge and belt preview, a rating graph with a timeframe
+selector, and a level-up videos row. Bottom nav present, Rank active.
+
+### Asset `celebration`
+
+Each card fills the screen, plays an entrance, and reveals a CTA once settled.
+Each must contain its hero, its figures, and the CTA zone (which is laid out
+from the first frame so its arrival never reflows the card).
+
+**`streak`** — the streak icon hero, a large week count that counts up, the
+"+N points" subtitle, and the week strip of seven day badges with attended days
+marked.
+
+**`points`** — the orbiting 3D sphere of point tokens, collapsing into the
+points hero image, with a "+N POINTS" count-up and a running total caption.
+
+**`rewards`** — the giftbox intro that opens into a burst, then a cover-flow
+carousel of reward cards with a featured caption.
+
+**`rank`** — the rank belt hero, the rank name and its sub-label, and a count-up
+of classes in rank.
+
+**`wins`** — the trophy hero inside a sparkle burst, the "Today's wins" title
+and subtitle (both themed copy slots), and a row of three stat tiles that
+cascade in.
+
+## Every transition
+
+| from | trigger | to | history |
+| --- | --- | --- | --- |
+| `home` | tap a class row | `class` | **push** (back returns) |
+| `class` | topbar **back** | `home` | pop |
+| `class` | **Reserve your spot** | `booking` | push |
+| `booking` | **Continue** | `home` | **reset** — clears the class push too |
+| any app screen | bottom-nav tab | that tab's root | **reset**, never push |
+| any celebration card | tap while animating | same card, settled | none |
+| any celebration card | its CTA | the next card | **replace** — no going back |
+| `wins` (last) | **Book your next class** | `streak` | replace — wraps to the start |
+
+Tab switches reset rather than push because the Dart reaches each tab root with
+`pushReplacementNamed`; pushing would accumulate a back stack the member never
+built.
+
+---
+
+# PART TWO — the gotchas
 
 ## The celebration order is the Dart's
 

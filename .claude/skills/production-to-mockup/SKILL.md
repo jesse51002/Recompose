@@ -98,23 +98,46 @@ behind, `nav.reset` returns to the asset root. Tab switches reset.
 exists.** This is the mechanism [[Mockup_Guardrail_Skill]] names, and it is the
 step most likely to be skipped because the screens already look right.
 
-It must answer, for this app specifically:
+**It has TWO halves, and it is not done with only one.**
 
-1. **What assets exist and why exactly that many** — including the justification
-   for any second asset.
-2. **How every screen exits.** A table. Flag the ones with no bottom nav, whose
-   single affordance is therefore load-bearing.
-3. **Any flow's order, and which source proved it.** Name the file. If a config
-   file disagrees, say so explicitly and say which won.
-4. **Names that look wrong but are not** — concept-vs-screen mismatches, wire
+### Half one — the complete inventory, in plain prose
+
+A full written description of the app, so nothing can be missed by someone who
+cannot run it. **Prose and tables, not code.** Code says what is; this half says
+what must be, which is what you check against.
+
+It must list:
+
+1. **Every asset**, and why exactly that many — including the justification for
+   any second one.
+2. **Every screen in each asset.** For each: what it is, what the member does
+   there, and **everything it must contain** — every region, control, image slot
+   and piece of copy. This is the checklist a redesign is judged against; an
+   element missing from here is an element a redesign can silently drop.
+3. **Every transition between screens**, both directions. What triggers it,
+   which screen it lands on, and what happens to the history — pushed, replaced,
+   or reset to root.
+4. **How every screen exits**, in a table. Flag the ones whose single affordance
+   is the only way out, because those are the ones that become dead ends.
+5. **The order of any flow**, and which source proved it. Name the file.
+
+Write it so a reader can reconstruct the whole app in their head, in order,
+without opening a single file. If a screen's description does not say what it
+must contain, that screen has no accept condition.
+
+### Half two — the gotchas
+
+What will break the next agent, which the inventory cannot tell them:
+
+6. **Names that look wrong but are not** — concept-vs-screen mismatches, wire
    contracts, banned directory names.
-5. **Screens that are easy to confuse** with each other.
-6. **Upstream sources that have gone stale**, with what each has already caused.
-7. **Known gaps against the real app that are unported, not broken** — so the
+7. **Screens that are easy to confuse** with each other, and what breaks if they
+   are.
+8. **Upstream sources that have gone stale**, with what each has already caused.
+9. **Known gaps against the real app that are unported, not broken** — so the
    next agent does not "fix" them by inventing something.
-
-Write it from what you hit while porting, not from what you imagine. If nothing
-surprised you, the file is too short and you have not looked hard enough.
+10. **Anything that surprised you during the port.** If nothing did, you have not
+    looked hard enough and this section is too short.
 
 Then link it: this skill, `mockup-redesign-general`, and the app's own file
 should each point at the others.
