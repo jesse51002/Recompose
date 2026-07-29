@@ -80,6 +80,11 @@ On each, check:
   someone added, which breaks the arrangement-only invariant just as badly and
   is far easier to wave through because it usually looks like an improvement.
   Flag both.
+
+  **Presence, not prominence.** The inventory says what must be *there*, never
+  how big or how emphasised. A screen that makes one class a hero card and the
+  rest compact rows still matches its inventory — every class is present. Do
+  not report a hierarchy change as a finding; that is the redesign working.
 - Nothing clipped at the phone edge, nothing overlapping, no text at a default
   font, no image at an obviously wrong size.
 
@@ -118,6 +123,12 @@ and confirm tapping the card skips to settled.
 Walk the app's transition table. For each row: perform the trigger, confirm you
 land on the stated screen, and confirm the history behaved (push leaves a way
 back; reset does not).
+
+Also check **reachability**, which is where a hierarchy change can go wrong
+without adding or removing anything: every destination a member could reach
+before must still be reachable, in the same number of taps or fewer. A
+rearrangement that buries a destination has removed it in practice, and the
+inventory check will not catch that on its own.
 
 Then walk the flows end to end:
 

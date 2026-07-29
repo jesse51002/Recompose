@@ -54,6 +54,27 @@ data — the real screen would need a request that does not exist.
 re-emphasise, restyle, retime, change hierarchy, change density, change the
 motion. The *arrangement* is the free variable. The *element set* is fixed.
 
+**Hierarchy is explicitly yours, and that includes treating items unequally.**
+Making the first class on the schedule a big hero card and the rest compact
+rows is a redesign doing its job, not a new feature — every class is still
+there, still shows what it showed, still opens when tapped. The same goes for
+featuring one reward, collapsing a section behind a heading, or giving one
+screen's content twice the space it had. Prominence is a design decision and
+you own it.
+
+The two tests that keep that honest:
+
+- **Is everything still functional?** An item you demoted must still be
+  readable and still do what it did. Demoting is fine; disabling is not.
+- **Is every end result still reachable?** Whatever a member could get to
+  before, they can still get to, in the same number of taps or fewer. A
+  rearrangement that buries a destination has removed it in practice.
+
+**"New feature" means something BRAND NEW** — a capability the app did not
+have. A filter that did not exist, a sort control, a new destination, a
+new piece of data on screen. Not "this looks different from before"; different
+is the entire point.
+
 **Why it is absolute.** The whole product is sellable because functional
 equivalence is checkable rather than argued: a tenant's redesigned app is
 provably the same app, with the same screens and the same API surface, wearing a
