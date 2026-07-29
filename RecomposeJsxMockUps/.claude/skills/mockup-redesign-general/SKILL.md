@@ -236,6 +236,16 @@ Then check every hit, including the ones that use a different helper — the
 class banner went through `DegradingImage` rather than the shared ladder, so a
 grep for the ladder alone missed it.
 
+**An optional prop hides the miss.** Adding `themeSlot?: string | undefined` to
+a component and forgetting to pass it from the caller typechecks perfectly and
+silently takes the untokenised path — which is exactly how the class banner
+stayed broken after it had supposedly been wired. After adding the prop, grep
+the callers and confirm each one passes it:
+
+```bash
+grep -rn "<ComponentName" src/apps/<app> --include=*.tsx | grep -v themeSlot
+```
+
 **Stamp the slot at the source, not at each call site.** Put it on the data
 object where the list is resolved (`useShowcaseContent`), so every screen that
 renders that item inherits the same slot and cannot drift. A call site that

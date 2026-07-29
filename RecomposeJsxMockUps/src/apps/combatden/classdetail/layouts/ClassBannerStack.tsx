@@ -26,7 +26,7 @@ export function ClassBannerStack({ detail, gymName, gymLogoSrc }: ClassLayoutPro
     <div className={styles.column}>
       <div className={styles.scrollBody}>
         <ClassScreenTopbar gymName={gymName} gymLogoSrc={gymLogoSrc} />
-        <ClassImageBanner imageUrl={cls.imageUrl} treatment="banner" />
+        <ClassImageBanner imageUrl={cls.imageUrl} themeSlot={cls.themeSlot} treatment="banner" />
         <ClassSectionStack
           sections={[
             <ClassMetaSection key="meta" detail={detail} />,
