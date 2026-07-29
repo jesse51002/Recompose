@@ -4,17 +4,15 @@
 // change, `dev/` does not change, and no existing app changes — a host reads
 // this list and mounts what it finds, so it never names an app.
 //
-// CombatDen is first because it is the real one: the reference implementation
-// the pipeline generates against and the engine's demo canvas. The café is a
-// proof, deliberately kept small — see ./cafe/index.ts for what it does and
-// does not claim to be.
+// CombatDen's base layout is first: the reference implementation the pipeline
+// generates against, and what every redesign forks from. A redesigned variant
+// is a sibling folder with its own id, registered here.
 
 import type { MockApp } from '../kit/registry';
 
-import { CAFE_APP } from './cafe';
 import { COMBATDEN_APP } from './combatden';
 
-export const MOCK_APPS: readonly MockApp[] = Object.freeze([COMBATDEN_APP, CAFE_APP]);
+export const MOCK_APPS: readonly MockApp[] = Object.freeze([COMBATDEN_APP]);
 
 /** One app by id, or `undefined`. */
 export function findMockApp(id: string | null | undefined): MockApp | undefined {

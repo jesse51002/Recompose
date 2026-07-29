@@ -296,6 +296,51 @@ an axis from `aspect-ratio` only when the size it derives FROM is definite. A
 reflow at another size would mean the arrangement being reviewed is not the one
 that ships. A host that already scales passes `fit="none"`.
 
+## GUARDRAIL 10 — many items, few slots: the standard mapping
+
+**Every app hits this.** A real screen renders a list whose length the brand
+does not control — a schedule, a store, a feed, a catalogue — while the
+pipeline generates a FIXED, small number of slots for it. A slot per item is
+not something an `app.yaml` can declare, because the manifest is written once
+and the list is however long the tenant's data happens to be. So there is one
+standard mapping, and it is not a per-app decision:
+
+**1. Cycle by position.** Item `i` uses slot `i % M`. `slotAt(slots, i)` is the
+helper; do not hand-roll the modulo at a call site.
+
+**2. One index per ITEM, for every generated field it has.** The picture, the
+name, and anything else generated for that item come off the *same* index.
+Never one index for the art and a different rule for the copy.
+
+This is the half that gets got wrong, because the wrong version looks more
+careful. The video shelf first cycled thumbnails across all fourteen cards but
+applied generated titles to the first four only — reasoning that a repeated
+*title* reads as the same video listed twice, while a repeated *photograph*
+reads as a brand that owns four good ones. That reasoning is true and it still
+produced the worse screen: card five wore thumbnail one under a title
+belonging to nothing. **A card that repeats is fine. A card that contradicts
+itself is broken.** When the two goals conflict, coherence wins.
+
+**3. Declare the sets paired, in the same order.** `SLOT_X_PHOTOS[i]` and
+`SLOT_X_NAMES[i]` must describe the same thing, because the pipeline believes
+they do — the image slot declares `depends_on_text` naming its own copy, so the
+picture is generated *from* the name. Two lists in different orders is a
+silent, total mismatch.
+
+**4. Stamp at the source.** Where the list is resolved, not at each call site
+(Guardrail 7). One index computed once per item is what makes 2 structurally
+true instead of remembered.
+
+**5. Never leave a tail un-themed, and never invent an (M+1)th slot.** A
+half-themed list looks broken in a way a repeated one does not, and a slot the
+manifest never declared resolves to nothing at all.
+
+The trade is deliberate and worth stating out loud when you pick M: repetition
+across a long list is the accepted cost, and M is chosen to be large enough
+that a *screenful* rarely repeats. Four covers a week of schedule rows and a
+genre carousel; it does not cover a fourteen-card feed without repeating, and
+that was known when it was chosen.
+
 ---
 
 ## The bar is "does it look right" — and you have to actually check

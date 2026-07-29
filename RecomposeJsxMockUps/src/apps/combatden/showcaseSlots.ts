@@ -134,11 +134,11 @@ export const SLOT_VIDEO_THUMBS: readonly string[] = Object.freeze([
  * Keeping the two lists in the same order here is what makes position `i` mean
  * the same thing on both sides.
  *
- * UNLIKE THE IMAGE SLOTS, THE TITLES ARE NOT CYCLED. A repeated photograph in
- * a long feed reads as a brand with four good pictures; a repeated *title*
- * reads as the same video listed twice. So the copy is applied to the first
- * four entries and the rest keep what they shipped with — see
- * ./useShowcaseContent.ts.
+ * SO THEY CYCLE TOGETHER. A list longer than the slot set takes item `i` from
+ * slot `i % length` — and every generated field of that item comes off the
+ * SAME index, never one index for the picture and another for the copy. A
+ * repeated card reads as a brand that owns four good ones; a card whose label
+ * and image disagree reads as broken. See ./useShowcaseContent.ts.
  */
 export const SLOT_CLASS_NAMES: readonly string[] = Object.freeze([
   'class_name_1',

@@ -32,7 +32,6 @@ export type { MockApp } from './kit/registry';
 // specific app — the studio nests CombatDen's assets by name.
 export { MOCK_APPS, findMockApp } from './apps';
 export { COMBATDEN_APP } from './apps/combatden';
-export { CAFE_APP } from './apps/cafe';
 export { AppContentProvider, useAppContent } from './apps/combatden/appContent';
 export type { AppContent, AppContentProviderProps } from './apps/combatden/appContent';
 

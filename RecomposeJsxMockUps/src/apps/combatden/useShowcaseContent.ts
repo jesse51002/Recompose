@@ -137,15 +137,20 @@ export function useShowcaseContent(
       ...r,
       title: pickName(rewardNames, i, r.title),
     })),
-    // The thumbnail CYCLES across the whole feed; the title does not. Four
-    // photographs spread over fourteen cards read as a brand that owns four
-    // good pictures — four titles spread the same way read as the same video
-    // listed four times. So only the first four cards, the hero among them,
-    // take generated copy, and the tail keeps what it shipped with.
-    videos: videos.map((v, i) => ({
-      ...v,
-      title: i < videoTitles.length ? pickName(videoTitles, i, v.title) : v.title,
-      themeSlot: slotAt(SLOT_VIDEO_THUMBS, i),
-    })),
+    // ONE INDEX FOR BOTH HALVES. The feed is fourteen cards against four
+    // generated slots, so the slots cycle — and the picture and the title
+    // cycle TOGETHER, off the same index, because they describe the same
+    // thing. Splitting them (cycling the art, applying copy to the first four
+    // only) leaves card five wearing thumbnail one under a title that belongs
+    // to nothing, which is a card that contradicts itself rather than a card
+    // that repeats.
+    videos: videos.map((v, i) => {
+      const n = i % SLOT_VIDEO_THUMBS.length;
+      return {
+        ...v,
+        title: pickName(videoTitles, n, v.title),
+        themeSlot: slotAt(SLOT_VIDEO_THUMBS, n),
+      };
+    }),
   };
 }

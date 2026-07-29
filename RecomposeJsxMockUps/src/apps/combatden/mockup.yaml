@@ -1,80 +1,31 @@
-# The CombatDen mockup — the LAYOUT half of a design.
+# The LAYOUT half of a design.
 #
-# A design in this product is two artifacts that are produced separately and
-# have to be readable separately:
+# A design is two artifacts made separately: the ASSETS (a pipeline run — its
+# `customization.yaml` brief and the `output.yaml` it resolved to) and the
+# LAYOUT (this folder). The theme half has always been self-describing; this
+# is the layout's equivalent, and it is deliberately the same three fields as
+# a brief's `design_direction`, because it answers the same question.
 #
-#   the ASSETS  — a pipeline run: apps/<app>/<run>/customization.yaml (the
-#                 brief) + output.yaml (the resolved palette, type, imagery
-#                 and copy). Already self-describing.
-#   the LAYOUT  — this folder: the screens an agent rewrote. Until this file
-#                 there was nothing recording what it is or what produced it,
-#                 so a mockup could only be understood by reading its source.
-#
-# This is that record. It is the mockup's counterpart to `customization.yaml`:
-# the spec the layout was generated from, the design it belongs to, and the
-# inventory of what it contains.
+# Three fields. Nothing about routes, sizes or assets — the code already says
+# all of that, and a second copy would only be a thing to keep in sync.
 
-id: combatden
-label: CombatDen
+name: CombatDen
 
-design:
-  name: CombatDen
-  # The BASE layout — ported from production, not redesigned against a brand.
-  # A generated layout names the run it was redesigned for; this one is what
-  # every redesign starts from.
-  run_id: ""
+short_desc: >-
+  The base layout: the class-based-gym member app, ported from production and
+  stripped of every feature. What every redesign forks from.
 
-spec:
-  origin: ported
-  short_desc: >-
-    The class-based-gym member app: browse the schedule, open a class, reserve
-    it, move between home, profile, store and videos — plus the five-card
-    post-class celebration.
-  long_desc: >-
-    A port of the production Flutter app at /var/home/jm/Documents/CombatDen
-    (MobileApp/ and the CRM's showcase clones), feature-free: no business
-    logic, no API calls, no fetching. Every file names the Dart file it ports
-    from in its header.
+long_desc: >-
+  A feature-free port of the production Flutter member app — no business
+  logic, no API calls, no fetching. Two assets: the app you click through
+  (schedule, class, booking, store, videos, profile) and the five-card
+  post-class celebration that no tap can reach.
 
-    It is the reference implementation and the eval bed — the app the pipeline
-    generates against and the surface a design agent rewrites. Its content is
-    per-gym-type constants keyed by the run's `category`, which the surface
-    reads off the loaded theme, so the half of the screen that is not
-    generated still follows the design.
+  This is the reference implementation and the eval bed — the app the pipeline
+  generates against, and the surface a design agent rewrites. It is
+  deliberately CombatDen's own design language rather than a neutral one: a
+  redesign has to be judged against something a real business actually ships,
+  not against a blank.
 
-assets:
-  - id: app
-    label: App
-    width: 390
-    height: 844
-    initial_route: home
-    routes:
-      - home
-      - class
-      - booking
-      - store
-      - video
-      - profile
-  # A SECOND asset is justified only by a screen no tap can reach. The
-  # post-class flow plays after a member attends a class and no button in the
-  # app leads to it; that is the whole justification.
-  - id: celebration
-    label: Celebration
-    width: 390
-    height: 844
-    initial_route: streak
-    routes:
-      - streak
-      - rank
-      - points
-      - rewards
-      - wins
-
-invariants:
-  - Every screen carries a way off it; the last screen of a flow returns to
-    that flow's root.
-  - No screen is added, removed, merged or split.
-  - No feature is added and none removed — arrangement only.
-  - No data fetching, ever.
-  - The nav tabs stay named for concepts (`rank` is the profile, `reward` is
-    the store) — renaming them to match the screens breaks icon resolution.
+  It belongs to no run. Every other layout in this package is a fork of it,
+  named for the design it was redesigned against.

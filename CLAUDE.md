@@ -42,11 +42,12 @@ import `src/apps/`. An app reaches the kit by calling `defineMockAsset` /
 `defineMockApp`, never the reverse — which is what makes a new app a folder
 rather than a change to the machinery. Its own eslint Gate 1 enforces it.
 
-**There are two apps now, and the second one is there to keep that claim
-honest.** `src/apps/cafe/` is a café ordering flow with its own token
-vocabulary, its own device size and its own layout language; adding it changed
-the kit not at all. An app folder also may not import a sibling app folder —
-nothing enforces that yet, but deleting one app must never break another.
+**A redesign of an app is a SIBLING FOLDER under `src/apps/`, never an edit to
+the base.** The base layout is what the pipeline generates against; a redesign
+forks it, keeps its own folder and its own `mockup.yaml`, and is registered in
+`src/apps/index.ts`. That mirrors the engine's own two fork layers. An app
+folder also may not import a sibling app folder — nothing enforces that yet,
+but deleting one design must never break another.
 
 The rule predates the package split; it was enforced inside the old single
 package and the split made it structural. If you find yourself wanting to share

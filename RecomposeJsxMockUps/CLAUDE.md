@@ -54,7 +54,7 @@ src/
   apps/
     combatden/         one product: its screens, its tokens, its two assets
       mockup.yaml        what this layout is, and what produced it — REQUIRED
-    cafe/              the second app — see below
+    <design-id>/       a REDESIGN of the base — a sibling folder, see below
       mockup.yaml
     index.ts           MOCK_APPS: every app, for a host that names none
   index.ts             the ONLY export surface
@@ -70,26 +70,16 @@ A design in this product is **two artifacts produced separately**:
 | the layout — the screens | an app folder here | `mockup.yaml` |
 
 The theme half has always been self-describing. The layout half was not: a
-mockup could only be understood by reading its source, and nothing recorded
-which design it belonged to or what spec produced it. `mockup.yaml` is that
-record — the mockup's counterpart to `customization.yaml`.
+mockup could only be understood by reading its source. `mockup.yaml` is that
+record, and it is deliberately **the same three fields as a brief's
+`design_direction`** — `name`, `short_desc`, `long_desc` — because it answers
+the same question about the other half.
 
-It declares `id`, `label`, the `design` it belongs to (`name` plus the `run_id`
-it was redesigned against, empty for a ported or authored base), the `spec` it
-was produced from, the `assets` inventory, and the `invariants` a redesign may
-not break.
-
-`src/apps/__tests__/mockupYaml.test.ts` fails if an app has no `mockup.yaml`,
-if a required section is missing, or if the file and `defineMockApp` disagree
-about an app's label, an asset's id, its authored size, its initial route or
-its route list — in either direction, so a deleted asset cannot linger in the
-record. It is a presence-and-agreement check rather than a parse: there is no
-YAML parser in this package and one test does not justify adding one.
-
-**Write the drift assertions line-anchored.** The first version used
-`toContain`, which passed happily with a route mistyped as `menuu` — `- menuu`
-contains `- menu`. Corrupt a value on purpose and watch the suite go red before
-believing a gate like this works.
+**Three fields, and no more.** Nothing about routes, sizes or assets: the code
+already declares all of it, and a second copy in YAML would only be a thing to
+keep in sync. `src/apps/__tests__/mockupYaml.test.ts` fails if an app has no
+`mockup.yaml` or leaves any of the three empty — presence and non-emptiness,
+which is all a file this shape can usefully guarantee.
 
 **A second app is a sibling folder under `apps/` plus one `defineMockApp`.**
 Not a change to the kit, and not a change to the host. That is the whole reason
@@ -100,29 +90,21 @@ not import `src/apps/`. An app reaches the kit by calling `defineMockAsset` /
 `src/index.ts` is the only export surface. The studio imports the package, never
 a file inside it. If the studio needs something new, export it there.
 
-### `cafe/` exists to keep that claim honest
+### A redesign is a sibling folder, not an edit
 
-`apps/cafe/` is a small café ordering app — menu, item, order — and it is here
-as **proof, not product**. Adding it changed `src/kit/` not at all, `dev/` only
-to grow an app switcher, and `apps/combatden/` not at all. It brings its own
-token vocabulary (`--cafe-*`, never `--sc-*`), its own device size (402x874
-against CombatDen's 390x844), its own layout language (a two-column grid where
-CombatDen has a schedule list) and its own state.
+The base layout above is what the pipeline generates against and what every
+redesign forks from. **A redesign never edits it.** It is copied to a sibling
+folder under `apps/` with its own id, redesigned there, and registered in
+`apps/index.ts` — which is the same shape as the engine's own two fork layers
+(a shared tokenised base, then one design fork per design).
 
-Two things it deliberately is not:
+That is why `MOCK_APPS` exists and why the harness switches apps: the point of
+having more than one folder is to put the base and a redesign side by side and
+flip between them.
 
-- **Not a pipeline app.** There is no `apps/cafe/app.yaml` in the engine, so it
-  resolves only the slot ids every brand manifest declares — the four colour
-  roles and the two font roles (`cafe/cafeSlots.ts`). That is enough to prove
-  theming crosses the app boundary; a real second app would ship a manifest.
-- **Not carrying bundled art.** Every picture on those screens is drawn in CSS
-  from the palette (`cafe/ItemArt.tsx`). With no image slots to resolve, a
-  bundled photograph would look themed while being the one element on screen
-  that never moves — the exact illusion this package exists to avoid.
-
-If a **third** app appears, promote `cx` to `src/kit/` — it is genuinely
-app-agnostic, and two copies is the cheapest correct answer where three is a
-signal.
+A redesign folder declares which design it belongs to in its `mockup.yaml`
+(`design.name` and the `run_id` it was redesigned against). The base leaves
+`run_id` empty — it belongs to no run, it is what they all start from.
 
 ## Assets, not screens
 
@@ -133,7 +115,6 @@ through. Not a gallery of stills behind a picker.
 | --- | --- | --- | --- |
 | combatden | `app` | the member app | home, class, booking, store, video, profile |
 | combatden | `celebration` | the post-class flow | streak, rank, points, rewards, wins |
-| cafe | `order` | the café ordering flow | menu, item, order |
 
 **An asset holds everything reachable by tapping.** The bottom nav switches
 tabs, a schedule row opens a class, its reserve action books it — all one asset.
@@ -195,7 +176,7 @@ a vocabulary, you are rebuilding what was deliberately removed.
 
 `make dev` (or `npm run dev`) serves the harness in `dev/` on **:8081** — an app
 switcher, an asset switcher, a phone-shaped box, and nothing else.
-`?app=cafe&asset=order` deep-links, so a reload lands back where you were
+`?app=<id>&asset=celebration` deep-links, so a reload lands back where you were
 instead of making you click through the flow again.
 
 **It names no app.** The switcher lists whatever `src/apps/index.ts` exports, so
@@ -237,12 +218,6 @@ Where the exit lives, per screen:
 - every celebration card — its CTA, which appears once the card settles; a tap
   anywhere on a still-animating card skips straight to settled, so a slow
   entrance can never strand anyone. The last card wraps to the first.
-- cafe `menu` — the asset root; every card goes forward. The basket bar is
-  hidden on an empty basket, which is not a dead end: the order screen has
-  nothing to show then and every card is still a way on.
-- cafe `item` — **back**, and **Add to order** which also returns to the menu.
-- cafe `order` — **back**, and **Place order** which `nav.reset()`s to the menu
-  and clears the basket, because it is the last screen of the flow.
 
 Two traps this has already sprung, both of which typecheck and lint cleanly:
 
@@ -303,11 +278,13 @@ together, by position, in `useShowcaseContent` — split them across two files a
 they drift, and a card captioned one thing while showing another is worse than
 either being un-themed.
 
-**Video titles do not cycle the way thumbnails do.** Four photographs spread
-over a fourteen-card feed read as a brand that owns four good pictures; four
-titles spread the same way read as the same video listed four times. So the
-thumbnail cycles with `slotAt` and the copy applies to the first four entries
-only.
+**A list longer than the slot set cycles, and every generated field of one
+item cycles off the SAME index.** Fourteen feed cards against four slots: card
+`i` takes slot `i % 4` for its picture AND its title. Splitting the two — art
+cycled, copy applied to the first four only — was tried and is worse, because
+card five then wears thumbnail one under a title belonging to nothing. A card
+that repeats is fine; a card that contradicts itself is broken. Guardrail 10 in
+`mockup-redesign-general` is the full rule.
 
 **Directory names are load-bearing.** Gate 2a bans `**/widgets/**`,
 `**/chrome/**` and `**/browser/**` anywhere in this island and matches the
