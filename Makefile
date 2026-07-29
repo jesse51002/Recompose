@@ -1,43 +1,32 @@
-.PHONY: run smoke api studio test sync-assets react-install react-dev react-build react-check
+.PHONY: help install check test ThemeTree RecomposeAPI RecomposeFlutter RecomposeReact RecomposeJsxMockUps RecomposeStudio
 
-run:
-	poetry run python -m ThemeTree --app-yaml apps/combatden/app.yaml --customization-yaml apps/combatden/customization.yaml
+# Root delegates. Every subsystem owns its own Makefile and its own dependencies;
+# this file only fans out to them. Anything subsystem-specific belongs in that
+# subsystem's Makefile, not here.
 
-smoke:
-	poetry run python -m ThemeTree --app-yaml apps/smoketest/app.yaml --customization-yaml apps/smoketest/customization.yaml
+SUBSYSTEMS := ThemeTree RecomposeAPI RecomposeFlutter RecomposeReact RecomposeJsxMockUps RecomposeStudio
 
-api:
-	poetry run python -m uvicorn RecomposeAPI.main:app --host 0.0.0.0 --port 8001 --reload
+help:
+	@echo "make install         install every subsystem"
+	@echo "make check           typecheck + lint + test across every subsystem"
+	@echo "make test            test across every subsystem"
+	@echo "make <Subsystem>     that subsystem's help"
+	@echo ""
+	@echo "Subsystems: $(SUBSYSTEMS)"
+	@echo ""
+	@echo "Common loops:"
+	@echo "  make -C RecomposeAPI dev        the read-only API"
+	@echo "  make -C RecomposeStudio dev     the theme browser (needs the API running)"
+	@echo "  make -C ThemeTree smoke         a cheap end-to-end pipeline run"
 
-# The local launch surface (start a run, watch it stream). NOT deployed and
-# NOT 0.0.0.0: it starts runs that spend real money, so it is bound to
-# loopback only. Needs the full .env (it imports the pipeline).
-studio:
-	poetry run python -m uvicorn ThemeTree.studio.main:app --host 127.0.0.1 --port 8002 --reload
+install:
+	@for d in $(SUBSYSTEMS); do echo "==> $$d"; $(MAKE) -C $$d install || exit 1; done
+
+check:
+	@for d in $(SUBSYSTEMS); do echo "==> $$d"; $(MAKE) -C $$d check || exit 1; done
 
 test:
-	poetry run pytest tests/ -v
+	@for d in $(SUBSYSTEMS); do echo "==> $$d"; $(MAKE) -C $$d test || exit 1; done
 
-# --- ThemeReact (the web theme runtime + standalone browser) ----------------
-# npm, not poetry. ThemeReact/ is invisible to pyproject.toml and excluded from
-# the API image (.dockerignore), exactly as RecomposeFlutter/ is — the two sides
-# share only the HTTP contract this Makefile's `api` target serves.
-# `react-dev` serves on :8080 (pinned — see ThemeReact/vite.config.ts) and needs
-# `make api` running alongside it.
-react-install:
-	cd ThemeReact && npm install
-
-react-dev:
-	cd ThemeReact && npm run dev
-
-react-build:
-	cd ThemeReact && npm run build
-
-react-check:
-	cd ThemeReact && npm run typecheck && npm run lint && npm run test
-
-# Mirror all generated images/icons to S3 (backfill + repair). Needs boto3 + AWS
-# creds; bucket defaults to combatden-assets. New runs self-upload via the Writer
-# when ASSET_UPLOAD_ENABLED=1; this is the one-shot backfill (skips unchanged).
-sync-assets:
-	poetry run python -m scripts.sync_assets.run
+$(SUBSYSTEMS):
+	@$(MAKE) -C $@ help

@@ -45,33 +45,37 @@ The reason is the product: the mockups are the surface a design agent rewrites
 freely. Every dependency they carry is a thing that can break when an agent
 rearranges a screen.
 
-## Three independent installs
+## Each subsystem owns its own dependencies
 
-The TypeScript packages are **not** an npm workspace. Each has its own
-`package.json` and its own `node_modules`; you run `npm install` three times.
+Every subsystem stands alone: it declares what it depends on and installs on its
+own. There is no shared lockfile and no workspace linking across the repo. Adding
+one would be an architecture decision, not a convenience.
 
-Cross-package imports resolve to **source**, not to built output — via `resolve.alias`
-in each `vite.config.ts` and `paths` in each `tsconfig.json`. That keeps hot reload
-working across boundaries and makes a missing export fail immediately rather than
-against a stale `dist/`. The `file:../Sibling` entries in `dependencies` record the
-intent; the alias is what actually resolves.
+Where a subsystem depends on a sibling, cross-package imports resolve to **source**
+rather than to built output. That keeps hot reload working across the boundary and
+makes a missing export fail immediately instead of failing against a stale build
+directory. Declared dependencies record the intent; the resolver config is what
+actually resolves.
 
-`RecomposeStudio`'s dev and preview port is **pinned to 8080** and must not be
-changed casually — the API's CORS allowlist contains 8080 and not Vite's default 5173.
+Anything more specific than that — install commands, ports, config filenames, which
+tool does the resolving — lives in the subsystem's own CLAUDE.md, because that is
+the only place it can be kept true.
 
-## Python: one package root, two surfaces
+**Every subsystem also owns a `Makefile`**, and each answers the same few verbs so
+the root can fan out to all of them uniformly. Run `make help` anywhere to see what
+that subsystem offers; the root's `help` lists the subsystems and the common loops.
+Add a target to the subsystem that owns the work, never to the root.
 
-`ThemeTree/` and `RecomposeAPI/` are separate top-level packages in one Poetry
-project (`pyproject.toml` lists both under `packages`). One `poetry install`
-covers both.
+## Python: two surfaces, one of which ships
 
-They are deliberately not separate distributions. That is a decision for now, not
-a principle — if the API ever needs its own release cadence, it earns its own
-`pyproject` then and not before.
+`ThemeTree/` and `RecomposeAPI/` are separate top-level packages. Whether they
+share one project or split into separate distributions is an arrangement rather
+than a principle — read `pyproject.toml` for how it stands today, not this file.
 
-- **`RecomposeAPI` ships. `ThemeTree/studio` does not.** Studio binds to
-  127.0.0.1:8002 and spends real money on every launch. Nothing about it is
-  deployed, and nothing in it should assume it ever will be.
+**`RecomposeAPI` ships. `ThemeTree/studio` does not.** Studio binds to localhost
+and spends real money on every launch. Nothing about it is deployed, and nothing
+in it should assume it ever will be. That distinction is load-bearing and is not
+expected to change.
 
 ## Conventions that apply everywhere
 
@@ -80,9 +84,8 @@ a principle — if the API ever needs its own release cadence, it earns its own
   update that file **in the same change**. A stale rule produces false review
   findings and misleads the next contributor. If the doc is what diverged, fix the
   doc; if the code is, fix the code. They must agree when you are done.
-- **Diagrams** are authored with the `mermaid-creation` skill and must pass its
-  gates: top-down at the flow level, sibling-only edges, no `~~~`, and both the
-  Mermaid-9 parse and the render before you call it done.
+- **Diagrams** are authored with the `mermaid-creation` skill and must pass the
+  gates it defines. The skill is the source of truth for what those are.
 - **No assumptions.** When a decision has more than one reasonable answer, ask and
   wait rather than picking one quietly.
 
