@@ -56,8 +56,6 @@ import type { ReactNode } from 'react';
 import { ThemedImage } from 'recompose-react';
 
 import { cx } from '../cx';
-import type { AppShellFormat } from '../formats';
-import { APP_SHELL_FORMATS, FORMAT_SLOTS, useFormat } from '../formats';
 import type { ShowcaseAssetFile } from '../showcaseAssets';
 import { showcaseAsset } from '../showcaseAssets';
 import {
@@ -125,10 +123,7 @@ export function ShowcaseTopbar({
   rankBadgeAsset,
   logoSrc,
   themeTabPreview = false,
-  formatOverride,
 }: ShowcaseTopbarProps) {
-  const resolved = useFormat(FORMAT_SLOTS.appShell, APP_SHELL_FORMATS, 'stacked');
-  const format = formatOverride ?? resolved;
   const data: TopbarData = {
     mode,
     gymName,
@@ -139,16 +134,7 @@ export function ShowcaseTopbar({
     themeTabPreview,
   };
 
-  switch (format) {
-    case 'compactRail':
-      return <TopbarCompactRail data={data} />;
-    case 'statFirst':
-      return <TopbarStatFirst data={data} />;
-    case 'markOnly':
-      return <TopbarMarkOnly data={data} />;
-    case 'stacked':
-      return <TopbarStacked data={data} />;
-  }
+  return <TopbarStacked data={data} />;
 }
 
 // ---------------------------------------------------------------------------
@@ -173,66 +159,6 @@ function TopbarStacked({ data }: { data: TopbarData }) {
         nameSize={bigLogo ? 'h1' : 'h2'}
       />
       <InfoBar data={data} layout="spread" />
-    </TopbarFrame>
-  );
-}
-
-/**
- * `AppShellFormat.compactRail` — one row.
- *
- * Mark leading, name centred, stats clustered trailing. Buys back the vertical
- * space the stacked mark spends, on every screen at once.
- */
-function TopbarCompactRail({ data }: { data: TopbarData }) {
-  return (
-    <TopbarFrame compact arrangement="rail">
-      <TopbarIdentity
-        data={data}
-        markSize={data.mode === 'bigLogo' ? 'sm' : null}
-        axis="horizontal"
-        nameSize="h2"
-        // Dart's `Expanded`: on a single-row topbar the name must be able to
-        // give up width, or a long gym name pushes the stat cluster off screen.
-        placement={styles.identityGrow}
-      />
-      <InfoBar data={data} layout="cluster" />
-    </TopbarFrame>
-  );
-}
-
-/**
- * `AppShellFormat.statFirst` — stats above identity.
- *
- * For a tenant whose retention story is the numbers rather than the brand mark.
- * Identity drops to a small centred row beneath.
- */
-function TopbarStatFirst({ data }: { data: TopbarData }) {
-  return (
-    <TopbarFrame arrangement="stackLarge">
-      <InfoBar data={data} layout="spread" />
-      <TopbarIdentity
-        data={data}
-        markSize={data.mode === 'bigLogo' ? 'xs' : null}
-        axis="horizontal"
-        nameSize="p"
-      />
-    </TopbarFrame>
-  );
-}
-
-/**
- * `AppShellFormat.markOnly` — mark alone, stats inline, no rule.
- *
- * The gym name is still built and still carries its text and switch chevron
- * into the accessibility tree; it is only removed from the visual layout. That
- * is what keeps this a rearrangement rather than a dropped affordance — see
- * `GymNameLabel.visuallyHidden` and `.visuallyHidden` in the stylesheet.
- */
-function TopbarMarkOnly({ data }: { data: TopbarData }) {
-  return (
-    <TopbarFrame rule={false} compact arrangement="stackMedium">
-      <TopbarIdentity data={data} markSize="md" axis="horizontal" nameHidden />
-      <InfoBar data={data} layout="inline" />
     </TopbarFrame>
   );
 }

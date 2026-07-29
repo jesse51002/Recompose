@@ -38,12 +38,7 @@
 
 import type { ReactElement } from 'react';
 
-import { FORMAT_SLOTS, REWARDS_FORMATS, useFormat } from './formats';
 import { RewardsCardGrid } from './rewards/layouts/RewardsCardGrid';
-import { RewardsListRows } from './rewards/layouts/RewardsListRows';
-import { RewardsPosterDeck } from './rewards/layouts/RewardsPosterDeck';
-import { RewardsPriceLadder } from './rewards/layouts/RewardsPriceLadder';
-import { RewardsStorefrontHero } from './rewards/layouts/RewardsStorefrontHero';
 import type { ShowcasePointsStoreItem } from './rewards/mockPointsStore';
 import { SHOWCASE_POINTS_STORE_DATA } from './rewards/mockPointsStore';
 import type { RewardsLayoutData } from './rewards/rewardsLayoutData';
@@ -90,7 +85,6 @@ export function RewardsShowcase({
   gymLogoSrc,
   rewards,
 }: RewardsShowcaseProps) {
-  const format = useFormat(FORMAT_SLOTS.rewards, REWARDS_FORMATS, 'cardGrid');
   const sample = SHOWCASE_POINTS_STORE_DATA;
 
   // One payload, handed unchanged to whichever arrangement renders. There is
@@ -105,29 +99,11 @@ export function RewardsShowcase({
     items: storeItemsFor(rewards),
   };
 
-  // Exhaustive over `RewardsFormat` — a new arrangement fails to typecheck here
-  // until it is built.
-  let body: ReactElement;
-  switch (format) {
-    case 'cardGrid':
-      body = <RewardsCardGrid data={data} />;
-      break;
-    case 'listRows':
-      body = <RewardsListRows data={data} />;
-      break;
-    case 'posterDeck':
-      body = <RewardsPosterDeck data={data} />;
-      break;
-    case 'priceLadder':
-      body = <RewardsPriceLadder data={data} />;
-      break;
-    case 'storefrontHero':
-      body = <RewardsStorefrontHero data={data} />;
-      break;
-  }
+  const body: ReactElement = <RewardsCardGrid data={data} />;
 
-  // See the header: the two pinned arrangements own their own scroller.
-  const bodyScroll = format !== 'posterDeck' && format !== 'priceLadder';
+  // The store scrolls: it is an app surface a member browses, not a
+  // single-viewport composition.
+  const bodyScroll = true;
 
   return (
     <ShowcaseScaffold

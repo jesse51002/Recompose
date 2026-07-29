@@ -21,13 +21,12 @@
 // slots — a theme pick must never rename the mock. `themeTabPreview` selects the
 // topbar's middle logo rung (see ../support/ShowcaseTopbar.tsx).
 
-import { FORMAT_SLOTS, HOME_FORMATS, useFormat } from '../formats';
 import type { ShowcaseClassInfo } from '../showcaseContent';
 import { ShowcaseBottomNav } from '../support/ShowcaseBottomNav';
 import { ShowcaseScaffold } from '../support/ShowcaseScaffold';
 import { ShowcaseTopbar } from '../support/ShowcaseTopbar';
 
-import { HomeLayoutBody } from './HomeLayoutBody';
+import { HomeAgendaList } from './layouts/HomeAgendaList';
 
 // Dummy non-identity data: the streak / points / rank chips in the info bar.
 // Gym name + logo come from the host.
@@ -50,15 +49,13 @@ export function HomeShowcase({
   classes,
   themeTabPreview = false,
 }: HomeShowcaseProps) {
-  const format = useFormat(FORMAT_SLOTS.home, HOME_FORMATS, 'agendaList');
   return (
     <ShowcaseScaffold
       horizontalPadding="none"
       bodyScroll
       bottomNav={<ShowcaseBottomNav selected="home" />}
     >
-      <HomeLayoutBody
-        format={format}
+      <HomeAgendaList
         classes={classes}
         topbar={
           <ShowcaseTopbar

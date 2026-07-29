@@ -26,8 +26,6 @@ import type { ReactElement } from 'react';
 import { ThemeIcon } from 'recompose-react';
 
 import { cx } from '../cx';
-import type { AppShellFormat } from '../formats';
-import { APP_SHELL_FORMATS, FORMAT_SLOTS, useFormat } from '../formats';
 import {
   SLOT_NAV_HOME,
   SLOT_NAV_RANK,
@@ -59,25 +57,15 @@ const TABS: readonly NavSpec[] = Object.freeze([
 /** `_kBottomNavRowHeight` — a local const in Dart too, not a design token. */
 const ROW_HEIGHT = 64;
 
-/** `_kPillHeight` — likewise a local const in `nav_floating_pill.dart`. */
-const PILL_HEIGHT = 56;
 
 /** `ShowcaseTokens.iconSizeMd`. Passed to <ThemeIcon>, which sizes in px. */
 const ICON_SIZE = SC.iconSizeMd;
 
 export interface ShowcaseBottomNavProps {
   selected: ShowcaseNavTab;
-  /**
-   * Forces an arrangement instead of resolving it from the theme —
-   * `AppBottomNavBar.formatOverride`. Null in normal use; the invariant test and
-   * a side-by-side preview are its only readers.
-   */
-  formatOverride?: AppShellFormat | undefined;
 }
 
-export function ShowcaseBottomNav({ selected, formatOverride }: ShowcaseBottomNavProps) {
-  const resolved = useFormat(FORMAT_SLOTS.appShell, APP_SHELL_FORMATS, 'stacked');
-  const pill = (formatOverride ?? resolved) === 'markOnly';
+export function ShowcaseBottomNav({ selected }: ShowcaseBottomNavProps) {
 
   // Built ONCE, above the layout branch, so neither layout can drop, reorder or
   // duplicate a destination — the Dart file builds its `items` list the same way
@@ -89,23 +77,9 @@ export function ShowcaseBottomNav({ selected, formatOverride }: ShowcaseBottomNa
       label={label}
       icon={<Icon />}
       isActive={tab === selected}
-      showLabel={!pill}
+      showLabel
     />
   ));
-
-  if (pill) {
-    // `NavFloatingPill` — an inset, rounded bar floating over the canvas. It
-    // stays in the scaffold's bottom slot exactly as `NavFourUp` does (Dart
-    // keeps both in `AppScreenScaffold`'s Column), so no screen and no scaffold
-    // has to know which one is drawn.
-    return (
-      <div className={styles.pillInset}>
-        <nav className={styles.pill} style={{ height: `${String(PILL_HEIGHT)}px` }}>
-          {items}
-        </nav>
-      </div>
-    );
-  }
 
   return (
     // `NavFourUp`. Dart adds `MediaQuery.padding.bottom` here; the phone frame

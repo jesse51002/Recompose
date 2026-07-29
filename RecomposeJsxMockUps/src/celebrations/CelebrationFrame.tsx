@@ -40,8 +40,6 @@
 import type { ReactNode } from 'react';
 
 import { cx } from '../cx';
-import type { CelebrationFormat } from '../formats';
-import { CELEBRATION_FORMATS, FORMAT_SLOTS, useFormat } from '../formats';
 import { SC, showcaseStyle } from '../showcaseTokens';
 import { ShowcaseScaffold } from '../support/ShowcaseScaffold';
 
@@ -82,21 +80,6 @@ const FRAME_VARS: Readonly<Record<string, string>> = Object.freeze({
 });
 
 /** One arrangement's class — `PostClassScaffold._build`'s switch. */
-function arrangementClass(format: CelebrationFormat): string | undefined {
-  switch (format) {
-    case 'centerHero':
-      return styles.centerHero;
-    case 'figureTop':
-      return styles.figureTop;
-    case 'cardReveal':
-      return styles.cardReveal;
-    case 'splitBand':
-      return styles.splitBand;
-    case 'fullBleed':
-      return styles.fullBleed;
-  }
-}
-
 export interface CelebrationFrameProps {
   /** The card's own content — one opaque block, exactly as `CelebrationData.body` is. */
   children: ReactNode;
@@ -122,24 +105,16 @@ export interface CelebrationFrameProps {
  * which has no counterpart on a preview card that never had a CTA to unblock.
  */
 export function CelebrationFrame({ children, bleed = false }: CelebrationFrameProps) {
-  const format = useFormat(FORMAT_SLOTS.celebration, CELEBRATION_FORMATS, 'centerHero');
-
   return (
     // `AppScreenScaffold(horizontalPadding: none)` — every layout owns its own
     // insets, because `splitBand` and `fullBleed` need the canvas edge and
     // `centerHero` re-applies the standard screen padding so it renders exactly
     // as it always has.
     <ShowcaseScaffold horizontalPadding="none">
-      <div
-        className={cx(styles.frame, arrangementClass(format))}
-        style={showcaseStyle(FRAME_VARS)}
-        data-celebration-format={format}
-      >
+      <div className={cx(styles.frame, styles.centerHero)} style={showcaseStyle(FRAME_VARS)}>
         <div className={styles.surface}>
           <div className={cx(styles.stage, bleed && styles.bleed)}>{children}</div>
         </div>
-        {/* `CelebrationScrim` — `fullBleed`'s only extra part. */}
-        {format === 'fullBleed' && <div className={styles.scrim} aria-hidden="true" />}
       </div>
     </ShowcaseScaffold>
   );

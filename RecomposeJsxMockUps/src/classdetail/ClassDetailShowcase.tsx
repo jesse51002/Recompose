@@ -45,16 +45,11 @@
 // to be what the Dart calls them everywhere but the folder name — "the four
 // content sections", `ClassSectionStack`, `class_section_tabs`.
 
-import { CLASS_FORMATS, FORMAT_SLOTS, useFormat } from '../formats';
 import type { ShowcaseClassInfo } from '../showcaseContent';
 import { ShowcaseScaffold } from '../support/ShowcaseScaffold';
 
 import { detailFor, previewClassCard } from './classDetail';
 import { ClassBannerStack } from './layouts/ClassBannerStack';
-import { ClassDetailSheet } from './layouts/ClassDetailSheet';
-import { ClassOverlayHero } from './layouts/ClassOverlayHero';
-import { ClassSectionTabs } from './layouts/ClassSectionTabs';
-import { ClassSpecBrief } from './layouts/ClassSpecBrief';
 import type { ClassLayoutProps } from './layouts/layoutProps';
 
 export interface ClassDetailShowcaseProps {
@@ -77,31 +72,10 @@ export function ClassDetailShowcase({
   classes,
   category = null,
 }: ClassDetailShowcaseProps) {
-  // `ThemeLayout.classDetail()` — the preview override, then the theme's
-  // classified pick, then the value that ships.
-  const format = useFormat(FORMAT_SLOTS.class, CLASS_FORMATS, 'bannerStack');
   const detail = detailFor(previewClassCard(classes, category), gymName);
   const props: ClassLayoutProps = { detail, gymName, gymLogoSrc };
 
-  // `_layout`'s switch, exhaustive over the vocabulary.
-  let layout;
-  switch (format) {
-    case 'bannerStack':
-      layout = <ClassBannerStack {...props} />;
-      break;
-    case 'overlayHero':
-      layout = <ClassOverlayHero {...props} />;
-      break;
-    case 'detailSheet':
-      layout = <ClassDetailSheet {...props} />;
-      break;
-    case 'sectionTabs':
-      layout = <ClassSectionTabs {...props} />;
-      break;
-    case 'specBrief':
-      layout = <ClassSpecBrief {...props} />;
-      break;
-  }
+  const layout = <ClassBannerStack {...props} />;
 
   // `AppScreenScaffold(horizontalPadding: none)` — every arrangement is
   // edge-to-edge and supplies its own inset. No topbar / bottomNav props: the

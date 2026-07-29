@@ -15,13 +15,7 @@
 // container. A wrapper div here would give the sticky bands a new containing
 // block and they would pin to the feed instead of to the phone screen.
 
-import { FORMAT_SLOTS, VIDEOS_FORMATS, useFormat } from '../formats';
-
 import { VideosCarouselRows } from './layouts/VideosCarouselRows';
-import { VideosEditorialStack } from './layouts/VideosEditorialStack';
-import { VideosMosaic } from './layouts/VideosMosaic';
-import { VideosShortsColumn } from './layouts/VideosShortsColumn';
-import { VideosTagRail } from './layouts/VideosTagRail';
 import type { VideosLayoutData } from './videosLayoutData';
 
 export interface VideosFeedBodyProps {
@@ -29,19 +23,5 @@ export interface VideosFeedBodyProps {
 }
 
 export function VideosFeedBody({ data }: VideosFeedBodyProps) {
-  const format = useFormat(FORMAT_SLOTS.videos, VIDEOS_FORMATS, 'carouselRows');
-
-  // Dart's `switch` over `VideosFormat`, exhaustive over the same five values.
-  switch (format) {
-    case 'editorialStack':
-      return <VideosEditorialStack data={data} />;
-    case 'mosaic':
-      return <VideosMosaic data={data} />;
-    case 'shortsColumn':
-      return <VideosShortsColumn data={data} />;
-    case 'tagRail':
-      return <VideosTagRail data={data} />;
-    case 'carouselRows':
-      return <VideosCarouselRows data={data} />;
-  }
+  return <VideosCarouselRows data={data} />;
 }

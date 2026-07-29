@@ -30,17 +30,11 @@
 // copy.
 
 import type { ShowcaseVideo } from '../showcaseContent';
-import { FORMAT_SLOTS, RANK_FORMATS, useFormat } from '../formats';
-import type { RankFormat } from '../formats';
 import { ShowcaseBottomNav } from '../support/ShowcaseBottomNav';
 import { ShowcaseScaffold } from '../support/ShowcaseScaffold';
 import { levelUpVideos } from '../videos/videoSelectors';
 
-import { RankBeltHero } from './layouts/RankBeltHero';
-import { RankProgressFirst } from './layouts/RankProgressFirst';
 import { RankSparkleStack } from './layouts/RankSparkleStack';
-import { RankSplitRank } from './layouts/RankSplitRank';
-import { RankStatTiles } from './layouts/RankStatTiles';
 import type { RankLayoutData } from './rankLayoutData';
 import styles from './ProfileShowcase.module.css';
 import {
@@ -69,7 +63,6 @@ export function ProfileShowcase({
 }: ProfileShowcaseProps) {
   // The tenant's classified arrangement, or the one that ships. Resolved here
   // and nowhere else: a layout is handed its data, never a format.
-  const format = useFormat(FORMAT_SLOTS.rank, RANK_FORMATS, 'sparkleStack');
 
   // `LevelUpVideosSection` asks the portal for `videoType: educational,
   // limit: 10`; there is no portal here, so the same narrowing runs over the
@@ -96,24 +89,10 @@ export function ProfileShowcase({
         scroll clear of it rather than ending underneath it.
       */}
       <div className={styles.profile}>
-        <RankBody format={format} data={data} />
+        <RankSparkleStack data={data} />
       </div>
     </ShowcaseScaffold>
   );
 }
 
-/** `switch (formatOverride ?? ThemeLayout.rank())`, exhaustive in both languages. */
-function RankBody({ format, data }: { format: RankFormat; data: RankLayoutData }) {
-  switch (format) {
-    case 'sparkleStack':
-      return <RankSparkleStack data={data} />;
-    case 'beltHero':
-      return <RankBeltHero data={data} />;
-    case 'statTiles':
-      return <RankStatTiles data={data} />;
-    case 'progressFirst':
-      return <RankProgressFirst data={data} />;
-    case 'splitRank':
-      return <RankSplitRank data={data} />;
-  }
-}
+
