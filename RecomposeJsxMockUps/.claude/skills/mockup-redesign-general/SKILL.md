@@ -234,32 +234,20 @@ arrangement wanted more room rather than a smaller element.
 Screenshot it and decide. If you are unsure whether something reads correctly,
 that uncertainty is the finding — say so rather than shipping it quietly.
 
-## Verification — the part that is not optional
+## Verification — run `mockup-qa`
 
-`make -C RecomposeJsxMockUps check` proves typecheck, lint and tests. **It
-proves nothing about what renders.** A build succeeding and an HTTP 200 also
-prove nothing — both were true while the screens rendered completely unstyled.
+**You are not done until `mockup-qa` passes.** It is the full sweep: every
+screen screenshotted and looked at, every affordance hit-tested, every
+transition walked, and the render checked against the app's inventory in both
+directions. It owns the procedure — do not improvise a shorter version of it
+here.
 
-Run the harness and **look at pixels**:
+`make -C RecomposeJsxMockUps check` is not that check. It proves typecheck, lint
+and tests, and **nothing about what renders** — every failure listed in the
+guardrails above passed it.
 
-```bash
-make -C RecomposeJsxMockUps dev &
-B="$HOME/.claude/skills/gstack/browse/dist/browse"
-$B goto http://localhost:8081/ ; $B screenshot /tmp/app.png
-$B console --errors
-```
-
-Then Read the PNG. Then walk every route in the asset, confirming each one exits
-and the last screen of any flow returns to its root.
-
-**Re-snapshot between navigations** — `browse` refs go stale after a route
-change, and clicking a stale ref silently hits the wrong element and looks like
-a broken handler.
-
-**`mockup-qa` is the full sweep** — every screen, every transition, every
-affordance, checked against the app's inventory. Run it after a redesign, not a
-spot-check. `/design-review` on the running harness handles visual polish; the
-two answer different questions.
+`/design-review` on the running harness handles visual polish. Different
+question; neither substitutes for the other.
 
 ---
 

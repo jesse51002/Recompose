@@ -149,26 +149,17 @@ should each point at the others.
 
 ---
 
-## Verification
+## Verification — run `mockup-qa`
 
 `make -C RecomposeJsxMockUps check` proves typecheck, lint and tests and
-**nothing about what renders**. Open the harness, screenshot every screen, and
-walk every route confirming each exits:
+**nothing about what renders**.
 
-```bash
-make -C RecomposeJsxMockUps dev &
-B="$HOME/.claude/skills/gstack/browse/dist/browse"
-$B goto http://localhost:8081/ ; $B screenshot /tmp/app.png ; $B console --errors
-```
+Run **`mockup-qa`**. It owns the sweep — do not improvise a shorter version
+here. What matters for a PORT specifically is that it checks the render against
+the inventory you just wrote: if the sweep cannot find a screen the inventory
+promises, or finds one the inventory does not list, then one of the two is
+wrong. Fix whichever it is; a wrong inventory is worse than none, because
+everything downstream trusts it.
 
-Read the PNGs. Re-snapshot between navigations — refs go stale after a route
-change and a stale click silently hits the wrong element.
-
-Then run **`mockup-qa`** — the full sweep, which checks the render against the
-inventory you just wrote. If the sweep cannot find a screen the inventory
-promises, one of the two is wrong; fix whichever it is before calling the port
-done.
-
-The port is complete when: every screen renders styled, every screen exits,
-every flow's last screen returns to its root, `mockup-qa` passes in full, and
-the app's guardrail skill exists with both halves.
+The port is complete when `mockup-qa` passes in full and the app's guardrail
+skill exists with both halves.
