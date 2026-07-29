@@ -422,6 +422,44 @@ You still choose its FORM — a bar, a segmented band, a dock, how it is ruled,
 filled or labelled — and everything else (sheets, pagers, swipe, overlay menus,
 gesture-first) is free. Only its position is fixed.
 
+## GUARDRAIL 13 — spacing carries the grouping, and more is safer than less
+
+Spacing is not polish applied at the end. It is the mechanism that tells a
+reader what belongs to what, and it fails in three ways that need different
+fixes — `mockup-qa` Pass 2d is the check, and this is the rule it checks.
+
+**Related things sit closer than unrelated things.** A label and the figure it
+names are ONE object; the gap between them must be smaller than the gap to the
+next region. Get this backwards and the label reads as the previous region's
+footer instead of the next one's heading — which is exactly what shipped here:
+a "REDEEM" label sat 2px under a lane stripe and 24px above the list it named,
+so it belonged to the wrong thing. **When every gap on a screen is the same
+value, nothing is grouped**, and the screen reads as a list of parts even though
+no single value is wrong.
+
+**The same control gets the same spacing everywhere.** Two tab rows on two
+screens drifted to 0px and 16px of inline padding because they were two
+stylesheets doing one job. When two places disagree, **extract the shared
+component rather than syncing the numbers** — syncing fixes today and drifts
+again the next time either is touched.
+
+**Every value comes from the scale.** `--sc-spacing-tiny/small/medium/large/big`
+and `--sc-gutter`. A tail of one-off values (`3px`, `6px`, `13px`) means numbers
+were typed at call sites. A healthy screen shows a short list of values with
+tall usage counts.
+
+**When in doubt, more gap.** If you cannot decide between two values, take the
+larger. Cramped is a defect a reader feels instantly and reads as cheap; a
+little loose is at worst a missed opportunity and usually reads as calm. Every
+spacing finding in this package has been "not enough" and none has been "too
+much".
+
+**Watch the modifiers that remove padding.** A container given `flush` / `bleed`
+/ `padding: 0` for one good reason — its child runs to the edge — will strand
+the NEXT thing added to it. Both spacing bugs here came from exactly that: a
+label placed into a lane whose padding had been deliberately removed for a
+photograph.
+
 ## GUARDRAIL 12 — invent the look, not the interaction
 
 **Be creative within industry standards.** A member must be able to use the app

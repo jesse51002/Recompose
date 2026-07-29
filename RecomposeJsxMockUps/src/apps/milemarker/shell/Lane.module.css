@@ -59,7 +59,12 @@
   letter-spacing: var(--sc-type-label-ls);
   text-transform: uppercase;
   color: var(--sc-text-2nd);
-  margin-bottom: var(--sc-spacing-medium);
+  /*
+   * TIGHT to what it names. A label and the region beneath it are ONE object,
+   * so this gap must stay smaller than the gap ABOVE the label — otherwise the
+   * label binds upward to the previous region and reads as its footer.
+   */
+  margin-bottom: var(--sc-spacing-small);
 }
 
 .labelRow {
@@ -67,7 +72,7 @@
   align-items: baseline;
   justify-content: space-between;
   gap: var(--sc-spacing-medium);
-  margin-bottom: var(--sc-spacing-medium);
+  margin-bottom: var(--sc-spacing-small);
 }
 
 .labelRow .label {
@@ -90,4 +95,25 @@
 .bleed > .label,
 .bleed > .labelRow {
   padding-inline: var(--sc-gutter);
+}
+
+/*
+ * A FLUSH lane drops its vertical padding so its CONTENT can run to the lane
+ * stripe — but a label is not content, and without this it sits 2px under the
+ * stripe and reads as jammed. The store's "REDEEM" row shipped exactly that
+ * way.
+ *
+ * It takes the FULL region gap rather than the lane's usual inset, because in a
+ * flush lane this is the only thing separating the label from the region above
+ * it — there is no lane padding doing that job. A normal lane already has its
+ * own `spacing-large` above the label and needs nothing extra.
+ *
+ * The size is load-bearing, not taste: it has to beat the gap BELOW the label
+ * (its own margin plus the first item's inset) or the label groups upward and
+ * reads as the previous region's footer. At `spacing-large` the two came out at
+ * 19px and 21px — nearly equal, which is the ungrouped case.
+ */
+.flush > .label,
+.flush > .labelRow {
+  padding-top: var(--sc-spacing-big);
 }

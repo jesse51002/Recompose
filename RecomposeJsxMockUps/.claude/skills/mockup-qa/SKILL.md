@@ -119,6 +119,21 @@ On each, check:
   redesign to it.
 - Nothing clipped at the phone edge, nothing overlapping, no text at a default
   font, no image at an obviously wrong size.
+- **DOES THE SPACING LOOK GOOD?** Ask this of every screenshot, explicitly, and
+  do not treat it as polish to defer — spacing is one of the most important
+  parts of design, and it is the thing that most reliably separates a screen
+  that looks designed from one that looks assembled. Three questions per
+  screenshot:
+  - Is anything **jammed** — text against a rule, a label against a stripe, a
+    row against the screen edge?
+  - Is anything **adrift** — a gap so large the element looks orphaned from what
+    it belongs to?
+  - Do things that belong together **look** like they belong together, before
+    you read a single word?
+
+  If a screen looks cramped, it is cramped. Trust that reading and go measure it
+  with Pass 2d rather than talking yourself out of it — every spacing bug found
+  in this package was visible in a screenshot before it was ever measured.
 
 Also, once per asset:
 
@@ -367,6 +382,39 @@ should be traceable to a `--sc-*` token.
 the numbers.** Syncing fixes today; the two copies drift again the next time
 either is touched. The tab rows above were fixed by giving the app ONE `TabRow`,
 not by copying `16px` across.
+
+**MEASURE FROM THE TEXT, NOT FROM THE BOX.** This trap was hit twice in one
+session and produced two confidently wrong readings, one of which nearly sent a
+correct fix into reverse.
+
+`element.getBoundingClientRect()` returns the **border box**, which INCLUDES the
+element's own padding. So measuring `label.top - container.top` tells you where
+the label's *box* starts, not where its *text* starts — and if the padding you
+just added lives inside that box, the number does not move and the fix looks
+like it did nothing. The reading said `2px` before a fix and `3px` after; the
+real gaps were 2px and 31px.
+
+Measure between the two things a reader actually sees — the deepest text nodes —
+and divide by the stage's scale, because the phone is scaled to fit:
+
+```bash
+$B js "(()=>{const s=document.querySelector('[class*=_screen_]');
+const sc=390/s.getBoundingClientRect().width;              // undo the stage scale
+const a=s.querySelector('SELECTOR_ABOVE').getBoundingClientRect();
+const b=s.querySelector('SELECTOR_BELOW').getBoundingClientRect();
+return Math.round((b.top-a.bottom)*sc)+'px between them (authored)';})()"
+```
+
+Two corollaries worth keeping: a gap you measured in raw viewport pixels is
+**not** the authored value unless you divided by the scale, and a `0px` gap
+between two boxes can still be a comfortable gap on screen if one of them has
+inner padding. Always sanity-check the number against the screenshot.
+
+**WHEN IN DOUBT, MORE GAP.** If you cannot decide between two values, take the
+larger one. Cramped is a defect a reader feels immediately and attributes to the
+product being cheap; slightly loose is at worst a missed opportunity, and on a
+390pt screen it usually reads as calm rather than empty. Almost every spacing
+finding in this package has been "not enough", and none has been "too much".
 
 **3. Does the spacing GROUP?** This is the half no script can check, and it is
 the half that decides whether a screen reads. **Related things sit closer

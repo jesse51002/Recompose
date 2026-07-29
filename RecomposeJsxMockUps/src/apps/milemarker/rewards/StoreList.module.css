@@ -24,6 +24,12 @@
 
 .itemFirst {
   border-top-width: 0;
+  /*
+   * The first entry sits snug under the label that names the list; every other
+   * entry is separated FROM ITS NEIGHBOUR and keeps the full inset. Same rule,
+   * opposite ends of it.
+   */
+  padding-top: var(--sc-spacing-medium);
 }
 
 .itemBody {
