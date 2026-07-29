@@ -18,6 +18,12 @@ export interface ShowcaseClass {
   readonly imageAsset?: ShowcaseAssetFile | undefined;
   /** Injected gym class photo (a network URL); wins over `imageAsset`. */
   readonly imageUrl?: string | undefined;
+  /**
+   * The generated class-photo slot this row paints with — the TOP rung of the
+   * image ladder, above the injected gym photo and the bundled fallback.
+   * Assigned by position where the schedule is built.
+   */
+  readonly themeSlot?: string | undefined;
   readonly attending?: number | undefined;
   readonly isBooked: boolean;
 }

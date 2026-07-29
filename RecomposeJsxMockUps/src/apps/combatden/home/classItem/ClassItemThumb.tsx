@@ -15,6 +15,8 @@
 
 import { useState } from 'react';
 
+import { ThemedImage } from 'recompose-react';
+
 import { showcaseAssetOrNetwork } from '../../showcaseAssets';
 import type { ShowcaseClass } from '../homeClass';
 
@@ -33,10 +35,27 @@ export interface ClassItemThumbProps {
 }
 
 export function ClassItemThumb({ classData, className, imgClassName }: ClassItemThumbProps) {
+  // The ladder, top rung first: the THEME's generated class photo, then the
+  // injected gym photo, then the bundled fallback. <ThemedImage> owns the top
+  // rung — it keeps the fallback on screen until the override's URL has
+  // actually probed, so a 404 degrades to the old image rather than an empty
+  // box.
   const src = showcaseAssetOrNetwork(
     classData.imageUrl,
     classData.imageAsset ?? 'class_photo_1.png',
   );
+  if (classData.themeSlot !== undefined) {
+    return (
+      <div className={className}>
+        <ThemedImage
+          className={imgClassName}
+          slot={classData.themeSlot}
+          fallbackSrc={src}
+          alt=""
+        />
+      </div>
+    );
+  }
   // `key` remounts the frame whenever the photo changes — a theme switch swaps
   // the whole class list, and without the reset one dead URL would pin this
   // slot to the empty box forever. The same trick <ThemedImage> uses, and for

@@ -84,6 +84,35 @@ export const SLOT_NAV_RANK = 'nav_rank';
 export const SLOT_NAV_REWARD = 'nav_reward';
 export const SLOT_NAV_VIDEOS = 'nav_videos';
 
+/**
+ * Class photography and the reward catalogue — the generated imagery a schedule
+ * row and a store card paint with.
+ *
+ * Assigned BY POSITION where the lists are built (see ./home/homeClass.ts and
+ * ./rewards/mockPointsStore.ts) rather than threaded down as an index. A screen
+ * that rearranges its rows must not have to re-derive which slot each one uses,
+ * which is the same reasoning that keeps tap handlers off prop chains.
+ */
+export const SLOT_CLASS_PHOTOS: readonly string[] = Object.freeze([
+  'class_photo_1',
+  'class_photo_2',
+  'class_photo_3',
+  'class_photo_4',
+]);
+
+/** Cheapest-first, matching the order app.yaml declares them in. */
+export const SLOT_REWARDS: readonly string[] = Object.freeze([
+  'reward_guest_pass',
+  'reward_apparel',
+  'reward_gear',
+  'reward_session',
+]);
+
+/** The slot for the item at `index`, cycling if a list runs longer than the set. */
+export function slotAt(slots: readonly string[], index: number): string {
+  return slots[index % slots.length]!;
+}
+
 export const EXPECTED_ICONS: readonly string[] = Object.freeze([
   SLOT_NAV_HOME,
   SLOT_NAV_RANK,

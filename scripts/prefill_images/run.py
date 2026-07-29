@@ -106,6 +106,15 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         "— so pass this when seeding NEW slots.",
     )
     parser.add_argument(
+        "--seed-root",
+        type=Path,
+        default=None,
+        help="Where the per-category seed folders live. Defaults to "
+        "<app_dir>/prefill. Pass this when the seeds and the runs are not in "
+        "the same checkout — e.g. seeding a catalogue on main from a branch "
+        "that added the seed set.",
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Report what would be seeded without writing anything.",
@@ -129,6 +138,7 @@ def _prefill_one(
     run_dir: Path,
     *,
     app_yaml: Path | None,
+    seed_root: Path | None,
     dry_run: bool,
 ) -> tuple[str, list[str]]:
     """Seed one run. Returns (status, slots-seeded)."""
@@ -140,7 +150,7 @@ def _prefill_one(
     category = output.category
     if not category:
         return ("skipped: run has no category", [])
-    seed_dir = run_dir.parent / PREFILL_DIRNAME / category
+    seed_dir = (seed_root or run_dir.parent / PREFILL_DIRNAME) / category
     if not seed_dir.is_dir():
         return (f"skipped: no seed folder for category {category!r}", [])
 
@@ -198,7 +208,10 @@ def main(argv: list[str] | None = None) -> int:
     seeded_slots = 0
     for run_dir in runs:
         status, slots = _prefill_one(
-            run_dir, app_yaml=args.app_yaml, dry_run=args.dry_run
+            run_dir,
+            app_yaml=args.app_yaml,
+            seed_root=args.seed_root.resolve() if args.seed_root else None,
+            dry_run=args.dry_run,
         )
         if slots:
             seeded_runs += 1

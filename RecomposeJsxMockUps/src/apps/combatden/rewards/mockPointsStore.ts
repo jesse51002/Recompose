@@ -19,6 +19,8 @@ export interface ShowcasePointsStoreItem {
   readonly imageAsset?: ShowcaseAssetFile | undefined;
   /** Injected gym reward photo (a network URL); wins over `imageAsset`. */
   readonly imageUrl?: string | undefined;
+  /** The generated reward slot — the top rung, assigned by position. */
+  readonly themeSlot?: string | undefined;
 }
 
 /** `ShowcasePointsStoreData`. */
