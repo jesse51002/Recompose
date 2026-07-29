@@ -13,9 +13,18 @@
  * different app pasted into the sheet, and the archival object stops being one.
  */
 
+/*
+ * `box-sizing: border-box` is load-bearing, not tidiness. This package has NO
+ * global border-box reset, so the paper mount's 3px padding would make every
+ * plate 6px wider than the width its caller set — and a plate at `width: 100%`
+ * inside a padded column then hangs over the sheet's right margin. Pass 2b of
+ * `mockup-qa` exists because this bug is invisible: it reads as "the layout is
+ * slightly off", never as a broken box.
+ */
 .plate {
   position: relative;
   display: block;
+  box-sizing: border-box;
   flex: 0 0 auto;
   /* Square corners, everywhere, always. A mounted plate has none. */
   border-radius: 0;

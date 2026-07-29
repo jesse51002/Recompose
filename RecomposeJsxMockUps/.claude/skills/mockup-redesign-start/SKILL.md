@@ -147,9 +147,15 @@ reachable*, and says nothing about form. Read it as permission.
 **You MAY — and where the direction calls for it, SHOULD:**
 
 - **Replace the navigation pattern.** A bottom tab bar is the base's answer, not
-  a requirement. A rail, a sheet, a pager, a persistent header, gesture-first,
-  an overlay — all keep the same destinations reachable, which is all the
+  a requirement. A sheet, a full-screen pager, a scrolling or segmented header,
+  swipe between sections, an overlay menu, gesture-first with one persistent
+  affordance — all keep the same destinations reachable, which is all the
   invariant asks. Biggest lever, most often left alone.
+
+  **Not a vertical side rail** — `mockup-redesign-general` Guardrail 11 bans
+  it unless the origin app has one. At ~390pt, width is the scarce axis and a
+  rail spends a fifth of it on chrome the thumb cannot reach. Radical is not
+  the same as importing a pattern from a bigger screen.
 - **Change what a screen is made of.** Cards → bare canvas, list → grid, grid →
   full-bleed pager, vertical → horizontal. A list of things is not required to
   be rows.

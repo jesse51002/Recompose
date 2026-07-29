@@ -37,25 +37,51 @@
 }
 
 /*
- * `_RewardCircle` — `Container(shape: circle, border: text @ buttonBorderSize,
- * clipBehavior: antiAlias)`. `background` is the `errorBuilder`'s
- * `ColoredBox(card)`, showing through whenever the photo is absent or dead.
+ * `_RewardCircle` — the cover flow's card. Dart draws it as a circle with a
+ * heavy ink border; here it is a square PLATE with a paper mount and a
+ * hairline, because every photograph in this design is mounted the same way
+ * (../shell/Plate.module.css) and a circle is a shape the design does not have
+ * anywhere else. The class name is the Dart's and is kept so the port stays
+ * traceable; only its geometry changed.
+ *
+ * `background` is the `errorBuilder`'s `ColoredBox(card)`, showing through
+ * whenever the photo is absent or dead.
  */
 .circle {
+  position: relative;
+  box-sizing: border-box;
   flex: 0 0 auto;
   width: var(--rc-size);
   height: var(--rc-size);
-  border: var(--sc-button-border-size) solid var(--sc-text);
-  border-radius: var(--sc-radius-circle);
+  padding: 4px;
+  border: 0;
+  border-radius: 0;
   overflow: hidden;
-  background: var(--sc-card);
+  background: var(--sc-plate-mount);
   will-change: transform;
 }
 
-/* `Image(fit: BoxFit.cover)`. */
+/* `Image(fit: BoxFit.cover)`, inside the mount and under the warm veil. */
 .photo {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  box-shadow: inset 0 0 0 1px var(--sc-rule-hair);
+  filter: saturate(0.72) contrast(1.04);
+}
+
+/*
+ * The warm wash every photograph in this design carries. A pseudo-element
+ * rather than a sibling because the cover flow's markup is the Dart's port and
+ * this is presentation — `multiply` over walnut is what puts a cool photograph
+ * in a warm room; a flat overlay would only grey it.
+ */
+.circle::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  background: var(--sc-plate-veil);
+  mix-blend-mode: multiply;
+  pointer-events: none;
 }

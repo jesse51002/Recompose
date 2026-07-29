@@ -110,6 +110,7 @@
 
 /* The screen's one filled action — full bleed, square, walnut. */
 .play {
+  box-sizing: border-box;
   display: block;
   width: 100%;
   margin-top: 18px;

@@ -1,6 +1,10 @@
 /* Styles for ./ActionBand.tsx. `--sc-*` only. */
 
+/* `box-sizing: border-box`: `width: 100%` plus the sheet's inline padding is
+   exactly the overflow Pass 2b of `mockup-qa` describes — this package has no
+   global reset, so the band would be 40px wider than the sheet it sits in. */
 .band {
+  box-sizing: border-box;
   flex: 0 0 auto;
   width: 100%;
   min-height: 66px;

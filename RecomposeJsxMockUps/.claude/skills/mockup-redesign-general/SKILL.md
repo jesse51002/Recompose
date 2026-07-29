@@ -21,9 +21,11 @@ from breaking it by accident.
 
 **Read it as PERMISSION, not restriction.** It constrains what is *present and
 reachable* and says nothing about form. A bottom tab bar is the base's answer,
-not a requirement — a rail, a sheet, a pager or an overlay keeps the same
-destinations reachable. A schedule need not be rows. Cards are not mandatory.
-Obeying a constraint that was never there costs more here than breaking one.
+not a requirement — a sheet, a pager, a scrolling header or an overlay keeps
+the same destinations reachable. A schedule need not be rows. Cards are not
+mandatory. Obeying a constraint that was never there costs more here than
+breaking one — within Guardrail 11, which rules out patterns borrowed from
+bigger screens.
 
 **The one thing to internalise:** every failure that has actually shipped here
 was invisible to `make check`. Typecheck, eslint and a full green suite passed
@@ -351,6 +353,34 @@ across a long list is the accepted cost, and M is chosen to be large enough
 that a *screenful* rarely repeats. Four covers a week of schedule rows and a
 genre carousel; it does not cover a fourteen-card feed without repeating, and
 that was known when it was chosen.
+
+## GUARDRAIL 11 — phone patterns only; no vertical nav rail
+
+**Never introduce a vertical / side navigation rail for primary navigation.**
+If the origin app does not have one, the redesign does not get one. (If it
+*does*, keep it — that is the arrangement-only invariant, which cuts both ways.)
+
+These assets are ~390pt wide. **Width is the scarce axis and height is not.** A
+rail spends 15–20% of the width permanently on chrome, squeezes every screen
+into a narrow column, and puts the primary destinations along an edge the thumb
+does not reach — while the bottom of the screen, which it does reach, sits
+empty. It is a desktop and tablet pattern and it does not survive the trip down.
+
+It is called out by name because it is exactly what an agent told to *be
+radical* reaches for: it looks like a bold structural move and it is one screen
+away from unusable.
+
+**The general rule it stands for: radical is not the same as importing a
+pattern from another device class.** Also out, for the same reason — anything
+depending on hover or right-click, multi-column text, desktop-density hit
+targets, a persistent sidebar of any kind, and a fixed-width content column
+that leaves dead margins.
+
+The freedom is real; spend it on things a phone can hold. A bottom bar, a
+segmented or scrolling header, a full-screen pager, swipe between sections, a
+sheet, an overlay menu, gesture-first with a single persistent affordance — all
+of these keep every destination reachable, which is all the invariant asks, and
+all of them work at 390pt.
 
 ---
 
