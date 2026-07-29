@@ -1,0 +1,74 @@
+/* The one tab row this app has. See ./TabRow.tsx. */
+
+.row {
+  box-sizing: border-box;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  /*
+   * The row's own breathing room. Without it the cells sit hard against the
+   * horizon above and the lane stripe below, which reads as the row being
+   * squeezed rather than placed — the store's row shipped exactly that way.
+   */
+  padding-top: var(--sc-spacing-medium);
+  padding-bottom: var(--sc-spacing-medium);
+}
+
+/* A row of equal cells — two destinations that share the width. */
+.fill .cell {
+  flex: 1;
+  justify-content: center;
+}
+
+/* A row that travels sideways — more labels than fit. */
+.scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+.scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll .cell {
+  flex: none;
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  /*
+   * ONE inline padding for every tab in the app. The store's cells had none and
+   * the video's had 16px, which is the drift a shared component exists to stop:
+   * the same control, two stylesheets, no reason.
+   */
+  padding-inline: var(--sc-spacing-large);
+  padding-top: var(--sc-spacing-medium);
+  padding-bottom: var(--sc-spacing-medium);
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+  white-space: nowrap;
+  position: relative;
+}
+
+.cellActive {
+  color: var(--sc-text);
+  font: var(--sc-type-label-lg);
+  letter-spacing: var(--sc-type-label-lg-ls);
+}
+
+/*
+ * The finish tape, inset to the label rather than run to the cell edge, so the
+ * mark measures the word it belongs to.
+ */
+.tape {
+  position: absolute;
+  left: var(--sc-spacing-large);
+  right: var(--sc-spacing-large);
+  bottom: 0;
+  height: var(--sc-lane-weight);
+  background: var(--sc-tape);
+}

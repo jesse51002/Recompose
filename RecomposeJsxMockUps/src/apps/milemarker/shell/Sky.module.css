@@ -1,0 +1,148 @@
+/* The contents of the sky. See ./Sky.tsx. */
+
+.sky {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* The identity / back row, at the very top of the air. */
+.lead {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-medium);
+  min-height: 32px;
+}
+
+.leadSpacer {
+  flex: 1;
+}
+
+/*
+ * The headline block sits at the BOTTOM of the sky, above the horizon, so the
+ * largest thing on the screen reads as standing on the edge rather than
+ * floating in the middle of a colour field.
+ */
+.block {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-small);
+  /* Never let the mark's circle sit under the type. */
+  position: relative;
+  z-index: 1;
+  max-width: 74%;
+}
+
+.blockWide {
+  max-width: 100%;
+}
+
+.label {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-sky-ink-2nd);
+}
+
+.headline {
+  font: var(--sc-type-hero);
+  letter-spacing: var(--sc-type-hero-ls);
+  color: var(--sc-sky-ink);
+  /* Tabular so a counting figure cannot shift its own baseline sideways. */
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+
+.headlineSmall {
+  font: var(--sc-type-hero-sm);
+  letter-spacing: var(--sc-type-hero-sm-ls);
+}
+
+.aside {
+  font: var(--sc-type-lede);
+  letter-spacing: var(--sc-type-lede-ls);
+  color: var(--sc-sky-ink-2nd);
+}
+
+/*
+ * THE MARK — a generated cut-out, floating free in the air with nothing
+ * containing it, and allowed to overhang the horizon. That overhang is the
+ * whole reason the sky sets `overflow: visible`.
+ */
+.mark {
+  position: absolute;
+  right: 0;
+  bottom: -22px;
+  width: 128px;
+  height: 128px;
+  object-fit: contain;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.markSmall {
+  width: 92px;
+  height: 92px;
+  bottom: -14px;
+}
+
+/* The identity mark in the lead row — small, and a true circle. */
+.crest {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  border-radius: var(--sc-radius-circle);
+  flex: none;
+}
+
+.gymName {
+  font: var(--sc-type-label-lg);
+  letter-spacing: var(--sc-type-label-lg-ls);
+  text-transform: uppercase;
+  color: var(--sc-sky-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gymRow {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-small);
+  min-width: 0;
+}
+
+.chevron {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  color: var(--sc-sky-ink-2nd);
+}
+
+/* The back affordance. Top-left, where every phone puts it. */
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-small);
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  color: var(--sc-sky-ink);
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  /* A 32px-tall row is the tap target; the glyph inside it is smaller. */
+  min-height: 32px;
+}
+
+.backGlyph {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}

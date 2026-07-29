@@ -105,12 +105,17 @@ export function MockAssetStage({
         {/* A route the asset does not declare falls back to its own root —
             see `initialRoute` above for why that is silent rather than an
             error. */}
+        {/* `rootRoute` is the asset's OWN root and is deliberately NOT the
+            route we opened on: a host that deep-links or remembers a route must
+            not move where `reset()` lands, or a finished flow resets to itself.
+            See `MockNavProviderProps.rootRoute`. */}
         <MockNavProvider
           initialRoute={
             initialRoute !== undefined && initialRoute in asset.routes
               ? initialRoute
               : asset.initialRoute
           }
+          rootRoute={asset.initialRoute}
         >
           <MockAssetBody asset={asset} onRouteChange={onRouteChange} />
         </MockNavProvider>

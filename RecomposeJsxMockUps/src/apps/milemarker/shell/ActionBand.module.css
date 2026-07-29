@@ -1,0 +1,34 @@
+/* The one filled region per screen. See ./ActionBand.tsx. */
+
+.band {
+  /* No global reset in this package: width 100% + the gutter would overflow. */
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-medium);
+  width: 100%;
+  height: var(--sc-band-h);
+  padding-inline: var(--sc-gutter);
+  background: var(--sc-primary);
+  color: var(--sc-primary-button-text);
+  border: none;
+  margin: 0;
+  cursor: pointer;
+  text-align: left;
+  font: var(--sc-type-label-lg);
+  letter-spacing: var(--sc-type-label-lg-ls);
+  text-transform: uppercase;
+}
+
+/*
+ * The chevron is the design's only directional glyph, and here it points the
+ * way the action goes: rotated a quarter turn so the arrowhead reads as
+ * "forward" rather than "up".
+ */
+.glyph {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  transform: rotate(90deg);
+}

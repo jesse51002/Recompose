@@ -1,0 +1,97 @@
+/*
+ * Styles for ./BookingShowcase.tsx
+ * (ports CRM/lib/showcase/booking_showcase.dart).
+ *
+ * `--sc-*` for the design tokens (see ./ShowcaseThemeVars.tsx); `--bk-*` for
+ * this screen's motion values, which the component derives from the ported
+ * arithmetic and writes inline, so no timing is restated as a literal here.
+ */
+
+/*
+ * The hero sits in a lane of its own, filling the ground.
+ *
+ * THE OBJECT SETTLES; IT DOES NOT POP. The motion direction (../layout_brief.yaml)
+ * allows no overshoot anywhere, so this is the base's `ScaleReveal` arithmetic
+ * — same duration, same start scale, same ease-out-quart — travelling UP into
+ * place rather than scaling out of nothing. A cut-out object arrives from
+ * slightly below its resting place and comes to rest.
+ */
+.hero {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding-inline: var(--sc-gutter);
+  padding-top: var(--sc-spacing-big);
+  padding-bottom: var(--sc-spacing-big);
+  box-sizing: border-box;
+  animation: settle var(--bk-image-scale-ms) var(--bk-ease) both;
+}
+
+/* `Image(fit: BoxFit.contain)` — a cut-out is never cropped. */
+.heroImg {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.ground {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/*
+ * The action band's arrival.
+ *
+ * `pointer-events` is off only WHILE it fades in; the keyframe re-enables it at
+ * `to` and the `both` fill keeps that final state. It used to be pinned off, on
+ * the reasoning that every tap here was a no-op. That stopped being true the
+ * moment this became a real screen in a real flow: the band is the ONLY way off
+ * booking, which carries no last lane, so an unclickable button was not a
+ * harmless lie but a dead end.
+ */
+.actionIn {
+  animation: fadeIn var(--bk-cta-fade-ms) var(--bk-ease) var(--bk-cta-delay-ms) both;
+}
+
+/* Travel up into place at slightly reduced scale, decelerating, no rebound. */
+@keyframes settle {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(var(--bk-start-scale));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  to {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+/*
+ * `MediaQuery.disableAnimationsOf` — the screen renders its finished state.
+ * The component also declines to arm the loop timer, so nothing restarts.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .hero,
+  .actionIn {
+    animation: none;
+  }
+}

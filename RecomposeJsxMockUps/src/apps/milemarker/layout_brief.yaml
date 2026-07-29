@@ -1,0 +1,168 @@
+# The brief this layout was produced from — the LAYOUT half of a design.
+#
+# Its counterpart is the ASSET half's brief, a run's `customization.yaml`
+# (a `design_direction` plus a `colors_direction`). Same shape on purpose: a
+# name, and one direction per thing being directed.
+#
+# Contract: ThemeTree/studio/schema/layout_brief.py (`LayoutBrief`).
+
+name: Mile Marker Run Club
+
+layout_direction:
+  short_desc: >-
+    The road seen from the start line — open sky carrying the one thing that
+    matters, a lane-striped surface running away beneath it, and the finish tape
+    laid across the foot.
+  long_desc: >-
+    Mile Marker coaches people outdoors, in daylight, on a measured route. The
+    defining experience of that is not a room and not a machine: it is standing
+    at the start with open sky in front of you and a surface running away under
+    your feet, marked out in painted lanes and numbered posts. This app is that
+    view. Every screen is a HORIZON — one hard edge with air above it and ground
+    below it — and everything the app does is placed on one side of that edge or
+    the other.
+
+    The sky. The upper third of every screen is a single uninterrupted field of
+    daylight, and it holds exactly ONE thing: the live state of the screen the
+    member is on, set enormous. The next session and its distance on the
+    schedule, the points balance in the store, the rank on the profile, the
+    class name on a detail. It is set in the display grotesque at 44-72px and
+    KNOCKED OUT in white against a saturated field, with a small tracked label
+    above it and nothing else — no bar, no container, no rule, no row of
+    controls competing with it. The brand's own roundel floats free in that air,
+    unframed and unclipped, because a cut-out object with no edges of its own
+    belongs to open space. The sky does not scroll; it is where you are.
+
+    The ground. Below the horizon lies the working surface, edge to edge, and it
+    is the only thing that scrolls. It carries no cards. Structure comes from
+    PAINTED LANE STRIPES — solid 3px lines running the full width of the screen,
+    the marking of a real track rather than a hairline borrowed from stationery.
+    A stripe is painted in whatever reads on the surface it crosses: track blue
+    on the pale ground, white where it runs over a colour field or a photograph.
+    A stripe opens a section and closes it; two adjacent stripes make a lane,
+    and a lane is what content sits in. There are no rounded
+    containers, no shadows, no elevation, no tinted panels and no floating
+    surfaces anywhere below the horizon. The moment a card appears the ground
+    stops being a surface you travel over and becomes a desk with things on it.
+
+    The foot. The primary navigation is the LAST LANE. The ground runs unbroken
+    to the bottom edge of the screen, and its final band — opened by a lane
+    stripe like every other — carries the four destinations. Where the member is
+    standing is marked by the FINISH TAPE: a coral stripe stretched across that
+    one cell, with its label at full ink strength while the other three are held
+    back. Navigation costs one band of height at the reachable edge and never a
+    column of width, and it is the ground's own last lane rather than a bar
+    parked on top of it. The lane is present wherever the base's tabs are and
+    absent on the two screens that have none, so what is reachable never
+    changes.
+
+    A screen's primary action is the one other full-width band the design
+    allows, seated directly above that lane in solid track blue with its label
+    knocked out. Exactly one region per screen is filled that way.
+
+    Typography carries hierarchy through SCALE and KNOCKOUT, because both
+    typefaces here are sans and there is no serif to lean on. The display
+    grotesque does two jobs only: the single headline in the sky, and every
+    FIGURE in the app — times, distances, counts, points, ranks, ordinals — at
+    28-72px. The body sans does everything else: class names, descriptions,
+    instructor bios, reward titles, set at a real reading measure. Between them
+    sit 10px labels in uppercase with wide tracking, and those labels are how a
+    region announces itself. So a heading is rarely a heading: it is a tracked
+    label over a very large number, and the number is what the eye lands on
+    first.
+
+    The circle is this brand's own form and it is used as one. The generated
+    identity is a roundel, the rank is a medallion, the points are struck discs
+    — so anything the app counts or awards is a true circle: a stat sits in a
+    disc, a rank sits in a disc, an avatar is a disc. The chevron is the second
+    form, taken from the streak mark and the face of every points coin, and it
+    is the app's only directional glyph — progress, streak, advance, more.
+    Between them the app never needs a decorative shape it was not given.
+
+    Photographs are treated as GROUND, not as objects — at size. A photograph
+    that is the subject of its screen or the head of a list is laid full-bleed
+    into a lane, edge to edge, bounded above and below by lane stripes, and it
+    is never inset, never given a border and never placed underneath text. It is
+    a stretch of the route, and a stretch of route runs to both edges. Its
+    caption sits in the lane beneath it.
+
+    A photograph that is one of MANY — the thumbnail on a schedule row, a video
+    in a shelf — becomes a FRAME in a filmstrip: its own native proportion,
+    square corners, no radius, bounded by lane stripes, the strip running off
+    the right edge rather than stopping inside a gutter. A list forty rows long
+    cannot give each row a stretch of route without becoming a gallery, and a
+    filmstrip is what a route looks like when it is sampled instead of walked.
+
+    THE PROPORTION OF A PHOTOGRAPH IS NEVER THE LAYOUT'S TO CHOOSE. This is the
+    rule the rest of the imagery direction hangs off, and it outranks every
+    shape preference stated above. A photograph arrives already composed — a
+    16:9 video still has its title burnt into the top third and its subject
+    framed against the edges — so a box of a different ratio does not resize it,
+    it destroys it. Cropping a 1.78 frame to a 1.00 box discards 44% of the
+    width before anything is masked, which is not a smaller picture but a
+    different one. Give a photograph a box of its own ratio, always, and solve
+    the layout around that.
+
+    THE DISC IS FOR OBJECTS THIS BRAND MINTED, NOT FOR PHOTOGRAPHS. The
+    generated cut-outs — the roundel, the medallion, the struck coins, the
+    streak chevrons — are square, centre-weighted and transparent-edged, so a
+    circle costs them nothing and belongs to them: the points ARE discs and the
+    rank IS a medallion. A headshot or an avatar is close enough to square to
+    join them. A landscape photograph is not, and putting one in a circle
+    borrows the brand's own form to do damage with it.
+
+    The generated cut-out objects do the opposite of both: they float in the sky
+    at scale, with nothing containing them.
+
+    Restraint is a rule, and coral is where it is spent. Coral is the finish
+    tape and nothing else: it marks the lane the member is standing in, and it
+    marks the thing they have just earned. It appears at most twice on a screen
+    and it is never a fill large enough to set type on — coral carries an ink
+    label at only 4.35:1, so a coral button would be a legibility failure
+    dressed as a brand moment. Everything else is track blue, ink, and the
+    daylight canvas. A screen that wants a third bright fitting wants a
+    different arrangement instead.
+
+motion_direction:
+  short_desc: >-
+    Ground passing underfoot — one direction, steady cadence, and a stopwatch
+    that never bounces.
+  long_desc: >-
+    Everything in this app moves the way the road moves when you run on it. The
+    ground travels toward you at a constant rate and passes; it does not swing,
+    it does not spring back, and it never arrives early or late. So motion here
+    is single-axis and vertical, travelling UP, at an even unhurried tempo, with
+    a decelerating ease and no overshoot anywhere. Nothing bounces, nothing
+    rubber-bands, nothing scales up past its size and settles back.
+
+    Cadence is the organising idea and it is literal. When a screen's content
+    arrives it arrives as FOOTFALLS: each lane rises into place behind its
+    stripe at a fixed interval from the one before it — the same interval every
+    time, never accelerating and never easing into a stagger. Three lanes
+    landing on an even beat reads as a pace; three lanes landing on a curve
+    reads as a flourish, and this brand does not flourish.
+
+    The sky is fixed. It does not animate on entry, it does not parallax, and it
+    does not move between screens. It is the horizon, and a horizon stays where
+    it is while the ground goes past — that is the whole reason the app is split
+    that way. Between screens the ground travels up and out while the sky
+    replaces its contents in place, so moving through the app feels like
+    covering distance rather than shuffling panels.
+
+    Type is revealed by a WIPE beneath the lane stripe it sits under,
+    travelling up into place from behind that edge, never faded and never
+    scaled. A headline knocked out of a colour field must be at full crispness
+    on every frame; caught mid-fade it is a headline rendered at the wrong
+    colour, and caught mid-scale it is one rendered at the wrong size.
+
+    Figures are a stopwatch. A count rolls fast, tabular so nothing shifts
+    sideways while it moves, and lands inside half a second on the exact value —
+    no easing tail, no final tick, no bounce. Progress fills its lane at a
+    constant rate and stops flat against its mark, because a pace that varies is
+    a pace that was not held.
+
+    Interaction is never held hostage to any of this. A tap on any still-moving
+    post-class card resolves it to settled immediately, and every card's action
+    zone is laid out from its first frame so nothing reflows when the action
+    appears. A member standing in a doorway with their phone out is never made
+    to wait for a nicety.

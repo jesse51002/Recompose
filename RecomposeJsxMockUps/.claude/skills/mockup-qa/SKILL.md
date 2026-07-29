@@ -65,7 +65,15 @@ not exist, a prop no caller passes. Every one of those found here is one you are
 not chasing through a browser afterwards, and browser time is the expensive
 part.
 
-**Then run this sweep in ONE session, serially.** Do not fan it out.
+**Then run this sweep in ONE session, serially.** Do not fan it out — with one
+exception, below.
+
+**The one thing to run in parallel: Pass 2d, the spacing audit.** Start it as a
+subagent at the same moment you start the code review. It reads stylesheets and
+measures a static DOM without navigating, so it does not move the browser out
+from under you, and it is slow-ish work that would otherwise sit in the critical
+path. Everything else — every pass that clicks, navigates or advances a flow —
+stays in this session and stays serial.
 
 `browse` is a single shared headless Chromium. Two agents driving it at once
 navigate out from under each other: refs captured by one go stale the moment
@@ -111,12 +119,83 @@ On each, check:
   redesign to it.
 - Nothing clipped at the phone edge, nothing overlapping, no text at a default
   font, no image at an obviously wrong size.
+- **DOES THE SPACING LOOK GOOD?** Ask this of every screenshot, explicitly, and
+  do not treat it as polish to defer — spacing is one of the most important
+  parts of design, and it is the thing that most reliably separates a screen
+  that looks designed from one that looks assembled. Three questions per
+  screenshot:
+  - Is anything **jammed** — text against a rule, a label against a stripe, a
+    row against the screen edge?
+  - Is anything **adrift** — a gap so large the element looks orphaned from what
+    it belongs to?
+  - Do things that belong together **look** like they belong together, before
+    you read a single word?
+
+  If a screen looks cramped, it is cramped. Trust that reading and go measure it
+  with Pass 2d rather than talking yourself out of it — every spacing bug found
+  in this package was visible in a screenshot before it was ever measured.
 
 Also, once per asset:
 
 ```bash
 $B console --errors
 ```
+
+---
+
+## Pass 1b — every element is somewhere it MEANS something
+
+**The inventory check is necessary and not sufficient.** It asks "is this
+element present?" in both directions, and a screen can answer yes for every row
+and still be wrong, because *present* is not the same as *placed*. Two shapes,
+both of which pass Pass 1 cleanly:
+
+**Orphaned by relocation.** A redesign moves an element rather than dropping it
+— correct, the invariant demands it — and then parks it somewhere it says
+nothing. The tell is a region whose entire content is one relocated item, with
+no relationship to the lane above or below it. It reads as an element in
+storage rather than an element on a screen, and it is usually the last thing in
+the scroll because that is where there was room.
+
+Found and fixed in `apps/milemarker/`: the store ended with a lane labelled
+"YOUR RANK" containing a single rank medallion and nothing else. The base
+carries that badge in its topbar, so dropping it would break the invariant — but
+a section of its own at the foot of a shop is not where it means anything. It
+now sits beside the balance, which is the pairing the base actually has.
+**Preserving an element is the floor. Placing it is the job.**
+
+**The same fact, twice.** A redesign that re-emphasises freely (which it should)
+can easily state one value in two places without noticing, because each
+placement was decided separately and both look reasonable alone. Same package:
+profile rendered the same remaining-classes count as "7 TO GO" beside the
+progress label and again as "7 more classes" one lane below. Neither was wrong;
+together they were noise, and a reader assumes two different numbers were meant.
+The cause was structural — one region of the base had been split into two lanes
+— so the fix was to merge them back, not to delete a line.
+
+How to check, per screen — this one is READING, not tooling:
+
+- For each region, ask **why is this here rather than three lanes up?** If the
+  only answer is "it had to go somewhere", that is the finding.
+- List every FIGURE on the screen. Any value appearing twice is either a
+  deliberate echo you can justify in one sentence, or a duplicate.
+- Ask whether a member would read the screen as one thing with a structure, or
+  as a correct list of parts.
+
+**A duplicate is not always a defect — but it must be justifiable in one
+sentence.** The same screen legitimately keeps the rank target as a figure AND
+as the rating graph's y-axis maximum, because one is the member's target and the
+other is the plot's scale, and a plot without its scale is unreadable. Write the
+justification down next to the code; an unexplained echo will be re-litigated by
+every later sweep.
+
+Report these as **misplaced element** — distinct from missing and from added,
+because the fix is different: nothing is removed and nothing is introduced, the
+arrangement is corrected. It is also the one finding class that a redesign is
+MORE likely to produce than the base, precisely because it moved things on
+purpose.
+
+
 
 ---
 
@@ -180,6 +259,185 @@ means the whole surface was written the same way.
 
 ---
 
+## Pass 2c — no photograph is in a box of the wrong ratio
+
+**This is the easiest way in the whole package to make a screen look terrible,
+and it passes every other check.** The layout is fine, the tokens are fine,
+nothing overflows, nothing is a dead end — and the pictures are ruined.
+
+A photograph arrives ALREADY COMPOSED. A 16:9 video still has its title burnt
+into the top third and its subject framed against the edges; a 3:2 class
+photograph is cropped by whoever shot it. Put one in a box of a different ratio
+and `object-fit: cover` does not resize it, it **throws part of it away** —
+silently, with no error and no visual cue that anything is missing. Mask that
+box to a circle and the corners go too.
+
+The numbers are not marginal. Cropping 16:9 to 1:1 discards **44% of the
+width**; a circular mask on top of that leaves barely half the original frame,
+centre-weighted. It renders as unreadable fragments of burnt-in text — real
+output from this package: `ENDARY`, `KING`, `1-6 D`.
+
+Run this on every screen carrying imagery:
+
+```bash
+$B js "(()=>{const bad=[];document.querySelectorAll('img').forEach(i=>{
+if(!i.naturalWidth) return; const r=i.getBoundingClientRect(); if(r.width<24) return;
+const nat=i.naturalWidth/i.naturalHeight, box=r.width/r.height;
+const fit=getComputedStyle(i).objectFit;
+if(fit==='cover' && Math.abs(nat-box)/nat > 0.12)
+  bad.push(i.src.split('/').pop().slice(0,24)+' nat='+nat.toFixed(2)+' box='+box.toFixed(2)+
+    ' losing '+Math.round(100*(1-Math.min(nat,box)/Math.max(nat,box)))+'%');});
+return bad.length?JSON.stringify(bad.slice(0,8)):'every image is in a box of its own ratio'})()"
+```
+
+A hit is not automatically a bug — a deliberate tight crop of a photograph that
+carries no edge detail can be right. It IS a bug whenever:
+
+- the source has **burnt-in text or graphics** (video stills almost always do),
+- the box is **circular**, which crops twice, or
+- the loss is **over ~20%** and nobody decided that on purpose.
+
+**The fix is not a different `object-fit`.** `contain` letterboxes, which
+usually looks worse. Give the picture a box of **its own ratio** and solve the
+layout around it.
+
+**Know which of your images are photographs and which are cut-outs**, because
+the honest treatments differ and the ratios tell you which is which. In this
+package the generated marks — roundel, medallion, struck coins, streak glyph —
+measure **0.99-1.00** and are transparent-edged and centre-weighted, so a circle
+costs them nothing. Every generated photograph measures **1.50 or 1.78**. If a
+design has a rule like "everything is a disc", that rule will eat the
+photographs; the rule has to be conditioned on what the art is, and that belongs
+in the fork's `layout_brief.yaml`, not in the CSS.
+
+This shipped once, in `apps/milemarker/`: the brief said "full-bleed or a disc,
+never an inset rectangle" as an absolute, and every 1280x720 shelf thumbnail
+went into a 1:1 disc. The guardrail existed and was read; the DIRECTION
+contradicted it, which is why the fix went to the brief first and the components
+second.
+
+---
+
+## Pass 2d — spacing: is there any, is it consistent, does it group
+
+**Run this as a SUBAGENT, in parallel with the code review.** It is the one part
+of QA that parallelises: it reads stylesheets and measures a static DOM, it
+changes no route, and it therefore does not fight the shared browser the way a
+second navigating agent would. Start it when you start `/code-review low` and
+collect both before you begin the walk-through.
+
+Spacing is where a redesign quietly stops looking designed, and it fails in
+three distinct ways. Check all three — they have different causes and different
+fixes.
+
+**1. Is there any?** A region with no padding or gap at all reads as broken
+rather than as tight. The usual cause is a container that was given `flush` /
+`bleed` / `padding: 0` for one good reason (its child runs to the edge) and then
+gained a second child that needed the padding after all.
+
+```bash
+$B js "(()=>{const s=document.querySelector('[class*=_screen_]');const bad=[];
+s.querySelectorAll('*').forEach(e=>{const c=getComputedStyle(e);const r=e.getBoundingClientRect();
+if(r.height<12||r.width<40) return;
+const kids=[...e.children].filter(k=>k.getBoundingClientRect().height>4);
+if(kids.length<2) return;
+const pad=parseFloat(c.paddingTop)+parseFloat(c.paddingBottom);
+const gap=c.rowGap==='normal'?0:parseFloat(c.rowGap)||0;
+if(pad===0&&gap===0&&c.display.includes('flex'))
+  bad.push(String(e.className).slice(0,34)+' kids='+kids.length+' pad=0 gap=0');});
+return bad.length?JSON.stringify([...new Set(bad)].slice(0,8)):'no zero-spacing containers'})()"
+```
+
+**This one produces false positives by design — it is a prompt to look, not a
+verdict.** Two shapes are correct and will be flagged every time:
+
+- a container whose CHILDREN each bring their own padding (a bleed lane holding
+  rows, for instance) legitimately has none of its own;
+- a deliberately tight pair — a figure and the unit label directly under it — is
+  ONE object, and zero gap is what makes it read as one. That is rule 3 working,
+  not rule 1 failing.
+
+Confirm against the screenshot before changing anything.
+
+**2. Is it consistent across similar places?** The same control on two screens
+must carry the same spacing. This is the failure that actually shipped here: the
+store's tab cells had **no** inline padding and the video library's had **16px**
+— identical control, two stylesheets, nobody decided. Collect every value in use
+and look at the shape of the list:
+
+```bash
+$B js "(()=>{const s=document.querySelector('[class*=_screen_]');const v={};
+s.querySelectorAll('*').forEach(e=>{const c=getComputedStyle(e);
+[['padT',c.paddingTop],['padX',c.paddingLeft],['gap',c.rowGap==='normal'?'0px':c.rowGap]]
+ .forEach(([k,x])=>{if(x&&x!=='0px'){const key=k+':'+x;v[key]=(v[key]||0)+1;}});});
+return JSON.stringify(Object.entries(v).sort((a,b)=>b[1]-a[1]))})()"
+```
+
+**A healthy app shows a SHORT list with tall counts** — a handful of values, each
+used many times. A long tail of one-off values (`13px`, `18px`, `22px`) means
+numbers were typed at call sites instead of taken from the scale. Every value
+should be traceable to a `--sc-*` token.
+
+**When two places disagree, prefer extracting the shared component over syncing
+the numbers.** Syncing fixes today; the two copies drift again the next time
+either is touched. The tab rows above were fixed by giving the app ONE `TabRow`,
+not by copying `16px` across.
+
+**MEASURE FROM THE TEXT, NOT FROM THE BOX.** This trap was hit twice in one
+session and produced two confidently wrong readings, one of which nearly sent a
+correct fix into reverse.
+
+`element.getBoundingClientRect()` returns the **border box**, which INCLUDES the
+element's own padding. So measuring `label.top - container.top` tells you where
+the label's *box* starts, not where its *text* starts — and if the padding you
+just added lives inside that box, the number does not move and the fix looks
+like it did nothing. The reading said `2px` before a fix and `3px` after; the
+real gaps were 2px and 31px.
+
+Measure between the two things a reader actually sees — the deepest text nodes —
+and divide by the stage's scale, because the phone is scaled to fit:
+
+```bash
+$B js "(()=>{const s=document.querySelector('[class*=_screen_]');
+const sc=390/s.getBoundingClientRect().width;              // undo the stage scale
+const a=s.querySelector('SELECTOR_ABOVE').getBoundingClientRect();
+const b=s.querySelector('SELECTOR_BELOW').getBoundingClientRect();
+return Math.round((b.top-a.bottom)*sc)+'px between them (authored)';})()"
+```
+
+Two corollaries worth keeping: a gap you measured in raw viewport pixels is
+**not** the authored value unless you divided by the scale, and a `0px` gap
+between two boxes can still be a comfortable gap on screen if one of them has
+inner padding. Always sanity-check the number against the screenshot.
+
+**WHEN IN DOUBT, MORE GAP.** If you cannot decide between two values, take the
+larger one. Cramped is a defect a reader feels immediately and attributes to the
+product being cheap; slightly loose is at worst a missed opportunity, and on a
+390pt screen it usually reads as calm rather than empty. Almost every spacing
+finding in this package has been "not enough", and none has been "too much".
+
+**3. Does the spacing GROUP?** This is the half no script can check, and it is
+the half that decides whether a screen reads. **Related things sit closer
+together than unrelated things.** A label and the figure it names are one object
+and should be nearer to each other than either is to the next region. When every
+gap on a screen is the same value, nothing is grouped and the screen reads as a
+list of parts — which is a spacing failure even though every individual value is
+"consistent".
+
+Screenshot each screen and ask, per region:
+
+- Does the gap between a label and its value look SMALLER than the gap to the
+  next region? If they are equal, the hierarchy is not being carried.
+- Is anything closer to a thing it is not related to than to the thing it is?
+  That is the one that actively misleads.
+- Does a region have breathing room from the edge above it, or is it jammed
+  against a rule or a horizon?
+
+Report as **spacing** findings, and say which of the three it is — missing,
+inconsistent, or ungrouped — because the fix differs each time.
+
+---
+
 ## Pass 3 — every transition, in both directions
 
 Walk the app's transition table. For each row: perform the trigger, confirm you
@@ -218,8 +476,30 @@ A screen fails this pass if any of these is true:
 
 - it has no exit affordance at all,
 - its only affordance has no handler (the click does nothing),
+- **its handler runs and is a NO-OP**, which looks identical to the line above
+  from the outside and is not identical at all — see below,
 - its only affordance is `BLOCKED` from Pass 2,
 - it is the last screen of a flow and does not return to that flow's root.
+
+**Confirm the move, never the click.** A handler that fires and changes nothing
+passes every check that stops at "did the button respond": the hit test says
+`hittable`, no console error appears, and the DOM under the cursor is the button
+you wanted. Always read the route (or the screen) BEFORE and AFTER and assert it
+changed.
+
+That is not hypothetical. `nav.reset()` took its fallback from the route the
+stage OPENED on rather than the asset's declared root, and `dev/DevHarness.tsx`
+hands the remembered route back so a reload lands where you were — so once you
+were on `booking`, `reset()` resolved to `booking`. Booking's Continue is that
+screen's only exit (it carries no bottom nav), and it did nothing, **on every app
+in the package at once**. It typechecked, linted, passed the whole suite, and
+only a before/after route comparison found it. `src/kit/__tests__/mockNav.test.tsx`
+now pins it.
+
+**When a finding reproduces on every app, suspect `src/kit/` or `dev/`, not the
+fork.** Check one other app before writing it up as a redesign's regression —
+that one comparison is what separates "this fork broke it" from "this was always
+broken", and the two have completely different owners.
 
 Pay special attention to screens with **no bottom nav** — their single
 affordance is load-bearing, and both dead ends found in this package so far were
@@ -300,7 +580,10 @@ State the scope you actually covered: **N screens of M, across K assets.**
 
 For each finding: the screen, what is wrong, the evidence (screenshot path,
 `BLOCKED by …`, console error), and whether it is a **dead end** (blocking), a
-**missing element**, an **added element** (both break the invariant), or
+**missing element**, an **added element** (both break the invariant), a
+**misplaced element** (present but meaningless where it landed — Pass 1b), a
+**mangled image** (a photograph in a box of the wrong ratio — Pass 2c), a
+**spacing** finding (missing, inconsistent, or ungrouped — Pass 2d), or
 **cosmetic**.
 
 Then say plainly, in these words if they are true:
