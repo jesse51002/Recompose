@@ -1,6 +1,6 @@
 ---
 name: mockup-qa
-description: Exhaustively QA a mock asset in a live browser — screenshot every screen, click every transition, prove no screen is a dead end, and check every rendered screen against the app's inventory. Use after editing a mock, after a design agent produces a redesign, before shipping a mock to a tenant, or whenever asked to test, verify, check or sign off the mockups. This is a full sweep, not a smoke test: every screen, every route, every affordance, every time. Always fan the per-screen passes out as a workflow (one agent per screen) and keep the transition and dead-end walks serial.
+description: Exhaustively QA a mock asset in a live browser — screenshot every screen, click every transition, prove no screen is a dead end, and check every rendered screen against the app's inventory. Use after editing a mock, after a design agent produces a redesign, before shipping a mock to a tenant, or whenever asked to test, verify, check or sign off the mockups. This is a full sweep, not a smoke test: every screen, every route, every affordance, every time. Run `/code-review low` over the diff before opening a browser, then run this sweep in ONE serial session — browse is a single shared Chromium and parallel agents navigate out from under each other.
 ---
 
 # Mock asset QA — the full sweep
@@ -43,8 +43,7 @@ $B viewport 1280x900
 $B goto http://localhost:8081/
 ```
 
-`?app=<id>&asset=<id>` deep-links straight to an asset, which is what makes the
-per-screen half of this sweep parallelisable — see below.
+`?app=<id>&asset=<id>` deep-links straight to an asset.
 
 **Re-snapshot after every navigation.** `browse` refs (`@e3`) are captured at
 the last snapshot and go stale the moment a route changes. Clicking a stale ref
@@ -57,35 +56,26 @@ step() { ref=$($B snapshot -i | grep -v UNTRUSTED | grep -m1 "\"$1" |
   sed -E 's/^ *(@[ec][0-9]+).*/\1/'); [ -n "$ref" ] && $B click "$ref"; sleep 2; }
 ```
 
-## Running the sweep as a workflow
+## Run a code review FIRST, and do NOT parallelise the sweep
 
-**Always fan this out.** Walking a dozen screens serially in one context is the
-slowest part of a redesign, and most of it does not need to be serial: a
-screen's own render is independent of every other screen's.
+**Before opening a browser, run `/code-review low` over the diff.** It is
+static, needs no browser, and catches the whole class of defects a reader can
+see — a dangling import, a handler that was never wired, a class name that does
+not exist, a prop no caller passes. Every one of those found here is one you are
+not chasing through a browser afterwards, and browser time is the expensive
+part.
 
-Split it by what each pass actually needs:
+**Then run this sweep in ONE session, serially.** Do not fan it out.
 
-| passes | needs | how to run |
-| --- | --- | --- |
-| **1, 2, 2b, 5** — renders styled, affordances hittable, overflow/centring, states and edges | one screen, loaded directly | **one agent per screen, in parallel** |
-| **3, 4** — every transition both ways, the dead-end walk | continuity across screens | **one agent, serially** |
-| the themed-image checklist and the cross-screen coherence read | the whole app at once | **one agent, serially** |
+`browse` is a single shared headless Chromium. Two agents driving it at once
+navigate out from under each other: refs captured by one go stale the moment
+the other changes route, screenshots come back showing somebody else's screen,
+and every finding has to be re-validated before you can believe it. The
+parallelism buys nothing because the browser is the bottleneck and there is
+only one of it.
 
-A parallel agent can prove *its* screen renders, is styled, and has nothing
-hanging off an edge. It cannot prove you can get from that screen to another
-and back out — that is a walk, and a walk is one session by definition. Trying
-to parallelise passes 3 and 4 produces agents that each re-derive half the
-route table and still miss the trap.
-
-Give the per-screen agents a **schema** so they return findings rather than
-prose. A dozen free-text reports is a dozen things for you to read and
-reconcile; a dozen structured finding lists is one merged list. Each agent
-should report its screen, the defect, the evidence (a screenshot path), and
-whether it is a blocker.
-
-Then **look at the screenshots yourself**. The fan-out buys wall-clock, not
-judgement — and "does this look right" is the one question that cannot be
-delegated to twelve agents who have each seen a single screen.
+The build parallelises — the sweep does not. Fan out screens while you are
+*writing* them (see `mockup-redesign-start`); walk them one at a time.
 
 ---
 

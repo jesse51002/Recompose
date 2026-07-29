@@ -199,13 +199,16 @@ Hand off to:
 - **The app's own skill**, PART TWO — the gotchas.
 - **`mockup-qa`** at the end. Not optional.
 
-## Build AND verify as a workflow, one agent per screen
+## Build as a workflow, one agent per screen
 
-**Always use a workflow for both halves — building the screens and sweeping
-them.** Doing a dozen screens one after another in a single context is
-punishingly slow, and unnecessary: once the direction and the shared layer are
-fixed, screens are independent to build, and each one's own render is
-independent to check. Fan both out.
+**Always use a workflow to BUILD the screens.** Writing a dozen screens one
+after another in a single context is punishingly slow and unnecessary: once the
+direction and the shared layer are fixed, screens are independent to write. Fan
+them out.
+
+**Do not fan out the browser work.** `browse` is a single shared Chromium, so
+parallel agents navigate out from under each other and every finding needs
+re-validating. The build parallelises; the sweep does not.
 
 What each pass does stays the same; the workflow is how they are run:
 
@@ -213,7 +216,8 @@ What each pass does stays the same; the workflow is how they are run:
    here; the wrong *shape* is not, because everything after inherits it.
 2. **Craft** — `impeccable`'s quality floor: rhythm, alignment, type, detail.
 3. **Motion** — the motion direction, applied.
-4. **Sweep** — `mockup-qa`, fix what it finds, re-sweep.
+4. **Review, then sweep** — `/code-review low` first, then `mockup-qa`. Both
+   serial; only the sweep needs a browser.
 
 ### The shape
 
@@ -235,15 +239,16 @@ const built = await pipeline(SCREENS,
 
 // 3. MOTION — after every screen exists; it is judged across a whole asset.
 await agent(`Apply the motion direction across both assets. ${BRIEF}`)
-
-// 4. SWEEP — fan out the per-screen checks, then walk the flows serially.
-//    See mockup-qa's own "Running the sweep as a workflow" for the split.
-const findings = await parallel(SCREENS.map(s => () =>
-  agent(`mockup-qa passes 1, 2, 2b and 5 on the ${s} screen only.`,
-        {label: `qa:${s}`, phase: 'Sweep', schema: FINDINGS})))
-await agent('mockup-qa passes 3 and 4: walk every transition and every flow ' +
-            'end to end, in one session. Then the cross-screen coherence read.')
 ```
+
+Then, outside the workflow and in this order:
+
+1. **`/code-review low` over the diff.** Static, no browser, and it catches the
+   whole class of defects a reader can see — a dangling import, a handler never
+   wired, a class name that does not exist, a prop no caller passes. Fixing
+   those here means not chasing them through a browser later.
+2. **`mockup-qa`, in one serial session.** Browser time is the expensive part
+   and there is only one browser.
 
 ### The rules that make it work
 
@@ -262,13 +267,8 @@ await agent('mockup-qa passes 3 and 4: walk every transition and every flow ' +
 - **No worktree isolation.** Because the file sets do not overlap, agents can
   share the checkout — and isolating them would just create merges to do by
   hand afterwards.
-- **Anything judged ACROSS screens stays serial.** Motion, every transition,
-  the dead-end walk, and your own look at the result. A per-screen agent can
-  prove its screen renders and that nothing on it overflows; only a walk proves
-  you can get from one screen to another and back out.
-- **Make the fanned-out agents return findings, not prose.** Give the QA agents
-  a schema so the results merge into one list instead of a dozen reports you
-  have to read and reconcile.
+- **Anything judged ACROSS screens stays serial**, and so does anything using
+  a browser: motion, the review, the sweep, and your own look at the result.
 
 Between passes, screenshot and look. `make check` proves the code compiles; it
 proves nothing about the design, and it passes cleanly on screens that render
