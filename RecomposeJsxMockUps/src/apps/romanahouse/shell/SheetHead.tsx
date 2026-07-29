@@ -36,8 +36,6 @@ import {
 } from '../showcaseSlots';
 import { ExpandMoreIcon } from '../support/icons';
 
-import type { IndexTab } from './RomanaIndex';
-import { RomanaIndex } from './RomanaIndex';
 import styles from './SheetHead.module.css';
 
 export interface SheetHeadProps {
@@ -54,12 +52,6 @@ export interface SheetHeadProps {
    * than a cosmetic gap, and it has been one — see Guardrail 4.
    */
   onBack?: (() => void) | undefined;
-  /**
-   * The destination this screen is. Omitted on the two screens that carry no
-   * navigation in the member app — `class` and `booking` — so what is reachable
-   * from where stays exactly as the base has it.
-   */
-  selected?: IndexTab | undefined;
   /** The host gym's real logo URL, when a host has one. */
   logoSrc?: string | undefined;
   /** Resolve the mark through the theme's `logo_primary` slot. */
@@ -72,7 +64,6 @@ export function SheetHead({
   pointsLabel,
   rankBadgeAsset,
   onBack,
-  selected,
   logoSrc,
   themeTabPreview = false,
 }: SheetHeadProps) {
@@ -136,7 +127,6 @@ export function SheetHead({
           />
         </SpecCell>
       </div>
-      {selected !== undefined && <RomanaIndex selected={selected} />}
     </header>
   );
 }

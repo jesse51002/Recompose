@@ -51,11 +51,11 @@ export function HomeShowcase({
 }: HomeShowcaseProps) {
   return (
     <Sheet
+      selected="home"
       scroll
       flush
       head={
         <SheetHead
-          selected="home"
           gymName={gymName}
           logoSrc={gymLogoSrc}
           themeTabPreview={themeTabPreview}

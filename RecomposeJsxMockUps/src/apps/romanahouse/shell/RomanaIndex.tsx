@@ -1,20 +1,22 @@
 // THE INDEX — this design's answer to the base's bottom tab bar.
 //
-// Four destinations in one ruled row at the head of the sheet, each a glyph
+// Four destinations in one ruled row at the FOOT of the sheet, each a glyph
 // over a tracked label, the one you are on SEATED IN SOLID WALNUT. It is the
 // same device the day scale (../home/DayScale.module.css) and the timeframe
 // selector use to mark a selection, which is the point: the shell is built out
 // of the design's own part rather than out of a component borrowed from
 // somewhere else.
 //
-// WHY A HEADER AND NOT A RAIL. An earlier version of this fork put the four
-// destinations on a vertical walnut rail down the left edge. Guardrail 11 rules
-// that out and is right to: these assets are ~390pt wide, so width is the
-// scarce axis and height is not — a rail spends a fifth of the width
-// permanently on chrome and parks the destinations along an edge the thumb
-// never reaches. A segmented header costs one row of height, which is the axis
-// there is more of, and it leaves the foot of every screen free for the
-// action band this design puts there.
+// WHY THE FOOT, AND NOT A RAIL OR A HEADER. An earlier version of this fork
+// put the four destinations on a vertical walnut rail down the left edge, then
+// on a segmented header. Guardrail 11 rules out both: the foot is the edge a
+// thumb reaches on a 390pt phone, and where every mobile OS puts primary
+// navigation. What stays this design's own is its FORM — a ruled index row of
+// four equal cells with the current one seated in solid walnut, the same
+// device the day scale and the timeframe selector use to mark a selection.
+//
+// A screen with an action band stacks them: the band is that screen's one job,
+// the index is how you leave.
 //
 // WHAT IT KEEPS FROM THE BAR IT REPLACES, exactly:
 //

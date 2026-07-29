@@ -78,11 +78,11 @@ export function ProfileShowcase({
 
   return (
     <Sheet
+      selected="rank"
       scroll
       flush
       head={
         <SheetHead
-          selected="rank"
           logoSrc={gymLogoSrc}
           themeTabPreview
           gymName={gymName}

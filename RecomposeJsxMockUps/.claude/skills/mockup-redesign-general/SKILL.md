@@ -362,18 +362,40 @@ that a *screenful* rarely repeats. Four covers a week of schedule rows and a
 genre carousel; it does not cover a fourteen-card feed without repeating, and
 that was known when it was chosen.
 
-## GUARDRAIL 11 — phone patterns only; no vertical nav rail
+## GUARDRAIL 11 — primary nav lives at the bottom; never a side rail
 
-**No vertical / side nav rail for primary navigation, unless the origin app has
-one** (if it does, it stays). At ~390pt width is the scarce axis, and a rail
-spends a fifth of it on chrome along an edge the thumb cannot reach.
+**Primary navigation sits at the FOOT of the screen.** Not the top, not a
+vertical / side rail — unless the origin app puts it elsewhere, in which case
+it stays where the origin has it. The bottom is the reachable edge on a 390pt
+phone and where every mobile OS puts it; a rail additionally spends a fifth of
+the scarce axis on chrome.
 
 **Radical is not the same as importing a pattern from a bigger screen.** Same
 reason, also out: hover or right-click dependence, multi-column text,
 desktop-density hit targets, any persistent sidebar.
 
-Sheets, pagers, scrolling or segmented headers, swipe, overlay menus and
-gesture-first all keep every destination reachable and all work at 390pt.
+You still choose its FORM — a bar, a segmented band, a dock, how it is ruled,
+filled or labelled — and everything else (sheets, pagers, swipe, overlay menus,
+gesture-first) is free. Only its position is fixed.
+
+## GUARDRAIL 12 — invent the look, not the interaction
+
+**Be creative within industry standards.** A member must be able to use the app
+on sight, without learning anything new. Novel interaction is a cost they pay;
+novel *appearance* is the product.
+
+Where the creativity goes: type, colour, imagery, composition, density,
+hierarchy, materials, motion, ornament, voice.
+
+Where it does not: a control must look like what it is and behave the way its
+platform behaves. A button looks pressable, a tab looks selectable and switches
+immediately, back is top-left or a swipe, a list scrolls vertically, a sheet
+dismisses downward, tapping a row opens it. Do not invent a gesture, hide a
+primary action behind a discovery, repurpose a familiar control for a different
+job, or replace a standard affordance with something that has to be explained.
+
+The test: **could someone use this screen correctly the first time, having only
+ever used other phone apps?** If it needs a caption, redesign it.
 
 ---
 

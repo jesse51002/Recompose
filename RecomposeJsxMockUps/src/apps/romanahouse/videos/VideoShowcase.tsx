@@ -70,11 +70,11 @@ export function VideoShowcase({
 
   return (
     <Sheet
+      selected="videos"
       scroll
       flush
       head={
         <SheetHead
-          selected="videos"
           logoSrc={gymLogoSrc}
           themeTabPreview
           gymName={gymName}

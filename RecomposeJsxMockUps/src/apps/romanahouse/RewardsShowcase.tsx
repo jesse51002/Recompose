@@ -113,11 +113,11 @@ export function RewardsShowcase({
   // single-viewport composition.
   return (
     <Sheet
+      selected="reward"
       scroll
       flush
       head={
         <SheetHead
-          selected="reward"
           logoSrc={gymLogoSrc}
           themeTabPreview
           gymName={gymName}
