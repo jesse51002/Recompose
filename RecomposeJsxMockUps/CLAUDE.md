@@ -53,10 +53,43 @@ src/
     useElementSize.ts    duplicated from the studio (see the island rule)
   apps/
     combatden/         one product: its screens, its tokens, its two assets
+      mockup.yaml        what this layout is, and what produced it — REQUIRED
     cafe/              the second app — see below
+      mockup.yaml
     index.ts           MOCK_APPS: every app, for a host that names none
   index.ts             the ONLY export surface
 ```
+
+### Every app ships a `mockup.yaml`, and a test enforces it
+
+A design in this product is **two artifacts produced separately**:
+
+| half | where it lives | what describes it |
+| --- | --- | --- |
+| the assets — palette, type, imagery, copy | a pipeline run, `apps/<app>/<run>/` | `customization.yaml` (the brief) + `output.yaml` |
+| the layout — the screens | an app folder here | `mockup.yaml` |
+
+The theme half has always been self-describing. The layout half was not: a
+mockup could only be understood by reading its source, and nothing recorded
+which design it belonged to or what spec produced it. `mockup.yaml` is that
+record — the mockup's counterpart to `customization.yaml`.
+
+It declares `id`, `label`, the `design` it belongs to (`name` plus the `run_id`
+it was redesigned against, empty for a ported or authored base), the `spec` it
+was produced from, the `assets` inventory, and the `invariants` a redesign may
+not break.
+
+`src/apps/__tests__/mockupYaml.test.ts` fails if an app has no `mockup.yaml`,
+if a required section is missing, or if the file and `defineMockApp` disagree
+about an app's label, an asset's id, its authored size, its initial route or
+its route list — in either direction, so a deleted asset cannot linger in the
+record. It is a presence-and-agreement check rather than a parse: there is no
+YAML parser in this package and one test does not justify adding one.
+
+**Write the drift assertions line-anchored.** The first version used
+`toContain`, which passed happily with a route mistyped as `menuu` — `- menuu`
+contains `- menu`. Corrupt a value on purpose and watch the suite go red before
+believing a gate like this works.
 
 **A second app is a sibling folder under `apps/` plus one `defineMockApp`.**
 Not a change to the kit, and not a change to the host. That is the whole reason
