@@ -30,7 +30,7 @@ const LOG_LINES = [
   'writing the design fork…',
 ];
 
-export function OnboardView() {
+export function OnboardView({ onOpenCustomerView }: { onOpenCustomerView: () => void }) {
   const [step, setStep] = useState<Step>('idle');
   const [log, setLog] = useState(LOG_LINES[0]!);
 
@@ -52,6 +52,14 @@ export function OnboardView() {
 
   return (
     <div className={cx(styles.page, SHELL_CLASS)}>
+      {/* The drifting light. It is the only decorative colour in the whole
+          shell, and it is allowed here because this page has no state to
+          report — nothing it could be confused with. It owns the field around
+          the reading column, never the column itself. */}
+      <div className={styles.beam} aria-hidden="true">
+        <i />
+      </div>
+
       <div className={styles.body}>
         <div className={styles.kick}>Admin · onboard a platform</div>
         <h1 className={styles.display}>Point us at the app.</h1>
@@ -153,6 +161,17 @@ export function OnboardView() {
                     View repo
                   </button>
                   <span className={styles.spacer} />
+                  {/* The flow. Onboarding is the ADMIN's job and it ends by
+                      handing over to the customer's view — so the page says
+                      so and takes you there, rather than leaving you to find
+                      the right tab. */}
+                  <button
+                    type="button"
+                    className={cx(styles.btn, styles.primary)}
+                    onClick={onOpenCustomerView}
+                  >
+                    Open the customer view →
+                  </button>
                 </div>
               </>
             )}

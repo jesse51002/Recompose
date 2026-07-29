@@ -1,25 +1,21 @@
-// The standalone theme browser's shell.
+// The app shell: three pages, and the runtime booted around them.
 //
-// Ports the composition ../../../../CRM/lib/main_theme_browser.dart performs:
-// the landing page's sticky nav (ported verbatim in ./chrome/) over the
-// theme-browser module (./browser/ThemeBrowser.tsx), with the customization
-// engine booted around both.
+// Onboard (admin) hands over to Generate (the customer), which hands over to
+// Fleet (admin again) once a design is approved. That is the product's shape,
+// so the pages perform the handover rather than leaving a person to find the
+// right tab.
 //
-// <ThemeProvider> is the `FutureBuilder<void>(future: _engineReady, …)` at
-// live_theme_preview_tab.dart:172 — the gate that holds the preview back until
-// the runtime has settled. It carries NO value: every hook below reads the
-// module-singleton store directly (see ../../CLAUDE.md).
+// <ThemeProvider> is the gate that holds every page back until the runtime has
+// settled. It carries NO value: every hook below reads the module-singleton
+// store directly (see ../../CLAUDE.md).
 
 import { useEffect, useState } from 'react';
-import { ThemeProvider, activeDesignId, loadFontFamily, selectDesign } from 'recompose-react';
+import { ThemeProvider, loadFontFamily } from 'recompose-react';
 
 import styles from './App.module.css';
 import { INITIAL_URL_VIEW, syncViewUrl, type AppView } from './appUrl';
-import { ThemeBrowser } from './browser/ThemeBrowser';
-import { INITIAL_URL_THEME } from './browser/themeUrl';
 import { GWNav } from './chrome/GWNav';
 import { APP_ID, SEED_DESIGN_ID } from './config';
-import { InspectView } from './inspect/InspectView';
 import {
   EXPECTED_COLORS,
   EXPECTED_FONTS,
@@ -57,10 +53,10 @@ export function App() {
       <main className={styles.main}>
         <ThemeProvider
           appId={APP_ID}
-          // The design the engine boots on: the deep-linked one, else the seed.
-          // A previous visit's sticky selection outranks both (ThemeStore's
-          // fallback ladder), which ThemeBrowser corrects back on mount.
-          designId={INITIAL_URL_THEME ?? SEED_DESIGN_ID}
+          // The design the engine boots on. A previous visit's sticky
+          // selection outranks it (ThemeStore's fallback ladder), which is
+          // what makes the Library's pick survive a reload.
+          designId={SEED_DESIGN_ID}
           // The slot manifest the showcase screens consume — Dart passes the
           // same `ShowcaseSlots.expected*` lists into `ThemeRuntime.initialize`.
           // They are used ONLY for the store's loud missing-slot warning, which
@@ -73,24 +69,21 @@ export function App() {
           expectedIcons={EXPECTED_ICONS}
           fallback={<CenteredSpinner />}
         >
-          <DeepLinkTheme />
-          {/* The theme-reading views sit INSIDE the gate: the inspector reads
-              the resolved theme and the studio previews what it just produced,
-              so neither can render before the runtime has settled. Onboard and
-              Fleet read no theme at all — they are admin chrome over fixtures —
-              but they stay inside it rather than being special-cased out, since
-              the gate costs them one already-settled render and an exception
-              would be a second code path to keep true. */}
-          {view === 'inspect' ? (
-            <InspectView />
-          ) : view === 'studio' ? (
-            <StudioView />
-          ) : view === 'onboard' ? (
-            <OnboardView />
+          {/* All three pages sit inside the gate. Generate reads the theme
+              directly; Onboard and Fleet read none, but they stay inside it
+              rather than being special-cased out — the gate costs them one
+              already-settled render, and an exception would be a second code
+              path to keep true. */}
+          {view === 'generate' ? (
+            <StudioView onDone={() => setView('fleet')} />
           ) : view === 'fleet' ? (
             <FleetView />
           ) : (
-            <ThemeBrowser />
+            // Onboarding hands over to the customer's view when the fork is
+            // ready. That handover IS the product's shape — admin sets a
+            // platform up once, tenants generate against it many times — so
+            // the page performs it rather than leaving you to find a tab.
+            <OnboardView onOpenCustomerView={() => setView('generate')} />
           )}
         </ThemeProvider>
       </main>
@@ -98,38 +91,6 @@ export function App() {
   );
 }
 
-/**
- * Applies the arrival `?theme=` once per page load, for every view.
- *
- * WHY IT EXISTS: `ThemeStore.initialize` resolves the design as
- * `readSelectedDesignId() ?? <the id the provider was constructed with>`, so a
- * STICKY pick from a previous visit OUTRANKS the deep link. Something has to
- * correct that after the bootstrap settles.
- *
- * WHY IT LIVES HERE: it used to be a mount effect inside `ThemeBrowser`, which
- * was correct while the library was the only view — but that component only
- * mounts on the browse view, so arriving straight at `?view=inspect&theme=X`
- * silently rendered the visitor's last pick instead of X. Since `?view=` exists
- * precisely so a demo can be handed over as a URL, that broke the feature.
- *
- * ONCE PER PAGE LOAD, not once per mount: `INITIAL_URL_THEME` is the ARRIVAL
- * value. Re-applying it whenever a view remounts would throw away a theme the
- * visitor picked in this session. This component sits outside the view switch
- * and never unmounts, so an empty dep array IS "once per page load" — no
- * module-level flag needed to enforce it.
- *
- * Rendered inside <ThemeProvider>, so the runtime has already settled when the
- * effect runs. `selectDesign` is no-throw; a bad id leaves the theme alone.
- */
-function DeepLinkTheme() {
-  useEffect(() => {
-    const intended = INITIAL_URL_THEME;
-    if (intended !== null && activeDesignId() !== intended) void selectDesign(intended);
-  }, []);
-  return null;
-}
-
-/** Ports `_CenteredSpinner` (live_theme_preview_tab.dart:308-324). */
 function CenteredSpinner() {
   return (
     <div className={styles.loading}>

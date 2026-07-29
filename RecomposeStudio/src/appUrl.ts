@@ -1,39 +1,31 @@
-// The app's TOP-LEVEL view routing.
+// The app's TOP-LEVEL page routing.
 //
-// This has no Flutter counterpart to port: the CRM's theme surface is a single
-// tab, so `browser/themeUrl.ts` (which does port it) only ever had to carry a
-// theme. Two further views — the artifact inspector and the generation studio —
-// exist only here, so their routing is native rather than a port.
+// Three pages, walked in order. A deep link opens straight onto one, and from
+// then on the address bar follows the state, which is what lets the demo be
+// handed over as a URL rather than as a click path.
 //
-// Kept OUT of `browser/themeUrl.ts` on purpose: that module is the URL half of
-// one ported widget, and the view a visitor is on is not that widget's concern.
-// The two write the same address bar and therefore share one rule, stated once
-// here and honoured there: *merge* into the existing query string, never rebuild
-// it, or each would erase the other's parameter.
+// There used to be a second URL module beside this one carrying `?theme=`, for
+// a Library view that no longer exists. Theme selection is a popup over the
+// canvas now, so a theme is a thing you pick while looking at a design rather
+// than an address you navigate to.
 
 /**
- * The top-level surfaces.
+ * The three pages of the product, in the order a demo walks them.
  *
- * `browse` is the default and is deliberately ABSENT from the URL — a bare
- * `/` is the library, so the address a visitor shares stays clean and an
- * unknown `?view=` degrades to it rather than erroring.
+ * `onboard` is the default and is deliberately ABSENT from the URL — a bare
+ * `/` is where the story starts, so the address a visitor shares stays clean
+ * and an unknown `?view=` degrades to it rather than erroring.
  *
- * `onboard` and `fleet` are the two ADMIN surfaces, and both are demo-ware:
- * they draw from `data/fleetFixtures.ts` and connect to nothing. They live
- * here rather than in a separate app because the demo is one thing a person
- * clicks through, and a second bundle would be a second thing to keep running.
+ * The old `browse` and `inspect` surfaces are gone. Picking a theme is a
+ * popup over the canvas and inspecting artifacts is a pane of it, so neither
+ * is a destination any more — a catalogue you had to leave the design to
+ * visit was a shopping trip in the middle of a review.
  */
-export type AppView = 'browse' | 'inspect' | 'studio' | 'onboard' | 'fleet';
+export type AppView = 'onboard' | 'generate' | 'fleet';
 
 const VIEW_PARAM = 'view';
 
-const VIEWS: readonly AppView[] = Object.freeze([
-  'browse',
-  'inspect',
-  'studio',
-  'onboard',
-  'fleet',
-]);
+const VIEWS: readonly AppView[] = Object.freeze(['onboard', 'generate', 'fleet']);
 
 function isAppView(value: string | null): value is AppView {
   return value !== null && (VIEWS as readonly string[]).includes(value);
@@ -53,7 +45,7 @@ export function viewFromUrl(): AppView {
     }
   }
   const fromQuery = new URLSearchParams(window.location.search).get(VIEW_PARAM);
-  return isAppView(fromQuery) ? fromQuery : 'browse';
+  return isAppView(fromQuery) ? fromQuery : 'onboard';
 }
 
 /**
@@ -73,7 +65,7 @@ export const INITIAL_URL_VIEW: AppView = viewFromUrl();
  */
 export function syncViewUrl(view: AppView): void {
   const params = new URLSearchParams(window.location.search);
-  if (view === 'browse') params.delete(VIEW_PARAM);
+  if (view === 'onboard') params.delete(VIEW_PARAM);
   else params.set(VIEW_PARAM, view);
   const query = params.toString();
   const url = query === '' ? window.location.pathname : `${window.location.pathname}?${query}`;

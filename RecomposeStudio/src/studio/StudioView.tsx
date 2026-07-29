@@ -30,7 +30,7 @@ type Phase =
       readonly designName: string;
     };
 
-export function StudioView() {
+export function StudioView({ onDone }: { onDone: () => void }) {
   const [phase, setPhase] = useState<Phase>({ kind: 'attaching' });
 
   useEffect(() => {
@@ -102,6 +102,7 @@ export function StudioView() {
       key={phase.sessionId}
       sessionId={phase.sessionId}
       designName={phase.designName}
+      onDone={onDone}
     />
   );
 }

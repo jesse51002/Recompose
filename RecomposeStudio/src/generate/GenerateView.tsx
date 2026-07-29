@@ -1,36 +1,44 @@
-// The Generate page: watch a design get made.
+// The Generate page: watch a design get made. The customer's view.
 //
-// Three panes. The transcript on the left never resets between phases; the
-// canvas in the centre shows the mock, repainting as the theme lands and
-// switching to the generated folder once a layout agent is writing to one; the
-// centre's Inspect side shows the run as it resolves.
+// Two panes. The transcript on the left never resets between phases — the
+// brand interview, the asset run, the layout interview and the layout agent
+// all land in one column, because they are one design and four views of it
+// would be four things to reconcile. The canvas on the right carries a bar
+// (what to look at, which theme, how the run is going) over one of three
+// panes: the mock, the artifact sheet, or the brief.
 //
-// EVERYTHING IS A PURE FUNCTION OF THE RECORD LIST. The session stream replays
-// from index 0 on every connect, so a reload mid-run costs nothing — which is
-// the property the whole server-held session exists for, and the one worth not
-// breaking here by keeping state that the records already carry.
+// EVERYTHING RENDERED IS A PURE FUNCTION OF THE RECORD LIST. The session
+// stream replays from index 0 on every connect, so a reload mid-run costs
+// nothing — the property the server-held session exists for, and the one
+// easiest to lose here by keeping state the records already carry.
 
 import { useState } from 'react';
 
 import { cx } from '../widgets/cx';
 import { AppSpinner } from '../widgets/AppSpinner';
-import { RunSheet } from '../studio/RunSheet';
+import { InspectView } from '../inspect/InspectView';
 import { foldSession } from '../studio/sessionFold';
 import { useSessionStream } from '../studio/useSessionStream';
 import { acceptProposal, closeSession, takeTurn } from '../studio/sessionApi';
 
-import { SessionChat } from './SessionChat';
+import { Approved } from './Approved';
 import { BriefSheet } from './BriefSheet';
 import { GenerateCanvas } from './GenerateCanvas';
+import { RunMeter } from './RunMeter';
+import { SessionChat } from './SessionChat';
+import { ThemeChip } from './ThemeChip';
+import { ThemePopup } from './ThemePopup';
 import { phaseClass, SHELL_CLASS } from './phaseClass';
 import styles from './GenerateView.module.css';
 
-/** Which side of the centre pane is showing. */
-type Centre = 'mockup' | 'inspect' | 'brief';
+/** Which pane the canvas is showing. */
+type Pane = 'mockup' | 'inspect' | 'brief';
 
 interface GenerateViewProps {
   readonly sessionId: string;
   readonly designName: string;
+  /** Where to go once the design is approved. */
+  readonly onDone: () => void;
 }
 
 /**
@@ -39,9 +47,10 @@ interface GenerateViewProps {
  * **Mounted under a `key={sessionId}`** by the caller, so a new design starts
  * with an empty accumulator rather than needing state reset from an effect.
  */
-export function GenerateView({ sessionId, designName }: GenerateViewProps) {
-  const { records, transport } = useSessionStream(sessionId);
-  const [centre, setCentre] = useState<Centre>('mockup');
+export function GenerateView({ sessionId, designName, onDone }: GenerateViewProps) {
+  const { records } = useSessionStream(sessionId);
+  const [pane, setPane] = useState<Pane>('mockup');
+  const [library, setLibrary] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -58,17 +67,12 @@ export function GenerateView({ sessionId, designName }: GenerateViewProps) {
       .finally(() => setBusy(false));
   };
 
-  const say = (message: string): void => {
-    act(() => takeTurn(sessionId, message));
-  };
-
   const accept = (): void => {
     const proposal = view.proposal;
     if (proposal === null) return;
-    // Opening the brief on accept is deliberate: the phase that follows is
-    // long, and the thing the person just approved is what they should be
-    // looking at while it runs.
-    setCentre('brief');
+    // The phase that follows is long, and the thing just approved is what a
+    // person should be looking at while it runs.
+    setPane('brief');
     act(() =>
       acceptProposal(
         sessionId,
@@ -79,126 +83,98 @@ export function GenerateView({ sessionId, designName }: GenerateViewProps) {
     );
   };
 
+  // The approved screen takes the WHOLE surface, in the generated theme. It is
+  // the tenant's last screen and the one moment the tool gets out of the way —
+  // so it is not a pane inside the canvas, it replaces the page.
+  if (view.settled) {
+    return <Approved designName={designName} onDone={onDone} />;
+  }
+
   return (
     <div className={cx(styles.shell, SHELL_CLASS)}>
-      <header className={styles.top}>
-        <div className={styles.identity}>
-          <span className={styles.product}>Recompose</span>
-          <span className={styles.design}>{designName}</span>
-        </div>
-        <div className={styles.topRight}>
-          {view.phase !== null && (
-            <span className={cx(styles.tag, phaseClass(view.phase))}>
-              {view.phase}
-            </span>
-          )}
-          {/* The transport is worth showing because "polling" and "live" look
-              identical until something is wrong, and a demo that has silently
-              degraded is worse than one that says so. */}
-          <span className={styles.transport}>{transport}</span>
-          {view.settled ? (
-            <span className={styles.done}>approved</span>
-          ) : (
+      <div className={styles.panes}>
+        <aside className={styles.chat}>
+          <div className={styles.phead}>
+            Conversation
+            <span className={styles.push} />
+            {view.phase !== null && (
+              <span className={cx(styles.tag, phaseClass(view.phase))}>
+                {view.phase}
+              </span>
+            )}
+          </div>
+          <SessionChat
+            view={view}
+            onSay={(message) => act(() => takeTurn(sessionId, message))}
+            onAccept={accept}
+            onOpenProposal={() => setPane('brief')}
+            busy={busy}
+          />
+        </aside>
+
+        <main className={styles.canvas}>
+          <div className={styles.bar}>
+            <div className={styles.seg}>
+              <Seg now={pane} me="mockup" set={setPane} label="Mockup" />
+              <Seg now={pane} me="inspect" set={setPane} label="Inspect" />
+              <Seg now={pane} me="brief" set={setPane} label="Brief" />
+            </div>
+            <ThemeChip onOpen={() => setLibrary(true)} />
+            <span className={styles.push} />
+            <RunMeter runId={view.runId} />
             <button
               type="button"
               className={styles.approve}
               disabled={busy}
-              onClick={() => {
-                act(() => closeSession(sessionId));
-              }}
+              onClick={() => act(() => closeSession(sessionId))}
             >
               Approve design
             </button>
-          )}
-        </div>
-      </header>
+          </div>
 
-      {error !== null && <div className={styles.error}>{error}</div>}
-
-      <div className={styles.panes}>
-        <SessionChat
-          view={view}
-          onSay={say}
-          onAccept={accept}
-          onOpenProposal={() => setCentre('brief')}
-          busy={busy}
-        />
-
-        <section className={styles.centre}>
-          <nav className={styles.tabs}>
-            <Tab now={centre} me="mockup" set={setCentre} label="Mockup" />
-            <Tab now={centre} me="inspect" set={setCentre} label="Inspect" />
-            {/* The brief is its own tab rather than a panel in the column: it
-                is a document, and it is longer than that column deserves. */}
-            <Tab
-              now={centre}
-              me="brief"
-              set={setCentre}
-              label="Brief"
-              disabled={view.proposal === null && records.length === 0}
-            />
-          </nav>
+          {error !== null && <div className={styles.error}>{error}</div>}
 
           <div className={styles.stage}>
-            {centre === 'mockup' && <GenerateCanvas view={view} />}
-            {centre === 'inspect' &&
-              (view.runId === null ? (
-                <Empty>
-                  Nothing has been generated yet. The run appears here the
-                  moment one starts.
-                </Empty>
-              ) : (
-                // RunSheet is kept whole from the previous studio: per-node
-                // state, the live clock, the tally and the cost read better in
-                // its plate grid than they ever would in a transcript.
-                <RunSheet
-                  key={view.runId}
-                  runId={view.runId}
-                  // The brief is shown in its own tab here, so the sheet's
-                  // masthead falls back to the run name rather than repeating
-                  // a document that is one click away.
-                  brief={null}
-                  // Starting another run is the session's job, not a button
-                  // inside a pane of it: the agent decides when work starts.
-                  onStartAnother={() => setCentre('mockup')}
-                />
-              ))}
-            {centre === 'brief' && <BriefSheet view={view} />}
+            {pane === 'mockup' && <GenerateCanvas view={view} />}
+            {/* The artifact sheet — every slot the run produced, filling in as
+                the partial output.yaml grows. This IS the Inspect view; it is
+                not a separate destination any more. */}
+            {pane === 'inspect' && (
+              <div className={styles.sheet}>
+                <InspectView />
+              </div>
+            )}
+            {pane === 'brief' && <BriefSheet view={view} />}
           </div>
-        </section>
+        </main>
       </div>
+
+      {library && <ThemePopup onClose={() => setLibrary(false)} />}
     </div>
   );
 }
 
-function Tab({
+function Seg({
   now,
   me,
   set,
   label,
-  disabled = false,
 }: {
-  now: Centre;
-  me: Centre;
-  set: (next: Centre) => void;
+  now: Pane;
+  me: Pane;
+  set: (next: Pane) => void;
   label: string;
-  disabled?: boolean;
 }) {
   return (
     <button
       type="button"
-      className={cx(styles.tab, now === me && styles.tabOn)}
+      className={cx(now === me && styles.segOn)}
       aria-pressed={now === me}
-      disabled={disabled}
       onClick={() => set(me)}
     >
       {label}
     </button>
   );
-}
-
-function Empty({ children }: { children: React.ReactNode }) {
-  return <div className={styles.empty}>{children}</div>;
 }
 
 /** Shown while the page works out whether a session is already open. */

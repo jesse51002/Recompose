@@ -1,17 +1,23 @@
 # RecomposeStudio — the theme browser
 
-The standalone tool. Three views, switched by the tab bar and reachable by URL
-(`?view=`, `src/appUrl.ts`):
+The product, as three pages walked in order:
 
-| `?view=` | What |
-|---|---|
-| *(default)* | **Library** — the catalog, and any design previewed in a phone frame. |
-| `inspect` | **Inspect** — every artifact one pipeline run produced: the four colour roles with their derivations, the flat palette, both typefaces set in themselves, the generated copy, icons and imagery. |
-| `studio` | **Studio** — the Generate page: name a business, answer an interview, and watch the design get made. Three panes over one server-held session. |
-| `onboard` | **Onboard** — point us at a platform. **Demo-ware**: connects to nothing. |
-| `fleet` | **Fleet** — every customer app and what an agent is doing to it. **Demo-ware**: drawn from fixtures. |
+| `?view=` | Who | What |
+|---|---|---|
+| *(default)* | admin | **Onboard** — point us at a platform, get a design fork. Demo-ware. |
+| `generate` | customer | **Generate** — name a business, answer an interview, watch the design get made. Real. |
+| `fleet` | admin | **Fleet** — every customer app and what an agent is doing to it. Demo-ware. |
 
-See `../CLAUDE.md` for the monorepo map.
+**The pages hand over to each other.** Onboarding ends by opening the customer
+view; an approved design ends by returning to the fleet. That handover is the
+product's shape — set a platform up once, generate against it many times — so
+the pages perform it rather than leaving a person to find the right tab.
+
+**Library and Inspect are no longer destinations.** Picking a theme is a popup
+over the canvas (`generate/ThemePopup.tsx`) and inspecting artifacts is a pane
+of it (`inspect/InspectView.tsx`, mounted by the Generate page). A catalogue
+you had to leave the design to visit was a shopping trip in the middle of a
+review, and `browser/` is deleted.
 
 ## What it depends on, and what it must not become
 
@@ -33,8 +39,7 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
 
 ## Structure
 
-- `browser/` — the Library view: catalog grid, search, filters, phone-frame preview.
-- `inspect/` — the Inspect view and `artifactModel.ts`, which maps a run's output into what the view renders.
+- `inspect/` — the artifact sheet and `artifactModel.ts`, which maps a run's output into what it renders. Mounted as the Generate page's Inspect pane, not as a view of its own.
 - `studio/` — the wire contract and the streams: `sessionApi` / `studioApi`,
   `recordStream` (the replayable-log subscription both streams share),
   `sessionFold` / `runFold`, and `RunSheet`, which is now the Generate page's

@@ -1,0 +1,71 @@
+/* The approved screen. Ported from design/studio-demo.html (#approved).
+   Every colour here comes from the GENERATED theme, inline — this is the one
+   surface where the design, not the tool, owns the page. */
+
+.screen {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  padding: 40px;
+  text-align: center;
+  animation: rise 0.6s ease both;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .screen { animation: none; }
+}
+
+.inner { max-width: 560px; }
+
+.mark {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  margin: 0 auto 26px;
+}
+
+.title {
+  margin: 0 0 18px;
+  font-size: clamp(38px, 4.6vw, 58px);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+
+.body {
+  margin: 0 auto;
+  max-width: 460px;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.body b { font-weight: 600; }
+
+.meta {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid currentcolor;
+  font: 400 12px / 1.8 var(--mono);
+  opacity: 0.7;
+}
+
+.onward {
+  margin-top: 22px;
+  border: 0;
+  background: transparent;
+  font: 400 12px / 1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  opacity: 0.75;
+}
+
+.onward:hover { opacity: 1; }

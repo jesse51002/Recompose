@@ -9,9 +9,10 @@
 //
 // THE HEIGHT IS A CONTRACT, not a layout choice — see ./ViewTabs.module.css.
 //
-// Deliberately NOT sticky: ./browser/LibraryView.module.css already sticks its
-// search + filter chrome at `top: var(--adm-nav-height)`, so a second sticky
-// bar claiming the same offset would sit on top of the library's own.
+// Deliberately NOT sticky. It was not sticky when the Library view existed
+// either (that view stuck its own search chrome at the same offset); the
+// reason has changed but the answer has not — each page below owns a full
+// height and manages its own scrolling, so a sticky band would cut into it.
 
 import type { AppView } from './appUrl';
 import styles from './ViewTabs.module.css';
@@ -24,13 +25,9 @@ import styles from './ViewTabs.module.css';
  */
 const TABS: readonly { readonly view: AppView; readonly label: string; readonly title: string }[] =
   Object.freeze([
-    { view: 'browse', label: 'Library', title: 'Browse every generated design' },
-    { view: 'inspect', label: 'Inspect', title: 'Every artifact the pipeline produced' },
-    { view: 'studio', label: 'Studio', title: 'Generate a new design' },
-    // The two admin surfaces. Both are demo-ware and say so on the page
-    // itself, which is the only place a viewer would otherwise be misled.
-    { view: 'onboard', label: 'Onboard', title: 'Point us at a platform (demo)' },
-    { view: 'fleet', label: 'Fleet', title: 'Every customer app and its agent (demo)' },
+    { view: 'onboard', label: 'Onboard', title: 'Admin — point us at a platform' },
+    { view: 'generate', label: 'Generate', title: 'Customer — watch a design get made' },
+    { view: 'fleet', label: 'Fleet', title: 'Admin — every customer app and its agent' },
   ]);
 
 export function ViewTabs({

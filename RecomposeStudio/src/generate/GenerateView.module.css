@@ -15,44 +15,37 @@
   justify-content: center;
 }
 
-/* ── The header ────────────────────────────────────────────────────────── */
-.top {
+.panes {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  /* The transcript is fixed because prose has a comfortable measure and this
+     one is read for an hour; the canvas takes whatever is left. */
+  grid-template-columns: 380px minmax(0, 1fr);
+}
+
+/* ── The transcript column ─────────────────────────────────────────────── */
+.chat {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid var(--sh-line);
+  background: var(--sh-panel);
+}
+
+.phead {
   flex: none;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 11px 16px;
-  background: var(--sh-void);
+  gap: 10px;
+  padding: 12px 15px;
   border-bottom: 1px solid var(--sh-line);
+  background: var(--sh-void);
+  font: 500 var(--fs-xs) / 1 var(--sans);
+  color: var(--ink-2);
 }
 
-.identity {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  min-width: 0;
-}
-
-.product {
-  font: 600 var(--fs-sm) / 1 var(--sans);
-  letter-spacing: var(--tr-title);
-}
-
-.design {
-  font: 400 var(--fs-xs) / 1 var(--sans);
-  color: var(--ink-3);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.topRight {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: none;
-}
+.push { margin-left: auto; }
 
 /* The phase tag wears the phase's own hue — the same custom properties the
    transcript's markers read, so the two cannot disagree. */
@@ -67,15 +60,53 @@
   text-transform: uppercase;
 }
 
-.transport {
-  font: 400 var(--fs-micro) / 1 var(--mono);
-  letter-spacing: var(--tr-label);
-  text-transform: uppercase;
-  color: var(--ink-4);
+/* ── The canvas ────────────────────────────────────────────────────────── */
+.canvas {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 15px;
+  border-bottom: 1px solid var(--sh-line);
+  background: var(--sh-void);
+}
+
+.seg {
+  display: flex;
+  flex: none;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.seg button {
+  padding: 7px 13px;
+  border: 0;
+  border-right: 1px solid var(--sh-line-2);
+  background: transparent;
+  color: var(--ink-3);
+  font: 500 var(--fs-xs) / 1 var(--sans);
+  cursor: pointer;
+}
+
+.seg button:last-child { border-right: 0; }
+.seg button:hover { color: var(--ink-2); }
+
+.segOn {
+  background: var(--sh-raised-2);
+  color: var(--ink) !important;
 }
 
 .approve {
-  padding: 6px 11px;
+  flex: none;
+  padding: 7px 12px;
   border: 1px solid var(--st-you-l);
   border-radius: 6px;
   background: var(--st-you-w);
@@ -84,94 +115,29 @@
   cursor: pointer;
 }
 
-.approve:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
-.done {
-  padding: 6px 11px;
-  border-radius: 6px;
-  background: var(--st-ok-w);
-  color: var(--st-ok);
-  font: 500 var(--fs-micro) / 1 var(--mono);
-  letter-spacing: var(--tr-label);
-  text-transform: uppercase;
-}
+.approve:disabled { opacity: 0.5; cursor: default; }
 
 /* Fail visible: a write that did not land says so, in the one alarm hue. */
 .error {
   flex: none;
-  padding: 9px 16px;
+  padding: 9px 15px;
   background: var(--st-bad-w);
   border-bottom: 1px solid var(--st-bad-l);
   color: var(--st-bad);
   font: 400 var(--fs-xs) / 1.5 var(--sans);
 }
 
-/* ── The panes ─────────────────────────────────────────────────────────── */
-.panes {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  /* The transcript is fixed because prose has a comfortable measure and this
-     one is read for an hour; the canvas takes whatever is left. */
-  grid-template-columns: 380px minmax(0, 1fr);
-}
-
-.centre {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  min-height: 0;
-  background: var(--sh-ground);
-}
-
-.tabs {
-  flex: none;
-  display: flex;
-  gap: 2px;
-  padding: 8px 12px 0;
-  border-bottom: 1px solid var(--sh-line);
-}
-
-.tab {
-  padding: 7px 13px;
-  border: none;
-  border-bottom: 2px solid transparent;
-  background: transparent;
-  color: var(--ink-3);
-  font: 500 var(--fs-xs) / 1 var(--sans);
-  cursor: pointer;
-}
-
-.tab:hover:enabled {
-  color: var(--ink-2);
-}
-
-.tab:disabled {
-  color: var(--ink-4);
-  cursor: default;
-}
-
-.tabOn {
-  color: var(--ink);
-  border-bottom-color: var(--ink);
-}
-
 .stage {
   flex: 1;
   min-height: 0;
-  overflow: auto;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
-.empty {
-  margin: auto;
-  max-width: 34ch;
-  padding: 24px;
-  text-align: center;
-  font: 400 var(--fs-sm) / 1.6 var(--sans);
-  color: var(--ink-3);
+/* The artifact sheet scrolls on its own; it is a long document. */
+.sheet {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }

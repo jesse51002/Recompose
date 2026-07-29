@@ -1,0 +1,44 @@
+/* The theme chip. Ported from design/studio-demo.html (.chipbtn / .swatch). */
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 6px;
+  background: var(--sh-raised);
+  padding: 7px 11px;
+  font-size: var(--fs-xs);
+  color: var(--ink-2);
+  cursor: pointer;
+  flex: none;
+}
+
+.chip:hover {
+  border-color: var(--sh-line-3);
+  color: var(--ink);
+}
+
+.chip em {
+  font: 400 var(--fs-micro) / 1 var(--mono);
+  font-style: normal;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+}
+
+.chip b {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+/* The one place a generated colour appears in the CHROME. It is not decoration
+   — it names which theme is loaded — and it is the design's own resolved
+   primary rather than a swatch someone picked. */
+.swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  border: 1px solid var(--sh-line-2);
+  flex: none;
+}
