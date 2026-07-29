@@ -64,7 +64,7 @@ src/
       layout_brief.yaml
     romanahouse/       a second redesign, for the ReformerClassical run
       layout_brief.yaml
-      shell/             its OWN chrome: rail, sheet, head, action band, plate
+      shell/             its OWN chrome: sheet, head, index, action band, plate
     index.ts           MOCK_APPS: every app, for a host that names none
   index.ts             the ONLY export surface
 ```
@@ -155,18 +155,25 @@ radii rather than committing to a different world. That is the failure mode
 **`apps/romanahouse/`** is the second, built for the theme produced at
 `apps/combatden/ReformerClassical/`, and it shows how far a fork MAY go under
 the same invariant. Its direction (read `layout_brief.yaml`) is the studio's
-apparatus chart: a walnut rail down the left edge replaces the bottom tab bar,
-an ivory sheet beside it is structured by scribed rules instead of cards, the
+apparatus chart: a ruled head carrying a letterhead, a spec panel and the four
+destinations as a segmented index replaces the bottom tab bar, an ivory sheet
+below it is structured by scribed rules instead of cards, the
 grotesque is the display face carrying tabular figures and 9px tracked labels
 while the serif is prose only, and every photograph is a mounted plate captioned
 outside its frame. Same eleven screens, same element set, same routes. Three
 things it establishes that a later fork should know:
 
 - **A fork owns its own `shell/`.** It replaces the base's `support/Showcase*`
-  chrome outright — `RomanaRail` for the bottom nav, `Sheet` for the scaffold,
+  chrome outright — `RomanaIndex` for the bottom nav, `Sheet` for the scaffold,
   `SheetHead` for the topbar, `ActionBand` for the primary button, `Plate` for
   every photograph — rather than restyling the base's. Its own folder, so
   nothing shared moved.
+- **It was built once with a vertical nav rail and that was wrong.** Guardrail
+  11 now bans it by name: at ~390pt width is the scarce axis, and a rail spends
+  a fifth of it on chrome along an edge the thumb cannot reach. The replacement
+  is a segmented header index, which costs one row of the axis there is more of.
+  If a direction seems to need a pattern from a bigger screen, it needs a
+  different pattern.
 - **A fork MAY replace its bundled fallbacks**, and this one does where zenbjj
   does not. Its `showcaseTokens.ts` fallback colours, its two font families and
   its bundled cut-out art are the produced run's, not CombatDen's. The reason is
@@ -176,12 +183,25 @@ things it establishes that a later fork should know:
   A fork that replaces them must also update its own `showcaseTokens.test.ts`,
   which pins them.
 - **`--sc-*` may be EXTENDED by a fork, in its own `showcaseTokens.ts`.**
-  Romana House adds rule weights, a plate veil, the rail width and two type
+  Romana House adds rule weights, a plate veil and two type
   registers the ported ramp has no rung for. Guardrail 2's sweep still holds
   because every `var(--sc-…)` any of its stylesheets reads is a string in that
   one file. **Do not add a numeric `line-height` to anything containing a
   `CountUpText`** — a line box shorter than the font's own makes adjacent digit
   cells overlap through the reel's clip, which is a bug this fork shipped once.
+
+It also **deletes the base chrome it replaced** rather than leaving it in place:
+a fork carrying two navigations and two scaffolds, one of them unreachable, is a
+fork the next agent has to reverse-engineer. If a fork replaces a component,
+delete the original from *its own folder* — never from `apps/combatden/`.
+
+One deliberate BEHAVIOURAL divergence from the base, and the only one: under
+`prefers-reduced-motion: reduce`, `StatsShowcase` and `PointsShowcase` now fire
+`onCycleComplete` before returning. The base returns first, so those two cards
+never settle and their action stays hidden until the card is tapped — Guardrail
+5's exact shape, confirmed in the browser on both. **The same fix belongs in
+`apps/combatden/` and has not been made there**, because this change was scoped
+to the fork.
 
 ## Assets, not screens
 

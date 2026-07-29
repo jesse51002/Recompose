@@ -44,7 +44,6 @@ import type { ShowcasePointsStoreItem } from './rewards/mockPointsStore';
 import { SHOWCASE_POINTS_STORE_DATA } from './rewards/mockPointsStore';
 import type { RewardsLayoutData } from './rewards/rewardsLayoutData';
 import type { ShowcaseReward } from './showcaseContent';
-import { RomanaRail } from './shell/RomanaRail';
 import { Sheet } from './shell/Sheet';
 import { SheetHead } from './shell/SheetHead';
 
@@ -116,9 +115,11 @@ export function RewardsShowcase({
     <Sheet
       scroll
       flush
-      rail={<RomanaRail selected="reward" logoSrc={gymLogoSrc} themeTabPreview />}
       head={
         <SheetHead
+          selected="reward"
+          logoSrc={gymLogoSrc}
+          themeTabPreview
           gymName={gymName}
           streakDays={data.streakDays}
           pointsLabel={data.pointsLabel}

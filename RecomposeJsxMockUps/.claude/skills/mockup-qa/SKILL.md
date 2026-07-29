@@ -112,10 +112,13 @@ On each, check:
   is far easier to wave through because it usually looks like an improvement.
   Flag both.
 
-  **Presence, not prominence.** The inventory says what must be *there*, never
-  how big or how emphasised. A screen that makes one class a hero card and the
-  rest compact rows still matches its inventory — every class is present. Do
-  not report a hierarchy change as a finding; that is the redesign working.
+  **Presence, not form.** The inventory says what must be *there*, never how
+  big, what shape, what order or how emphasised. One class as a hero card with
+  the rest compact still matches — every class is present. A square thumbnail
+  where the base had a wide one still matches. Do not report a hierarchy or
+  proportion change as a finding; that is the redesign working. If an inventory
+  line pins a form, the inventory is wrong — fix it there rather than holding a
+  redesign to it.
 - Nothing clipped at the phone edge, nothing overlapping, no text at a default
   font, no image at an obviously wrong size.
 

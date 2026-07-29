@@ -5,20 +5,20 @@
 // The elements are the SAME four plus the name and its chevron, and every
 // theme slot they resolve is the same:
 //
-//   `logo_primary`  the mark — which now lives at the head of the rail
-//                   (./RomanaRail.tsx), on exactly the screens that drew it in
-//                   the topbar before. Moved, not dropped.
+//   `logo_primary`  the mark, at the head of the letterhead — small, and to
+//                   the LEFT of the gym name rather than centred above it.
 //   `rank_belt`     the rank cell
 //   `streak_icon`   the streak cell
 //   `single_point`  the points cell
 //   `icon_qrcode`   the pass cell
 //
-// What changed is the form. The name goes left and becomes a letterhead in the
-// serif; under a 2px walnut rule the four stats become a SPEC BLOCK — four
-// cells divided by vertical hairlines, each a tracked 9px label over its
-// object and its figure. It is the specification panel on a technical drawing,
-// which is where the design keeps facts that are true of the member rather than
-// of the screen.
+// What changed is the form. The mark shrinks and the name goes left, so the two
+// read as a letterhead; under a 2px walnut rule the four stats become a SPEC
+// BLOCK — four cells divided by vertical hairlines, each a tracked 9px label
+// over its object and its figure. It is the specification panel on a technical
+// drawing, which is where the design keeps facts that are true of the member
+// rather than of the screen. Beneath it sits the four-destination index
+// (./RomanaIndex.tsx), so the whole fixed head is one ruled block.
 //
 // The tracked labels are static chrome, in the same sense the nav's "Home" /
 // "Rank" / "Reward" / "Videos" are: they name a value already on screen rather
@@ -29,12 +29,15 @@ import { ThemedImage } from 'recompose-react';
 import { showcaseAsset } from '../showcaseAssets';
 import {
   SLOT_ICON_QRCODE,
+  SLOT_LOGO_PRIMARY,
   SLOT_RANK_BELT,
   SLOT_SINGLE_POINT,
   SLOT_STREAK_ICON,
 } from '../showcaseSlots';
 import { ExpandMoreIcon } from '../support/icons';
 
+import type { IndexTab } from './RomanaIndex';
+import { RomanaIndex } from './RomanaIndex';
 import styles from './SheetHead.module.css';
 
 export interface SheetHeadProps {
@@ -51,6 +54,16 @@ export interface SheetHeadProps {
    * than a cosmetic gap, and it has been one — see Guardrail 4.
    */
   onBack?: (() => void) | undefined;
+  /**
+   * The destination this screen is. Omitted on the two screens that carry no
+   * navigation in the member app — `class` and `booking` — so what is reachable
+   * from where stays exactly as the base has it.
+   */
+  selected?: IndexTab | undefined;
+  /** The host gym's real logo URL, when a host has one. */
+  logoSrc?: string | undefined;
+  /** Resolve the mark through the theme's `logo_primary` slot. */
+  themeTabPreview?: boolean | undefined;
 }
 
 export function SheetHead({
@@ -59,6 +72,9 @@ export function SheetHead({
   pointsLabel,
   rankBadgeAsset,
   onBack,
+  selected,
+  logoSrc,
+  themeTabPreview = false,
 }: SheetHeadProps) {
   return (
     <header className={styles.head}>
@@ -80,6 +96,7 @@ export function SheetHead({
         </button>
       )}
       <div className={styles.letterhead}>
+        <Mark logoSrc={logoSrc} themeTabPreview={themeTabPreview} />
         <span className={styles.gymName}>{gymName}</span>
         <ExpandMoreIcon className={styles.chevron} />
       </div>
@@ -119,8 +136,43 @@ export function SheetHead({
           />
         </SpecCell>
       </div>
+      {selected !== undefined && <RomanaIndex selected={selected} />}
     </header>
   );
+}
+
+/**
+ * The logo ladder, unchanged from the base's topbar:
+ *
+ *   1. the host gym's REAL logo, which always wins — gym identity is not a
+ *      customization slot;
+ *   2. the active THEME's `logo_primary`, when `themeTabPreview`;
+ *   3. the bundled mark.
+ */
+function Mark({
+  logoSrc,
+  themeTabPreview,
+}: {
+  logoSrc?: string | undefined;
+  themeTabPreview: boolean;
+}) {
+  const bundled = showcaseAsset('combatden_logo.png');
+  if (logoSrc !== undefined && logoSrc !== '') {
+    return <img className={styles.mark} src={logoSrc} alt="" />;
+  }
+  if (themeTabPreview) {
+    // <ThemedImage> keeps the fallback on screen until the override's URL has
+    // actually probed, so a 404 degrades to the bundled art, not an empty box.
+    return (
+      <ThemedImage
+        className={styles.mark}
+        slot={SLOT_LOGO_PRIMARY}
+        fallbackSrc={bundled}
+        alt=""
+      />
+    );
+  }
+  return <img className={styles.mark} src={bundled} alt="" />;
 }
 
 function SpecCell({ label, children }: { label: string; children: React.ReactNode }) {

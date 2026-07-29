@@ -105,6 +105,7 @@ export function BookingShowcase({ loop = true, onCycleComplete }: BookingShowcas
 
   return (
     <Sheet
+      flush
       foot={
         <ActionBand
           label="Continue"

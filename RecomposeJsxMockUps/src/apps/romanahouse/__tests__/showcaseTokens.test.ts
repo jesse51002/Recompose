@@ -183,7 +183,7 @@ describe('showcaseCssVars', () => {
   it('adds the design’s rules, plates and two type registers', () => {
     expect(vars['--sc-rule-hair']).toBe('rgba(77, 39, 27, 0.16)');
     expect(vars['--sc-rule-solid']).toBe('rgba(77, 39, 27, 1)');
-    expect(vars['--sc-rail-width']).toBe('58px');
+    expect(vars['--sc-sheet-pad']).toBe('20px');
     // Figures and labels are the DISPLAY face; prose is the body face.
     expect(vars['--sc-type-fig-xl']).toBe('600 44px/normal "Oswald", system-ui, sans-serif');
     expect(vars['--sc-type-label']).toBe('600 9px/normal "Oswald", system-ui, sans-serif');

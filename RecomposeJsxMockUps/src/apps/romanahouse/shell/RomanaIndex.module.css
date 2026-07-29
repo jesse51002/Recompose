@@ -1,0 +1,50 @@
+/*
+ * Styles for ./RomanaIndex.tsx — the four destinations, as a ruled index row.
+ *
+ * `--sc-*` only. Four equal cells divided by hairlines, opened by the same 2px
+ * walnut rule that opens every other region in this design, and the selected
+ * cell filled solid — the device the day scale and the timeframe selector use.
+ */
+
+.index {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--sc-rule-hair);
+}
+
+.cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding-block: 9px 10px;
+  min-width: 0;
+  cursor: pointer;
+  /* No radius and no floating pill: a cell in a ruled row is bounded by its
+     neighbours, which is what the hairline below draws. */
+  border-radius: 0;
+}
+
+.cell + .cell {
+  border-left: 1px solid var(--sc-rule-hair);
+}
+
+/* THE SEAT. The one filled cell, and the only selection affordance. */
+.cellActive {
+  background: var(--sc-rule-solid);
+}
+
+.label {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: inherit;
+  text-align: center;
+  /* Four labels on a 390pt sheet: "REWARD" is the longest and sets the budget.
+     Clipping a destination's name is worse than a tight row. */
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

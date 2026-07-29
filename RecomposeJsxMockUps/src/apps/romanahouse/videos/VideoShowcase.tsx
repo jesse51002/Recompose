@@ -31,7 +31,6 @@
 // rank badge in the topbar are PER-MEMBER chrome and stay sample data, exactly
 // as ../RewardsShowcase.tsx keeps them when a gym's real rewards are injected.
 
-import { RomanaRail } from '../shell/RomanaRail';
 import { Sheet } from '../shell/Sheet';
 import { SheetHead } from '../shell/SheetHead';
 import type { ShowcaseVideo } from '../showcaseContent';
@@ -73,9 +72,11 @@ export function VideoShowcase({
     <Sheet
       scroll
       flush
-      rail={<RomanaRail selected="videos" logoSrc={gymLogoSrc} themeTabPreview />}
       head={
         <SheetHead
+          selected="videos"
+          logoSrc={gymLogoSrc}
+          themeTabPreview
           gymName={gymName}
           streakDays={STREAK_DAYS}
           pointsLabel={POINTS_LABEL}

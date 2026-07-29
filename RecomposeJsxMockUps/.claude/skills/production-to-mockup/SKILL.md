@@ -114,6 +114,13 @@ It must list:
    there, and **everything it must contain** — every region, control, image slot
    and piece of copy. This is the checklist a redesign is judged against; an
    element missing from here is an element a redesign can silently drop.
+
+   **Write presence, never form.** "A thumbnail", not "a 16:9 thumbnail". "The
+   four info-bar items", not "a four-column strip". Size, aspect, order,
+   emphasis and grouping belong to the redesign, and an inventory that pins one
+   forbids the thing this package exists to do — silently, because it reads as
+   a requirement rather than as a description of the app you ported. If you
+   catch yourself describing the layout, you are writing PART TWO.
 3. **Every transition between screens**, both directions. What triggers it,
    which screen it lands on, and what happens to the history — pushed, replaced,
    or reset to root.

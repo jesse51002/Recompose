@@ -19,6 +19,12 @@ Everything the mock must contain, in prose, so nothing can be missed by someone
 who cannot run it. If an element is not listed here, a redesign can drop it and
 nobody will notice.
 
+**It lists PRESENCE, never form.** "A thumbnail", not "a 16:9 thumbnail";
+"the four info-bar items", not "a four-column strip". Size, aspect, order,
+emphasis and grouping all belong to the redesign — an inventory that pins them
+forbids the thing this package exists to do, and does it silently, because it
+reads as a requirement rather than as a description of the base.
+
 ## Two assets, and why exactly two
 
 | asset | routes |
@@ -63,7 +69,7 @@ topbar (gym mark, gym name with its chevron, and the four-item info bar —
 rank belt, streak with its icon and count, points total, QR affordance); a
 horizontal date row of five days with the active day marked; a "TODAY" section
 heading; and a list of class rows. Each row carries the class name, its time
-range with duration, the instructor, an attending count, and a 16:9 thumbnail.
+range with duration, the instructor, an attending count, and a thumbnail.
 Bottom nav present, Home active.
 
 **`class`** — the class detail page. Must contain: a topbar with a **back**

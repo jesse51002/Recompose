@@ -12,7 +12,14 @@
  * mid-fade is a headline rendered wrong.
  */
 
+/*
+ * `box-sizing: border-box` plus `flush` on the <Sheet>: this screen supplies
+ * its own inset, so the sheet body must not add a second one, and `width: 100%`
+ * with padding would otherwise compute 40px wider than the phone. Pass 2b of
+ * `mockup-qa` caught exactly this.
+ */
 .screen {
+  box-sizing: border-box;
   width: 100%;
   height: 100%;
   display: flex;

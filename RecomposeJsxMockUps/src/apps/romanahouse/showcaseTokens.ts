@@ -510,8 +510,7 @@ export function showcaseCssVars(
     // The paper mount a plate sits in.
     '--sc-plate-mount': toCss(withAlpha(WHITE, 0.55)),
 
-    // The shell.
-    '--sc-rail-width': px(58),
+    // The shell's one measurement.
     '--sc-sheet-pad': px(20),
 
     // Tabular figures, display face. `font-variant-numeric: tabular-nums` is

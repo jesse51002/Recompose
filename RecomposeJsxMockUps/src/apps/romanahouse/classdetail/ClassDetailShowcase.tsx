@@ -12,7 +12,7 @@
 // then the three sections each opened by a tracked label over a rule, then the
 // reserve action as a walnut band across the foot.
 //
-// NO RAIL, because the base carries no bottom nav here. The head's back
+// NO INDEX, because the base carries no bottom nav here. The head's back
 // control is therefore the ONLY way off this screen, which is exactly why it is
 // wired to `nav.back` and walked in the browser rather than assumed.
 //

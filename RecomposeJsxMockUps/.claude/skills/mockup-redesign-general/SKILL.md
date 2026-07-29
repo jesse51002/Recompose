@@ -63,6 +63,14 @@ Also never reach for **new data**. Rendering a field the original screen did not
 show is adding a feature even when the value happens to be available in the mock
 data — the real screen would need a request that does not exist.
 
+**The test is whether it tells the member something the screen did not.** A
+label naming a value already on screen (`POINTS` over the points total), or an
+ordinal restating an order already visible (`01`–`04` down a list), tells them
+nothing new — that is typography, and it is yours. A filter, a sort, an extra
+tab, a count the screen never showed: those hand over a fact or a capability
+that was not there, and they are features. When a change is genuinely on the
+line, ship it and **say so in your report** rather than deciding silently.
+
 **What you may do is unlimited within that:** move, resize, restack, regroup,
 re-emphasise, restyle, retime, change hierarchy, change density, change the
 motion. The *arrangement* is the free variable. The *element set* is fixed.

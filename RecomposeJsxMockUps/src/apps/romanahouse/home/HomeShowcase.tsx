@@ -2,23 +2,22 @@
 //
 // The base draws a schedule: a centred branded topbar, a row of day pills, a
 // TODAY heading, and a stack of rows each pairing text with a 16:9 thumbnail.
-// This draws the studio's apparatus chart. The rail carries the mark and the
-// destinations; the sheet carries a letterhead, a spec block, a measuring
-// SCALE for the day window, and then each day's classes as numbered entries in
-// a sequence — ordinal, time, name, teacher, attendance, and the class
-// photograph as a small mounted plate at the right margin.
+// This draws the studio's apparatus chart: a letterhead, a spec block and the
+// four-destination index as one ruled head, then a measuring SCALE for the day
+// window, then each day's classes as numbered entries in a sequence — ordinal,
+// time, name, teacher, attendance, and the class photograph as a small mounted
+// plate at the right margin.
 //
-// EVERY ELEMENT THE INVENTORY NAMES IS HERE: the mark (on the rail), the gym
-// name with its chevron and the four-item info bar (../shell/SheetHead.tsx),
+// EVERY ELEMENT THE INVENTORY NAMES IS HERE: the mark, the gym name with its
+// chevron and the four-item info bar (../shell/SheetHead.tsx),
 // five days with the active one marked (the scale), the day heading (a tracked
 // label under a rule), and every class entry's name, time range with duration,
 // instructor, attending count and thumbnail. Nothing dropped, nothing added.
 //
 // `gymName` / `gymLogoSrc` are the HOST's gym identity and are NOT customization
 // slots — a theme pick must never rename the mock. `themeTabPreview` selects the
-// mark's middle logo rung (../shell/RomanaRail.tsx).
+// mark's middle logo rung (../shell/SheetHead.tsx).
 
-import { RomanaRail } from '../shell/RomanaRail';
 import { Sheet } from '../shell/Sheet';
 import { SheetHead } from '../shell/SheetHead';
 import type { ShowcaseClassInfo } from '../showcaseContent';
@@ -54,12 +53,12 @@ export function HomeShowcase({
     <Sheet
       scroll
       flush
-      rail={
-        <RomanaRail selected="home" logoSrc={gymLogoSrc} themeTabPreview={themeTabPreview} />
-      }
       head={
         <SheetHead
+          selected="home"
           gymName={gymName}
+          logoSrc={gymLogoSrc}
+          themeTabPreview={themeTabPreview}
           streakDays={STREAK_DAYS}
           pointsLabel={POINTS_LABEL}
           rankBadgeAsset={RANK_BADGE_ASSET}

@@ -30,7 +30,6 @@
 // copy.
 
 import type { ShowcaseVideo } from '../showcaseContent';
-import { RomanaRail } from '../shell/RomanaRail';
 import { Sheet } from '../shell/Sheet';
 import { SheetHead } from '../shell/SheetHead';
 import { levelUpVideos } from '../videos/videoSelectors';
@@ -81,9 +80,11 @@ export function ProfileShowcase({
     <Sheet
       scroll
       flush
-      rail={<RomanaRail selected="rank" logoSrc={gymLogoSrc} themeTabPreview />}
       head={
         <SheetHead
+          selected="rank"
+          logoSrc={gymLogoSrc}
+          themeTabPreview
           gymName={gymName}
           streakDays={data.streakWeeks}
           pointsLabel={data.pointsLabel}

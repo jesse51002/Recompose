@@ -82,7 +82,16 @@ export function StatsShowcase({ loop = true, onCycleComplete }: StatsShowcasePro
   const [showStats, setShowStats] = useState(false);
 
   useEffect(() => {
-    if (reduceMotion) return;
+    // GUARDRAIL 5 — fire the callback BEFORE the guard. With reduced motion on,
+    // returning early meant `onCycleComplete` never fired, so the card never
+    // settled and its action stayed hidden forever; only a tap on the card
+    // recovered it. The base has the same shape and the same bug (verified in
+    // the browser under `prefers-reduced-motion: reduce`), and the fix belongs
+    // there too.
+    if (reduceMotion) {
+      onCycleComplete?.();
+      return;
+    }
     // `_ctrl.forward().whenComplete(widget.onComplete)` → `_toStats`.
     const toStats = window.setTimeout(() => {
       setShowStats(true);

@@ -1,9 +1,9 @@
 // THE SHEET — the frame every screen in this design is built on.
 //
-// One ivory field, edge to edge, held beside the walnut rail. It replaces
-// ../support/ShowcaseScaffold.tsx (which stacks a topbar, a body and a bottom
-// bar in a column) with a ROW: rail, then sheet; and inside the sheet a head, a
-// scrolling body and an optional foot band.
+// One ivory field, edge to edge. It replaces ../support/ShowcaseScaffold.tsx
+// (topbar, body, bottom bar) with a head that carries the letterhead, the spec
+// block and the four-destination index, a scrolling body, and an optional foot
+// band.
 //
 // It keeps the two properties the scaffold it replaces was careful about:
 //
@@ -15,8 +15,9 @@
 //   * THE STATUS INSET is honoured by whichever element is flush to the top.
 //
 // The foot is where this design puts a screen's primary action: a full-width
-// walnut band across the sheet. Because the navigation went vertical, the foot
-// of every screen is free, and that is what pays for the rail.
+// walnut band across the sheet. Because the navigation moved into the head, the
+// foot of every screen is free — which is what the index buys, and it costs one
+// row of height rather than a fifth of the width (Guardrail 11).
 
 import type { ReactNode } from 'react';
 
@@ -26,8 +27,6 @@ import styles from './Sheet.module.css';
 
 export interface SheetProps {
   children: ReactNode;
-  /** The rail, on the four screens that carry one. Omitted elsewhere. */
-  rail?: ReactNode;
   /** Fixed, above the body. */
   head?: ReactNode;
   /** The walnut action band, pinned to the foot. */
@@ -38,10 +37,9 @@ export interface SheetProps {
   flush?: boolean | undefined;
 }
 
-export function Sheet({ children, rail, head, foot, scroll = false, flush = false }: SheetProps) {
+export function Sheet({ children, head, foot, scroll = false, flush = false }: SheetProps) {
   return (
     <div className={styles.frame}>
-      {rail}
       <div className={styles.sheet}>
         {head}
         <div className={cx(styles.body, scroll && styles.bodyScroll, !flush && styles.inset)}>

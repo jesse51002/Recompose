@@ -10,6 +10,14 @@
   align-items: flex-start;
   gap: 0;
   /*
+   * `stretch`, not the base's `flex-start`. The cells carry the hairlines that
+   * make this a ruled block, and a short cell rules at a different height from
+   * a tall one — "Classes this week" wraps to two lines and the other two do
+   * not, so the three bottom rules landed at three heights and the dividers
+   * stopped short. The base has no borders, so it never had to care.
+   */
+  align-items: stretch;
+  /*
    * A ruled data block, not three cards: the cells are divided by hairlines and
    * opened by one walnut rule, so three figures read as one measured record.
    */

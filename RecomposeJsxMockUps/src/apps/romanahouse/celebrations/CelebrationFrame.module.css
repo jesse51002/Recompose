@@ -51,8 +51,16 @@
  * `CelebrationStage` — `Align(alignment, child: body)`. A column so a body that
  * sizes itself settles at the anchor, while a body that asks for `height: 100%`
  * fills the box instead.
+ *
+ * `box-sizing: border-box` is load-bearing on the VERTICAL axis here, and its
+ * absence is a real bug this fork shipped: `height: 100%` plus `padding-block`
+ * with no border-box makes the stage taller than the surface it sits in, and a
+ * body at `height: 100%` then pushes its last child under the action band. The
+ * points card's running-total caption vanished completely that way. The base
+ * has the same defect — Pass 2b of `mockup-qa` names this file for it.
  */
 .stage {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: var(--cf-stage-anchor, center);
