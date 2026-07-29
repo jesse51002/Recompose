@@ -66,6 +66,18 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
   it with `recompose-react` resolvers, and do not let its widgets drift toward
   looking like product UI — the whole point is that the previewed screen is the
   only themed thing on the page.
+- **The Inspect sheet is the one exception, and it is total.** It is where the
+  artifact is JUDGED, and judging a palette on the tool's ground is how a warm
+  sand reads as grey and a dark theme reads as broken. So `inspect/InspectView`
+  wears the design's own `background` and `text` roles, and **rebinds
+  `--adm-ink` / `--adm-text-2nd` / `--adm-text-3rd` / `--adm-line` /
+  `--adm-line-soft` on its root** so every plate below follows. Setting `color`
+  alone is not enough — the plates state their own `color: var(--adm-ink)`,
+  which beats an inherited value. That rebinding works because **CSS Modules
+  scopes class names but not custom property names**, which is the same fact
+  that makes `animation-name` need `var(--kf-*)` indirection in `styles/base.css`.
+  The secondary inks are alpha ratios off the one `text` role, because
+  `app.yaml` declares no muted role to read.
 - **In `generate/`, colour is functional and nothing else.** A hue in the shell
   means a state — a phase, a failure, a person is needed. Decorative colour
   belongs to the generated theme, and the canvas is where it lives. So a hue

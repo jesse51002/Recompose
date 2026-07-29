@@ -8,11 +8,13 @@
 //   the wall. It refuses the design-tokens grid this category always ships: a
 //   swatch board with hex captions evidences a colour LIST, and has nowhere to
 //   put the sentence the pipeline wrote about why each colour exists.
-// OWN-WORLD: the CRM's daylit control desk unchanged (cool #F3F5F8 ground,
-//   cool near-black ink, Geist, hairline rules, no boxed sections), with two
-//   rules of its own — zero white cards and zero shadows, every specimen a
-//   flat plate painted in the THEME's background under a chrome hairline; and
-//   sapphire reserved for the two "you are here" marks, nothing else.
+// OWN-WORLD: the control desk's STRUCTURE (Geist, hairline rules, no boxed
+//   sections, zero white cards, zero shadows, every specimen a flat plate) over
+//   the THEME's own ground and ink rather than the tool's. The desk's fixed
+//   #F3F5F8 ground and near-black ink were the original world and are gone from
+//   this sheet on purpose: judging a palette on someone else's ground is how a
+//   warm sand reads as grey and a dark theme reads as broken. Sapphire is still
+//   reserved for the two "you are here" marks, nothing else.
 // STORY: a white-label platform buyer scrolls once and sees 28 computed
 //   derivations as one instrument, four colours each with a written purpose,
 //   35 tokens, two faces set live, five authored strings and fourteen
@@ -36,7 +38,7 @@
 // No Dart counterpart — the Flutter side has no inspector. It reads only what
 // ../showcase/ already reads, through the same hooks.
 
-import { useEffect } from 'react';
+import { useEffect, type CSSProperties } from 'react';
 import {
   fontStack,
   loadFontFamily,
@@ -46,6 +48,7 @@ import {
   useThemeColor,
   useThemeConfig,
   useThemeFontFamily,
+  withAlpha,
 } from 'recompose-react';
 
 import {
@@ -116,6 +119,20 @@ const FORMAT_SURFACE: Readonly<Record<string, string>> = Object.freeze({
 const SLOT_BACKGROUND = 'background';
 const SLOT_TEXT = 'text';
 
+/**
+ * How far the sheet's quieter inks sit back from its primary one.
+ *
+ * `app.yaml` declares ONE text role, not a ramp — so secondary copy, captions
+ * and hairlines are derived from it by alpha rather than read from a role that
+ * does not exist. Alpha rather than a mixed colour on purpose: it composites
+ * over whatever ground the theme brought, so one set of ratios works on sand
+ * and on near-black without either being special-cased.
+ */
+const INK_SECONDARY_ALPHA = 0.68;
+const INK_TERTIARY_ALPHA = 0.45;
+const RULE_ALPHA = 0.14;
+const RULE_SOFT_ALPHA = 0.08;
+
 export function InspectView() {
   const config = useThemeConfig();
   const activeDesign = useActiveDesign();
@@ -126,7 +143,12 @@ export function InspectView() {
   const bodyFont = useThemeFontFamily(SLOT_FONT_BODY, '');
   // The design's own ground and ink — see the note on the returned element.
   const ground = toCss(useThemeColor(SLOT_BACKGROUND, { fallback: rgba(11, 14, 18) }));
-  const ink = toCss(useThemeColor(SLOT_TEXT, { fallback: rgba(232, 236, 242) }));
+  const inkColor = useThemeColor(SLOT_TEXT, { fallback: rgba(232, 236, 242) });
+  const ink = toCss(inkColor);
+  // Quieter inks, derived from the theme's own. Scaled by the role's alpha
+  // rather than replacing it, so a translucent text role stays translucent.
+  const fadedInk = (ratio: number): string =>
+    toCss(withAlpha(inkColor, inkColor.a * ratio));
 
   useEffect(() => {
     loadFontFamily(MONO_FAMILY);
@@ -152,9 +174,35 @@ export function InspectView() {
     //
     // Fallbacks are the shell's own dark, so an unresolved theme degrades to
     // the surrounding chrome rather than to a white flash.
+    //
+    // SETTING `color` ALONE WAS NOT ENOUGH, and the reason is worth keeping:
+    // almost every plate below states its own `color: var(--adm-ink)` or
+    // `var(--adm-text-2nd)`, which beats an inherited value — so the sheet's
+    // ground came from the design while its copy stayed the tool's near-black
+    // ink, tuned for a daylit desk. On a dark theme that is body text you
+    // cannot read on a background you can.
+    //
+    // Rebinding the tokens here fixes all of it in one place, because CSS
+    // Modules rewrites class names but NOT custom property names — so
+    // `--adm-ink` set on this element is the same `--adm-ink` those modules
+    // read. The alternative was editing the twelve stylesheets that name them,
+    // and then every future one.
     <div
       className={styles.view}
-      style={{ background: ground, color: ink }}
+      style={
+        {
+          background: ground,
+          color: ink,
+          '--adm-ink': ink,
+          '--adm-text-2nd': fadedInk(INK_SECONDARY_ALPHA),
+          '--adm-text-3rd': fadedInk(INK_TERTIARY_ALPHA),
+          // The hairlines are ink too. Left on their dark-on-light defaults
+          // they simply vanish on a dark theme, and a sheet whose rules have
+          // disappeared reads as broken rather than as clean.
+          '--adm-line': fadedInk(RULE_ALPHA),
+          '--adm-line-soft': fadedInk(RULE_SOFT_ALPHA),
+        } as CSSProperties
+      }
     >
       <div className={styles.railSlot}>
         <IndexRail entries={rail} reducedMotion={reducedMotion} />
