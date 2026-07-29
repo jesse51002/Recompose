@@ -14,6 +14,7 @@ from ThemeTree.studio.agent_router import agent_router
 from ThemeTree.studio.brief_router import brief_router
 from ThemeTree.studio.config import settings
 from ThemeTree.studio.run_router import run_router
+from ThemeTree.studio.session_router import session_router
 
 
 def create_app() -> FastAPI:
@@ -31,6 +32,10 @@ def create_app() -> FastAPI:
 
     application.include_router(run_router)
     application.include_router(brief_router)
+    # A session is one design end to end; a run is one pipeline launch inside
+    # it. Both are independently watchable, which is why this is a router
+    # beside `runs` rather than a wrapper around it.
+    application.include_router(session_router)
     # The agent is optional: with no ANTHROPIC_API_KEY its service is never
     # built and only its own endpoint 503s, so mounting it is always safe.
     application.include_router(agent_router)

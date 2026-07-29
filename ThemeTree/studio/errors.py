@@ -40,6 +40,30 @@ class RunInFlightError(StudioError):
         self.run_name = run_name
 
 
+class UnknownSessionError(StudioError):
+    """No such session, in memory or on disk (maps to HTTP 404)."""
+
+
+class SessionInFlightError(StudioError):
+    """A session is already open and sessions are serialized (HTTP 409).
+
+    Serialized for the same reason runs are — one laptop, rate-limited
+    providers — and additionally because a session OWNS the single run slot
+    for its whole length: a second one could only sit and be refused.
+
+    Carries the active session's identity so the UI can say *which* one.
+    """
+
+    def __init__(self, session_id: str, app_id: str, design_name: str) -> None:
+        super().__init__(
+            f"session {session_id} is already open ({app_id}/{design_name}); "
+            "the studio runs one design at a time"
+        )
+        self.session_id = session_id
+        self.app_id = app_id
+        self.design_name = design_name
+
+
 class RunNameTakenError(StudioError):
     """The target run directory already exists (maps to HTTP 409).
 

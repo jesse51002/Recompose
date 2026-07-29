@@ -368,9 +368,35 @@ Rules that hold inside `ThemeTree/studio/`:
   HTTP status mapping; the executor owns `ProgressEvent`. Anything
   transport-flavoured belongs here, never in `ThemeTree/executor/`.
 - **State lives in `.studio/`, never in a run directory.** One append-only
-  `.studio/runs/<run_id>.jsonl` per launch, and committed briefs under
-  `.studio/briefs/`. Writing anything into `apps/<app_id>/<run_id>/` would
-  break the iron-clad rule above. `.studio/` is gitignored.
+  `.studio/runs/<run_id>.jsonl` per launch, one `.studio/sessions/<id>.jsonl`
+  per design, and committed briefs under `.studio/briefs/`. Writing anything
+  into `apps/<app_id>/<run_id>/` would break the iron-clad rule above.
+  `.studio/` is gitignored.
+
+### Sessions and runs are different units
+
+A **run** is one pipeline launch. A **session** is one design being made end to
+end — the interview, the asset run, the layout brief, the layout agent. A
+session starts runs; both are independently watchable, which is why
+`session_router.py` sits *beside* `run_router.py` rather than wrapping it.
+
+- **Per-node progress never crosses over.** A session's `task` record names its
+  `run_id` and the browser attaches `/runs/{id}/events` to it. Re-emitting
+  twenty-three nodes into a second stream would create two places that can
+  disagree about what one run is doing.
+- **A session is settled by a person, a run by the executor.** The work
+  stopping is not what makes a design done — approving it is. That difference
+  is why `SessionRegistry` is a sibling of `RunRegistry` rather than a
+  generalisation of it. They are near-copies on purpose; extract only if they
+  start converging, not because they look alike.
+- **The studio is no longer stateless.** `POST /brief-agent` still is — the
+  client holds that transcript and posts it back each turn — but a session is
+  held by the server, because two background tasks emit events for an hour with
+  nobody asking, and a page reloaded mid-run must come back to the same
+  conversation. Read `agent_turn.py`'s stateless claim as scoped to that one
+  endpoint.
+- **One session at a time**, for the reason runs are serialized *and* because a
+  session owns the single run slot for its whole length.
 - **The launch path only ever CREATES a run directory.** A name collision is
   refused, never re-run in place — that keeps
   `Pipeline._overwrite_existing`'s delete path unreachable from a browser.

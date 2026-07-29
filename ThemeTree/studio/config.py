@@ -16,6 +16,10 @@ _DEFAULT_APPS_ROOT = _ROOT / "apps"
 STUDIO_DIRNAME = ".studio"
 RUNS_DIRNAME = "runs"
 BRIEFS_DIRNAME = "briefs"
+# A session is one design being made end to end; a run is one pipeline launch
+# inside it. Separate directories because they have separate lifetimes — a
+# session outlives every run it starts.
+SESSIONS_DIRNAME = "sessions"
 # One JSON object per line, append-only. See ThemeTree/studio/schema/run_record.py.
 RUN_LOG_SUFFIX = ".jsonl"
 BRIEF_SUFFIX = ".yaml"
@@ -65,6 +69,11 @@ class Settings(BaseSettings):
     def briefs_dir(self) -> Path:
         """Where a committed brand brief is saved as `<slug>.yaml`."""
         return self.studio_root / BRIEFS_DIRNAME
+
+    @property
+    def sessions_dir(self) -> Path:
+        """Where one append-only `<session_id>.jsonl` per design is written."""
+        return self.studio_root / SESSIONS_DIRNAME
 
 
 settings = Settings()

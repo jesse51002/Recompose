@@ -2,11 +2,18 @@
 
 One tight unit: what a turn asks for and what it gets back.
 
-**The server holds no session state.** The client keeps the transcript and
+**This endpoint holds no session state.** The client keeps the transcript and
 sends it back as ``history`` every turn; the response hands back the new
 transcript for the next one. That is why there is no conversation id, no
 store, and nothing to expire — the studio can restart mid-interview and the
 browser can carry on.
+
+That is true of ``POST /brief-agent`` and **not** of the studio as a whole:
+``ThemeTree/studio/session_router.py`` holds a design's transcript server-side,
+because a session has background tasks emitting events for an hour with nobody
+asking, and a client-held history cannot receive those. The two coexist —
+this one is the stateless single-purpose interview, that one is the whole
+design.
 
 ``history`` is Pydantic AI's own serialized message list, deliberately typed
 as opaque. Its shape is that library's contract, not ours: it round-trips
