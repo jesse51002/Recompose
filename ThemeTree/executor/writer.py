@@ -186,9 +186,18 @@ class Writer:
         and copy exist nowhere except this file, so without it a watcher shows
         generated imagery over an unthemed shell for the whole run.
 
-        **Only ``output.yaml``, and never anything append-only.** No
-        provenance (it is static and the final write lays it down), no asset
-        upload (a partial is not a publish), and above all no ledger entry —
+        **Provenance is written too, and that is not an oversight.** The
+        first version of this wrote only ``output.yaml``, reasoning that
+        ``app.yaml`` / ``customization.yaml`` are static and the final write
+        lays them down. The final write may never happen. A run killed
+        mid-flight then left a directory carrying an ``output.yaml`` — so the
+        read API lists it as a design — with no frozen manifest, which is
+        exactly what ``expand`` / ``regen`` reopen against: the run was
+        listed, looked finished, and could not be repaired. Writing them here
+        is idempotent and costs two small dumps per level.
+
+        **Never anything append-only**: no asset upload (a partial is not a
+        publish), and above all no ledger entry —
         ``expansion_cost.yaml`` appends, so writing one per level would record
         a dozen phantom passes for a single run.
 
@@ -207,6 +216,14 @@ class Writer:
         )
         self._stamp_versions(output, run_ctx)
         self._dump_model_atomic(output, run_ctx.output_path())
+        # The inputs this run was launched from, so a run that dies mid-flight
+        # is still a REOPENABLE directory rather than an un-repairable one.
+        self._dump_model_atomic(
+            run_ctx.app, run_ctx.run_dir / APP_PROVENANCE_NAME
+        )
+        self._dump_model_atomic(
+            run_ctx.cust, run_ctx.run_dir / CUSTOMIZATION_PROVENANCE_NAME
+        )
 
         logger.debug(
             "wrote partial output for %s (%d image slot(s) so far)",

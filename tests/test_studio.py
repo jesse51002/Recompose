@@ -185,6 +185,9 @@ class _StubWriter:
         run_ctx.output_path().write_text(
             "app: demo\npartial: true\n", encoding="utf-8"
         )
+        # The real writer lays provenance down here too, so a run that dies
+        # mid-flight is still reopenable. The stub mirrors that.
+        (run_ctx.run_dir / "app.yaml").write_text("id: demo\n", encoding="utf-8")
 
 
 class _FailingPipeline:
