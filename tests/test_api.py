@@ -530,14 +530,18 @@ def test_list_styles_lists_categorised_runs_when_app_declares_no_vocabulary(
     assert [s.id for s in page.items] == ["AnyCategory"]
 
 
-def test_cdn_base_url_defaults_to_prod_cdn() -> None:
-    """The setting defaults to the prod CDN, so the de-baked container emits
-    absolute CDN URLs even when the App Runner env var is never set — a
-    relative path would 404 since the image bytes aren't baked in anymore."""
-    assert (
-        Settings.model_fields["assets_cdn_base_url"].default
-        == "https://cdn.combatden.net"
-    )
+def test_cdn_base_url_defaults_to_serving_local_files() -> None:
+    """The setting defaults to EMPTY — the API serves image bytes off disk.
+
+    It used to default to the prod CDN, for a deployment that no longer exists
+    (`75694f3` dropped the deploy plumbing). The default outlived it and every
+    local run emitted absolute CDN URLs for bytes nothing uploads any more, so
+    a freshly generated or prefilled image 404'd and every client silently fell
+    back to its bundled asset. Serving local files is the correct default for a
+    repo with no deploy path; the CDN case is still supported by SETTING the
+    var, which `test_get_output_emits_absolute_cdn_urls_when_configured` covers.
+    """
+    assert Settings.model_fields["assets_cdn_base_url"].default == ""
 
 
 def test_get_output_emits_absolute_cdn_urls_when_configured(
