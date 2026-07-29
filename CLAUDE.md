@@ -42,6 +42,13 @@ import `src/apps/`. An app reaches the kit by calling `defineMockAsset` /
 `defineMockApp`, never the reverse — which is what makes a new app a folder
 rather than a change to the machinery. Its own eslint Gate 1 enforces it.
 
+**A redesign of an app is a SIBLING FOLDER under `src/apps/`, never an edit to
+the base.** The base layout is what the pipeline generates against; a redesign
+forks it, keeps its own folder and its own `layout_brief.yaml`, and is registered in
+`src/apps/index.ts`. That mirrors the engine's own two fork layers. An app
+folder also may not import a sibling app folder — nothing enforces that yet,
+but deleting one design must never break another.
+
 The rule predates the package split; it was enforced inside the old single
 package and the split made it structural. If you find yourself wanting to share
 something between the studio and the mockups, duplicate it or push it down into

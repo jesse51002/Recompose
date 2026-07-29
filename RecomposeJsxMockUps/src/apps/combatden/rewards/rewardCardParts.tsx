@@ -23,6 +23,8 @@ import { useState } from 'react';
 
 import { cx } from '../cx';
 import { formatThousands } from '../formatPoints';
+import { ThemedImage } from 'recompose-react';
+
 import { showcaseAssetOrNetwork } from '../showcaseAssets';
 
 import type { ShowcasePointsStoreItem } from './mockPointsStore';
@@ -71,6 +73,7 @@ export function RewardImageHero({
   showPriceTag = true,
   rounded = false,
 }: RewardImageHeroProps) {
+  // Theme slot -> injected gym photo -> bundled, same ladder as a class row.
   const src = showcaseAssetOrNetwork(item.imageUrl, item.imageAsset ?? 'reward_bring_friend.png');
   return (
     <div
@@ -83,7 +86,18 @@ export function RewardImageHero({
         slot to the empty box forever. Resetting in an effect is a lint error in
         this package (see ../../../CLAUDE.md).
       */}
-      <RewardPhoto key={src} src={src} alt={item.title} />
+      {item.themeSlot === undefined ? (
+        <RewardPhoto key={src} src={src} alt={item.title} />
+      ) : (
+        // <ThemedImage> already holds the fallback on screen until the
+        // override's URL has probed, so it needs no `key` remount of its own.
+        <ThemedImage
+          className={styles.photo}
+          slot={item.themeSlot}
+          fallbackSrc={src}
+          alt={item.title}
+        />
+      )}
       {showPriceTag && <RewardPriceTag label={item.priceLabel} />}
     </div>
   );

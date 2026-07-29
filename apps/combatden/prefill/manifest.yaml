@@ -1,6 +1,6 @@
 # Provenance for the checked-in prefill seed images.
 #
-# Written by scripts/prefill_images/fetch_seeds.py. Each entry records
+# Written by scripts/prefill/fetch_seeds.py. Each entry records
 # the URL a seed PNG was downloaded from, so the set can be audited and
 # re-fetched. The BYTES beside this file are what prefill actually uses
 # — nothing reads these URLs at prefill time.
@@ -14,6 +14,10 @@ Barre:
   reward_gear: https://upload.wikimedia.org/wikipedia/commons/8/81/Halksockar.JPG
   reward_guest_pass: https://upload.wikimedia.org/wikipedia/commons/3/38/Two_people_in_a_gym_using_BOSU_balls.jpg
   reward_session: https://upload.wikimedia.org/wikipedia/commons/0/01/Personal_trainer_monitoring_a_client%27s_movement_during_a_fitball_exercise.JPG
+  video_thumb_1: https://i.ytimg.com/vi/SQlH_pHSa24/maxresdefault.jpg
+  video_thumb_2: https://i.ytimg.com/vi/X40Emh1fko0/maxresdefault.jpg
+  video_thumb_3: https://i.ytimg.com/vi/gaQ3v5I3_i4/maxresdefault.jpg
+  video_thumb_4: https://i.ytimg.com/vi/8JWZehPF9_k/maxresdefault.jpg
 Cardio:
   class_photo_1: https://images.pexels.com/photos/264084/pexels-photo-264084.jpeg?auto=compress&cs=tinysrgb&w=1200
   class_photo_2: https://images.pexels.com/photos/4162595/pexels-photo-4162595.jpeg?auto=compress&cs=tinysrgb&w=1200
@@ -23,6 +27,10 @@ Cardio:
   reward_gear: https://upload.wikimedia.org/wikipedia/commons/4/4d/Paar_wielerschoenen%2C_S-Phyre%2C_Annemiek_Van_Vleuten%2C_2020_-_overzicht-1_%28WU3762_-_collectie_KOERS._Museum_van_de_Wielersport%29.jpg
   reward_guest_pass: https://upload.wikimedia.org/wikipedia/commons/3/38/Two_people_in_a_gym_using_BOSU_balls.jpg
   reward_session: https://upload.wikimedia.org/wikipedia/commons/0/01/Personal_trainer_monitoring_a_client%27s_movement_during_a_fitball_exercise.JPG
+  video_thumb_1: https://i.ytimg.com/vi/4Hl1WAGKjMc/maxresdefault.jpg
+  video_thumb_2: https://i.ytimg.com/vi/ImI63BUUPwU/maxresdefault.jpg
+  video_thumb_3: https://i.ytimg.com/vi/0MLnC3bzXgQ/maxresdefault.jpg
+  video_thumb_4: https://i.ytimg.com/vi/QB69Pwl6GI8/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBZVq-5rHyclfC_ab4tSjBG4rBSDw
 Dance:
   class_photo_1: https://images.pexels.com/photos/12312/pexels-photo-12312.jpeg?auto=compress&cs=tinysrgb&w=1200
   class_photo_2: https://images.pexels.com/photos/3775566/pexels-photo-3775566.jpeg?auto=compress&cs=tinysrgb&w=1200
@@ -32,6 +40,10 @@ Dance:
   reward_gear: https://upload.wikimedia.org/wikipedia/commons/4/45/Metal_Water_Bottles.jpeg
   reward_guest_pass: https://upload.wikimedia.org/wikipedia/commons/3/38/Two_people_in_a_gym_using_BOSU_balls.jpg
   reward_session: https://upload.wikimedia.org/wikipedia/commons/0/01/Personal_trainer_monitoring_a_client%27s_movement_during_a_fitball_exercise.JPG
+  video_thumb_1: https://i.ytimg.com/vi/hI4b_9h9LtY/maxresdefault.jpg
+  video_thumb_2: https://i.ytimg.com/vi/1ilft2HKQrI/maxresdefault.jpg
+  video_thumb_3: https://i.ytimg.com/vi/1hC3_-c5XYk/maxresdefault.jpg
+  video_thumb_4: https://i.ytimg.com/vi/JWTyO8npkOQ/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBalg1Mr9SJZsD3uVGfOhek4oNKxw
 Fighting:
   class_photo_1: https://images.pexels.com/photos/7991668/pexels-photo-7991668.jpeg?auto=compress&cs=tinysrgb&w=1200
   class_photo_2: https://images.pexels.com/photos/6296002/pexels-photo-6296002.jpeg?auto=compress&cs=tinysrgb&w=1200
@@ -41,6 +53,10 @@ Fighting:
   reward_gear: https://upload.wikimedia.org/wikipedia/commons/c/c8/Boxing_gloves_Bail_10-OZ_%281%29.jpg
   reward_guest_pass: https://upload.wikimedia.org/wikipedia/commons/3/38/Two_people_in_a_gym_using_BOSU_balls.jpg
   reward_session: https://upload.wikimedia.org/wikipedia/commons/0/01/Personal_trainer_monitoring_a_client%27s_movement_during_a_fitball_exercise.JPG
+  video_thumb_1: https://i.ytimg.com/vi/EERMNeTfHaY/maxresdefault.jpg
+  video_thumb_2: https://i.ytimg.com/vi/tSNybMUpMKk/maxresdefault.jpg
+  video_thumb_3: https://i.ytimg.com/vi/JhkqSCahsNY/maxresdefault.jpg
+  video_thumb_4: https://i.ytimg.com/vi/oZOXsO_LN7M/maxresdefault.jpg
 HIIT:
   class_photo_1: https://images.pexels.com/photos/4662333/pexels-photo-4662333.jpeg?auto=compress&cs=tinysrgb&w=1200
   class_photo_2: https://images.pexels.com/photos/9958667/pexels-photo-9958667.jpeg?auto=compress&cs=tinysrgb&w=1200
@@ -50,6 +66,10 @@ HIIT:
   reward_gear: https://upload.wikimedia.org/wikipedia/commons/f/fd/BeadedRope.jpg
   reward_guest_pass: https://upload.wikimedia.org/wikipedia/commons/3/38/Two_people_in_a_gym_using_BOSU_balls.jpg
   reward_session: https://upload.wikimedia.org/wikipedia/commons/0/01/Personal_trainer_monitoring_a_client%27s_movement_during_a_fitball_exercise.JPG
+  video_thumb_1: https://i.ytimg.com/vi/ptpmRrzRtWQ/maxresdefault.jpg
+  video_thumb_2: https://i.ytimg.com/vi/eFmjckKXEoA/maxresdefault.jpg?sqp=-oaymwEmCIAKENAF8quKqQMa8AEB-AH-CYAC0AWKAgwIABABGGUgWShVMA8=&rs=AOn4CLDFxM6OS3q2NRbxjWBMaDJUTZadFA
+  video_thumb_3: https://i.ytimg.com/vi/4Y2ZdHCOXok/maxresdefault.jpg
+  video_thumb_4: https://i.ytimg.com/vi/ImI63BUUPwU/maxresdefault.jpg
 Pilates:
   class_photo_1: https://images.pexels.com/photos/25599825/pexels-photo-25599825.jpeg?auto=compress&cs=tinysrgb&w=1200
   class_photo_2: https://images.pexels.com/photos/18136885/pexels-photo-18136885.jpeg?auto=compress&cs=tinysrgb&w=1200
@@ -59,6 +79,10 @@ Pilates:
   reward_gear: https://upload.wikimedia.org/wikipedia/commons/8/81/Halksockar.JPG
   reward_guest_pass: https://upload.wikimedia.org/wikipedia/commons/3/38/Two_people_in_a_gym_using_BOSU_balls.jpg
   reward_session: https://upload.wikimedia.org/wikipedia/commons/0/01/Personal_trainer_monitoring_a_client%27s_movement_during_a_fitball_exercise.JPG
+  video_thumb_1: https://i.ytimg.com/vi/nfMALE8WdoE/maxresdefault.jpg
+  video_thumb_2: https://i.ytimg.com/vi/czoUHKFCOyQ/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLAHNZY5DrxoJjvoiG1ikgJ6xWRpYA
+  video_thumb_3: https://i.ytimg.com/vi/M43CvYO3EOw/maxresdefault.jpg
+  video_thumb_4: https://i.ytimg.com/vi/n5WJYBtTPXg/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCgi9onnRrMnznigoQHeQmzbu1uiQ
 Wellness:
   class_photo_1: https://images.pexels.com/photos/7596956/pexels-photo-7596956.jpeg?auto=compress&cs=tinysrgb&w=1200
   class_photo_2: https://images.pexels.com/photos/8436490/pexels-photo-8436490.jpeg?auto=compress&cs=tinysrgb&w=1200
@@ -68,6 +92,10 @@ Wellness:
   reward_gear: https://upload.wikimedia.org/wikipedia/commons/6/68/Fitness_mats_%2851543374690%29.jpg
   reward_guest_pass: https://upload.wikimedia.org/wikipedia/commons/3/38/Two_people_in_a_gym_using_BOSU_balls.jpg
   reward_session: https://upload.wikimedia.org/wikipedia/commons/0/01/Personal_trainer_monitoring_a_client%27s_movement_during_a_fitball_exercise.JPG
+  video_thumb_1: https://i.ytimg.com/vi/JoDKbXEUrvQ/maxresdefault.jpg
+  video_thumb_2: https://i.ytimg.com/vi/U9YKY7fdwyg/maxresdefault.jpg
+  video_thumb_3: https://i.ytimg.com/vi/jHZPtn15agE/maxresdefault.jpg
+  video_thumb_4: https://i.ytimg.com/vi/o_73FeXw3ZI/maxresdefault.jpg
 Yoga:
   class_photo_1: https://images.pexels.com/photos/8436589/pexels-photo-8436589.jpeg?auto=compress&cs=tinysrgb&w=1200
   class_photo_2: https://images.pexels.com/photos/8436587/pexels-photo-8436587.jpeg?auto=compress&cs=tinysrgb&w=1200
@@ -77,3 +105,7 @@ Yoga:
   reward_gear: https://upload.wikimedia.org/wikipedia/commons/6/68/Fitness_mats_%2851543374690%29.jpg
   reward_guest_pass: https://upload.wikimedia.org/wikipedia/commons/3/38/Two_people_in_a_gym_using_BOSU_balls.jpg
   reward_session: https://upload.wikimedia.org/wikipedia/commons/0/01/Personal_trainer_monitoring_a_client%27s_movement_during_a_fitball_exercise.JPG
+  video_thumb_1: https://i.ytimg.com/vi/v7AYKMP6rOE/maxresdefault.jpg
+  video_thumb_2: https://i.ytimg.com/vi/JoDKbXEUrvQ/maxresdefault.jpg
+  video_thumb_3: https://i.ytimg.com/vi/S9p5yhE6_fk/hqdefault.jpg
+  video_thumb_4: https://i.ytimg.com/vi/P8uHMMmWMHQ/maxresdefault.jpg

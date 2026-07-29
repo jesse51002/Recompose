@@ -1,0 +1,63 @@
+/*
+ * Styles for ./VideoCardInfo.tsx (ports MobileApp/lib/features/videos/
+ * presentation/widgets/cards/video_card_info.dart).
+ * `--sc-*` only — see ../ShowcaseThemeVars.tsx.
+ */
+
+/*
+ * `_Framed`'s `Padding(fromLTRB(spacingMedium, 0, spacingMedium, spacingLarge))`
+ * around `Row(crossAxisAlignment: center)`.
+ *
+ * The inset lives HERE rather than on the card because three of the four card
+ * sizes are `_Framed` and hold the line at exactly this inset; the fourth
+ * (`_Captioned`) pads its whole band instead and asks for `.flush`.
+ */
+/*
+ * ZEN BJJ drops the horizontal half of this inset.
+ *
+ * The base holds the meta line in from the card's own SURFACE edge. This fork's
+ * carousel card has no surface (../VideoCarouselCard.module.css), so the same
+ * inset now reads as the caption hanging in from the picture above it rather
+ * than as a card's padding — and the title's left edge stops lining up with
+ * anything. Flush left under the thumbnail is what a surface-less card wants.
+ */
+.info {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-medium);
+  padding: 0;
+}
+
+/* The caption band supplies its own padding — see the component. */
+.flush {
+  padding: 0;
+}
+
+/* `Expanded > Padding(horizontal: spacingMedium) > Column(start, spacing: spacingMedium)`. */
+.text {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sc-spacing-medium);
+  padding-right: var(--sc-spacing-medium);
+}
+
+/* `Text(title, style: p, maxLines: 1, overflow: ellipsis)`. */
+.title {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: var(--sc-type-p);
+  letter-spacing: var(--sc-type-p-ls);
+  color: var(--sc-text);
+}
+
+/* `Text(style: pSmall.copyWith(color: text2nd))`. */
+.meta {
+  font: var(--sc-type-p-small);
+  letter-spacing: var(--sc-type-p-small-ls);
+  color: var(--sc-text-2nd);
+}

@@ -34,12 +34,12 @@ class Settings(BaseSettings):
     #
     # It used to default to the prod CDN, because the deployed container did not
     # bake the image bytes and a relative path would have 404'd there. That
-    # deployment was dropped (`75694f3`, "drop deploy plumbing") and the default
-    # outlived it: every local run emitted absolute `cdn.combatden.net` URLs for
-    # bytes nothing in this repo uploads any more, so a freshly generated image
-    # resolved to a 404 and every client fell back to its bundled asset. That
-    # reads as "the new images do not work" and is really "the API pointed
-    # somewhere else".
+    # deployment was dropped (`75694f3`, "drop deploy plumbing" — DEPLOYMENT.md
+    # and deploy-assets/ went with it), and the default outlived it: every local
+    # run emitted absolute `cdn.combatden.net` URLs for bytes nothing in this
+    # repo uploads any more, so a freshly generated or prefilled image resolved
+    # to a 404 and every client fell back to its bundled asset. That reads as
+    # "the new images do not work" and is really "the API pointed somewhere else".
     #
     # Set ASSETS_CDN_BASE_URL to a CDN base if one is ever reintroduced; the
     # byte endpoints then 307-redirect there. See ThemeTree/core/asset_urls.py.

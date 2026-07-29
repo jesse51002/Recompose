@@ -35,7 +35,8 @@ import { useMockNav } from '../../kit/MockNav';
 
 import { useThemeText } from 'recompose-react';
 
-import { AppContentProvider, useAppContent } from './appContent';
+import { useAppContent } from './appContent';
+import { CombatDenSurface } from './CombatDenSurface';
 import styles from './celebrationAsset.module.css';
 import { cx } from './cx';
 import { PointsShowcase } from './PointsShowcase';
@@ -222,7 +223,7 @@ export const CELEBRATION_ASSET = defineMockAsset({
   initialRoute: ROUTE_STREAK,
   // The rewards card carousels the gym's real catalogue, so this asset needs
   // the same content ladder the app does.
-  provider: AppContentProvider,
+  provider: CombatDenSurface,
   routes: {
     [ROUTE_STREAK]: StreakRoute,
     [ROUTE_POINTS]: PointsRoute,

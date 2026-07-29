@@ -1,0 +1,40 @@
+/*
+ * Styles for ./ClassSectionStack.tsx
+ * (ports MobileApp/.../layouts/parts/class_section_stack.dart).
+ */
+
+/*
+ * The run of sections.
+ *
+ * ZEN BJJ opens the gap BETWEEN sections to one and a half `spacingBig` while
+ * leaving the gap either side of a divider at `spacingBig`. The two used to be
+ * the same number, which made the page one evenly-spaced list of paragraphs;
+ * splitting them is what makes a section read as a section — the rule now sits
+ * clearly inside the space that separates two blocks rather than being one more
+ * beat in a run of equal ones.
+ */
+.stack {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: calc(var(--sc-spacing-big) * 1.5);
+  min-width: 0;
+}
+
+/*
+ * The screen's body inset. ZEN BJJ uses the fork's wider gutter
+ * (`screenHorizontalPadding * 1.5`) so the description's measure narrows and
+ * the page keeps the same left spine as the schedule it was opened from.
+ */
+.padded {
+  padding: calc(var(--sc-spacing-big) * 1.5) calc(var(--sc-screen-padding-x) * 1.5);
+}
+
+/* Each entry carries its own leading rule, centred in the section gap. */
+.item {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--sc-spacing-big);
+  min-width: 0;
+}

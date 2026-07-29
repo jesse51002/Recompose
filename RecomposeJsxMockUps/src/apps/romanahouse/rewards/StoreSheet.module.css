@@ -1,0 +1,86 @@
+/* Styles for ./StoreSheet.tsx. `--sc-*` only. */
+
+.sheet {
+  padding-bottom: var(--sc-spacing-big);
+}
+
+/* The index: two tracked labels, the active one on a walnut rule. */
+.index {
+  display: flex;
+  gap: 20px;
+  padding-inline: var(--sc-sheet-pad);
+  padding-block: 14px 0;
+}
+
+.indexItem {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+  padding-bottom: 8px;
+  border-bottom: 2px solid transparent;
+}
+
+.indexItemActive {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-primary);
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--sc-rule-solid);
+}
+
+/*
+ * THE BALANCE BLOCK. Full-bleed walnut, edge to edge across the sheet — the
+ * one thing on this screen that outranks everything else. Nothing else on the
+ * store is filled.
+ */
+.balance {
+  margin-top: 20px;
+  padding-block: 26px 28px;
+  padding-inline: var(--sc-sheet-pad);
+  background: var(--sc-primary);
+  color: var(--sc-primary-button-text);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.balanceTop {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  opacity: 0.66;
+}
+
+.balanceFigure {
+  font: var(--sc-type-fig-xl);
+  letter-spacing: var(--sc-type-fig-xl-ls);
+  font-variant-numeric: tabular-nums;
+  /* The figure sits tight to its own labels — it is one object, not three
+     stacked lines. */
+  line-height: 1.02;
+  padding-block: 3px;
+}
+
+.balanceBottom {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  /* The brass fitting on this screen, and the only one. */
+  color: var(--sc-accent);
+}
+
+.catalogue {
+  padding-inline: var(--sc-sheet-pad);
+}
+
+.catalogueLabel {
+  margin: 0;
+  padding-block: 24px 9px;
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+}

@@ -1,88 +1,73 @@
-"""LayoutBrief — the instruction handed to the layout/animation agent.
+"""LayoutBrief — the brief a mock app's layout was produced from.
 
-A design is two artifacts made separately, and each half has an INPUT and a
-RESULT:
+A design is **two artifacts produced separately**, and each is written from
+its own brief:
 
-===========  ==========================  ============================
-half         input                       result
-===========  ==========================  ============================
-assets       ``customization.yaml``      ``output.yaml``
-layout       ``layout_brief.yaml``       the folder itself
-===========  ==========================  ============================
+- the **assets** — palette, type, imagery, copy. Brief:
+  ``schema/customization.py`` (``Customization``), a ``design_direction`` plus
+  a ``colors_direction``. Consumed by the pipeline.
+- the **layout** — the screens themselves, one folder per design under
+  ``RecomposeJsxMockUps/src/apps/<id>/``. Brief: this model, written to
+  ``layout_brief.yaml`` beside them.
 
-This is the layout half's input — what a person asked for, before anything
-exists. It is deliberately not the same thing as a description of what came
-out, and the two must not be collapsed: an input is edited by a human before
-the work, a description is written after it, and either is free to gain a
-field the other should not have.
-
-**Both directions are ``{short_desc, long_desc}`` and nothing else**, the same
-shape as a brief's ``design_direction``, so one ``Direction`` serves both and a
-reviewer holding a brand brief and a layout brief side by side does not have to
+The two are deliberately the same SHAPE — a name plus one `Direction` per
+thing being directed — because they are the same kind of document about
+opposite halves of one design. A reviewer holding both should not have to
 translate between them.
 
-Local only. It lives here rather than in the top-level ``schema/`` package
-because ``RecomposeAPI`` never serves it and ``schema/`` is what ships.
+**Why layout and motion are separate directions.** They are the two things a
+redesign actually controls, and they fail differently: an arrangement can be
+right while its animation is wrong, and a motion note buried in a paragraph
+about spacing is a note nobody acts on. Splitting them also matches the
+package's own rule that there is exactly one layout and one animation per
+asset — no presets, no vocabularies to switch between, so each gets a
+direction rather than an option set.
+
+**Why this lives in ``RecomposeAPI/studio/`` and not in ``schema/``.** ``schema/``
+holds the contracts the PIPELINE reads: ``app.yaml``, ``customization.yaml``,
+the produced ``output.yaml``. Nothing in the pipeline reads a layout brief —
+it never sees a screen. The studio is where briefs are authored and runs are
+launched, which makes it the surface that produces one, and it is local-only
+so nothing about this ships in the read API.
 """
 
 from __future__ import annotations
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class Direction(BaseModel):
-    """One direction: a line, and the prose behind it.
+    """One directed dimension: the short line and the reasoning behind it.
 
-    Free prose rather than an enumerated vocabulary, and that is load-bearing
-    rather than lazy. A ``density: generous | balanced | dense`` field would be
-    a bounded option set, and bounded option sets are precisely what structural
-    presets were built, tested and rejected for — they reproduce the platform's
-    existing design language, which is a reskin. Encoding the vocabulary here
-    would rebuild the thing that was deliberately removed, one field at a time.
+    Mirrors ``DesignDirection`` / ``ColorsDirection`` minus the ``name``,
+    which belongs to the brief as a whole rather than to each dimension of
+    it — a layout and its motion are two aspects of one design, not two
+    designs.
     """
 
-    model_config = ConfigDict(extra="forbid")
+    # ``str_strip_whitespace`` is what makes ``min_length=1`` mean what it
+    # looks like. Length alone counts characters, so a field holding "   "
+    # passes it — and a whitespace-only direction is exactly as useless as an
+    # empty one. Stripping first also trims the trailing newline a folded YAML
+    # block (``>-``) leaves behind, so the value is the prose and nothing else.
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
 
     short_desc: str = Field(min_length=1)
     long_desc: str = Field(min_length=1)
 
-    @field_validator("short_desc", "long_desc")
-    @classmethod
-    def _non_empty(cls, value: str) -> str:
-        """Whitespace is not a description. ``min_length`` alone would accept
-        a single space, which reads as filled in and is not."""
-        if not value.strip():
-            raise ValueError("field must be non-empty")
-        return value
-
 
 class LayoutBrief(BaseModel):
-    """One named layout generation.
+    """One mock app's ``layout_brief.yaml``.
 
-    ``name`` sits above the directions rather than inside one: it names the
-    GENERATION, not its layout half. It is also what makes a second attempt
-    possible — one brand brief and one settled asset run can carry several of
-    these, each its own folder, all visible at once. Comparing two arrangements
-    of the same brand is the point, and naming is the whole cost of it.
-
-    ``theme_run`` is the run this arranges *against*. The agent designs on top
-    of a palette, typography and imagery that already exist, so recording which
-    ones is the difference between a reproducible generation and a folder whose
-    provenance has to be guessed.
+    ``extra="forbid"`` is what keeps this a BRIEF rather than a manifest. An
+    earlier version carried the route list, the asset inventory and the
+    authored device size; all of it duplicated what the TypeScript already
+    declares, which makes a second source of truth that can only drift. The
+    code says what a layout CONTAINS. This says what it IS, and why.
     """
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
 
     name: str = Field(min_length=1)
-    app: str = Field(min_length=1)
-    theme_run: str = Field(min_length=1)
-
     layout_direction: Direction
     motion_direction: Direction
-
-    @field_validator("name", "app", "theme_run")
-    @classmethod
-    def _non_empty(cls, value: str) -> str:
-        if not value.strip():
-            raise ValueError("field must be non-empty")
-        return value

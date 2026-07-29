@@ -10,6 +10,7 @@ from types import ModuleType
 import pytest
 import yaml
 from PIL import Image
+from pydantic import ValidationError
 
 from schema import (
     AbsolutePath,
@@ -87,6 +88,51 @@ def test_every_live_app_manifest_validates(app_yaml: Path) -> None:
         assert len(seen) == len(set(seen)), (
             f"{app_yaml}: format slot {slot.id!r} repeats a value {seen}"
         )
+
+
+def test_image_text_dependency_must_name_a_declared_text_slot() -> None:
+    """``depends_on_text`` is refused when it names copy the app does not
+    declare — the one cross-LIST check on ``AppFormat``.
+
+    Refusing rather than ignoring matters because of what the edge is FOR.
+    A dropped image dependency costs visual continuity; a dropped text
+    dependency means the picture is no longer of the thing the label
+    beside it says, and nothing downstream can notice.
+    """
+    base = {
+        "id": "demo",
+        "display_name": "Demo",
+        "texts": [
+            {"id": "gear_name", "description": "n", "max_words": 3, "max_chars": 20},
+        ],
+    }
+    ok = AppFormat.model_validate(
+        base | {"images": [{"id": "gear", "description": "d",
+                            "depends_on_text": ["gear_name"]}]}
+    )
+    assert ok.images[0].depends_on_text == ["gear_name"]
+
+    with pytest.raises(ValidationError, match="depends_on_text unknown text ids"):
+        AppFormat.model_validate(
+            base | {"images": [{"id": "gear", "description": "d",
+                                "depends_on_text": ["nope"]}]}
+        )
+    with pytest.raises(ValidationError, match="duplicate depends_on_text ids"):
+        AppFormat.model_validate(
+            base | {"images": [{"id": "gear", "description": "d",
+                                "depends_on_text": ["gear_name", "gear_name"]}]}
+        )
+
+
+def test_image_text_dependency_defaults_empty() -> None:
+    """An app that names no copy keeps exactly the manifest it had — which
+    is what lets every frozen per-run ``app.yaml`` snapshot still validate
+    after the field was added."""
+    app = AppFormat.model_validate(
+        {"id": "demo", "display_name": "Demo",
+         "images": [{"id": "solo", "description": "d"}]}
+    )
+    assert app.images[0].depends_on_text == []
 
 
 # Committed fixture tree — never the live ``apps/`` production runs.

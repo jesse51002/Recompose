@@ -1,0 +1,23 @@
+# Text seeds for the HIIT category.
+#
+# Written by scripts/prefill/fetch_seeds.py from the same source
+# rows as the images beside this file — a class photo and its class
+# name come from ONE entry, which is what keeps a seeded picture and
+# a seeded name describing the same thing.
+#
+# These are PLACEHOLDERS, not brand copy: they are the demo content
+# the mock screens ship, matched to this category. `scripts/regen`
+# re-rolls any of them for a real brand.
+
+class_name_1: Olympic Lifting Fundamentals
+class_name_2: Core & Gymnastics Strength
+class_name_3: Metabolic Conditioning
+class_name_4: Strength & Injury Prevention
+reward_name_apparel: Club t-shirt
+reward_name_gear: Jump rope
+reward_name_guest_pass: Bring a friend
+reward_name_session: 1-on-1 PT session
+video_title_1: The Fastest Way To Blow Up Your Bench Press (4 Science-Based Steps) + Sample Program
+video_title_2: 'Workout Series: How to Master the Handstand'
+video_title_3: How to PROPERLY Bench Press for Growth (5 Easy Steps)
+video_title_4: 30 Min CARDIO WORKOUT at Home [LOW IMPACT STEADY STATE] LISS

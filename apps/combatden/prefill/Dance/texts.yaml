@@ -1,0 +1,23 @@
+# Text seeds for the Dance category.
+#
+# Written by scripts/prefill/fetch_seeds.py from the same source
+# rows as the images beside this file — a class photo and its class
+# name come from ONE entry, which is what keeps a seeded picture and
+# a seeded name describing the same thing.
+#
+# These are PLACEHOLDERS, not brand copy: they are the demo content
+# the mock screens ship, matched to this category. `scripts/regen`
+# re-rolls any of them for a real brand.
+
+class_name_1: Barre Foundations
+class_name_2: Rhythm & Movement
+class_name_3: High Energy Cardio
+class_name_4: Groove & Flow
+reward_name_apparel: Club t-shirt
+reward_name_gear: Water bottle
+reward_name_guest_pass: Bring a friend
+reward_name_session: 1-on-1 PT session
+video_title_1: Learn to dance Hip Hop the Ailey way w/ DJ Rubble & Run DMC | Noggin
+video_title_2: Centre Class Follow Along | Lazy Dancer Tips
+video_title_3: Things I Wish I Knew Before Becoming a Dance Teacher & Fitness Instructor
+video_title_4: Easy Kids Choreography - (Hip Hop Dance Tutorial AGES 4+)  | MihranTV

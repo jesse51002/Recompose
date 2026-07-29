@@ -53,7 +53,7 @@ export function VideoCarouselCard({ video, size = 'md' }: VideoCarouselCardProps
         {...{ [PART_ATTR]: VIDEO_PARTS.card }}
       >
         <div className={cx(styles.thumbFrame, styles.thumbRatio)}>
-          <VideoThumbnail src={video.thumbnailUrl} />
+          <VideoThumbnail video={video} />
         </div>
         {/* `Positioned(bottom) > ColoredBox(popup) > Padding(spacingMedium)`. */}
         <div className={styles.caption}>
@@ -70,7 +70,7 @@ export function VideoCarouselCard({ video, size = 'md' }: VideoCarouselCardProps
       {...{ [PART_ATTR]: VIDEO_PARTS.card }}
     >
       <div className={cx(styles.thumbFrame, size !== 'md' && styles.thumbRatio)}>
-        <VideoThumbnail src={video.thumbnailUrl} />
+        <VideoThumbnail video={video} />
       </div>
       <VideoCardInfo video={video} compact={size === 'tile'} />
     </article>

@@ -12,6 +12,7 @@
 // exactly; the mixing function is a small integer hash instead.
 
 import type { ShowcaseClassInfo } from '../showcaseContent';
+import { SLOT_CLASS_PHOTOS, slotAt } from '../showcaseSlots';
 
 import type { ShowcaseClass, ShowcaseDay } from './homeClass';
 import { SHOWCASE_CLASSES } from './homeClass';
@@ -121,6 +122,7 @@ function baseClasses(classes: readonly ShowcaseClassInfo[] | null | undefined): 
       durationMinutes: sample?.durationMinutes ?? 0,
       mentor: info.instructorName,
       imageUrl: info.imageUrl,
+      themeSlot: slotAt(SLOT_CLASS_PHOTOS, i),
       // DEVIATION, and a deliberate one: Dart borrows only the TIME from the
       // sample, so an injected class whose `image_url` came back null resolves
       // `AssetImage('assets/showcase/')`, fails, and paints a flat `card`
@@ -152,6 +154,7 @@ export function dayAt(
       mentor: item.mentor,
       imageAsset: item.imageAsset,
       imageUrl: item.imageUrl,
+      themeSlot: item.themeSlot,
       attending: seededAttending(dayOffset, i),
       isBooked: isClassBooked(dayOffset, i),
     })),

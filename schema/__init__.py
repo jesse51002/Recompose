@@ -1,4 +1,12 @@
-"""Public Pydantic v2 schemas for the pipeline's three YAML contracts."""
+"""Public Pydantic v2 schemas for the pipeline's three YAML contracts.
+
+`app.yaml` (`AppFormat`), `customization.yaml` (`Customization`) and the
+produced `output.yaml` (`Output`) — the contracts the PIPELINE reads.
+
+The LAYOUT half of a design has a brief of its own, but it is not here:
+nothing in `ThemeTree/` ever sees a screen, so `LayoutBrief` lives with the
+surface that authors one, `ThemeTree/studio/schema/layout_brief.py`.
+"""
 
 from schema.app_format import AppFormat
 from schema.color_mode import ColorMode

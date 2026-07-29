@@ -16,6 +16,7 @@ import type { ThemeSnapshot } from '../store/themeStore';
 import type { Rgba } from '../theme/color';
 import { loadFontFamily } from '../theme/fontLoader';
 import {
+  themeCategory,
   themeColor,
   themeDesignName,
   themeFontFamily,
@@ -107,6 +108,17 @@ export function useThemeText(slot: string, fallback: string): string {
 export function useThemeDesignName(fallback = ''): string {
   useThemeChanges();
   return themeDesignName(fallback);
+}
+
+/**
+ * The loaded run's classification bucket (`Fighting`, `Yoga`, …).
+ *
+ * A HOST hook: it is what lets demo content follow the loaded design instead of
+ * being pinned to whatever the host defaulted to. See `themeCategory`.
+ */
+export function useThemeCategory(fallback = ''): string {
+  useThemeChanges();
+  return themeCategory(fallback);
 }
 
 /**

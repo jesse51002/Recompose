@@ -1,0 +1,23 @@
+# Text seeds for the Wellness category.
+#
+# Written by scripts/prefill/fetch_seeds.py from the same source
+# rows as the images beside this file — a class photo and its class
+# name come from ONE entry, which is what keeps a seeded picture and
+# a seeded name describing the same thing.
+#
+# These are PLACEHOLDERS, not brand copy: they are the demo content
+# the mock screens ship, matched to this category. `scripts/regen`
+# re-rolls any of them for a real brand.
+
+class_name_1: Foundational Breathing
+class_name_2: Nervous System Reset
+class_name_3: Performance Breathing
+class_name_4: Sleep & Recovery
+reward_name_apparel: Club t-shirt
+reward_name_gear: Yoga mat
+reward_name_guest_pass: Bring a friend
+reward_name_session: 1-on-1 PT session
+video_title_1: 15 Mins Pranayama Practice | 5 Deep Breathing Exercises you should do Daily
+video_title_2: 10-Minute Meditation For Beginners | Goodful
+video_title_3: Gentle, Relaxing, Cozy Flow  |  20-Minute Home Yoga
+video_title_4: 10 Minutes That Instantly Loosen Your Whole Body

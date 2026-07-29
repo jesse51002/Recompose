@@ -25,7 +25,14 @@
    settling card never reflows. */
 .cta {
   flex: 0 0 auto;
-  padding: 0 var(--sc-padding-standard) var(--sc-spacing-big);
+  /* Longhands, not the `padding` shorthand. A shorthand containing ONE
+     unresolvable var() is invalid at computed-value time and the browser drops
+     the WHOLE declaration — which is how this rule lost its bottom padding as
+     well as its sides: it named `--sc-padding-standard`, which does not exist.
+     The screen inset is `--sc-screen-padding-x` (what ShowcaseScaffold's
+     `padStandard` uses); the bottom gap is its own token. */
+  padding-inline: var(--sc-screen-padding-x);
+  padding-bottom: var(--sc-spacing-big);
   opacity: 0;
   /* Not display:none — the button must keep its box so nothing moves when it
      appears, and must not be tabbable while it is invisible. */

@@ -16,6 +16,8 @@
 // information. It does not arise: the image is still on the screen, still the
 // same URL, just 96px square.
 
+import { ThemedImage } from 'recompose-react';
+
 import { cx } from '../../cx';
 import { CLASS_PART, classPart } from '../classParts';
 
@@ -37,11 +39,35 @@ const TREATMENT_CLASS: Readonly<Record<ClassBannerTreatment, string | undefined>
 
 export interface ClassImageBannerProps {
   imageUrl: string;
+  /** The generated class photo — the top rung, same as the schedule thumb. */
+  themeSlot?: string | undefined;
   /** Defaults to `banner`, the treatment that ships. */
   treatment?: ClassBannerTreatment;
 }
 
-export function ClassImageBanner({ imageUrl, treatment = 'banner' }: ClassImageBannerProps) {
+export function ClassImageBanner({
+  imageUrl,
+  themeSlot,
+  treatment = 'banner',
+}: ClassImageBannerProps) {
+  // The generated photo when the theme has one, keeping DegradingImage's frame
+  // so the treatment classes and the `data-class-part` hook are identical on
+  // both paths — a screenshot test must not be able to tell them apart.
+  if (themeSlot !== undefined) {
+    return (
+      <div
+        className={cx(styles.frame, TREATMENT_CLASS[treatment])}
+        {...classPart(CLASS_PART.banner)}
+      >
+        <ThemedImage
+          className={styles.img}
+          slot={themeSlot}
+          fallbackSrc={imageUrl}
+          alt=""
+        />
+      </div>
+    );
+  }
   return (
     <DegradingImage
       src={imageUrl}

@@ -371,13 +371,18 @@ Three standalone entrypoints (run from the package root, like `make`):
   only *what to change*). The prior image is kept as a numbered file in the
   run's `images/` dir (`<slot>.v1.png`, …); there is no version history in
   `output.yaml`.
-- **`scripts/prefill_images`** — `--run-dir <dir>` (or `--all-runs <app_dir>`).
-  Seeds image slots that are declared but not yet generated from checked-in
-  demo imagery under `apps/<app_id>/prefill/<Category>/`, matched to the run's
-  own `category`. Absent-only and idempotent; it can never overwrite a
-  generated image. Costs nothing and is logged as `kind: prefill`, so a seeded
+- **`scripts/prefill`** — `--run-dir <dir>` (or `--all-runs <app_dir>`).
+  Seeds slots that are declared but not yet generated from checked-in demo
+  content under `apps/<app_id>/prefill/<Category>/`, matched to the run's own
+  `category`: images from `<slot>.jpg`, copy from `texts.yaml`. Both halves in
+  one pass, because an image slot can declare `depends_on_text` — a seeded
+  picture and a seeded name are two halves of one claim about what the thing
+  is, and seeding one without the other gives you a photo of a boxing class
+  labelled "Sunrise Flow". Absent-only and idempotent; it can never overwrite
+  generated work. Costs nothing and is logged as `kind: prefill`, so a seeded
   slot stays distinguishable from a real one and can be re-rolled later with
-  `regen_image`. Run `make sync-assets` afterwards.
+  `regen_image` / `regen`. `scripts/prefill/fetch_seeds.py` is the one-time
+  vendoring step that writes the seed set.
 - **`scripts/edit_customization`** — `--file <customization.yaml>` plus the
   five flattened optional fields (`--name`, `--short-desc`, `--long-desc`,
   `--colors-description`, `--mode light|dark`). A validated, targeted edit of

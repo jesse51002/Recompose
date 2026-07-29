@@ -48,6 +48,13 @@ export interface ShowcaseRewardItem {
    */
   readonly imageUrl?: string | undefined;
   readonly imageAsset: ShowcaseAssetFile;
+  /**
+   * The generated reward slot — THE SAME ASSET the store card paints with.
+   * Carried here because the celebration carousel and the store show the same
+   * catalogue; tokenising one and not the other made a reward change picture
+   * between the two screens.
+   */
+  readonly themeSlot?: string | undefined;
   readonly name: string;
   readonly discountLabel: string;
   readonly pointsCost: number;

@@ -240,7 +240,14 @@ class OrchestratorService:
                     "layout is designed on top of what it produces."
                 )
             try:
-                design_id = await ctx.deps.layout.start(convo.accepted_layout)
+                # The base app and the run come from the SESSION, not the
+                # brief: a LayoutBrief says what a layout IS, and which base it
+                # forked is a property of this job.
+                design_id = await ctx.deps.layout.start(
+                    convo.accepted_layout,
+                    app=convo.app_id,
+                    theme_run=convo.run_id,
+                )
             except StudioError as exc:
                 raise ModelRetry(str(exc)) from None
             await ctx.deps.sessions.phase(

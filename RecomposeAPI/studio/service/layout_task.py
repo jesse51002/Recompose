@@ -50,9 +50,19 @@ LAYOUT_BRIEF_FILENAME = "layout_brief.yaml"
 
 
 class LayoutTask(Protocol):
-    """Start a layout generation. Returns the design folder's id."""
+    """Start a layout generation. Returns the design folder's id.
 
-    async def start(self, brief: LayoutBrief) -> str: ...
+    ``app`` is the authored mock to fork; ``theme_run`` the run whose palette
+    and typefaces the layout is designed on top of. Neither is a field on the
+    brief, deliberately: a `LayoutBrief` says what a layout IS, in prose, and
+    it is the file that ships beside the mock. Which base it forked and which
+    run it was made against are properties of the JOB, and the brief's own
+    long_desc is where a fork says so in words (see the base's and Zen BJJ's).
+    """
+
+    async def start(
+        self, brief: LayoutBrief, *, app: str, theme_run: str | None = None
+    ) -> str: ...
 
 
 class _LayoutTaskBase:
@@ -71,19 +81,21 @@ class _LayoutTaskBase:
         self._apps_dir = apps_dir
         self._sessions = sessions
 
-    async def _prepare(self, brief: LayoutBrief) -> tuple[str, Path]:
+    async def _prepare(
+        self, brief: LayoutBrief, app: str
+    ) -> tuple[str, Path]:
         """Copy the base app to ``gen-<slug>/`` and write the brief into it."""
         design_id = f"{GENERATED_PREFIX}{slugify(brief.name)}"
-        base = self._apps_dir / brief.app
+        base = self._apps_dir / app
         target = self._apps_dir / design_id
 
         # Checked by identity, not by pattern: the resolved base must still be
         # inside the apps dir, so no `app` value can walk out of the tree.
         if not base.resolve().is_relative_to(self._apps_dir.resolve()):
-            raise UnknownAppError(f"no such mock app {brief.app!r}")
+            raise UnknownAppError(f"no such mock app {app!r}")
         if not await asyncio.to_thread(base.is_dir):
             raise UnknownAppError(
-                f"no such mock app {brief.app!r} (expected {base})"
+                f"no such mock app {app!r} (expected {base})"
             )
         if await asyncio.to_thread(target.exists):
             # Two generations called the same thing ARE the same thing. Refuse
@@ -94,7 +106,7 @@ class _LayoutTaskBase:
 
         await asyncio.to_thread(shutil.copytree, base, target)
         await asyncio.to_thread(self._write_brief, target, brief)
-        logger.info("prepared design folder %s from %s", design_id, brief.app)
+        logger.info("prepared design folder %s from %s", design_id, app)
         return design_id, target
 
     @staticmethod
@@ -131,8 +143,10 @@ class SubprocessLayoutTask(_LayoutTaskBase):
         # pump could be garbage-collected mid-flight. Hold each until it ends.
         self._tasks: set[asyncio.Task[None]] = set()
 
-    async def start(self, brief: LayoutBrief) -> str:
-        design_id, target = await self._prepare(brief)
+    async def start(
+        self, brief: LayoutBrief, *, app: str, theme_run: str | None = None
+    ) -> str:
+        design_id, target = await self._prepare(brief, app)
         # A LIST, never a shell string, and never built from anything a model
         # produced — the only interpolated value is the cwd, which is a path
         # this service derived itself.
@@ -185,8 +199,10 @@ class StubLayoutTask(_LayoutTaskBase):
     copy of the base.
     """
 
-    async def start(self, brief: LayoutBrief) -> str:
-        design_id, _ = await self._prepare(brief)
+    async def start(
+        self, brief: LayoutBrief, *, app: str, theme_run: str | None = None
+    ) -> str:
+        design_id, _ = await self._prepare(brief, app)
         session_id = self._sessions.active_id
         if session_id is not None:
             await self._sessions.task(

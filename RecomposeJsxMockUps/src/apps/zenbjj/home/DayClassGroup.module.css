@@ -1,0 +1,73 @@
+/*
+ * Styles for ./DayClassGroup.tsx
+ * (ports CRM/lib/showcase/home/day_class_group.dart +
+ * MobileApp/.../class_schedule/day_group/day_group_{list,grid}.dart).
+ * `--sc-*` only — see ../ShowcaseThemeVars.tsx.
+ */
+
+/*
+ * `Padding(vertical: spacingBig)` over `Column(stretch, spacing: spacingLarge)`.
+ *
+ * That gap is BOTH the label-to-classes gap and, in the stacked case, Dart's
+ * `DayGroupList(spacing: spacingLarge)` — the rows are direct children here.
+ */
+/*
+ * ZEN BJJ: the day is a chapter, and chapters need a margin.
+ *
+ * The base gives each day `spacingBig` above and below and `spacingLarge`
+ * between its rows, so a five-day board reads as one continuous list. Here the
+ * day opens with half again as much air above it and its rows sit `spacingBig`
+ * apart, which is what turns the board into a small number of composed groups
+ * instead of one long ladder. Nothing is dropped — the board still carries
+ * every day and every class it did.
+ */
+.group {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--sc-spacing-big);
+  padding-block: calc(var(--sc-spacing-big) * 1.5) var(--sc-spacing-big);
+}
+
+/*
+ * `Padding(horizontal: screenHorizontalPadding)` around an `h2Bold` label.
+ * `margin: 0` because this is an `<h2>` and the UA sheet would otherwise add a
+ * gap the Dart Column does not have.
+ */
+/*
+ * ZEN BJJ: the day heading becomes an EYEBROW.
+ *
+ * The base sets it at `h2Bold` in full `text`, which puts "TODAY" at the same
+ * weight as the class names beneath it and makes the board shout its own
+ * scaffolding. Here it steps down to `h3` at `text2nd` and takes a wide tracked
+ * setting instead — the label is still upper-cased, still present, still the
+ * thing that separates one day from the next, but it now sits UNDER the class
+ * names in the reading order rather than over them.
+ *
+ * `em` is the right unit for this one letter-spacing and it is the exception
+ * the package names: the value is a multiple of the font size itself, which is
+ * what `em` means. ../rewards/SparkleHero.module.css's eyebrow is the same case.
+ */
+.label {
+  margin: 0;
+  padding-inline: calc(var(--sc-screen-padding-x) * 1.5);
+  font: var(--sc-type-h3);
+  letter-spacing: 0.28em;
+  color: var(--sc-text-2nd);
+}
+
+/*
+ * `DayGroupGrid` — `Padding(horizontal: screenHorizontalPadding)` over rows of
+ * two `Expanded` cards, `spacing: spacingLarge` on both axes.
+ *
+ * A CSS grid rather than hand-paired rows: Dart pairs them so an
+ * `IntrinsicHeight` can equalise each pair without a second scroll view, and a
+ * grid row already stretches its cells to the tallest one — the same result
+ * from the layout algorithm instead of from a loop.
+ */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sc-spacing-large);
+  padding-inline: var(--sc-screen-padding-x);
+}

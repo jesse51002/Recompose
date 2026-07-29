@@ -20,7 +20,8 @@
 import { defineMockAsset } from '../../kit/asset';
 import { useMockNav } from '../../kit/MockNav';
 
-import { AppContentProvider, useAppContent } from './appContent';
+import { useAppContent } from './appContent';
+import { CombatDenSurface } from './CombatDenSurface';
 import { BookingShowcase } from './BookingShowcase';
 import { ClassDetailShowcase } from './classdetail/ClassDetailShowcase';
 import { HomeShowcase } from './home/HomeShowcase';
@@ -118,7 +119,7 @@ export const APP_ASSET = defineMockAsset({
   width: 390,
   height: 844,
   initialRoute: ROUTE_HOME,
-  provider: AppContentProvider,
+  provider: CombatDenSurface,
   routes: {
     [ROUTE_HOME]: HomeRoute,
     [ROUTE_CLASS]: ClassRoute,

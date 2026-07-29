@@ -50,11 +50,15 @@ export interface DirectionInput {
   readonly long_desc: string;
 }
 
-/** `LayoutBrief` — the layout half's input, named per generation. */
+/**
+ * `LayoutBrief` — the layout half's brief, named per generation.
+ *
+ * Three fields and no more. Which base it forks and which run it is designed
+ * against are arguments to the layout task, not part of what the layout IS —
+ * a fork says so in its own `long_desc`, in words.
+ */
 export interface LayoutBriefInput {
   readonly name: string;
-  readonly app: string;
-  readonly theme_run: string;
   readonly layout_direction: DirectionInput;
   readonly motion_direction: DirectionInput;
 }

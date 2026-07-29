@@ -1,0 +1,131 @@
+# The brief this layout was produced from — the LAYOUT half of a design.
+#
+# Its counterpart is the ASSET half's brief, a run's `customization.yaml`
+# (a `design_direction` plus a `colors_direction`). Same shape on purpose: a
+# name, and one direction per thing being directed.
+#
+# Contract: ThemeTree/studio/schema/layout_brief.py (`LayoutBrief`).
+
+name: Romana House Pilates
+
+layout_direction:
+  short_desc: >-
+    The studio's apparatus chart — the work numbered in its order, scribed onto
+    ivory paper in hairline rules, tabular figures and walnut.
+  long_desc: >-
+    Romana House teaches a method whose defining property is ORDER: a fixed
+    sequence of exercises, each in its place, each spring counted before it is
+    loaded. This app is that order made into an object. It is the studio's
+    apparatus chart — the ruled ivory sheet a classical studio pins to its
+    wall — drawn in the walnut and brass of the carriage it describes. Nothing
+    here is a card and nothing floats; every region is a measured area of one
+    sheet, bounded by a scribed line.
+
+    The head. Every screen opens on one ruled block: the studio's mark and name
+    as a letterhead, a four-cell SPEC PANEL carrying the member's rank, streak,
+    points and pass, and beneath it the four destinations as an index row —
+    four equal cells divided by hairlines, the one you are on seated in solid
+    walnut with its label in ivory. That seat is the same device the day scale
+    and the plot's timeframe use to mark a selection, which is the point: the
+    shell is built out of the design's own part rather than out of a component
+    borrowed from somewhere else. Navigation costs one row of height, never a
+    column of width — at this size width is the scarce axis. The index is
+    present wherever the base's tabs would be and absent on the two screens
+    that have no tabs, so what is reachable never changes.
+
+    That leaves the foot of every screen free, and the primary action takes it:
+    a full-width band of solid walnut with its label in ivory small caps,
+    reaching to both edges. Exactly one region per screen is filled that way.
+
+    The sheet. Below the head lies one ivory field, edge to edge, with no inner
+    container and no second surface. Structure comes from
+    RULES, not from boxes: a hairline in walnut at 12% divides one region from
+    the next, a 2px walnut rule opens a section, and a full-bleed walnut block
+    marks the one thing on a screen that outranks everything else. Corners are
+    square everywhere. There are no shadows, no elevation, no tinted panels
+    and no rounded pills — a sheet of paper has none of these, and the moment
+    one appears the app stops being a document and becomes an interface again.
+
+    Typography carries the whole hierarchy, and it is inverted from habit. The
+    grotesque is the DISPLAY face and it appears almost entirely as two things:
+    tabular figures at 28-64px, and labels at 9-10px in uppercase with wide
+    tracking. The serif is prose only — class names, descriptions, instructor
+    bios, reward titles — set at a comfortable measure with real leading. So a
+    heading is rarely a heading: a region announces itself with a tracked
+    ten-pixel label above a rule, and the largest thing in view is a NUMBER.
+    Times, counts, points, ranks, ordinals, durations and progress are all
+    figures, and figures are what the eye lands on first on every screen.
+
+    Sequence is the organising idea, applied literally. The day's classes are
+    not rows in a list; they are numbered entries in an order, each led by a
+    two-digit ordinal in walnut, each closed by a hairline. The day selector is
+    a measuring scale — a ruled baseline with ticks, numerals hanging beneath
+    it, the selected day seated in a solid walnut block. The rewards catalogue
+    is a price list: name in serif on the left, a leader rule running across,
+    the cost in tabular figures hard against the right margin. The video
+    library is a plate index, every entry numbered. The five post-class cards
+    are plates in one numbered series, each headed with its position in the
+    set, so the celebration reads as a record being written rather than a
+    sequence of pop-ups.
+
+    Photography is treated as PLATES, never as surface. The studio's own
+    generated objects — the medallions, the springs, the walnut box, the brass
+    wreath — are cut out and float freely at scale, because they are the brand
+    and they belong to the sheet. Every photograph does the opposite: it is
+    inset inside a mount with a hairline rule around it, carries a warm walnut
+    veil so it sits in the room's light, and never bleeds to an edge, never
+    sits under text and never wears an overlay. Its caption lives OUTSIDE the
+    frame, beneath a rule, the way a plate is captioned in a book. This is what
+    lets photographs of a real room sit inside an archival object without
+    turning it into a stock-photo app.
+
+    Restraint is a rule, not a mood. Brass appears once per region and never
+    twice — one marker on a gauge, one unit under one figure, one rule under one
+    eyebrow. Everything else is walnut, oak text, and the ivory field. A screen
+    that wants a second bright fitting wants a different arrangement instead.
+
+motion_direction:
+  short_desc: >-
+    The carriage returns to its stop — short travel along one axis, a firm
+    settle, and lettering that is pin-sharp in every frame.
+  long_desc: >-
+    Everything in this app moves the way a well-made reformer moves. The
+    carriage travels a fixed distance along its track, decelerates into the stop
+    and does not rebound; a spring under load is controlled, never released. So
+    motion
+    here has one axis at a time, a short distance, a long unhurried duration
+    around half a second, and an easing that is firm and decelerating with no
+    overshoot anywhere. Nothing bounces, nothing springs back, nothing
+    overshoots and returns.
+
+    Type is revealed by a WIPE beneath a mask, travelling up into place from
+    behind a scribed edge, and it is never faded and never scaled. This is a
+    typographic design and letterforms must be at their final crispness on
+    every frame of every entrance; a headline caught mid-fade at 40% opacity is
+    a headline rendered wrong, and a headline caught mid-scale is one rendered
+    at the wrong size.
+
+    Rules DRAW. A hairline that divides a region arrives by scribing from one
+    end to the other, as a line is ruled — so the sheet composes itself in the
+    order a draughtsman would build it: the rules first, then the type wiping
+    up beneath them, then the plate settling into its mount. Objects settle:
+    a cut-out medallion arrives from slightly below its resting place, at
+    slightly reduced scale, and comes to rest with a soft grounding shadow
+    gathering under it as it lands.
+
+    Figures are mechanical. A count is an odometer, not a flourish — the digits
+    roll fast and land inside half a second, tabular so nothing shifts sideways
+    while they move. Progress fills a track at a constant rate and stops
+    exactly at its mark.
+
+    Between screens the app cross-dissolves without travel: no slide, no push,
+    no layered depth, because a chart replaced on the wall does not fly in from
+    the side. The head is the fixed part of every screen and does not animate at
+    all — the seated cell simply IS wherever the member is, the way a carriage
+    at rest simply is at its stop.
+
+    Interaction is never held hostage to any of this. A tap on any still-moving
+    post-class card resolves it to settled immediately, and each card's action
+    zone is laid out from its first frame so nothing reflows when the action
+    appears. Calm is a quality of movement, never a delay imposed on a member
+    standing in a doorway.

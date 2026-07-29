@@ -111,6 +111,7 @@ export {
   useThemeMode,
   useThemeText,
   useThemeDesignName,
+  useThemeCategory,
   useThemeFontFamily,
   useThemeImageSrc,
   useThemeIconUrl,

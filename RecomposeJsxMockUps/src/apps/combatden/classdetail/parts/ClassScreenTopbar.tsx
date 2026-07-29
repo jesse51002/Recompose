@@ -30,6 +30,7 @@
 // Drawing a matching stub here would contradict that arrangement's own choice
 // the moment a tenant classified into it.
 
+import { useMockNav } from '../../../../kit/MockNav';
 import { ShowcaseTopbar } from '../../support/ShowcaseTopbar';
 import { CLASS_PART, classPart } from '../classParts';
 
@@ -84,8 +85,18 @@ export function ClassScreenTopbar({
  * matches the rest of the set exactly.
  */
 function BackButton() {
+  // The ONLY way off the class detail screen — it carries no bottom nav,
+  // exactly as the member app's does not. An unwired back button here is a
+  // dead end, not a cosmetic gap.
+  const nav = useMockNav();
   return (
-    <button type="button" className={styles.back} aria-label="Back" {...classPart(CLASS_PART.back)}>
+    <button
+      type="button"
+      className={styles.back}
+      aria-label="Back"
+      onClick={nav.back}
+      {...classPart(CLASS_PART.back)}
+    >
       <svg
         className={styles.backIcon}
         viewBox="0 0 24 24"

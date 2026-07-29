@@ -15,9 +15,10 @@ help:
 	@echo "Subsystems: $(SUBSYSTEMS)"
 	@echo ""
 	@echo "Common loops:"
-	@echo "  make -C RecomposeAPI dev        the read-only API"
-	@echo "  make -C RecomposeStudio dev     the theme browser (needs the API running)"
-	@echo "  make -C ThemeTree smoke         a cheap end-to-end pipeline run"
+	@echo "  make -C RecomposeJsxMockUps dev  the mock assets, unthemed (no backend)"
+	@echo "  make -C RecomposeAPI dev         the read-only API"
+	@echo "  make -C RecomposeStudio dev      the theme browser (needs the API running)"
+	@echo "  make -C ThemeTree smoke          a cheap end-to-end pipeline run"
 
 install:
 	@for d in $(SUBSYSTEMS); do echo "==> $$d"; $(MAKE) -C $$d install || exit 1; done

@@ -1,0 +1,23 @@
+# Text seeds for the Yoga category.
+#
+# Written by scripts/prefill/fetch_seeds.py from the same source
+# rows as the images beside this file — a class photo and its class
+# name come from ONE entry, which is what keeps a seeded picture and
+# a seeded name describing the same thing.
+#
+# These are PLACEHOLDERS, not brand copy: they are the demo content
+# the mock screens ship, matched to this category. `scripts/regen`
+# re-rolls any of them for a real brand.
+
+class_name_1: Sunrise Flow
+class_name_2: Power Vinyasa
+class_name_3: Slow Flow
+class_name_4: Core Flow
+reward_name_apparel: Club t-shirt
+reward_name_gear: Yoga mat
+reward_name_guest_pass: Bring a friend
+reward_name_session: 1-on-1 PT session
+video_title_1: Yoga For Complete Beginners - 20 Minute Home Yoga Workout!
+video_title_2: 15 Mins Pranayama Practice | 5 Deep Breathing Exercises you should do Daily
+video_title_3: 30-Minute Power Yoga Flow For Tight Abs and a Toned Butt
+video_title_4: Yoga Joy  |  20-Minute Full Body Vinyasa Flow

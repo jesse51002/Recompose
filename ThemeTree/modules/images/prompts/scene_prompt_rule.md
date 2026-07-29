@@ -99,4 +99,5 @@ In depth: $long
 $palette
 --- Subject ---
 $subject
+$names
 $related_assets

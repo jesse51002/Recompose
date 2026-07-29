@@ -25,8 +25,17 @@ export type { MockNav } from './kit/MockNav';
 export { defineMockApp, findMockAsset, mockAssetOrFirst } from './kit/registry';
 export type { MockApp } from './kit/registry';
 
-// --- CombatDen: the first app ---
+// --- The apps ---
+// `MOCK_APPS` is what a host should read: it lists every app without naming
+// one, so a new app is a folder plus a line in ./apps/index.ts and no host
+// changes. The individual exports below are for a host that genuinely wants a
+// specific app — the studio nests CombatDen's assets by name.
+export { MOCK_APPS, findMockApp } from './apps';
 export { COMBATDEN_APP } from './apps/combatden';
+// Zen BJJ — a redesign of CombatDen's layout, exported beside the base so a
+// host can put the two side by side. It is a sibling FOLDER, never an edit to
+// the base: see ./apps/zenbjj/layout_brief.yaml.
+export { ZENBJJ_APP } from './apps/zenbjj';
 export { AppContentProvider, useAppContent } from './apps/combatden/appContent';
 export type { AppContent, AppContentProviderProps } from './apps/combatden/appContent';
 

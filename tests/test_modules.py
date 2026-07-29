@@ -21,6 +21,8 @@ from schema import (
     ImageOutput,
     OklchColor,
     OverwriteSpecs,
+    TextOutput,
+    TextSet,
 )
 from ThemeTree.core.errors import ProviderError
 from ThemeTree.core.run_context import RunContext
@@ -881,6 +883,124 @@ def test_image_no_dependency_block_absent(tmp_path: Path) -> None:
     assert "Related assets (visual continuity)" not in sent
     assert "$related_assets" not in sent
     assert not hasattr(out, "dependency_usage")
+
+
+# --- ImageNode with a TEXT dependency (depends_on_text) --------------------
+#
+# The opposite relationship from ``depends_on``: an image dep is reference
+# ("look like that"), a text dep is subject ("be the thing that string
+# names"). The edge is to the text NODE — one atomic call, one ``TextSet`` —
+# so the node receives the whole set and picks out what it declared.
+
+_TEXT = DependencyKind.TEXT.value
+
+
+def _named_ctx(tmp_path: Path) -> RunContext:
+    """A one-image app whose image is named by one of two text slots."""
+    app = AppFormat.model_validate(
+        {
+            "id": "demo",
+            "display_name": "Demo",
+            "images": [
+                {
+                    "id": "gear",
+                    "description": "the kit this brand's practice needs",
+                    "depends_on_text": ["gear_name"],
+                },
+            ],
+            "colors": _DEP_COLORS,
+            "fonts": _DEP_FONTS,
+            "texts": [
+                {"id": "gear_name", "description": "what the kit is called",
+                 "max_words": 4, "max_chars": 24},
+                {"id": "unrelated", "description": "some other copy",
+                 "max_words": 4, "max_chars": 24},
+            ],
+        }
+    )
+    cust = Customization.model_validate(_DEP_CUST)
+    return RunContext(app, cust, tmp_path)
+
+
+def _text_set(**values: str) -> TextSet:
+    return TextSet(texts={k: TextOutput(value=v) for k, v in values.items()})
+
+
+def test_text_dependency_folds_the_name_in_as_subject(tmp_path: Path) -> None:
+    """The declared name reaches the prompt writer; a text slot the image
+    did NOT declare stays out of it."""
+    ctx = _named_ctx(tmp_path)
+    palette = _full_palette(ctx)
+    slot = ctx.app.images[0]
+
+    llm = StubLLM()
+    node = _image_node(ctx, llm, slot, deps=frozenset({_COLOR, _TEXT}))
+    node.inputs = {
+        _COLOR: palette,
+        _TEXT: _text_set(gear_name="Rope & Wraps", unrelated="Not this"),
+    }
+    asyncio.run(node.run())
+
+    sent = llm.structured_calls[0]["messages"][0]["content"]
+    assert "What this thing is CALLED" in sent
+    assert "gear_name: Rope & Wraps" in sent
+    # Only what the slot declared — the set carries more than it asked for.
+    assert "Not this" not in sent
+
+
+def test_text_dependency_absent_slot_degrades_to_description(
+    tmp_path: Path,
+) -> None:
+    """A named slot that failed its length bounds is simply absent from the
+    set. That must not fail the image — it falls back to the slot
+    description, which describes the thing in general, and the placeholder
+    is still fully substituted away."""
+    ctx = _named_ctx(tmp_path)
+    palette = _full_palette(ctx)
+    slot = ctx.app.images[0]
+
+    llm = StubLLM()
+    node = _image_node(ctx, llm, slot, deps=frozenset({_COLOR, _TEXT}))
+    node.inputs = {_COLOR: palette, _TEXT: _text_set(unrelated="Not this")}
+    out = asyncio.run(node.run())
+
+    sent = llm.structured_calls[0]["messages"][0]["content"]
+    assert "What this thing is CALLED" not in sent
+    assert "$names" not in sent
+    assert out.prompt
+
+
+def test_text_dependency_hard_failure_degrades_too(tmp_path: Path) -> None:
+    """A hard text-node failure leaves the key out of ``inputs`` entirely
+    (the executor injects only what resolved). Reading it defensively is
+    what keeps that a degraded image rather than a crash."""
+    ctx = _named_ctx(tmp_path)
+    palette = _full_palette(ctx)
+    slot = ctx.app.images[0]
+
+    llm = StubLLM()
+    node = _image_node(ctx, llm, slot, deps=frozenset({_COLOR, _TEXT}))
+    node.inputs = {_COLOR: palette}
+    out = asyncio.run(node.run())
+
+    sent = llm.structured_calls[0]["messages"][0]["content"]
+    assert "$names" not in sent
+    assert out.prompt
+
+
+def test_no_text_dependency_leaves_no_trace(tmp_path: Path) -> None:
+    """A slot naming no copy gets a prompt with no named-subject wording at
+    all — the same property the related-assets block has."""
+    ctx = _run_ctx(tmp_path)
+    palette = _full_palette(ctx)
+
+    llm = StubLLM()
+    node = _image_node(ctx, llm, ctx.app.images[0])
+    _resolve(node, palette)
+
+    sent = llm.structured_calls[0]["messages"][0]["content"]
+    assert "What this thing is CALLED" not in sent
+    assert "$names" not in sent
 
 
 # --- FontNode --------------------------------------------------------------

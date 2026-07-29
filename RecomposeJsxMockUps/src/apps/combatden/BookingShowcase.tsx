@@ -40,6 +40,7 @@ import { showcaseAsset } from './showcaseAssets';
 import { SLOT_CELEBRATION_IMAGE, SLOT_CLASS_BOOKED_HEADLINE } from './showcaseSlots';
 import { showcaseStyle } from './showcaseTokens';
 import { ShowcasePrimaryButton } from './support/ShowcasePrimaryButton';
+import { useMockNav } from '../../kit/MockNav';
 import { ShowcaseScaffold } from './support/ShowcaseScaffold';
 import { usePrefersReducedMotion } from './usePrefersReducedMotion';
 
@@ -83,6 +84,10 @@ export interface BookingShowcaseProps {
 }
 
 export function BookingShowcase({ loop = true, onCycleComplete }: BookingShowcaseProps) {
+  // `ClassBookedScreen` ends by returning the member where they came from. The
+  // CTA is the only way off this screen — it carries no bottom nav — so it is
+  // wired here rather than left as decoration.
+  const nav = useMockNav();
   const reduceMotion = usePrefersReducedMotion();
   // Re-keys the body so every CSS entrance replays — Dart's `_cycle`.
   const [cycle, setCycle] = useState(0);
@@ -103,7 +108,17 @@ export function BookingShowcase({ loop = true, onCycleComplete }: BookingShowcas
       <div key={cycle} className={styles.screen} style={MOTION_VARS}>
         <BookedContent />
         <div className={styles.ctaRow}>
-          <ShowcasePrimaryButton text="Continue" fullWidth borderRadius="var(--sc-radius-big)" />
+          <ShowcasePrimaryButton
+            text="Continue"
+            fullWidth
+            borderRadius="var(--sc-radius-big)"
+            onPressed={() => {
+              // reset(), not back(): booking is the end of the reserve flow, so
+              // it returns to the asset's root rather than back through the
+              // class detail the member just finished with.
+              nav.reset();
+            }}
+          />
         </div>
       </div>
     </ShowcaseScaffold>

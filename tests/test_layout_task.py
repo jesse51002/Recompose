@@ -24,11 +24,11 @@ from RecomposeAPI.studio.service.layout_task import (
 from RecomposeAPI.studio.service.session_registry import SessionRegistry
 
 
-def _brief(name: str = "Quiet Morning", app: str = "combatden") -> LayoutBrief:
+def _brief(name: str = "Quiet Morning") -> LayoutBrief:
+    """A LayoutBrief carries only what a layout IS. Which base it forks and
+    which run it is designed against are arguments to `start`."""
     return LayoutBrief(
         name=name,
-        app=app,
-        theme_run="stillwater-01",
         layout_direction=Direction(
             short_desc="Lead with the next class.",
             long_desc="The schedule is why people open this, so it leads.",
@@ -57,7 +57,7 @@ def test_it_copies_the_base_into_a_prefixed_folder(task) -> None:
     a negation per authored app — so the prefix is a contract, not cosmetics."""
     layout, apps = task
 
-    design_id = asyncio.run(layout.start(_brief()))
+    design_id = asyncio.run(layout.start(_brief(), app="combatden"))
 
     assert design_id == f"{GENERATED_PREFIX}quiet-morning"
     target = apps / design_id
@@ -73,36 +73,29 @@ def test_the_brief_lands_beside_the_code_it_describes(task) -> None:
     """The agent is handed a directory and a YAML file; this is that file."""
     layout, apps = task
 
-    design_id = asyncio.run(layout.start(_brief()))
+    design_id = asyncio.run(layout.start(_brief(), app="combatden"))
 
     written = yaml.safe_load(
         (apps / design_id / LAYOUT_BRIEF_FILENAME).read_text(encoding="utf-8")
     )
     assert written["name"] == "Quiet Morning"
-    assert written["theme_run"] == "stillwater-01"
     # Both directions carry the same two fields and nothing else — the same
     # shape as a brand brief's `design_direction`.
     for group in ("layout_direction", "motion_direction"):
         assert set(written[group]) == {"short_desc", "long_desc"}
     # Field order is the model's, because that is the order a person reads.
-    assert list(written) == [
-        "name",
-        "app",
-        "theme_run",
-        "layout_direction",
-        "motion_direction",
-    ]
+    assert list(written) == ["name", "layout_direction", "motion_direction"]
 
 
 def test_a_repeated_name_is_refused_not_overwritten(task) -> None:
     """THE test in this file. Two generations called the same thing are the
     same thing; silently overwriting one would delete an agent's work."""
     layout, apps = task
-    design_id = asyncio.run(layout.start(_brief()))
+    design_id = asyncio.run(layout.start(_brief(), app="combatden"))
     (apps / design_id / "index.ts").write_text("// edited\n", encoding="utf-8")
 
     with pytest.raises(DesignNameTakenError):
-        asyncio.run(layout.start(_brief()))
+        asyncio.run(layout.start(_brief(), app="combatden"))
 
     # The edit survives, which is the point of refusing.
     assert (apps / design_id / "index.ts").read_text() == "// edited\n"
@@ -113,7 +106,7 @@ def test_an_unsluggable_name_is_refused(task) -> None:
     layout, _ = task
 
     with pytest.raises(ValueError, match="cannot derive a filename"):
-        asyncio.run(layout.start(_brief(name="!!!")))
+        asyncio.run(layout.start(_brief(name="!!!"), app="combatden"))
 
 
 def test_an_unknown_base_app_is_refused(task) -> None:
@@ -121,7 +114,7 @@ def test_an_unknown_base_app_is_refused(task) -> None:
     layout, _ = task
 
     with pytest.raises(UnknownAppError):
-        asyncio.run(layout.start(_brief(app="nosuchapp")))
+        asyncio.run(layout.start(_brief(), app="nosuchapp"))
 
 
 def test_the_base_app_cannot_walk_out_of_the_apps_tree(task) -> None:
@@ -130,4 +123,4 @@ def test_the_base_app_cannot_walk_out_of_the_apps_tree(task) -> None:
     layout, _ = task
 
     with pytest.raises(UnknownAppError):
-        asyncio.run(layout.start(_brief(app="../../etc")))
+        asyncio.run(layout.start(_brief(), app="../../etc"))

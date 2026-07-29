@@ -47,12 +47,6 @@ export function BriefSheet({ view }: { view: SessionView }) {
             state={layout.accepted ? 'accepted' : 'ready'}
           />
           <h2 className={styles.name}>{layout.brief.name}</h2>
-          {/* Which theme this arranges AGAINST. Recorded in the artifact, not
-              only in the code, so a generation's provenance never has to be
-              guessed later. */}
-          <Field label="Against">
-            {layout.brief.app} · {layout.brief.theme_run}
-          </Field>
           <Field label="Layout">{layout.brief.layout_direction.short_desc}</Field>
           <Field label="Layout, in full">
             {layout.brief.layout_direction.long_desc}

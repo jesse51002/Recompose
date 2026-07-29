@@ -37,6 +37,7 @@
 // farthest sparkle lands at x = 23 and x = 367, inside the body on both sides.
 
 import type { ReactElement } from 'react';
+import { SLOT_REWARDS, slotAt } from './showcaseSlots';
 
 import { RewardsCardGrid } from './rewards/layouts/RewardsCardGrid';
 import type { ShowcasePointsStoreItem } from './rewards/mockPointsStore';
@@ -60,14 +61,21 @@ const DEFAULT_GYM_NAME = 'Your Gym';
 export function storeItemsFor(
   rewards: readonly ShowcaseReward[] | null | undefined,
 ): readonly ShowcasePointsStoreItem[] {
+  // The theme slot is assigned BY POSITION here, where the list is built, so
+  // no card has to re-derive which slot it paints with. The bundled fallback
+  // set gets them too — it is what renders before any theme loads.
   if (rewards === null || rewards === undefined || rewards.length === 0) {
-    return SHOWCASE_POINTS_STORE_DATA.items;
+    return SHOWCASE_POINTS_STORE_DATA.items.map((item, i) => ({
+      ...item,
+      themeSlot: slotAt(SLOT_REWARDS, i),
+    }));
   }
-  return rewards.map((reward) => ({
+  return rewards.map((reward, i) => ({
     title: reward.title,
     priceLabel: reward.priceLabel,
     pointsCost: reward.pointsCost,
     imageUrl: reward.imageUrl,
+    themeSlot: slotAt(SLOT_REWARDS, i),
   }));
 }
 

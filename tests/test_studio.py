@@ -18,9 +18,12 @@ import pytest
 import yaml
 from fastapi.testclient import TestClient
 
+from pydantic import ValidationError
+
 from ThemeTree.executor.progress_event import ProgressEvent, ProgressEventKind
 from RecomposeAPI.studio.config import settings
 from RecomposeAPI.main import app
+from RecomposeAPI.studio.schema.layout_brief import LayoutBrief
 from RecomposeAPI.studio.service import brief_service as brief_service_module
 from RecomposeAPI.studio.service import run_launcher as run_launcher_module
 from RecomposeAPI.studio.service import run_reader as run_reader_module
@@ -651,3 +654,57 @@ def test_a_log_without_a_terminal_record_reads_as_crashed(studio) -> None:
     records = _records(client, run_id)
     assert records[-1]["kind"] == "settled"
     assert records[-1]["status"] == "crashed"
+
+
+# --- LayoutBrief ------------------------------------------------------------
+#
+# The LAYOUT half of a design's brief, the counterpart to a run's
+# `customization.yaml`. It lives in the studio's schema rather than in
+# `schema/` because nothing in the pipeline ever sees a screen — so its test
+# lives here too, beside the rest of the studio's contracts.
+
+_MOCKUP_APPS = Path(__file__).resolve().parents[1] / "RecomposeJsxMockUps" / "src" / "apps"
+
+
+@pytest.mark.parametrize(
+    "layout_brief",
+    sorted(_MOCKUP_APPS.glob("*/layout_brief.yaml")),
+    ids=lambda p: p.parent.name,
+)
+def test_every_layout_brief_validates(layout_brief: Path) -> None:
+    """Every mock app's `layout_brief.yaml` is a valid `LayoutBrief`.
+
+    This is the REAL check on that file. The TypeScript side can only look for
+    the presence of a key, while `extra="forbid"` here rejects a typo'd or
+    left-over one instead of silently ignoring it — which is what keeps the
+    file a brief rather than drifting back into a second copy of the route
+    list and the device size.
+    """
+    LayoutBrief.model_validate(yaml.safe_load(layout_brief.read_text()))
+
+
+def test_layout_brief_forbids_anything_but_the_three_fields() -> None:
+    """The `extra="forbid"` guarantee, asserted rather than assumed.
+
+    An inventory field is exactly what this model exists to keep out: the code
+    already declares routes, sizes and assets, so a copy here could only ever
+    drift out of agreement with it.
+    """
+    good = {
+        "name": "X",
+        "layout_direction": {"short_desc": "a", "long_desc": "b"},
+        "motion_direction": {"short_desc": "c", "long_desc": "d"},
+    }
+    assert LayoutBrief.model_validate(good).name == "X"
+
+    with pytest.raises(ValidationError):
+        LayoutBrief.model_validate(good | {"routes": ["home"]})
+    with pytest.raises(ValidationError):
+        LayoutBrief.model_validate(good | {"name": "  "})
+    with pytest.raises(ValidationError):
+        LayoutBrief.model_validate(
+            good | {"layout_direction": {"short_desc": "", "long_desc": "b"}}
+        )
+    # A direction is a pair; half of one is not a direction.
+    with pytest.raises(ValidationError):
+        LayoutBrief.model_validate(good | {"motion_direction": {"short_desc": "c"}})

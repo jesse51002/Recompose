@@ -27,6 +27,7 @@
 // page.
 
 import { useEffect, useRef, useState } from 'react';
+import { ThemedImage } from 'recompose-react';
 
 import { showcaseAssetOrNetwork } from '../showcaseAssets';
 import { showcaseStyle } from '../showcaseTokens';
@@ -169,6 +170,20 @@ export function RewardsCarousel({
  */
 function RewardCircle({ item }: { item: ShowcaseRewardItem }) {
   const src = showcaseAssetOrNetwork(item.imageUrl, item.imageAsset);
+  // <ThemedImage> already holds the fallback until the override's URL probes,
+  // so the `key` remount below is only needed on the untokenised path.
+  if (item.themeSlot !== undefined) {
+    return (
+      <div className={styles.circle}>
+        <ThemedImage
+          className={styles.photo}
+          slot={item.themeSlot}
+          fallbackSrc={src}
+          alt={item.name}
+        />
+      </div>
+    );
+  }
   // `key` remounts the frame whenever the photo changes, so one dead URL cannot
   // pin the slot to the empty disc forever. The same reset ../home/classItem/ClassItemThumb.tsx
   // and the library's <ThemedImage> use, and for the same reason.
