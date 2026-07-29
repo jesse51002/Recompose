@@ -73,17 +73,25 @@
  * off the scale, and the row still wrong, because consistency is not
  * distribution.
  *
- * `space-between` across the full measure, so the eye reads four things rather
- * than one clump. Each item keeps its OWN gap tight (see `.carryItem`), which is
- * what still says "this mark and this number are one fact".
+ * A GENEROUS UNIFORM GAP, not `space-between`. Stretching the row to the full
+ * measure did separate the four facts — but it also made the row span margin to
+ * margin directly beneath a masthead that stops in the left third, so the head
+ * had two disagreeing right edges and read as misaligned. That is mockup-qa's
+ * Pass 2d.2c, and the fix it prescribes is exactly this: size the stretched
+ * block to its content, with a gap big enough that it is still not packed.
  *
- * This is not an argument for centring anything: the row stays left-anchored at
- * the page margin like everything else on the screen.
+ * `--sc-spacing-big` is double the gap that caused the packing and half the
+ * screen's remaining slack, so the four read as four without the row claiming
+ * an edge the block above it does not.
+ *
+ * Each item keeps its OWN gap tight (see `.carryItem`), which is what still
+ * says "this mark and this number are one fact". Nothing here is centred: the
+ * row stays left-anchored at the page margin like everything else on screen.
  */
 .carry {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: var(--sc-spacing-big);
   margin-top: var(--sc-spacing-large);
 }
 

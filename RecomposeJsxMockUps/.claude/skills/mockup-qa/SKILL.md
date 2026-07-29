@@ -517,6 +517,61 @@ or a deliberately larger uniform gap — while keeping each entity's own interna
 gap tight. Re-read Guardrail 15 before changing anything here; over-applying it
 produces centred layouts that are worse than what they replaced.
 
+**2c. Do STACKED blocks agree on their edges?** A QA check only — deliberately
+not a design guardrail, because stated as a rule it would push every layout
+toward centring, and that would be a worse outcome than the thing it fixes.
+
+The shape: one block stops well short of the content width, and the block
+directly above or below it spans margin to margin. Each is defensible alone.
+Stacked, the eye sees two different right edges within one region and reads the
+composition as broken — most visibly at the top of a screen, where a masthead
+sitting in the left third above a full-width row of stats makes the whole head
+look misaligned.
+
+**MEASURE THE INK, NOT THE BOX** — the same trap rule 2 documents for gaps, and
+it makes this check useless if you get it wrong. A block laid out with
+`space-between` or `flex: 1` has a BOX that spans the full width whether or not
+its content does, so comparing `getBoundingClientRect().right` on two stacked
+blocks reports them as identical while one is visibly half empty. That happened
+here: both blocks measured 366 and the real ink edges were 164 and 292.
+
+Walk to the deepest painted descendants and take the rightmost:
+
+```bash
+$B js "(()=>{const s=document.querySelector('[class*=_screen_]');const sc=390/s.getBoundingClientRect().width;
+const ink=(el)=>{let m=0;el.querySelectorAll('*').forEach(e=>{if(e.children.length)return;
+  const r=e.getBoundingClientRect();if(r.width<1||r.height<1)return;m=Math.max(m,r.right);});return m;};
+const out=[];s.querySelectorAll('*').forEach(p=>{
+  if(getComputedStyle(p).flexDirection==='row')return;
+  const kids=[...p.children].filter(k=>k.getBoundingClientRect().height>8&&k.getBoundingClientRect().width>40);
+  for(let i=0;i<kids.length-1;i++){
+    const a=ink(kids[i]),b=ink(kids[i+1]);if(!a||!b)continue;
+    const d=Math.round(Math.abs(a-b)*sc);
+    if(d>48)out.push(String(kids[i].className).slice(0,16)+' / '+String(kids[i+1].className).slice(0,16)+' ink edges differ by '+d+'px');
+  }});
+return out.length?JSON.stringify([...new Set(out)].slice(0,6)):'stacked blocks agree on their edges';})()"
+```
+
+**A hit is a prompt to look, and there are good reasons to differ.** A
+full-bleed photograph above inset type is correct and will flag every time. A
+short heading above a long paragraph is correct. A list row above a wider list
+row is correct.
+
+**It is a finding when neither block has a reason to stop where it stops** —
+typically a row that was stretched to full width by `space-between` or `flex: 1`
+sitting under a block sized by its own content.
+
+**THE FIX IS NOT TO CENTRE ANYTHING.** Centring a masthead to match a row
+beneath it trades one problem for a worse one — wrapping text must stay left
+aligned and anything scanned reads better from one left edge. The honest fixes,
+in order of preference:
+
+- let the stretched block size to its content instead, with a gap generous
+  enough that it still is not packed (Guardrail 15);
+- give the short block something that legitimately belongs at its trailing edge,
+  if the inventory already contains such an element — never invent one;
+- accept it, and say why in the report.
+
 **3. Does the spacing GROUP?** This is the half no script can check, and it is
 the half that decides whether a screen reads. **Related things sit closer
 together than unrelated things.** A label and the figure it names are one object
