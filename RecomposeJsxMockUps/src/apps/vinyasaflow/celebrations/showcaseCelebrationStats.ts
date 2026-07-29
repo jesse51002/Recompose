@@ -104,9 +104,18 @@ export const SHOWCASE_POINTS_STATS: ShowcasePointsStats = Object.freeze({
   totalPoints: 3400,
 });
 
-/** `showcaseRewardsStats`. */
+/**
+ * `showcaseRewardsStats`.
+ *
+ * SENTENCE CASE, where the base's is title case. This app never sets a label in
+ * capitals and never tracks one out (../layout_brief.yaml) — the voice is a
+ * teacher with a hand on your shoulder, and title case is the register of a
+ * product announcement. Caught in the browser rather than by any gate: a
+ * stylesheet rule can ban `text-transform: uppercase`, and nothing can ban a
+ * string that was simply typed with capitals in it.
+ */
 export const SHOWCASE_REWARDS_STATS: ShowcaseRewardsStats = Object.freeze({
-  title: 'Rewards You Can Get',
+  title: 'Rewards you can get',
   subtitle: 'Swipe to view rewards',
   featuredIndex: 1,
   items: Object.freeze([

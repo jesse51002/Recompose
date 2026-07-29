@@ -215,11 +215,26 @@
   overflow: hidden;
 }
 
+/*
+ * THE ONE PLACE IN THIS APP A PHOTOGRAPH IS CROPPED ON PURPOSE, and the crop is
+ * DECIDED rather than inherited from the container's shape — which is the
+ * distinction Guardrail 10b actually draws. A headshot is the one photograph a
+ * circle suits.
+ *
+ * `object-position` is the load-bearing half. The bundled instructor portrait
+ * is 1281x1920 (0.67), not the near-square Guardrail 10b assumes when it says a
+ * circle is fine, so a centred cover crop discards 33% and lands the frame on
+ * the subject's chest — a headshot showing a shirt. Pulling the crop toward the
+ * top puts the face in the circle, which is what an avatar is for. Caught in
+ * the browser; the ratio sweep reported the 33% but only the screenshot said it
+ * was framing the wrong thing.
+ */
 .faceImg {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center 22%;
 }
 
 .teacherText {
