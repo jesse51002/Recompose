@@ -12,17 +12,28 @@
 // it, or each would erase the other's parameter.
 
 /**
- * The three top-level surfaces.
+ * The top-level surfaces.
  *
  * `browse` is the default and is deliberately ABSENT from the URL — a bare
  * `/` is the library, so the address a visitor shares stays clean and an
  * unknown `?view=` degrades to it rather than erroring.
+ *
+ * `onboard` and `fleet` are the two ADMIN surfaces, and both are demo-ware:
+ * they draw from `data/fleetFixtures.ts` and connect to nothing. They live
+ * here rather than in a separate app because the demo is one thing a person
+ * clicks through, and a second bundle would be a second thing to keep running.
  */
-export type AppView = 'browse' | 'inspect' | 'studio';
+export type AppView = 'browse' | 'inspect' | 'studio' | 'onboard' | 'fleet';
 
 const VIEW_PARAM = 'view';
 
-const VIEWS: readonly AppView[] = Object.freeze(['browse', 'inspect', 'studio']);
+const VIEWS: readonly AppView[] = Object.freeze([
+  'browse',
+  'inspect',
+  'studio',
+  'onboard',
+  'fleet',
+]);
 
 function isAppView(value: string | null): value is AppView {
   return value !== null && (VIEWS as readonly string[]).includes(value);

@@ -27,6 +27,8 @@ import {
   EXPECTED_IMAGES,
   EXPECTED_TEXT,
 } from 'recompose-jsx-mockups';
+import { FleetView } from './generate/FleetView';
+import { OnboardView } from './generate/OnboardView';
 import { StudioView } from './studio/StudioView';
 import { ADM } from './tokens/adminTokens';
 import { ViewTabs } from './ViewTabs';
@@ -72,13 +74,21 @@ export function App() {
           fallback={<CenteredSpinner />}
         >
           <DeepLinkTheme />
-          {/* All three views sit INSIDE the gate: the inspector reads the
-              resolved theme, and the studio previews what it just produced,
-              so neither can render before the runtime has settled. */}
+          {/* The theme-reading views sit INSIDE the gate: the inspector reads
+              the resolved theme and the studio previews what it just produced,
+              so neither can render before the runtime has settled. Onboard and
+              Fleet read no theme at all — they are admin chrome over fixtures —
+              but they stay inside it rather than being special-cased out, since
+              the gate costs them one already-settled render and an exception
+              would be a second code path to keep true. */}
           {view === 'inspect' ? (
             <InspectView />
           ) : view === 'studio' ? (
             <StudioView />
+          ) : view === 'onboard' ? (
+            <OnboardView />
+          ) : view === 'fleet' ? (
+            <FleetView />
           ) : (
             <ThemeBrowser />
           )}

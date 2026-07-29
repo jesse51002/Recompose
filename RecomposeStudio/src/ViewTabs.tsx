@@ -27,6 +27,10 @@ const TABS: readonly { readonly view: AppView; readonly label: string; readonly 
     { view: 'browse', label: 'Library', title: 'Browse every generated design' },
     { view: 'inspect', label: 'Inspect', title: 'Every artifact the pipeline produced' },
     { view: 'studio', label: 'Studio', title: 'Generate a new design' },
+    // The two admin surfaces. Both are demo-ware and say so on the page
+    // itself, which is the only place a viewer would otherwise be misled.
+    { view: 'onboard', label: 'Onboard', title: 'Point us at a platform (demo)' },
+    { view: 'fleet', label: 'Fleet', title: 'Every customer app and its agent (demo)' },
   ]);
 
 export function ViewTabs({

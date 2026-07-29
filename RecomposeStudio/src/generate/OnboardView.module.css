@@ -1,0 +1,260 @@
+/* The Onboard page. Ported from design/studio-demo.html. */
+
+.page {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  background: var(--sh-ground);
+  color: var(--ink);
+  font-family: var(--sans);
+}
+
+.body {
+  width: 100%;
+  max-width: 720px;
+  padding: 52px 28px 40px;
+}
+
+.kick {
+  font: 500 var(--fs-micro) / 1 var(--mono);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--ink-4);
+}
+
+.display {
+  margin: 14px 0 10px;
+  font: 700 clamp(38px, 4.4vw, 58px) / 1.02 var(--sans);
+  font-variation-settings: 'wdth' 108;
+  letter-spacing: -0.035em;
+}
+
+.lede {
+  margin: 0 0 28px;
+  max-width: 54ch;
+  font: 400 var(--fs-md) / 1.55 var(--sans);
+  color: var(--ink-2);
+}
+
+.lede b { color: var(--ink); font-weight: 500; }
+
+.urlbar {
+  display: flex;
+  gap: 9px;
+  margin-bottom: 18px;
+}
+
+.field {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 8px;
+  background: var(--sh-panel);
+  font: 400 var(--fs-sm) / 1 var(--mono);
+  color: var(--ink-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.glyph {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ink-4);
+}
+
+.btn {
+  padding: 11px 16px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+  font: 500 var(--fs-sm) / 1 var(--sans);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn:hover:enabled { border-color: var(--sh-line-3); }
+
+.primary {
+  border-color: var(--st-you-l);
+  background: var(--st-you-w);
+  color: var(--st-you);
+}
+
+.btn:disabled { opacity: 0.5; cursor: default; }
+
+.ribbon {
+  display: flex;
+  gap: 0;
+  margin-bottom: 20px;
+  border: 1px solid var(--sh-line);
+  border-radius: 9px;
+  overflow: hidden;
+}
+
+.rstep {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 15px;
+  border-right: 1px solid var(--sh-line);
+  color: var(--ink-4);
+}
+
+.rstep:last-child { border-right: 0; }
+
+.rstep b { font: 500 var(--fs-xs) / 1 var(--sans); }
+
+.rn {
+  font: 500 var(--fs-micro) / 1 var(--mono);
+  letter-spacing: var(--tr-label);
+}
+
+.rdone { color: var(--st-ok); }
+.ractive { color: var(--st-run); background: var(--st-run-w); }
+
+.panel {
+  margin-bottom: 16px;
+  padding: 15px 16px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 10px;
+  background: var(--sh-panel);
+}
+
+.agent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lb { flex: 1; min-width: 0; }
+
+.lb b {
+  display: block;
+  font: 500 var(--fs-sm) / 1.35 var(--sans);
+}
+
+.lb u {
+  display: block;
+  margin-top: 3px;
+  text-decoration: none;
+  font: 400 var(--fs-xs) / 1.5 var(--mono);
+  color: var(--ink-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pulse {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: currentcolor;
+}
+
+.ok { color: var(--st-ok); }
+.running { color: var(--st-run); }
+
+/* The pulse is the only motion on the page, and it means one thing: an agent
+   is working right now. Stilled under reduced motion — the colour and the
+   label already carry the state, so nothing is lost. */
+.running .pulse {
+  animation: breathe 1.6s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--st-run-w); }
+  50% { opacity: 0.55; box-shadow: 0 0 0 5px transparent; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .running .pulse { animation: none; }
+}
+
+.el {
+  flex: none;
+  font: 400 var(--fs-xs) / 1 var(--mono);
+  color: var(--ink-4);
+}
+
+.longrun {
+  margin-top: 13px;
+  padding: 10px 12px;
+  border: 1px solid var(--sh-line);
+  border-radius: 7px;
+  font: 400 var(--fs-xs) / 1.6 var(--sans);
+  color: var(--ink-3);
+}
+
+.longrun b { color: var(--ink-2); font-weight: 500; }
+
+.found {
+  display: flex;
+  gap: 0;
+  margin-top: 14px;
+  border-top: 1px solid var(--sh-line);
+  padding-top: 13px;
+}
+
+.found > div {
+  flex: 1;
+  border-right: 1px solid var(--sh-line);
+}
+
+.found > div:last-child { border-right: 0; }
+
+.found b {
+  display: block;
+  font: 600 var(--fs-lg) / 1 var(--sans);
+  letter-spacing: -0.02em;
+}
+
+.found u {
+  display: block;
+  margin-top: 6px;
+  text-decoration: none;
+  font: 400 var(--fs-micro) / 1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+}
+
+.acts {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 14px;
+}
+
+.spacer { flex: 1; }
+
+.disclaim {
+  margin: 26px 0 0;
+  padding-top: 15px;
+  border-top: 1px solid var(--sh-line);
+  max-width: 62ch;
+  font: 400 var(--fs-xs) / 1.7 var(--sans);
+  color: var(--ink-3);
+}
+
+.disclaim b { color: var(--ink-2); font-weight: 500; }
+
+.synthetic {
+  margin: 14px 0 0;
+  font: 400 var(--fs-micro) / 1.5 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+}

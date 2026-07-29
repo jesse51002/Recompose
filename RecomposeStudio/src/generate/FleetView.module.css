@@ -1,0 +1,212 @@
+/* The Fleet page. Ported from design/studio-demo.html.
+   Cards, not a table: the state has to land at a glance from across a room. */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--sh-ground);
+  color: var(--ink);
+  font-family: var(--sans);
+}
+
+.head {
+  flex: none;
+  padding: 22px 26px 18px;
+  border-bottom: 1px solid var(--sh-line);
+}
+
+.head h1 {
+  margin: 0;
+  font: 700 var(--fs-xl) / 1.08 var(--sans);
+  font-variation-settings: 'wdth' 106;
+  letter-spacing: var(--tr-title);
+}
+
+.head p {
+  margin: 7px 0 0;
+  max-width: 700px;
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+  color: var(--ink-3);
+}
+
+.head p b {
+  color: var(--ink-2);
+  font-weight: 500;
+}
+
+.kpis {
+  flex: none;
+  display: flex;
+  border-bottom: 1px solid var(--sh-line);
+}
+
+.kpi {
+  flex: 1;
+  padding: 15px 26px;
+  border-right: 1px solid var(--sh-line);
+}
+
+.kpi:last-child {
+  border-right: 0;
+}
+
+.kpi b {
+  display: block;
+  font: 600 var(--fs-xl) / 1 var(--sans);
+  letter-spacing: -0.03em;
+}
+
+.kpi u {
+  display: block;
+  margin-top: 8px;
+  text-decoration: none;
+  font: 400 var(--fs-xs) / 1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+}
+
+.run b { color: var(--st-run); }
+.ok b { color: var(--st-ok); }
+.you b { color: var(--st-you); }
+
+.cards {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 22px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr) auto;
+  gap: 22px;
+  align-items: start;
+  padding: 18px 20px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 12px;
+  background: var(--sh-panel);
+}
+
+/* A card an agent is working on right now has to be obviously alive. */
+.live {
+  border-color: var(--st-run-l);
+  background: linear-gradient(var(--st-run-w), var(--st-run-w)), var(--sh-panel);
+}
+
+.who b {
+  display: block;
+  font: 600 var(--fs-md) / 1.2 var(--sans);
+  letter-spacing: var(--tr-title);
+}
+
+.who u {
+  display: block;
+  margin-top: 5px;
+  text-decoration: none;
+  font: 400 var(--fs-xs) / 1 var(--mono);
+  color: var(--ink-3);
+}
+
+.since {
+  display: block;
+  margin-top: 7px;
+  font: 400 var(--fs-micro) / 1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+}
+
+.state {
+  min-width: 0;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--sh-line-2);
+  font: 500 var(--fs-micro) / 1.6 var(--mono);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+}
+
+.tag i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentcolor;
+}
+
+.tag.run { color: var(--st-run); border-color: var(--st-run-l); background: var(--st-run-w); }
+.tag.ok { color: var(--st-ok); border-color: oklch(0.8 0.092 165 / 0.4); background: var(--st-ok-w); }
+.tag.you { color: var(--st-you); border-color: var(--st-you-l); background: var(--st-you-w); }
+
+.state > b {
+  display: block;
+  margin: 9px 0 5px;
+  font: 500 var(--fs-sm) / 1.4 var(--sans);
+}
+
+.state > u {
+  display: block;
+  text-decoration: none;
+  max-width: 62ch;
+  font: 400 var(--fs-xs) / 1.6 var(--sans);
+  color: var(--ink-3);
+}
+
+.log {
+  display: block;
+  margin-top: 9px;
+  font: 400 var(--fs-micro) / 1.5 var(--mono);
+  color: var(--ink-4);
+}
+
+.acts {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.btn {
+  padding: 7px 12px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  font: 500 var(--fs-xs) / 1 var(--sans);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn:hover { border-color: var(--sh-line-3); }
+
+.foot {
+  flex: none;
+  padding: 15px 26px;
+  border-top: 1px solid var(--sh-line);
+  font: 400 var(--fs-xs) / 1.65 var(--sans);
+  color: var(--ink-3);
+}
+
+.foot b { color: var(--ink-2); font-weight: 500; }
+
+.synthetic {
+  flex: none;
+  margin: 0;
+  padding: 9px 26px 13px;
+  font: 400 var(--fs-micro) / 1.5 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+}

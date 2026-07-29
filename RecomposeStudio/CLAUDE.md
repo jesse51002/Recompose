@@ -8,6 +8,8 @@ The standalone tool. Three views, switched by the tab bar and reachable by URL
 | *(default)* | **Library** — the catalog, and any design previewed in a phone frame. |
 | `inspect` | **Inspect** — every artifact one pipeline run produced: the four colour roles with their derivations, the flat palette, both typefaces set in themselves, the generated copy, icons and imagery. |
 | `studio` | **Studio** — the Generate page: name a business, answer an interview, and watch the design get made. Three panes over one server-held session. |
+| `onboard` | **Onboard** — point us at a platform. **Demo-ware**: connects to nothing. |
+| `fleet` | **Fleet** — every customer app and what an agent is doing to it. **Demo-ware**: drawn from fixtures. |
 
 See `../CLAUDE.md` for the monorepo map.
 
@@ -43,7 +45,10 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
   this page was designed dark so the generated theme is the brightest thing on
   it. The tokens are scoped to `.shell`, so nothing else can read them.
 - `chrome/`, `widgets/`, `tokens/`, `styles/` — the app shell and its own UI vocabulary. **This is the studio's design system, not the product's** — it is admin chrome, deliberately plain, and must never leak into the mockups.
-- `data/` — defaults and fixtures the views fall back to.
+- `data/` — defaults and fixtures the views fall back to, including
+  `fleetFixtures.ts`. **Everything in that file is invented** — there are no
+  customers and no deployment — and both pages that read it say so on the page
+  itself, which is the only place a viewer would otherwise be misled.
 - `design/` — **a clickable demo of a proposed redesign, not code.** One
   self-contained `studio-demo.html`: open it, no build, no server. Three pages
   across two points of view — Onboard and Fleet are admin, Generate is the
@@ -60,6 +65,10 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
   means a state — a phase, a failure, a person is needed. Decorative colour
   belongs to the generated theme, and the canvas is where it lives. So a hue
   appearing in the chrome always means something changed.
+- **Demo-ware says so on its own surface.** Onboard and Fleet connect to
+  nothing, and each carries a line naming what is invented. A demo that cannot
+  be told from a product is the one failure this repo cannot afford, and a note
+  in a file nobody opens is not a label.
 - **Phase colour has exactly one source.** `generate/phaseClass.ts` maps a wire
   phase to the class carrying its `--phase*` properties, and the header tag and
   the transcript markers both read it. In the demo a single `stamp()` call held
