@@ -5,7 +5,7 @@ The product, as three pages walked in order:
 | `?view=` | Who | What |
 |---|---|---|
 | *(default)* | admin | **Onboard** — point us at a platform, get a design fork. Demo-ware. |
-| `generate` | customer | **Generate** — name a business, answer an interview, watch the design get made. Real. |
+| `generate` | customer | **Generate** — answer an interview, watch the design get made. Real. |
 | `fleet` | admin | **Fleet** — every customer app and what an agent is doing to it. Demo-ware. |
 
 **The pages hand over to each other.** Onboarding ends by opening the customer
@@ -45,7 +45,11 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
   `sessionFold` / `runFold`, and `RunSheet`, which is now the Generate page's
   Inspect tab rather than a page of its own. Talks to `RecomposeAPI/studio`.
 - `generate/` — the Generate page itself: the transcript column, the canvas,
-  the brief document, and its own dark token scope. **This is the one view with
+  the brief document, and its own dark token scope. **Nothing is typed before
+  it.** Opening the tab opens the session; the start form that used to stand in
+  front asked a person to name a thing that did not exist yet, for a fact the
+  agent's own first question collects. `StudioDown` is all that remains in
+  front, and only when the API cannot be reached. **This is the one view with
   a ground of its own** — the rest of the studio is a daylit control desk, and
   this page was designed dark so the generated theme is the brightest thing on
   it. The tokens are scoped to `.shell`, so nothing else can read them.
@@ -91,6 +95,21 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
   the transcript markers both read it. In the demo a single `stamp()` call held
   that invariant; here the data holds it, and a second mapping would be the way
   it breaks.
+- **One thing at a time is awaiting the person.** `sessionFold` closes any open
+  question when a proposal lands and any open proposal when a question lands, so
+  live chips can never sit above a live Accept. The agent's output union already
+  makes one TURN produce one arm, but a turn is not the unit that matters: a
+  system note (a run settling) starts a turn with nothing said, so an ask left
+  open before it would still be live underneath.
+- **An answered question shows WHICH option was taken**, in the shell's own
+  colour for "you". Derived by matching the next thing the person said against
+  the options — a chip press posts the option's own text, so the records
+  genuinely cannot tell a pick from typing. Without it a finished interview
+  scrolled back as identical grey rows: every question kept, every answer lost.
+- **Stopping the layout agent is offered only while one runs.** It is the most
+  expensive thing the page can start and closing the tab does not stop it, so
+  the control exists — but an offer to stop something that is not running is
+  worse than no offer. `view.layoutRunning` gates it.
 - **Fail visible.** A missing artifact, a failed run, an empty catalog: show the
   state. A blank pane that could mean "loading" or "broken" is the one failure
   mode that wastes the most time here.

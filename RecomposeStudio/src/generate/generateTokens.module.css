@@ -52,7 +52,6 @@
      Violet = a person is authoring. Blue = a machine is working. Amber = a
      person must decide. Green = settled. The transcript is therefore legible
      twice over: which phase, and whose turn it is. */
-  --ph-layout: oklch(0.8 0.128 332);
   --ph-brief: oklch(0.8 0.13 305);
   --ph-gen: oklch(0.8 0.13 262);
   --ph-design: oklch(0.8 0.126 218);
@@ -60,12 +59,10 @@
   --ph-review: var(--st-you);
   --ph-done: var(--st-ok);
 
-  --ph-layout-w: oklch(0.8 0.128 332 / 0.13);
   --ph-brief-w: oklch(0.8 0.13 305 / 0.13);
   --ph-gen-w: oklch(0.8 0.13 262 / 0.13);
   --ph-design-w: oklch(0.8 0.126 218 / 0.13);
   --ph-valid-w: oklch(0.8 0.11 193 / 0.13);
-  --ph-layout-l: oklch(0.8 0.128 332 / 0.4);
   --ph-brief-l: oklch(0.8 0.13 305 / 0.4);
   --ph-gen-l: oklch(0.8 0.13 262 / 0.4);
   --ph-design-l: oklch(0.8 0.126 218 / 0.4);
@@ -101,11 +98,6 @@
   --phase: var(--ph-gen);
   --phase-wash: var(--ph-gen-w);
   --phase-line: var(--ph-gen-l);
-}
-.p-layout {
-  --phase: var(--ph-layout);
-  --phase-wash: var(--ph-layout-w);
-  --phase-line: var(--ph-layout-l);
 }
 .p-designing {
   --phase: var(--ph-design);

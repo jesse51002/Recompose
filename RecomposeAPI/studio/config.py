@@ -42,8 +42,39 @@ class Settings(BaseSettings):
     mockup_apps_dir: Path = _ROOT / "RecomposeJsxMockUps" / "src" / "apps"
     # The layout agent, as ARGV — a list, never a shell string. Empty (the
     # default) selects the stub, so the flow is walkable with no agent set up.
-    # Set LAYOUT_AGENT_COMMAND to a JSON array in `.env`.
+    # Set LAYOUT_AGENT_COMMAND to a JSON array in `.env`, e.g.
+    #   LAYOUT_AGENT_COMMAND=["claude","-p","--permission-mode","bypassPermissions"]
+    #
+    # **The job arrives as one final argument appended to this list** — the
+    # launch prompt, naming the app, the run directory and the design folder in
+    # absolute paths. That is the whole hand-off: an argv command that takes a
+    # prompt is all a layout agent has to be.
     layout_agent_command: list[str] = []
+    # Where the layout agent runs. The repo root rather than the design folder,
+    # because the job spans both trees — the theme it designs against lives in
+    # `apps/<app>/<run>/` and the folder it writes lives in
+    # `RecomposeJsxMockUps/src/apps/`, and only their common root sees both.
+    layout_agent_cwd: Path = _ROOT
+    # Raw text appended to every launch prompt. The one steering seam: the
+    # layout agent has more context than this service (it opens the generated
+    # images, reads the palette, loads its own skills), so the studio does not
+    # author a direction for it — it points, and this is where a human leans.
+    layout_steer: str = ""
+    # WHICH ACCOUNT PAYS FOR THE LAYOUT AGENT.
+    #
+    # A coding-agent CLI bills to an API key when it finds one in its
+    # environment and to the operator's own logged-in subscription when it does
+    # not. A subprocess inherits this process's environment, so whether a long
+    # redesign is billed as credits or covered by a subscription would
+    # otherwise be decided by whether someone happened to `export
+    # ANTHROPIC_API_KEY` before `make api` — invisible either way, and only
+    # discovered on a bill.
+    #
+    # Default false: the key is stripped from the child's environment, so the
+    # agent uses the CLI's own credentials. Set true to bill API credits
+    # deliberately. The pipeline is unaffected — it reads its key from
+    # Settings, never from the environment of a child process.
+    layout_agent_inherit_api_key: bool = False
 
     # --- The brief agent (ThemeTree/studio/agent/) ------------------------------
     # A BARE Anthropic model name, never a litellm "provider/model" string:

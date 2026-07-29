@@ -6,25 +6,28 @@ request shape every human action uses afterwards.
 
 from __future__ import annotations
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from schema import Customization
-from RecomposeAPI.studio.schema.layout_brief import LayoutBrief
 
 
 class StartSession(BaseModel):
-    """Open a session against one app, for one design.
+    """Open a session against one app.
 
-    ``design_name`` is what the person is making, not what it will be called
-    on disk — the brand brief's own name decides that when it is committed.
-    It exists here so the transcript has something to call the design from its
-    first line, and so ``/sessions/active`` can say which one is open.
+    **Nothing is typed before the conversation starts.** A design name used to
+    be required here, collected by a form in front of the Generate page — which
+    asked a person to name a thing that does not exist yet, in a box, before
+    anything had explained what was about to happen. The agent's own first
+    question is what the business is called, so the form was asking for the
+    same fact twice and putting a wall in front of the product.
+
+    The name arrives later, from the brand brief the interview produces, and
+    ``/sessions/active`` reports ``None`` until it does.
     """
 
     model_config = ConfigDict(extra="forbid")
 
     app_id: str = Field(min_length=1)
-    design_name: str = Field(min_length=1)
 
 
 class SessionOpened(BaseModel):
@@ -34,7 +37,7 @@ class SessionOpened(BaseModel):
 
     session_id: str
     app_id: str
-    design_name: str
+    design_name: str | None = None
     started_at: str
 
 
@@ -61,25 +64,19 @@ class SessionTurn(BaseModel):
 
 
 class SessionAccept(BaseModel):
-    """Accept the open proposal — exactly one of the two halves.
+    """Accept the brand brief. The design's ONE approval gate.
 
     The reviewed brief comes back VERBATIM rather than being taken from server
     state, because the review panel is editable: what the owner accepted is
     what they were looking at, which is not necessarily what the agent last
     proposed.
+
+    **There is no layout half to accept.** This used to carry an optional
+    ``layout`` and refuse unless exactly one arm was set. The layout brief is
+    authored by the layout agent now, at the start of its own run — see
+    ``service/layout_task.py``.
     """
 
     model_config = ConfigDict(extra="forbid")
 
-    brief: Customization | None = None
-    layout: LayoutBrief | None = None
-
-    @model_validator(mode="after")
-    def _exactly_one(self) -> SessionAccept:
-        """Both or neither is a client bug, and it is not recoverable later —
-        the two open different phases and start different work."""
-        if (self.brief is None) == (self.layout is None):
-            raise ValueError(
-                "accept exactly one of 'brief' or 'layout'"
-            )
-        return self
+    brief: Customization

@@ -6,7 +6,6 @@
 //   SessionRecord    RecomposeAPI/studio/schema/session_record.py
 //   SessionSnapshot  RecomposeAPI/studio/schema/session_snapshot.py
 //   StartSession     RecomposeAPI/studio/schema/session_open.py
-//   LayoutBrief      RecomposeAPI/studio/schema/layout_brief.py
 //
 // A SESSION is one design being made end to end; a RUN is one pipeline launch
 // inside it. Per-node run progress deliberately does NOT come through here — a
@@ -31,7 +30,8 @@ export type SessionRecordKind =
 export type SessionPhase =
   | 'brief'
   | 'generating'
-  | 'layout brief'
+  // No 'layout brief' between these two: the layout is not interviewed for,
+  // so a settled run goes straight to 'designing'.
   | 'designing'
   | 'validating'
   | 'review'
@@ -42,25 +42,6 @@ export interface AgentQuestion {
   readonly question: string;
   readonly options: readonly string[];
   readonly multi_select: boolean;
-}
-
-/** One direction of a layout brief: a line, and the prose behind it. */
-export interface DirectionInput {
-  readonly short_desc: string;
-  readonly long_desc: string;
-}
-
-/**
- * `LayoutBrief` — the layout half's brief, named per generation.
- *
- * Three fields and no more. Which base it forks and which run it is designed
- * against are arguments to the layout task, not part of what the layout IS —
- * a fork says so in its own `long_desc`, in words.
- */
-export interface LayoutBriefInput {
-  readonly name: string;
-  readonly layout_direction: DirectionInput;
-  readonly motion_direction: DirectionInput;
 }
 
 /**
@@ -86,7 +67,6 @@ export interface SessionRecord {
   readonly question?: AgentQuestion | null;
 
   readonly brief?: BriefInput | null;
-  readonly layout?: LayoutBriefInput | null;
 
   readonly task?: 'assets' | 'layout' | null;
   readonly task_state?: 'started' | 'progress' | 'finished' | 'failed' | null;
@@ -106,7 +86,9 @@ export type SessionStatus = 'running' | 'succeeded' | 'failed' | 'crashed';
 export interface SessionSnapshot {
   readonly session_id: string;
   readonly app_id: string;
-  readonly design_name: string;
+  /** Null until the brand brief names it — nothing is typed before the
+      conversation starts. */
+  readonly design_name: string | null;
   readonly status: SessionStatus;
   /** The last phase declared, or null before the first one. */
   readonly phase?: SessionPhase | null;
@@ -119,7 +101,7 @@ export interface SessionSnapshot {
 export interface SessionOpened {
   readonly session_id: string;
   readonly app_id: string;
-  readonly design_name: string;
+  readonly design_name: string | null;
   readonly started_at: string;
 }
 
@@ -156,15 +138,21 @@ async function send<T>(path: string, init?: RequestInit): Promise<T> {
   return (await response.json()) as T;
 }
 
-/** Open a session. 409 when one is already open. */
+/**
+ * Open a session. 409 when one is already open.
+ *
+ * An app and nothing else. A design name used to be required, typed into a
+ * form in front of the page — which asked a person to name a thing that did
+ * not exist yet before anything had explained what was about to happen, and
+ * asked for a fact the agent's own first question collects anyway.
+ */
 export async function openSession(input: {
   appId: string;
-  designName: string;
 }): Promise<SessionOpened> {
   return send<SessionOpened>('/sessions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ app_id: input.appId, design_name: input.designName }),
+    body: JSON.stringify({ app_id: input.appId }),
   });
 }
 
@@ -196,13 +184,31 @@ export async function takeTurn(sessionId: string, message: string): Promise<void
  */
 export async function acceptProposal(
   sessionId: string,
-  proposal: { brief: BriefInput } | { layout: LayoutBriefInput },
+  brief: BriefInput,
 ): Promise<void> {
   await send<unknown>(`/sessions/${encodeURIComponent(sessionId)}/accept`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(proposal),
+    body: JSON.stringify({ brief }),
   });
+}
+
+/**
+ * Stop the running layout agent, whole process tree.
+ *
+ * **The one control over the most expensive thing the studio starts.** A
+ * layout agent runs for a long time and bills the whole time; closing the tab
+ * does not stop it, and before this the only way out was killing the API.
+ *
+ * Returns how many were stopped, so the page can say "nothing was running"
+ * rather than implying it stopped something.
+ */
+export async function stopLayout(sessionId: string): Promise<number> {
+  const body = await send<{ stopped: number }>(
+    `/sessions/${encodeURIComponent(sessionId)}/layout/stop`,
+    { method: 'POST' },
+  );
+  return body.stopped;
 }
 
 /** Approve the design and close the session. */

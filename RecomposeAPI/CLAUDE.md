@@ -58,11 +58,38 @@ the work runs, not the shape of the request.
 - **One run at a time and one session at a time**, refused with 409 rather than
   queued: the providers rate-limit, and a session owns the run slot for its
   whole length.
+- **Nothing is typed before the conversation starts.** `POST /sessions` takes an
+  app id and nothing else; the design's name arrives from the brand brief the
+  interview produces, and `/sessions/active` reports `null` until it does. The
+  form that used to ask for a name up front asked a person to name a thing that
+  did not exist yet, for a fact the agent's first question collects anyway.
+- **There is ONE approval gate: the brand brief.** The layout is not interviewed
+  for and not proposed. When an asset run settles, `run_settled` makes
+  `src/apps/gen-<run>/` as a copy of the base and launches the layout agent on
+  it — in code, not because a model chose to. That agent authors its own
+  `layout_brief.yaml` before it writes any code, having actually opened the
+  generated images; a direction authored out here could only be a thinner guess.
+  Most owners have no layout direction to give, and asking produced a shrug or
+  an invention.
+- **THE LAYOUT AGENT IS THE MOST EXPENSIVE THING THIS SERVICE STARTS**, and two
+  rules keep it controllable. It is spawned into its OWN process group
+  (`start_new_session=True`) because a coding agent spawns children of its own,
+  so only a group kill takes the whole tree. And the app's `lifespan` stops
+  every live one on shutdown — a process group outlives its parent, so without
+  that a Ctrl-C would leave the expensive half of the system running,
+  reparented to init and invisible. `POST /sessions/{id}/layout/stop` is the
+  same kill on demand.
+- **Which account pays for it is a decision, not an accident.** A coding-agent
+  CLI bills to `ANTHROPIC_API_KEY` when it finds one in its environment and to
+  its own logged-in subscription when it does not. `layout_agent_inherit_api_key`
+  defaults false and the key is stripped from the child's environment, so the
+  answer does not depend on whether someone exported it before `make api`.
 
 ### Sessions and runs are different units
 
 A **run** is one pipeline launch. A **session** is one design end to end — the
-interview, the asset run, the layout brief, the layout agent. A session starts
+brand interview, the asset run, and the layout agent that starts itself when
+that run settles. A session starts
 runs; both are independently watchable, which is why `session_router.py` sits
 *beside* `run_router.py` rather than wrapping it.
 

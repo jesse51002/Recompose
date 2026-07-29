@@ -64,9 +64,11 @@ class _LiveSession:
 
     session_id: str
     app_id: str
-    design_name: str
     started_at: str
     log_path: Path
+    # Unknown until the brand brief names it — nothing is typed before the
+    # conversation starts, so a session is identified by its id until then.
+    design_name: str | None = None
     status: RunStatus = RunStatus.RUNNING
     finished_at: str | None = None
     error: str | None = None
@@ -88,8 +90,13 @@ class SessionRegistry:
 
     # --- opening ---------------------------------------------------------
 
-    async def open(self, *, app_id: str, design_name: str) -> SessionSnapshot:
+    async def open(self, *, app_id: str) -> SessionSnapshot:
         """Reserve the single session slot and write the log's header line.
+
+        **No design name.** Nothing is typed before the conversation starts:
+        the agent's first question is what the business is called, and the
+        name reaches the header from the brand brief the interview
+        produces. Until then a session is identified by its id.
 
         Raises ``SessionInFlightError`` when one is already open. Returns the
         new session's snapshot — its ``session_id`` is what the caller watches.
@@ -104,7 +111,6 @@ class SessionRegistry:
             session = _LiveSession(
                 session_id=session_id,
                 app_id=app_id,
-                design_name=design_name,
                 started_at=_now(),
                 log_path=self._sessions_dir / f"{session_id}{RUN_LOG_SUFFIX}",
             )
@@ -118,7 +124,6 @@ class SessionRegistry:
                 at=session.started_at,
                 session_id=session_id,
                 app_id=app_id,
-                design_name=design_name,
             ),
         )
         return self._snapshot_of(session)
@@ -148,23 +153,26 @@ class SessionRegistry:
             session_id, kind=SessionRecordKind.ASKED, question=question
         )
 
-    async def proposed(
-        self, session_id: str, *, brief: object = None, layout: object = None
-    ) -> None:
-        """A finished proposal awaiting the person's Accept.
+    async def named(self, session_id: str, design_name: str) -> None:
+        """The design has a name now — the accepted brand brief's own.
 
-        Exactly one of the two: a record carrying both would be a proposal the
-        UI cannot render, since the two open different review tabs.
+        Set once, when the brief is committed, rather than typed into a form
+        before anything existed. It is in-memory state and not a record: the
+        durable copy is the brief itself, and a rebuilt-from-log session picks
+        the name back up from its `proposed` record (see `_from_log`).
         """
-        if (brief is None) == (layout is None):
-            raise ValueError(
-                "a proposal carries exactly one of 'brief' or 'layout'"
-            )
+        session = self._live.get(session_id)
+        if session is not None:
+            session.design_name = design_name
+
+    async def proposed(self, session_id: str, *, brief: object) -> None:
+        """The brand brief, awaiting the person's Accept.
+
+        One kind of proposal, so no discriminator and nothing to refuse. The
+        layout used to be the second, and is authored by the layout agent now.
+        """
         await self._record(
-            session_id,
-            kind=SessionRecordKind.PROPOSED,
-            brief=brief,
-            layout=layout,
+            session_id, kind=SessionRecordKind.PROPOSED, brief=brief
         )
 
     async def task(
@@ -380,6 +388,20 @@ class SessionRegistry:
                 return record.phase
         return None
 
+    @staticmethod
+    def _name_of(records: list[SessionRecord]) -> str | None:
+        """The design's name, read off the last brief it was proposed with.
+
+        Nothing is typed before the conversation starts, so the header carries
+        no name and this is where one comes from. Derived on read for the same
+        reason `_phase_of` is: a rebuilt-from-log session and a live one then
+        report the same fact rather than two copies that can disagree.
+        """
+        for record in reversed(records):
+            if record.kind is SessionRecordKind.PROPOSED and record.brief:
+                return record.brief.design_direction.name
+        return None
+
     @classmethod
     def _snapshot_of(cls, session: _LiveSession) -> SessionSnapshot:
         return SessionSnapshot(
@@ -412,7 +434,7 @@ class SessionRegistry:
         return SessionSnapshot(
             session_id=session_id,
             app_id=header.app_id or "",
-            design_name=header.design_name or "",
+            design_name=cls._name_of(records),
             # Never written, always concluded: a log that stops without a
             # terminal line is a process that died mid-session.
             status=RunStatus.SUCCEEDED if settled else RunStatus.CRASHED,

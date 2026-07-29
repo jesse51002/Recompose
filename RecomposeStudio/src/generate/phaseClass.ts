@@ -22,8 +22,8 @@ export function phaseClass(phase: SessionPhase | null | undefined): string {
       return tokens['p-brief']!;
     case 'generating':
       return tokens['p-generating']!;
-    case 'layout brief':
-      return tokens['p-layout']!;
+    // No 'layout brief' case: the layout is not interviewed for, so a
+    // settled run goes straight to 'designing'.
     case 'designing':
       return tokens['p-designing']!;
     case 'validating':

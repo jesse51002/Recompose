@@ -7,25 +7,41 @@
 // a pure function of that list — anything that assumed "I was here for the
 // start" would show a different conversation depending on when it connected.
 
-import type {
-  AgentQuestion,
-  LayoutBriefInput,
-  SessionPhase,
-  SessionRecord,
-} from './sessionApi';
+import type { AgentQuestion, SessionPhase, SessionRecord } from './sessionApi';
 import type { BriefInput } from './studioApi';
 
 /** One thing the transcript shows, in order. */
 export type Entry =
   | { readonly kind: 'said'; readonly who: 'agent' | 'you'; readonly text: string }
   | { readonly kind: 'phase'; readonly phase: SessionPhase }
-  | { readonly kind: 'asked'; readonly question: AgentQuestion; readonly answered: boolean }
+  | {
+      readonly kind: 'asked';
+      readonly question: AgentQuestion;
+      readonly answered: boolean;
+      /**
+       * The option the person took, once they have.
+       *
+       * Not in the records — answering is just the next `said`, so this is
+       * derived by matching that text back against the options. A typed reply
+       * that happens to match an option counts as picking it, which is the
+       * honest reading: the transcript cannot tell them apart either, and
+       * neither can the agent.
+       */
+      readonly picked: string | null;
+    }
   | { readonly kind: 'brief'; readonly brief: BriefInput; readonly accepted: boolean }
-  | { readonly kind: 'layout'; readonly brief: LayoutBriefInput; readonly accepted: boolean }
   | { readonly kind: 'task'; readonly task: 'assets' | 'layout'; readonly state: string; readonly line: string | null; readonly error: string | null };
 
 export interface SessionView {
   readonly entries: readonly Entry[];
+  /**
+   * What the design is called, once its brief has named it — null before.
+   *
+   * Nothing is typed before the conversation starts, so this is the first
+   * moment a name exists. Read off the last proposed brief rather than held as
+   * state, so it survives a reload like everything else here.
+   */
+  readonly designName: string | null;
   /** The last phase declared, or null before the first one. */
   readonly phase: SessionPhase | null;
   /** The run to attach the RUN stream to, once one has started. */
@@ -40,11 +56,17 @@ export interface SessionView {
   readonly themeId: string | null;
   /** The open question, if the agent is waiting on a pick. */
   readonly pending: AgentQuestion | null;
-  /** The proposal awaiting an Accept, if any. */
-  readonly proposal:
-    | { readonly kind: 'brief'; readonly brief: BriefInput }
-    | { readonly kind: 'layout'; readonly brief: LayoutBriefInput }
-    | null;
+  /** The brand brief awaiting an Accept, if one is open. */
+  readonly proposal: BriefInput | null;
+  /**
+   * Whether a layout agent is running right now.
+   *
+   * Derived from the last `layout` task record rather than tracked, so it
+   * survives a reload like everything else. It gates the Stop control: the
+   * agent is the most expensive thing this page starts, and an offer to stop
+   * something that is not running is worse than no offer at all.
+   */
+  readonly layoutRunning: boolean;
   readonly settled: boolean;
 }
 
@@ -55,6 +77,15 @@ export interface SessionView {
  * kind and nothing the owner said came after it.** That is what stops a
  * transcript full of answered questions from showing five live chip rows —
  * the records never say "answered", because answering is just the next `said`.
+ *
+ * **AT MOST ONE THING IS EVER AWAITING THE PERSON.** A question closes any open
+ * proposal and a proposal closes any open question, so the page can never show
+ * live chips above a live Accept button. The agent's own output union makes one
+ * turn produce one arm, but a turn is not the unit that matters here: a system
+ * note (a run settling) can start a turn without the owner having said
+ * anything, so an ask left open before it would still be live underneath
+ * whatever came after. Two live asks would mean two answers, and the second
+ * would silently overwrite the first.
  */
 export function foldSession(records: readonly SessionRecord[]): SessionView {
   const entries: Entry[] = [];
@@ -62,10 +93,12 @@ export function foldSession(records: readonly SessionRecord[]): SessionView {
   let runId: string | null = null;
   let designId: string | null = null;
   let themeId: string | null = null;
+  let designName: string | null = null;
+  let layoutRunning = false;
   let settled = false;
 
-  // Index of the last still-open ask / proposal, or -1. Cleared by anything
-  // the owner says, because that IS the answer.
+  // Index of the still-open ask / proposal, or -1. At most one is ever set.
+  // Cleared by anything the owner says, because that IS the answer.
   let openAsk = -1;
   let openProposal = -1;
 
@@ -88,17 +121,22 @@ export function foldSession(records: readonly SessionRecord[]): SessionView {
         break;
       case 'asked':
         if (record.question) {
+          openProposal = -1;
           openAsk = entries.length;
-          entries.push({ kind: 'asked', question: record.question, answered: false });
+          entries.push({
+            kind: 'asked',
+            question: record.question,
+            answered: false,
+            picked: null,
+          });
         }
         break;
       case 'proposed':
         if (record.brief) {
+          openAsk = -1;
           openProposal = entries.length;
+          designName = record.brief.design_direction.name;
           entries.push({ kind: 'brief', brief: record.brief, accepted: false });
-        } else if (record.layout) {
-          openProposal = entries.length;
-          entries.push({ kind: 'layout', brief: record.layout, accepted: false });
         }
         break;
       case 'task':
@@ -109,6 +147,12 @@ export function foldSession(records: readonly SessionRecord[]): SessionView {
         if (record.design_id) {
           if (record.task === 'assets') themeId = record.design_id;
           else designId = record.design_id;
+        }
+        if (record.task === 'layout' && record.task_state) {
+          // 'started' and 'progress' both mean a process is alive; anything
+          // else is terminal. Last record wins, so a restart re-arms it.
+          layoutRunning =
+            record.task_state === 'started' || record.task_state === 'progress';
         }
         if (record.task && record.task_state) {
           entries.push({
@@ -128,10 +172,12 @@ export function foldSession(records: readonly SessionRecord[]): SessionView {
     }
   }
 
-  // A settled session has nothing open, whatever the last records were.
+  // A settled session has nothing open, whatever the last records were — and
+  // approving stops the agent server-side, so nothing is running either.
   if (settled) {
     openAsk = -1;
     openProposal = -1;
+    layoutRunning = false;
   }
 
   const pendingEntry = openAsk >= 0 ? entries[openAsk] : undefined;
@@ -141,31 +187,56 @@ export function foldSession(records: readonly SessionRecord[]): SessionView {
     entries: entries.map((entry, i) =>
       i === openAsk || i === openProposal
         ? entry
-        : markResolved(entry),
+        : markResolved(entry, entries, i),
     ),
+    designName,
+    layoutRunning,
     phase,
     runId,
     designId,
     themeId,
-    pending:
-      pendingEntry?.kind === 'asked' ? pendingEntry.question : null,
-    proposal:
-      proposalEntry?.kind === 'brief'
-        ? { kind: 'brief', brief: proposalEntry.brief }
-        : proposalEntry?.kind === 'layout'
-          ? { kind: 'layout', brief: proposalEntry.brief }
-          : null,
+    pending: pendingEntry?.kind === 'asked' ? pendingEntry.question : null,
+    proposal: proposalEntry?.kind === 'brief' ? proposalEntry.brief : null,
     settled,
   };
 }
 
 /** A question or proposal that is no longer the open one reads as resolved. */
-function markResolved(entry: Entry): Entry {
-  if (entry.kind === 'asked') return { ...entry, answered: true };
-  if (entry.kind === 'brief' || entry.kind === 'layout') {
-    return { ...entry, accepted: true };
+function markResolved(
+  entry: Entry,
+  entries: readonly Entry[],
+  index: number,
+): Entry {
+  if (entry.kind === 'asked') {
+    return { ...entry, answered: true, picked: answerTo(entries, index) };
   }
+  if (entry.kind === 'brief') return { ...entry, accepted: true };
   return entry;
+}
+
+/**
+ * Which option an answered question was answered WITH.
+ *
+ * The next thing the owner said after it, if that text is one of the options.
+ * Scanning forward rather than storing the pick keeps the whole fold a pure
+ * function of the record list — the property that makes a reload free — and
+ * there is nothing to store anyway: a chip press posts the option's own text,
+ * so the records genuinely do not distinguish it from typing.
+ *
+ * Stops at the next question so a later answer cannot be attributed to an
+ * earlier ask.
+ */
+function answerTo(entries: readonly Entry[], index: number): string | null {
+  for (let i = index + 1; i < entries.length; i += 1) {
+    const entry = entries[i]!;
+    if (entry.kind === 'asked') return null;
+    if (entry.kind === 'said' && entry.who === 'you') {
+      const asked = entries[index];
+      if (asked?.kind !== 'asked') return null;
+      return asked.question.options.includes(entry.text) ? entry.text : null;
+    }
+  }
+  return null;
 }
 
 /**

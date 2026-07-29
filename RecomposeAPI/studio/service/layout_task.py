@@ -1,72 +1,131 @@
-"""LayoutTask — copy the base mock, write the brief, run the layout agent.
+"""LayoutTask — make the design folder, point the layout agent at it.
 
-**The seam with work that lives elsewhere.** What the layout agent is told to do
-is authored in another worktree and this file knows none of it. What this file
-owns is everything around it:
+**The studio does not author a layout direction, and that is the whole design
+of this file.** It used to: the orchestrator interviewed the owner about layout
+and motion, proposed a `LayoutBrief`, and wrote it into the folder for the agent
+to obey. That was the wrong agent doing the wrong job. The layout agent runs
+`mockup-redesign-start`, whose FIRST step is to open the run's generated images,
+read its palette and typefaces, and commit to a visual world — with a bigger
+context window, a browser, and its own skills. It writes `layout_brief.yaml`
+itself, before it writes any code. A brief authored out here could only be a
+thinner guess made by something that has not seen the pictures.
 
-1. slug the generation's name,
-2. copy the base mock app folder to ``gen-<slug>/``,
-3. write ``layout_brief.yaml`` into the copy,
-4. run a configured command with that folder as its working directory,
-5. pump its stdout into the session as it goes.
+It also asked the owner for a layout direction, and most people simply do not
+have one. Asking produced either a shrug or an answer invented to fill the box.
 
-**The contract is two things and no more:** the working directory is a
-self-contained mock app folder, and ``layout_brief.yaml`` in it is the
-instruction. Nothing here needs to know how the agent works, and the agent needs
-to know nothing about this service.
+So this file owns four things and no more:
+
+1. name the design folder DETERMINISTICALLY from the run it belongs to,
+2. copy the base mock app into it,
+3. run a configured command with a prompt naming the app, the run and the
+   folder,
+4. pump its stdout into the session as it goes.
+
+**The contract with the agent is one argument.** The configured argv gets one
+final element appended: the launch prompt, in absolute paths. Nothing here needs
+to know how the agent works, and the agent needs to know nothing about this
+service.
 
 **Why a folder copy and not a branch.** A design is a sibling directory under
 ``RecomposeJsxMockUps/src/apps/``, so ``ls`` is the list of designs and the undo
 is ``rm -rf``. The ``gen-`` prefix is what lets one ``.gitignore`` line cover
 every generated folder without a negation per authored app.
+
+**Why the copy happens here rather than in the agent.** A folder that is a
+working copy of the base compiles and hot-reloads from the first second, so the
+reviewer watches a real app being rearranged. An agent starting from an empty
+directory would leave the canvas broken until it finished, which is the one
+thing this page exists not to do.
 """
 
 from __future__ import annotations
 
 import asyncio
 import logging
+import os
 import shutil
+import signal
 from pathlib import Path
 from typing import Protocol
 
-import yaml
-
 from RecomposeAPI.studio.config import settings
 from RecomposeAPI.studio.errors import DesignNameTakenError, UnknownAppError
-from RecomposeAPI.studio.schema.layout_brief import LayoutBrief
 from RecomposeAPI.studio.service.session_registry import (
     SessionRegistry,
     session_registry,
 )
-from RecomposeAPI.studio.service.slug import slugify
 
 logger = logging.getLogger(__name__)
 
 # Generated folders are prefixed so `.gitignore` is one unambiguous line. The
-# prefix never reaches a human: a picker shows `MockApp.label`, which is the
-# brief's `name`.
+# prefix never reaches a human: a picker shows `MockApp.label`.
 GENERATED_PREFIX = "gen-"
-LAYOUT_BRIEF_FILENAME = "layout_brief.yaml"
+
+# The env var whose presence decides whether a coding-agent CLI bills API
+# credits or the operator's subscription. See `_env`.
+ANTHROPIC_KEY_VAR = "ANTHROPIC_API_KEY"
+
+# How long a terminated agent gets to exit before it is killed. Short on
+# purpose: this exists because an agent left running costs money, and one
+# that does not act on a TERM is exactly the one worth killing.
+TERMINATE_GRACE_SECONDS = 5.0
+
+# What the agent is told. Three properties, each load-bearing:
+#
+# 1. **It opens with `/goal`.** That is what makes the agent run the job to
+#    completion on its own instead of stopping at the first natural pause and
+#    waiting for a human who is not watching. A redesign is a dozen screens
+#    behind several skills; an agent that halts halfway leaves a half-built
+#    folder hot-reloading into the reviewer's canvas.
+# 2. **Absolute paths throughout**, so the job does not depend on the command's
+#    working directory being guessed correctly — the one place a hand-off like
+#    this usually breaks.
+# 3. **It names WHAT and WHERE and stops.** It does not say how to design: that
+#    is the `mockup-redesign-start` skill's job, and repeating a worse version
+#    of it here is how the two drift apart.
+LAUNCH_PROMPT = """\
+/goal Create the redesigned mock app at {target}. It is a fresh copy of the \
+{app} base and must end up reading as a different piece of design, not as the \
+base recoloured.
+
+It is being designed for one specific theme, which is already produced and \
+finished: {run_dir}. Open that run before deciding anything — the generated \
+images in final_images/, the icons in icons/, the palette and typefaces in \
+output.yaml, and the brand brief in customization.yaml. The layout is being \
+built for those pixels.
+
+Follow the mockup-redesign-start skill from its first step, including writing \
+{target}/layout_brief.yaml before you write any code, and then run every skill \
+it hands off to. The design folder already exists as a working copy of the \
+base, so edit it in place rather than creating it.
+
+Finish all the steps and run all the skills needed to complete this mockup. Do \
+not skip any steps.\
+"""
 
 
 class LayoutTask(Protocol):
     """Start a layout generation. Returns the design folder's id.
 
-    ``app`` is the authored mock to fork; ``theme_run`` the run whose palette
-    and typefaces the layout is designed on top of. Neither is a field on the
-    brief, deliberately: a `LayoutBrief` says what a layout IS, in prose, and
-    it is the file that ships beside the mock. Which base it forked and which
-    run it was made against are properties of the JOB, and the brief's own
-    long_desc is where a fork says so in words (see the base's and Zen BJJ's).
+    ``app`` is the authored mock to fork; ``theme_run`` the run whose palette,
+    imagery and typefaces the layout is designed for, and also what the folder
+    is NAMED after — one design per theme, derived rather than asked for.
     """
 
-    async def start(
-        self, brief: LayoutBrief, *, app: str, theme_run: str | None = None
-    ) -> str: ...
+    async def start(self, *, app: str, theme_run: str) -> str: ...
+
+    async def stop(self) -> int:
+        """Kill every layout agent this task has running. Returns how many.
+
+        Idempotent, and safe when nothing is running. Exists because a layout
+        agent is the most expensive thing this service can start and the only
+        one that keeps spending after the page that started it is closed.
+        """
+        ...
 
 
 class _LayoutTaskBase:
-    """The half both implementations share: slug, copy, write the brief.
+    """The half both implementations share: name the folder, copy the base.
 
     Split out rather than duplicated because getting the copy wrong is the one
     step that can destroy work — an existing folder must be refused, never
@@ -75,17 +134,20 @@ class _LayoutTaskBase:
     that matters.
     """
 
-    def __init__(
-        self, apps_dir: Path, sessions: SessionRegistry
-    ) -> None:
+    def __init__(self, apps_dir: Path, sessions: SessionRegistry) -> None:
         self._apps_dir = apps_dir
         self._sessions = sessions
 
-    async def _prepare(
-        self, brief: LayoutBrief, app: str
-    ) -> tuple[str, Path]:
-        """Copy the base app to ``gen-<slug>/`` and write the brief into it."""
-        design_id = f"{GENERATED_PREFIX}{slugify(brief.name)}"
+    async def _prepare(self, app: str, theme_run: str) -> tuple[str, Path]:
+        """Copy the base app to ``gen-<theme_run>/``.
+
+        The folder's name is the RUN's, so a design's two halves are legible as
+        a pair from the filesystem alone — ``apps/combatden/bike-maniacs/`` and
+        ``src/apps/gen-bike-maniacs/`` — with no field in either pointing at
+        the other. The run name is already a slug (the launcher only ever
+        creates one), so there is nothing left to slugify.
+        """
+        design_id = f"{GENERATED_PREFIX}{theme_run}"
         base = self._apps_dir / app
         target = self._apps_dir / design_id
 
@@ -94,72 +156,132 @@ class _LayoutTaskBase:
         if not base.resolve().is_relative_to(self._apps_dir.resolve()):
             raise UnknownAppError(f"no such mock app {app!r}")
         if not await asyncio.to_thread(base.is_dir):
-            raise UnknownAppError(
-                f"no such mock app {app!r} (expected {base})"
-            )
+            raise UnknownAppError(f"no such mock app {app!r} (expected {base})")
         if await asyncio.to_thread(target.exists):
-            # Two generations called the same thing ARE the same thing. Refuse
-            # and let the caller ask for another name — the same courtesy
-            # RunNameTakenError extends, and for the same reason: this is the
-            # one path here that could destroy generated work.
+            # One design per run, so this means the run has been laid out
+            # already. Refused rather than overwritten — it is the one path
+            # here that could destroy generated work.
             raise DesignNameTakenError(design_id)
 
         await asyncio.to_thread(shutil.copytree, base, target)
-        await asyncio.to_thread(self._write_brief, target, brief)
         logger.info("prepared design folder %s from %s", design_id, app)
         return design_id, target
 
     @staticmethod
-    def _write_brief(target: Path, brief: LayoutBrief) -> None:
-        """The brief, as readable YAML, beside the code it describes.
+    def _prompt(app: str, theme_run: str, target: Path) -> str:
+        """The one argument the agent receives."""
+        run_dir = settings.apps_root / app / theme_run
+        prompt = LAUNCH_PROMPT.format(target=target, app=app, run_dir=run_dir)
+        steer = settings.layout_steer.strip()
+        return f"{prompt}\n\n{steer}" if steer else prompt
 
-        Same dump settings as ``BriefService`` — ``sort_keys=False`` so the
-        fields stay in the order the model declares them, which is the order a
-        person reads them in.
+    @staticmethod
+    def _env() -> dict[str, str]:
+        """The child's environment, and the one thing deliberately taken out.
+
+        A coding-agent CLI bills to ``ANTHROPIC_API_KEY`` when it finds one and
+        to its own logged-in subscription when it does not. A subprocess
+        inherits this process's environment, so leaving the key in would make
+        "who pays for a two-hour redesign" depend on whether someone exported
+        it in the shell that started the API — a difference that is invisible
+        until a bill arrives. Stripped by default, deliberate when not.
         """
-        (target / LAYOUT_BRIEF_FILENAME).write_text(
-            yaml.safe_dump(
-                brief.model_dump(mode="json"),
-                sort_keys=False,
-                allow_unicode=True,
-                default_flow_style=False,
-            ),
-            encoding="utf-8",
-        )
+        env = dict(os.environ)
+        if not settings.layout_agent_inherit_api_key:
+            env.pop(ANTHROPIC_KEY_VAR, None)
+        return env
 
 
 class SubprocessLayoutTask(_LayoutTaskBase):
     """Run the configured command against the prepared folder."""
 
     def __init__(
-        self,
-        apps_dir: Path,
-        sessions: SessionRegistry,
-        command: list[str],
+        self, apps_dir: Path, sessions: SessionRegistry, command: list[str]
     ) -> None:
         super().__init__(apps_dir, sessions)
         self._command = command
         # Background tasks are only weakly referenced by the event loop, so a
         # pump could be garbage-collected mid-flight. Hold each until it ends.
         self._tasks: set[asyncio.Task[None]] = set()
+        # Every agent currently running, by pid. The ONE thing this service
+        # holds that must not be lost: an agent nobody has a handle to is an
+        # agent nobody can stop, and it bills for as long as it lives.
+        self._running: dict[int, asyncio.subprocess.Process] = {}
 
-    async def start(
-        self, brief: LayoutBrief, *, app: str, theme_run: str | None = None
-    ) -> str:
-        design_id, target = await self._prepare(brief, app)
-        # A LIST, never a shell string, and never built from anything a model
-        # produced — the only interpolated value is the cwd, which is a path
-        # this service derived itself.
+    async def start(self, *, app: str, theme_run: str) -> str:
+        design_id, target = await self._prepare(app, theme_run)
+        # A LIST, never a shell string, and never passed through a shell — the
+        # prompt is a single argv element, so nothing in it can be read as a
+        # command however it is punctuated.
+        #
+        # `start_new_session` puts the agent in its OWN process group, and that
+        # is what makes it killable. A coding agent spawns children of its own
+        # — subagents, language servers, test runners — so signalling the one
+        # process we hold a handle to would leave the expensive half of the
+        # tree running, reparented to init and invisible.
         proc = await asyncio.create_subprocess_exec(
             *self._command,
-            cwd=target,
+            self._prompt(app, theme_run, target),
+            cwd=settings.layout_agent_cwd,
+            env=self._env(),
+            start_new_session=True,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.STDOUT,
+        )
+        self._running[proc.pid] = proc
+        logger.info(
+            "layout agent for %s started as pid %d", design_id, proc.pid
         )
         task = asyncio.create_task(self._pump(proc, design_id))
         self._tasks.add(task)
         task.add_done_callback(self._tasks.discard)
         return design_id
+
+    async def stop(self) -> int:
+        """Kill every running agent, whole process group at a time.
+
+        SIGTERM to the group first so the agent can end cleanly, then SIGKILL
+        to whatever is still there. Killing the GROUP rather than the process
+        is the whole point — see `start`.
+
+        Returns how many were signalled, so a caller can say "nothing was
+        running" rather than implying it stopped something.
+        """
+        running = list(self._running.values())
+        for proc in running:
+            self._signal_group(proc, signal.SIGTERM)
+        if not running:
+            return 0
+        # A short grace period, then unconditional. An agent mid-tool-call may
+        # not act on a TERM at all, and the reason this exists is cost — a
+        # process that ignores the polite signal is exactly the one to kill.
+        _, pending = await asyncio.wait(
+            [asyncio.create_task(proc.wait()) for proc in running],
+            timeout=TERMINATE_GRACE_SECONDS,
+        )
+        for task in pending:
+            task.cancel()
+        for proc in running:
+            if proc.returncode is None:
+                self._signal_group(proc, signal.SIGKILL)
+        return len(running)
+
+    @staticmethod
+    def _signal_group(
+        proc: asyncio.subprocess.Process, sig: signal.Signals
+    ) -> None:
+        """Signal the agent's whole process group, tolerating a dead one.
+
+        The race is unavoidable and benign: the agent can exit between the
+        returncode check and the signal, and `ProcessLookupError` is what that
+        looks like. It means the thing we wanted gone is gone.
+        """
+        if proc.returncode is not None:
+            return
+        try:
+            os.killpg(os.getpgid(proc.pid), sig)
+        except (ProcessLookupError, PermissionError):
+            logger.debug("layout agent %d was already gone", proc.pid)
 
     async def _pump(
         self, proc: asyncio.subprocess.Process, design_id: str
@@ -179,6 +301,7 @@ class SubprocessLayoutTask(_LayoutTaskBase):
                     session_id, task="layout", state="progress", line=line
                 )
         code = await proc.wait()
+        self._running.pop(proc.pid, None)
         logger.info("layout agent for %s exited %d", design_id, code)
         if session_id is not None:
             await self._sessions.task(
@@ -199,10 +322,13 @@ class StubLayoutTask(_LayoutTaskBase):
     copy of the base.
     """
 
-    async def start(
-        self, brief: LayoutBrief, *, app: str, theme_run: str | None = None
-    ) -> str:
-        design_id, _ = await self._prepare(brief, app)
+    async def stop(self) -> int:
+        """Nothing runs, so nothing stops. Not an error — the flow is meant to
+        be walkable with no agent configured at all."""
+        return 0
+
+    async def start(self, *, app: str, theme_run: str) -> str:
+        design_id, _ = await self._prepare(app, theme_run)
         session_id = self._sessions.active_id
         if session_id is not None:
             await self._sessions.task(

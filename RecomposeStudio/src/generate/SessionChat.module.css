@@ -123,6 +123,22 @@
   border-color: var(--sh-line);
 }
 
+/* THE ONE THAT WAS CHOSEN, in the shell's own colour for "you".
+   Without this an answered row dimmed as a whole, so a finished interview
+   scrolled back as eight identical grey rows with no trace of what had been
+   decided — the transcript kept every question and lost every answer.
+   Amber is not decoration here: it is the same hue this shell already uses
+   for the person's own turns, so it reads as "you said this" rather than as
+   a highlight.
+   Placed AFTER `:disabled` deliberately — a chosen chip is also disabled, and
+   the two rules have equal specificity, so order is what decides. */
+.choice.chosen {
+  color: var(--st-you);
+  background: var(--st-you-w);
+  border-color: var(--st-you-l);
+  font-weight: 500;
+}
+
 /* ── A proposal ────────────────────────────────────────────────────────── */
 .card {
   margin-top: 4px;

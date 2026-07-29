@@ -54,9 +54,12 @@ class SessionInFlightError(StudioError):
     Carries the active session's identity so the UI can say *which* one.
     """
 
-    def __init__(self, session_id: str, app_id: str, design_name: str) -> None:
+    def __init__(
+        self, session_id: str, app_id: str, design_name: str | None = None
+    ) -> None:
         super().__init__(
-            f"session {session_id} is already open ({app_id}/{design_name}); "
+            f"session {session_id} is already open "
+            f"({app_id}/{design_name or 'unnamed'}); "
             "the studio runs one design at a time"
         )
         self.session_id = session_id

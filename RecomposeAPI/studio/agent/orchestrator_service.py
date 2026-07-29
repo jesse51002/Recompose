@@ -1,16 +1,22 @@
 """OrchestratorService — the agent that interviews, then starts the work.
 
 The brief agent conducts one interview and has zero tools. This one conducts
-BOTH interviews and has two tools, because they are the same ritual — ask,
-propose, accept — about two halves of one design, and splitting them across two
-agents would give the owner two transcripts to reconcile.
+that same interview and has ONE tool — start the asset run — because a design
+now has exactly one thing an owner decides.
 
-**What the agent decides, and what it cannot.** It chooses *when* work starts.
-It never decides *what happens*: a tool's body is the same deterministic
-launcher an HTTP client would hit, a brief is committed by ``BriefService``
-before the agent is told, and a tool refuses outright when its precondition is
-unmet. A model cannot talk its way past a `ModelRetry` — it can only try again
-with a better turn.
+**It used to have two of each.** There was a second interview about layout and
+motion, a `LayoutProposal` to accept, and a `start_layout_agent` tool. All of it
+is gone: most owners have no layout direction to give, and the agent that does
+the work opens the generated images before deciding, which no interview out here
+can match. The layout starts itself when the assets settle (`run_settled`).
+
+**What the agent decides, and what it cannot.** It chooses *when* the asset run
+starts, and nothing else. It never decides *what happens*: the tool's body is
+the same deterministic launcher an HTTP client would hit, a brief is committed
+by ``BriefService`` before the agent is told, and the tool refuses outright when
+its precondition is unmet. A model cannot talk its way past a `ModelRetry` — it
+can only try again with a better turn. It cannot fail to start the layout
+either, because starting the layout is not something it is asked to do.
 
 **Why per-session state exists here.** Pydantic AI needs its own message
 history, and a `SessionRecord` list is not that: the records are what a HUMAN
@@ -44,12 +50,10 @@ from RecomposeAPI.studio.errors import StudioError
 from RecomposeAPI.studio.schema.agent_output import (
     AgentQuestion,
     BriefProposal,
-    LayoutProposal,
     OrchestratorOutput,
 )
 from RecomposeAPI.studio.schema.brief_request import BriefRequest
 from RecomposeAPI.studio.schema.launch_request import LaunchRequest
-from RecomposeAPI.studio.schema.layout_brief import LayoutBrief
 from RecomposeAPI.studio.schema.session_record import SessionPhase
 from RecomposeAPI.studio.service.brief_service import BriefService, brief_service
 from RecomposeAPI.studio.service.layout_task import LayoutTask, layout_task
@@ -73,10 +77,12 @@ BRIEF_ACCEPTED = (
     "[The owner accepted the brand brief; it is saved as {slug}.yaml. Start "
     "the asset run now.]"
 )
-LAYOUT_ACCEPTED = (
-    "[The owner accepted the layout brief. Start the layout agent now.]"
+RUN_SETTLED = (
+    "[The asset run finished. {summary} The layout agent has been started "
+    "automatically on the design folder {design_id}; it decides the "
+    "arrangement itself. Tell the owner the look is done and the screens "
+    "are being rearranged now. Do NOT ask them anything about layout.]"
 )
-RUN_SETTLED = "[The asset run finished. {summary}]"
 RUN_FAILED = "[The asset run failed: {error}. Tell the owner plainly.]"
 
 
@@ -90,12 +96,16 @@ class _Conversation:
     """
 
     app_id: str
-    design_name: str
+    design_name: str | None = None
     history: list[Any] = field(default_factory=list)
     accepted_brief: Customization | None = None
-    accepted_layout: LayoutBrief | None = None
     assets_settled: bool = False
+    # The studio's run id (what `/runs/{id}` is keyed by) and the run's
+    # NAME (the folder under `apps/<app>/`, which the catalogue lists the
+    # design under and the layout fork is named after). Two different
+    # things that both identify one run.
     run_id: str | None = None
+    run_name: str | None = None
 
 
 @dataclass
@@ -148,13 +158,13 @@ class OrchestratorService:
     def _build(
         model_name: str, retries: int, api_key: str
     ) -> Agent[_Deps, OrchestratorOutput]:
-        """The agent, its prompt read from `.md`, and its two tools."""
+        """The agent, its prompt read from `.md`, and its one tool."""
         agent: Agent[_Deps, OrchestratorOutput] = Agent(
             AnthropicModel(
                 model_name, provider=AnthropicProvider(api_key=api_key)
             ),
             deps_type=_Deps,
-            output_type=[str, BriefProposal, AgentQuestion, LayoutProposal],
+            output_type=[str, BriefProposal, AgentQuestion],
             instructions=PROMPT_PATH.read_text(encoding="utf-8"),
             retries=retries,
         )
@@ -200,6 +210,7 @@ class OrchestratorService:
                 # than as an exception that would kill the turn.
                 raise ModelRetry(str(exc)) from None
             convo.run_id = accepted.run_id
+            convo.run_name = accepted.run_name
             # Nothing else would ever tell the agent this run ended: the
             # launcher settles the RUN registry and knows nothing about
             # sessions. Follow the run's own stream and report back when it
@@ -225,52 +236,19 @@ class OrchestratorService:
                 "settles; do not call this again."
             )
 
-        @agent.tool
-        async def start_layout_agent(ctx: RunContext[_Deps]) -> str:
-            """Start redesigning the screens from the accepted layout brief.
-
-            Call this only after the owner has accepted the layout brief AND
-            the asset run has finished — the layout is designed on top of the
-            palette and typefaces that run produced.
-            """
-            convo = ctx.deps.conversation
-            if convo.accepted_layout is None:
-                raise ModelRetry(
-                    "No layout brief has been accepted yet. Propose one and "
-                    "wait for the owner to accept it."
-                )
-            if not convo.assets_settled:
-                raise ModelRetry(
-                    "The asset run has not finished yet. Wait for it — the "
-                    "layout is designed on top of what it produces."
-                )
-            try:
-                # The base app and the run come from the SESSION, not the
-                # brief: a LayoutBrief says what a layout IS, and which base it
-                # forked is a property of this job.
-                design_id = await ctx.deps.layout.start(
-                    convo.accepted_layout,
-                    app=convo.app_id,
-                    theme_run=convo.run_id,
-                )
-            except StudioError as exc:
-                raise ModelRetry(str(exc)) from None
-            await ctx.deps.sessions.phase(
-                ctx.deps.session_id, SessionPhase.DESIGNING
-            )
-            return f"Started, on the folder {design_id}."
-
+        # THERE IS NO SECOND TOOL. Starting the layout used to be one, gated on
+        # an accepted layout brief — so the model chose the moment, after an
+        # interview about arrangement that most owners have no answer to. The
+        # asset run finishing is the only signal that was ever needed, and the
+        # service starts the layout on it directly (see `run_settled`). A model
+        # cannot forget to call something that is not a call.
         return agent
 
     # --- the conversation -------------------------------------------------
 
-    async def open(
-        self, session_id: str, *, app_id: str, design_name: str
-    ) -> None:
+    async def open(self, session_id: str, *, app_id: str) -> None:
         """Register the conversation and take the agent's opening turn."""
-        self._live[session_id] = _Conversation(
-            app_id=app_id, design_name=design_name
-        )
+        self._live[session_id] = _Conversation(app_id=app_id)
         await self._sessions.phase(session_id, SessionPhase.BRIEF)
         await self._run_turn(session_id, OPENING_NOTE)
 
@@ -292,6 +270,10 @@ class OrchestratorService:
         convo = self._require(session_id)
         committed = await self._briefs.commit(BriefRequest.from_brief(brief))
         convo.accepted_brief = brief
+        # The design has a name from here on: the brief's own. It is the first
+        # moment one exists — nothing was typed before the conversation began.
+        convo.design_name = brief.design_direction.name
+        await self._sessions.named(session_id, convo.design_name)
         await self._sessions.said(
             session_id, who="you", text="Accepted the brand brief."
         )
@@ -299,31 +281,25 @@ class OrchestratorService:
             session_id, BRIEF_ACCEPTED.format(slug=committed.slug)
         )
 
-    async def accept_layout(
-        self, session_id: str, brief: LayoutBrief
-    ) -> None:
-        """Record the accepted layout brief, then tell the agent.
-
-        Unlike the brand brief there is nothing to commit here: the layout
-        brief is written into the design folder by the layout task, at the
-        moment the folder exists. Writing it anywhere else first would leave a
-        copy to keep in sync.
-        """
-        convo = self._require(session_id)
-        convo.accepted_layout = brief
-        await self._sessions.said(
-            session_id, who="you", text="Accepted the layout brief."
-        )
-        await self._run_turn(session_id, LAYOUT_ACCEPTED)
-
     async def run_settled(
         self, session_id: str, *, ok: bool, summary: str
     ) -> None:
-        """A background asset run ended. Let the agent narrate it.
+        """A background asset run ended: start the layout, then narrate both.
 
-        A task finishing is not a human turn, so it arrives as a bracketed
-        system note — the same convention the brief agent's SAVED_NOTE uses,
-        so the model reads it as an aside rather than as the owner speaking.
+        **The layout starts here, in code, not because a model decided to.**
+        A finished asset run is the only precondition the layout ever had —
+        it is designed for those images, that palette and those typefaces —
+        so there is nothing left to judge and nothing to ask. The owner is
+        not consulted because most people have no layout direction to give,
+        and the agent that does the work has more to go on than either of
+        them: it opens the generated pictures.
+
+        Order matters. The layout is started BEFORE the agent's turn so the
+        note can say it is already running; a turn that promised it first
+        would be a promise the code had not yet kept.
+
+        A task finishing is not a human turn, so it reaches the model as a
+        bracketed system note — the same convention `BRIEF_ACCEPTED` uses.
         """
         convo = self._live.get(session_id)
         if convo is None:
@@ -336,14 +312,43 @@ class OrchestratorService:
             run_id=convo.run_id,
             error=None if ok else summary,
         )
-        if ok:
-            await self._sessions.phase(session_id, SessionPhase.LAYOUT_BRIEF)
+        if not ok:
+            await self._run_turn(session_id, RUN_FAILED.format(error=summary))
+            return
+
+        design_id = await self._start_layout(session_id, convo)
         await self._run_turn(
             session_id,
-            (RUN_SETTLED if ok else RUN_FAILED).format(
-                summary=summary, error=summary
-            ),
+            RUN_SETTLED.format(summary=summary, design_id=design_id),
         )
+
+    async def _start_layout(
+        self, session_id: str, convo: _Conversation
+    ) -> str:
+        """Make the design folder and launch the agent on it.
+
+        **Never raises.** The assets are made and the theme is watchable; a
+        layout that could not start is one half missing, not a dead session.
+        It is reported as a failed task — which is a visible red state in the
+        transcript — and the conversation carries on.
+        """
+        if convo.run_id is None:
+            return "(none)"
+        try:
+            design_id = await self._layout.start(
+                app=convo.app_id, theme_run=convo.run_name or ""
+            )
+        except Exception as exc:
+            logger.exception("could not start the layout for %s", session_id)
+            await self._sessions.task(
+                session_id, task="layout", state="failed", error=str(exc)
+            )
+            return "(it could not be started)"
+        await self._sessions.phase(session_id, SessionPhase.DESIGNING)
+        await self._sessions.task(
+            session_id, task="layout", state="started", design_id=design_id
+        )
+        return design_id
 
     def close(self, session_id: str) -> None:
         """Drop the conversation. The durable transcript is the JSONL."""
@@ -473,11 +478,6 @@ class OrchestratorService:
                 session_id, who="agent", text=output.message
             )
             await self._sessions.proposed(session_id, brief=output.brief)
-        elif isinstance(output, LayoutProposal):
-            await self._sessions.said(
-                session_id, who="agent", text=output.message
-            )
-            await self._sessions.proposed(session_id, layout=output.brief)
         elif isinstance(output, AgentQuestion):
             await self._sessions.asked(session_id, output)
         else:

@@ -135,7 +135,16 @@ function EntryView({ entry, onPick, onAccept, onOpen, busy }: EntryViewProps) {
               <button
                 key={option}
                 type="button"
-                className={styles.choice}
+                // THE ANSWER IS MARKED, not just recorded. An answered row
+                // used to grey out whole, so scrolling back through a
+                // finished interview showed eight identical dim rows and no
+                // trace of what had actually been decided — the transcript
+                // kept the questions and lost the answers.
+                className={cx(
+                  styles.choice,
+                  entry.picked === option && styles.chosen,
+                )}
+                aria-pressed={entry.picked === option}
                 // An answered question keeps its options visible but inert:
                 // the transcript is a record, and hiding what was on offer
                 // would make an earlier decision unreadable later.
@@ -150,26 +159,21 @@ function EntryView({ entry, onPick, onAccept, onOpen, busy }: EntryViewProps) {
       );
 
     case 'brief':
-    case 'layout':
       return (
         <div className={styles.msg}>
           <div className={styles.who}>Recompose</div>
           <div className={styles.card}>
             <h4>
-              {entry.kind === 'brief' ? 'Brand brief' : 'Layout brief'}
+              Brand brief
               <span className={styles.cardState}>
                 {entry.accepted ? 'accepted' : 'ready'}
               </span>
             </h4>
             <p className={styles.cardName}>
-              {entry.kind === 'brief'
-                ? entry.brief.design_direction.name
-                : entry.brief.name}
+              {entry.brief.design_direction.name}
             </p>
             <p className={styles.cardDesc}>
-              {entry.kind === 'brief'
-                ? entry.brief.design_direction.short_desc
-                : entry.brief.layout_direction.short_desc}
+              {entry.brief.design_direction.short_desc}
             </p>
             {!entry.accepted && (
               <div className={styles.actions}>

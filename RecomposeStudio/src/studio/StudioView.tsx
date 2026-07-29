@@ -1,16 +1,19 @@
-// The Studio tab: start a design, or re-attach to the one already going.
+// The Generate tab: open a design, or re-attach to the one already going.
 //
-// This used to launch a pipeline run directly from a form. It does not any
-// more: a run is one step inside a DESIGN, and what a person starts is a
-// SESSION — an interview that decides what to make and then starts making it.
-// The direct-launch form went with the direct launch; `BriefForm` and
-// `exampleBrief` are gone, and `RunSheet` survives as the Generate page's
-// Inspect tab, which is what it was always best at.
+// **NOTHING IS TYPED BEFORE THE CONVERSATION STARTS.** There used to be a form
+// here asking for the design's name — one box and a Start button in front of
+// the whole product. It asked a person to name a thing that did not exist yet,
+// before anything had shown them what was about to happen, and it asked for a
+// fact the agent's own first question collects anyway ("what is the business
+// called?"). So the page opens the session itself and the interview begins.
+//
+// The name arrives later, from the brief that interview produces, which is also
+// the first moment a name means anything.
 //
 // `attaching` exists because the studio serializes sessions GLOBALLY: a page
-// that loads while one is open should re-attach to it rather than offer to
-// start a second that would only be refused. It is also what makes a reload in
-// the middle of an hour-long design free.
+// that loads while one is open must re-attach to it rather than open a second
+// that would only be refused. It is also what makes a reload in the middle of a
+// long design free.
 
 import { useEffect, useState } from 'react';
 
@@ -18,81 +21,67 @@ import { APP_ID } from '../config';
 import { GenerateAttaching, GenerateView } from '../generate/GenerateView';
 
 import { fetchActiveSession, openSession } from './sessionApi';
-import { StartDesign } from './StartDesign';
 import { StudioError } from './studioApi';
+import { StudioDown } from './StudioDown';
 
 type Phase =
   | { readonly kind: 'attaching' }
-  | { readonly kind: 'idle'; readonly error: string | null }
-  | {
-      readonly kind: 'in-session';
-      readonly sessionId: string;
-      readonly designName: string;
-    };
+  | { readonly kind: 'down'; readonly error: string }
+  | { readonly kind: 'in-session'; readonly sessionId: string };
 
 export function StudioView({ onDone }: { onDone: () => void }) {
   const [phase, setPhase] = useState<Phase>({ kind: 'attaching' });
 
+  // ATTACH OR OPEN, in one effect, because they are one question — "which
+  // session am I watching?" — and the answer is never "none". A page that
+  // reached this view has already decided to make a design.
   useEffect(() => {
     let cancelled = false;
-    void fetchActiveSession()
-      .then((active) => {
-        if (cancelled) return;
-        setPhase(
-          active === null
-            ? { kind: 'idle', error: null }
-            : {
-                kind: 'in-session',
-                sessionId: active.session_id,
-                designName: active.design_name,
-              },
-        );
+
+    const attach = async (): Promise<Phase> => {
+      const active = await fetchActiveSession();
+      if (active !== null) {
+        return { kind: 'in-session', sessionId: active.session_id };
+      }
+      try {
+        const opened = await openSession({ appId: APP_ID });
+        return { kind: 'in-session', sessionId: opened.session_id };
+      } catch (cause: unknown) {
+        // A 409 means one opened between the two calls — a second tab, or a
+        // double mount in dev. The useful answer is to show THAT one, not an
+        // error about it.
+        if (cause instanceof StudioError && cause.status === 409) {
+          const raced = await fetchActiveSession();
+          if (raced !== null) {
+            return { kind: 'in-session', sessionId: raced.session_id };
+          }
+        }
+        throw cause;
+      }
+    };
+
+    void attach()
+      .then((next) => {
+        if (!cancelled) setPhase(next);
       })
-      .catch(() => {
-        // The studio is not running. The start form is still the right thing
-        // to show — pressing it is what surfaces the reason, together with the
-        // command that fixes it.
-        if (!cancelled) setPhase({ kind: 'idle', error: null });
+      .catch((cause: unknown) => {
+        // The studio is not running, or refused. There is no form to fall back
+        // to any more, so the failure has to say so itself — and name the
+        // command that fixes the common cause.
+        if (cancelled) return;
+        setPhase({
+          kind: 'down',
+          error: cause instanceof Error ? cause.message : String(cause),
+        });
       });
+
     return () => {
       cancelled = true;
     };
   }, []);
 
-  const start = async (designName: string): Promise<void> => {
-    try {
-      const opened = await openSession({ appId: APP_ID, designName });
-      setPhase({
-        kind: 'in-session',
-        sessionId: opened.session_id,
-        designName: opened.design_name,
-      });
-    } catch (cause: unknown) {
-      // A 409 is not a failure to reach — it means a design is already open,
-      // and the useful answer is to SHOW that one rather than an error about
-      // it. Anything else is reported as-is.
-      if (cause instanceof StudioError && cause.status === 409) {
-        const active = await fetchActiveSession().catch(() => null);
-        if (active !== null) {
-          setPhase({
-            kind: 'in-session',
-            sessionId: active.session_id,
-            designName: active.design_name,
-          });
-          return;
-        }
-      }
-      setPhase({
-        kind: 'idle',
-        error: cause instanceof Error ? cause.message : String(cause),
-      });
-    }
-  };
-
   if (phase.kind === 'attaching') return <GenerateAttaching />;
-  if (phase.kind === 'idle') {
-    return <StartDesign onStart={start} error={phase.error} />;
-  }
+  if (phase.kind === 'down') return <StudioDown error={phase.error} />;
   return (
     // KEYED ON THE SESSION. `useSessionStream` accumulates records in state,
     // and resetting them when the id changed would mean setting state from an
@@ -101,7 +90,6 @@ export function StudioView({ onDone }: { onDone: () => void }) {
     <GenerateView
       key={phase.sessionId}
       sessionId={phase.sessionId}
-      designName={phase.designName}
       onDone={onDone}
     />
   );

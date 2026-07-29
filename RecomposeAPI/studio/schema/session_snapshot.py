@@ -21,7 +21,7 @@ class SessionSnapshot(BaseModel):
 
     session_id: str
     app_id: str
-    design_name: str
+    design_name: str | None = None
     # Reused rather than redefined: a session is running, succeeded, failed or
     # crashed on exactly the same terms a run is, and CRASHED is likewise never
     # written — it is what a reader concludes from a log whose last line is not

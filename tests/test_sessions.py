@@ -24,6 +24,7 @@ from RecomposeAPI.studio.schema.session_record import (
 )
 from RecomposeAPI.studio.agent import orchestrator_service as orchestrator_module
 from RecomposeAPI.studio.service import session_registry as session_registry_module
+from RecomposeAPI.studio.service import layout_task as layout_task_module
 from RecomposeAPI.studio.service.session_registry import SessionRegistry
 
 APP = "demo"
@@ -50,10 +51,15 @@ def studio(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         yield client, settings.sessions_dir
 
 
-def _open(client: TestClient, design: str = DESIGN) -> dict[str, Any]:
-    resp = client.post(
-        "/sessions", json={"app_id": APP, "design_name": design}
-    )
+def _open(client: TestClient) -> dict[str, Any]:
+    """Opening takes an app and nothing else.
+
+    A design name used to be required, typed into a form in front of the page.
+    The agent's own first question is what the business is called, so the form
+    asked for the same fact twice — and asked a person to name a thing that did
+    not exist yet before anything had explained what was about to happen.
+    """
+    resp = client.post("/sessions", json={"app_id": APP})
     assert resp.status_code == 202, resp.text
     return resp.json()
 
@@ -78,7 +84,8 @@ def test_opening_writes_a_header_and_reports_itself_active(studio) -> None:
 
     active = client.get("/sessions/active").json()
     assert active["session_id"] == opened["session_id"]
-    assert active["design_name"] == DESIGN
+    # No name yet: it arrives with the brand brief the interview produces.
+    assert active["design_name"] is None
     assert active["status"] == "running"
     # Opening puts the session in the brief phase and takes the agent's first
     # turn, so the header is never alone.
@@ -92,22 +99,17 @@ def test_only_one_session_at_a_time(studio) -> None:
     client, _ = studio
     first = _open(client)
 
-    resp = client.post(
-        "/sessions", json={"app_id": APP, "design_name": "Another"}
-    )
+    resp = client.post("/sessions", json={"app_id": APP})
 
     assert resp.status_code == 409
     detail = resp.json()["detail"]
     assert detail["active_session_id"] == first["session_id"]
-    assert detail["active_design_name"] == DESIGN
     assert "one design at a time" in detail["message"]
 
     client.post(f"/sessions/{first['session_id']}/close")
     # With the slot free, the next open is accepted.
     assert (
-        client.post(
-            "/sessions", json={"app_id": APP, "design_name": "Another"}
-        ).status_code
+        client.post("/sessions", json={"app_id": APP}).status_code
         == 202
     )
 
@@ -200,7 +202,7 @@ def test_a_log_with_no_terminal_line_reads_as_crashed(studio) -> None:
 
     snapshot = client.get(f"/sessions/{session_id}").json()
     assert snapshot["status"] == "crashed"
-    assert snapshot["design_name"] == DESIGN
+    assert snapshot["design_name"] is None
     assert snapshot["records"][0]["kind"] == "opened"
     assert "mid-flight" in [r.get("text") for r in snapshot["records"]]
 
@@ -260,3 +262,29 @@ def test_a_malformed_session_id_is_refused_before_it_becomes_a_path(
 
     assert client.get("/sessions/..%2F..%2Fetc%2Fpasswd").status_code == 404
     assert client.get("/sessions/not-a-uuid/events").status_code == 404
+
+
+def test_shutting_the_server_down_stops_the_layout_agents(monkeypatch) -> None:
+    """KILLING THE SERVER KILLS THE AGENTS IT STARTED.
+
+    A layout agent is a detached process in its own group, and a process group
+    outlives its parent — so without the app's `lifespan` hook a Ctrl-C in the
+    terminal would leave the expensive half of the system running, reparented
+    to init and invisible to the tool that started it. It bills the whole time.
+    """
+    stopped: list[bool] = []
+
+    class _Spy:
+        async def start(self, *, app: str, theme_run: str) -> str:
+            raise AssertionError("not used here")
+
+        async def stop(self) -> int:
+            stopped.append(True)
+            return 1
+
+    monkeypatch.setattr(layout_task_module, "_task", _Spy())
+
+    with TestClient(app):
+        pass  # opening and closing the app is the whole scenario
+
+    assert stopped == [True], "shutdown did not stop the layout agents"

@@ -38,6 +38,7 @@ from RecomposeAPI.studio.schema.session_open import (
 )
 from RecomposeAPI.studio.schema.session_snapshot import SessionSnapshot
 from RecomposeAPI.studio.agent.orchestrator_service import orchestrator_service
+from RecomposeAPI.studio.service.layout_task import layout_task
 from RecomposeAPI.studio.service.session_registry import session_registry
 
 logger = logging.getLogger(__name__)
@@ -71,9 +72,7 @@ async def open_session(request: StartSession) -> SessionOpened:
     transcript can reach the browser by.
     """
     try:
-        snapshot = await session_registry().open(
-            app_id=request.app_id, design_name=request.design_name
-        )
+        snapshot = await session_registry().open(app_id=request.app_id)
     except SessionInFlightError as exc:
         # Enough detail for the UI to name what is already open, rather than
         # a bare "busy" — the same courtesy `POST /runs` extends.
@@ -89,9 +88,7 @@ async def open_session(request: StartSession) -> SessionOpened:
     # The agent opens the interview. It speaks over the stream like everything
     # else, so there is exactly one path a transcript reaches the browser by.
     await orchestrator_service().open(
-        snapshot.session_id,
-        app_id=snapshot.app_id,
-        design_name=snapshot.design_name,
+        snapshot.session_id, app_id=snapshot.app_id
     )
     return SessionOpened(
         session_id=snapshot.session_id,
@@ -138,11 +135,11 @@ async def take_turn(session_id: str, turn: SessionTurn) -> None:
     responses={
         202: {"description": "Committed; the agent takes it from here"},
         404: {"description": "No such open session"},
-        422: {"description": "The brief is invalid, or both halves were sent"},
+        422: {"description": "The brief is invalid"},
     },
 )
 async def accept(session_id: str, body: SessionAccept) -> None:
-    """Commit the accepted proposal, THEN tell the agent.
+    """Commit the accepted brand brief, THEN tell the agent.
 
     The commit is deterministic and runs first: a blank field or an
     un-sluggable design name surfaces as a 422 with nothing written. A brief is
@@ -152,11 +149,7 @@ async def accept(session_id: str, body: SessionAccept) -> None:
     orchestrator = orchestrator_service()
     try:
         await session_registry().snapshot(session_id)
-        if body.brief is not None:
-            await orchestrator.accept_brief(session_id, body.brief)
-        else:
-            assert body.layout is not None  # the validator guarantees it
-            await orchestrator.accept_layout(session_id, body.layout)
+        await orchestrator.accept_brief(session_id, body.brief)
     except UnknownSessionError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)
@@ -197,6 +190,47 @@ async def close_session(session_id: str) -> None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)
         ) from None
+    # Approving ends the design, so nothing should still be redesigning it.
+    # Closing the page is not what stops an agent — this is.
+    await layout_task().stop()
+
+
+@session_router.post(
+    "/{session_id}/layout/stop",
+    status_code=status.HTTP_200_OK,
+    summary="Stop the layout agent",
+    responses={
+        200: {"description": "How many agents were stopped (0 if none ran)"},
+        404: {"description": "No such open session"},
+    },
+)
+async def stop_layout(session_id: str) -> dict[str, int]:
+    """Kill the running layout agent, whole process tree.
+
+    **The one control over the most expensive thing this service starts.** A
+    layout agent runs for a long time and bills the whole time, and until this
+    existed the only ways to end one early were to kill the API or to hunt the
+    pid down by hand.
+
+    Returns the count rather than 204 so the page can say "nothing was
+    running" instead of implying it stopped something. Not an error when the
+    count is zero: asking twice is the normal way to be sure.
+    """
+    try:
+        await session_registry().snapshot(session_id)
+    except UnknownSessionError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)
+        ) from None
+    stopped = await layout_task().stop()
+    if stopped:
+        await session_registry().task(
+            session_id,
+            task="layout",
+            state="failed",
+            error="stopped by the operator",
+        )
+    return {"stopped": stopped}
 
 
 @session_router.get(

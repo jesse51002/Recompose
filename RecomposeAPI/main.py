@@ -33,6 +33,10 @@ nothing else.
 
 from __future__ import annotations
 
+import logging
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -41,12 +45,38 @@ from RecomposeAPI.output_router import output_router
 from RecomposeAPI.studio.agent_router import agent_router
 from RecomposeAPI.studio.brief_router import brief_router
 from RecomposeAPI.studio.run_router import run_router
+from RecomposeAPI.studio.service.layout_task import layout_task
 from RecomposeAPI.studio.session_router import session_router
+
+logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def _lifespan(_: FastAPI) -> AsyncIterator[None]:
+    """KILLING THE SERVER KILLS THE AGENTS IT STARTED.
+
+    A layout agent is a detached coding-agent process that can run for hours
+    and bills the whole time. It is put in its own process group so it can be
+    killed as a tree — but a process group also survives its parent, so
+    without this a Ctrl-C in the terminal would leave the expensive half of
+    the system running, reparented to init and invisible to the tool that
+    started it.
+
+    Shutdown-only. Nothing to do on the way up.
+    """
+    yield
+    stopped = await layout_task().stop()
+    if stopped:
+        logger.warning(
+            "stopped %d layout agent(s) on shutdown", stopped
+        )
 
 
 def create_app() -> FastAPI:
     """Build the app: CORS, the read + write routers, and a health probe."""
-    application = FastAPI(title="Recompose API", version="0.1.0")
+    application = FastAPI(
+        title="Recompose API", version="0.1.0", lifespan=_lifespan
+    )
 
     application.add_middleware(
         CORSMiddleware,

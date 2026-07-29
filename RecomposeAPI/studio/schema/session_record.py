@@ -33,7 +33,6 @@ from pydantic import BaseModel, ConfigDict
 
 from schema import Customization
 from RecomposeAPI.studio.schema.agent_output import AgentQuestion
-from RecomposeAPI.studio.schema.layout_brief import LayoutBrief
 
 
 class SessionRecordKind(str, enum.Enum):
@@ -58,7 +57,8 @@ class SessionPhase(str, enum.Enum):
 
     BRIEF = "brief"
     GENERATING = "generating"
-    LAYOUT_BRIEF = "layout brief"
+    # No LAYOUT_BRIEF between these two any more: the layout is not
+    # interviewed for, so a run settling goes straight to DESIGNING.
     DESIGNING = "designing"
     VALIDATING = "validating"
     REVIEW = "review"
@@ -76,7 +76,7 @@ class SessionRecord(BaseModel):
     - ``PHASE`` — ``phase``
     - ``SAID`` — ``who`` and ``text``
     - ``ASKED`` — ``question``
-    - ``PROPOSED`` — ``brief`` **or** ``layout``, awaiting an Accept
+    - ``PROPOSED`` — ``brief``, awaiting an Accept
     - ``TASK`` — ``task``, ``task_state``, and then whichever of ``run_id`` /
       ``design_id`` / ``line`` / ``error`` that state carries
     - ``SETTLED`` — ``error`` on a failure
@@ -110,7 +110,6 @@ class SessionRecord(BaseModel):
 
     # --- PROPOSED --------------------------------------------------------
     brief: Customization | None = None
-    layout: LayoutBrief | None = None
 
     # --- TASK ------------------------------------------------------------
     task: Literal["assets", "layout"] | None = None

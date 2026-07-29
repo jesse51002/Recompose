@@ -21,7 +21,12 @@ import { AppSpinner } from '../widgets/AppSpinner';
 import { InspectView } from '../inspect/InspectView';
 import { foldSession } from '../studio/sessionFold';
 import { useSessionStream } from '../studio/useSessionStream';
-import { acceptProposal, closeSession, takeTurn } from '../studio/sessionApi';
+import {
+  acceptProposal,
+  closeSession,
+  stopLayout,
+  takeTurn,
+} from '../studio/sessionApi';
 
 import { Approved } from './Approved';
 import { BriefSheet } from './BriefSheet';
@@ -46,7 +51,6 @@ type Pane = 'mockup' | 'inspect' | 'brief';
 
 interface GenerateViewProps {
   readonly sessionId: string;
-  readonly designName: string;
   /** Where to go once the design is approved. */
   readonly onDone: () => void;
 }
@@ -57,7 +61,7 @@ interface GenerateViewProps {
  * **Mounted under a `key={sessionId}`** by the caller, so a new design starts
  * with an empty accumulator rather than needing state reset from an effect.
  */
-export function GenerateView({ sessionId, designName, onDone }: GenerateViewProps) {
+export function GenerateView({ sessionId, onDone }: GenerateViewProps) {
   const { records } = useSessionStream(sessionId);
 
   // The pane a person picked, and which proposal they picked it against.
@@ -72,6 +76,10 @@ export function GenerateView({ sessionId, designName, onDone }: GenerateViewProp
   const [error, setError] = useState<string | null>(null);
 
   const view = foldSession(records);
+  // THE DESIGN'S NAME COMES FROM ITS BRIEF, not from a form in front of the
+  // page. Until the interview produces one there is nothing to call this but
+  // what it is.
+  const designName = view.designName ?? 'this design';
   // A generation the agent produced wins until someone picks otherwise; the
   // fallback keeps a deleted folder from blanking the canvas.
   const app =
@@ -122,7 +130,7 @@ export function GenerateView({ sessionId, designName, onDone }: GenerateViewProp
   // while switching to the Mockup mid-proposal is not yanked back on the very
   // next record.
   const proposalCount = view.entries.filter(
-    (entry) => entry.kind === 'brief' || entry.kind === 'layout',
+    (entry) => entry.kind === 'brief',
   ).length;
   const pane: Pane =
     picked !== null && picked.at === proposalCount
@@ -151,14 +159,7 @@ export function GenerateView({ sessionId, designName, onDone }: GenerateViewProp
     // The phase that follows is long, and the thing just approved is what a
     // person should be looking at while it runs.
     setPane('brief');
-    act(() =>
-      acceptProposal(
-        sessionId,
-        proposal.kind === 'brief'
-          ? { brief: proposal.brief }
-          : { layout: proposal.brief },
-      ),
-    );
+    act(() => acceptProposal(sessionId, proposal));
   };
 
   // The approved screen takes the WHOLE surface, in the generated theme. It is
@@ -201,6 +202,28 @@ export function GenerateView({ sessionId, designName, onDone }: GenerateViewProp
             <ThemeChip onOpen={() => setLibrary(true)} generatedId={themeId} />
             <span className={styles.push} />
             <RunMeter runId={view.runId} />
+            {/* STOPPING THE LAYOUT AGENT, and only while one is running.
+                It is the most expensive thing this page can start — a coding
+                agent that runs for a long time and bills the whole time — and
+                closing the tab does not stop it. A permanent button would
+                offer to stop something that mostly is not running; this
+                appears exactly when there is something to stop. */}
+            {view.layoutRunning && (
+              <button
+                type="button"
+                className={styles.stop}
+                disabled={busy}
+                title="Kill the layout agent. The screens keep whatever it has already written."
+                onClick={() =>
+                  act(async () => {
+                    const stopped = await stopLayout(sessionId);
+                    if (stopped === 0) setError('Nothing was running.');
+                  })
+                }
+              >
+                Stop the agent
+              </button>
+            )}
             <button
               type="button"
               className={styles.approve}
