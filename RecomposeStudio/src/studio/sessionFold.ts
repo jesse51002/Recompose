@@ -32,6 +32,12 @@ export interface SessionView {
   readonly runId: string | null;
   /** The design folder the layout agent is writing to, once one exists. */
   readonly designId: string | null;
+  /**
+   * The theme being generated — the asset run's NAME, which is its id in the
+   * catalogue. Distinct from `designId`: one is an arrangement, the other a
+   * set of slots, and they arrive from different tasks.
+   */
+  readonly themeId: string | null;
   /** The open question, if the agent is waiting on a pick. */
   readonly pending: AgentQuestion | null;
   /** The proposal awaiting an Accept, if any. */
@@ -55,6 +61,7 @@ export function foldSession(records: readonly SessionRecord[]): SessionView {
   let phase: SessionPhase | null = null;
   let runId: string | null = null;
   let designId: string | null = null;
+  let themeId: string | null = null;
   let settled = false;
 
   // Index of the last still-open ask / proposal, or -1. Cleared by anything
@@ -96,7 +103,13 @@ export function foldSession(records: readonly SessionRecord[]): SessionView {
         break;
       case 'task':
         if (record.run_id) runId = record.run_id;
-        if (record.design_id) designId = record.design_id;
+        // Both tasks use `design_id`, and they mean different things: the
+        // assets task names the THEME it is producing, the layout task names
+        // the FOLDER it is editing.
+        if (record.design_id) {
+          if (record.task === 'assets') themeId = record.design_id;
+          else designId = record.design_id;
+        }
         if (record.task && record.task_state) {
           entries.push({
             kind: 'task',
@@ -133,6 +146,7 @@ export function foldSession(records: readonly SessionRecord[]): SessionView {
     phase,
     runId,
     designId,
+    themeId,
     pending:
       pendingEntry?.kind === 'asked' ? pendingEntry.question : null,
     proposal:

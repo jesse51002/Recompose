@@ -17,7 +17,7 @@ import { cx } from '../widgets/cx';
 import styles from './ThemePopup.module.css';
 
 export function ThemePopup({ onClose }: { onClose: () => void }) {
-  const { items, isLoading, errored } = useStylesPager({ pageSize: 60 });
+  const { items, isLoading, errored, total, query, setQuery } = useStylesPager({ pageSize: 100 });
   const { id: activeId } = useActiveDesign();
 
   // Escape closes it. A modal that traps you in it is the one interaction a
@@ -36,10 +36,25 @@ export function ThemePopup({ onClose }: { onClose: () => void }) {
       <div className={styles.pop} role="dialog" aria-label="Theme library">
         <header className={styles.head}>
           <b>Library</b>
+          <span className={styles.count}>
+            {total > 0 ? `${String(total)} designs` : ''}
+          </span>
           <button type="button" className={styles.x} onClick={onClose} aria-label="Close">
             ✕
           </button>
         </header>
+
+        {/* Seventy-odd designs is a list you search, not one you scan. The
+            pager debounces and refetches, so this filters server-side rather
+            than hiding rows that are already loaded. */}
+        <input
+          className={styles.search}
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Search designs…"
+          aria-label="Search designs"
+          autoFocus
+        />
 
         <div className={styles.grid}>
           {isLoading && items.length === 0 && (
@@ -63,17 +78,12 @@ export function ThemePopup({ onClose }: { onClose: () => void }) {
                 onClose();
               }}
             >
-              {/* The design's own celebration image is the truest swatch it
-                  has: it was generated FROM the palette, so it shows what the
-                  engine made rather than four squares standing in for it. */}
-              <span
-                className={styles.sw}
-                style={{ backgroundImage: `url(${style.celebrationImageUrl})` }}
-              />
-              <span className={styles.lb}>
-                <b>{style.displayName}</b>
-                <u>{style.category ?? 'uncategorised'}</u>
-              </span>
+              {/* NAMES, not pictures. A generated image is one slot out of
+                  eighteen and says almost nothing about the palette; a grid of
+                  thumbnails is a wall you squint at. The name and its category
+                  are what a person actually picks by. */}
+              <b>{style.displayName}</b>
+              <u>{style.category ?? 'uncategorised'}</u>
             </button>
           ))}
         </div>

@@ -214,6 +214,11 @@ class OrchestratorService:
                 task="assets",
                 state="started",
                 run_id=accepted.run_id,
+                # The run NAME, not the run id: the name is the folder under
+                # `apps/<app>/`, which is exactly the id the read API lists the
+                # design under. It is what lets a watching browser switch to
+                # the theme being generated and repaint as it lands.
+                design_id=accepted.run_name,
             )
             return (
                 f"Started. Run id {accepted.run_id}. It will report when it "

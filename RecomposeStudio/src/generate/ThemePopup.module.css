@@ -60,18 +60,44 @@
 
 .x:hover { color: var(--ink); }
 
+.count {
+  margin-left: 10px;
+  font: 400 var(--fs-micro) / 1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+}
+
+.search {
+  flex: none;
+  margin: 12px 15px 4px;
+  padding: 9px 11px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 7px;
+  background: var(--sh-panel);
+  color: var(--ink);
+  font: 400 var(--fs-sm) / 1.3 var(--sans);
+}
+
+.search::placeholder { color: var(--ink-4); }
+.search:focus-visible { outline: 2px solid var(--sh-line-3); outline-offset: 1px; }
+
+/* ONE COLUMN, and rows that size to their own text.
+   The previous version kept the geometry of a card that used to carry an image
+   band above the label — fixed height, centred pill — so with the image gone
+   every name was clipped through the middle. A row is the right shape for a
+   name: it is as tall as the text in it. */
 .grid {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: 15px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 11px;
+  padding: 8px 15px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .note {
-  grid-column: 1 / -1;
   margin: 0;
   padding: 18px 4px;
   font: 400 var(--fs-xs) / 1.6 var(--sans);
@@ -84,51 +110,45 @@
 }
 
 .lib {
-  display: block;
-  border: 1px solid var(--sh-line);
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  width: 100%;
+  padding: 9px 11px;
+  border: 1px solid transparent;
   border-radius: 7px;
-  overflow: hidden;
-  background: var(--sh-panel);
+  background: transparent;
   text-align: left;
-  padding: 0;
   cursor: pointer;
 }
 
-.lib:hover { border-color: var(--sh-line-3); }
+.lib:hover {
+  background: var(--sh-panel);
+  border-color: var(--sh-line);
+}
 
 .on {
-  border-color: var(--sh-line-3);
   background: var(--sh-raised-2);
+  border-color: var(--sh-line-3);
 }
 
-/* The design's own generated image is the swatch. It came OUT of the palette,
-   so it shows what the engine made rather than a stand-in for it. */
-.sw {
-  display: block;
-  height: 62px;
-  background-color: var(--sh-raised-2);
-  background-size: cover;
-  background-position: center;
-}
-
-.lb {
-  display: block;
-  padding: 8px 10px;
-}
-
-.lb b {
-  display: block;
-  font-size: var(--fs-xs);
-  font-weight: 500;
+.lib b {
+  flex: 1;
+  min-width: 0;
+  font: 500 var(--fs-sm) / 1.4 var(--sans);
   color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.lb u {
-  display: block;
+.lib u {
+  flex: none;
   text-decoration: none;
-  font: 400 var(--fs-micro) / 1.5 var(--mono);
+  font: 400 var(--fs-micro) / 1.4 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--ink-4);
-  margin-top: 2px;
 }
 
 .foot {

@@ -12,8 +12,9 @@
 // nothing — the property the server-held session exists for, and the one
 // easiest to lose here by keeping state the records already carry.
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MOCK_APPS, findMockApp } from 'recompose-jsx-mockups';
+import { selectDesign } from 'recompose-react';
 
 import { cx } from '../widgets/cx';
 import { AppSpinner } from '../widgets/AppSpinner';
@@ -66,6 +67,21 @@ export function GenerateView({ sessionId, designName, onDone }: GenerateViewProp
   // fallback keeps a deleted folder from blanking the canvas.
   const app =
     findMockApp(appId) ?? findMockApp(view.designId) ?? MOCK_APPS[0]!;
+
+  // WHEN A RUN STARTS, SWITCH TO WHAT IT IS MAKING. Otherwise the phone sits
+  // on whatever theme was loaded before and the run appears to do nothing —
+  // the partial `output.yaml` writes exist precisely so this repaints level by
+  // level, and it can only do that if the runtime is pointed at the new design.
+  //
+  // Re-attempted whenever the transcript grows, because the design is not in
+  // the catalogue until the first partial write lands: the first call after
+  // launch resolves false, a later one succeeds. `selectDesign` resolves
+  // rather than throwing, so a miss costs nothing.
+  const themeId = view.themeId;
+  useEffect(() => {
+    if (themeId === null) return;
+    void selectDesign(themeId);
+  }, [themeId, records.length]);
 
   /** Every write shares one guard: one in flight, and failures are shown. */
   const act = (work: () => Promise<void>): void => {
