@@ -1,0 +1,64 @@
+/*
+ * Styles for ./Action.tsx — the one primary action on a screen.
+ *
+ * Reads ONLY `--sc-*`. Never `--gw-*` / `--adm-*` (eslint Gates 2a/2b).
+ */
+
+/*
+ * A CAPSULE, not a rounded rectangle. `--sc-radius-circle` makes both ends true
+ * semicircles, so the action is a LINE WITH ROUND ENDS — in the vocabulary the
+ * rest of the app is drawn from rather than a fourth form smuggled in as a
+ * button.
+ *
+ * Exactly one region per screen is filled this way. A screen that wants a
+ * second terracotta fill wants a different arrangement.
+ */
+.action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sc-spacing-medium);
+  width: 100%;
+  min-height: 52px;
+  padding-inline: var(--sc-padding-small);
+  padding-block: var(--sc-spacing-medium);
+  border: none;
+  border-radius: var(--sc-radius-circle);
+  background: var(--sc-primary);
+  /*
+   * `--sc-knockout`, NOT `--sc-primary-button-text`. The pipeline's
+   * `regular_text` derivation resolves to the canvas linen on this palette,
+   * which reads 4.35:1 on terracotta; a button label is normal-size text and
+   * the bar is 4.5:1. The light derivation reads 5.54:1.
+   */
+  color: var(--sc-knockout);
+  font: var(--sc-type-say);
+  letter-spacing: var(--sc-type-say-ls);
+  cursor: pointer;
+  /* Sentence case, like everything else in this app. */
+  text-transform: none;
+}
+
+.action:disabled {
+  cursor: default;
+}
+
+/*
+ * The quieter action — sage, for a thing already earned or already done. Same
+ * rule about its ink, same reason.
+ */
+.calm {
+  background: var(--sc-accent);
+  color: var(--sc-accent-knockout);
+}
+
+/*
+ * An action drawn in LINE ONLY: the thread's stroke bent into a capsule, with
+ * no fill at all. For a secondary affordance on a screen whose one fill is
+ * already spent.
+ */
+.open {
+  background: transparent;
+  color: var(--sc-primary);
+  border: var(--sc-thread-width) solid var(--sc-primary);
+}

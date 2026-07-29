@@ -1,0 +1,66 @@
+/*
+ * Styles for ./Figure.tsx — every number this app counts.
+ *
+ * Reads ONLY `--sc-*`. Never `--gw-*` / `--adm-*` (eslint Gates 2a/2b).
+ */
+
+/*
+ * TABULAR FIGURES ARE NOT OPTIONAL HERE. Every one of these rungs is used by a
+ * count that ROLLS, and proportional digits change width as they change value —
+ * so a settling count visibly shifts the things beside it. It is also what lets
+ * a column of times or costs line up on its own decimal.
+ *
+ * NO NUMERIC `line-height` ANYWHERE IN THIS FILE. A line box shorter than the
+ * font's own makes adjacent digit cells overlap through a count-up reel's clip,
+ * which is a bug ../../romanahouse shipped once (../../../CLAUDE.md).
+ */
+.figure {
+  display: block;
+  margin: 0;
+  color: var(--sc-text);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+.xl {
+  font: var(--sc-type-figure-xl);
+  letter-spacing: var(--sc-type-figure-xl-ls);
+}
+
+.lg {
+  font: var(--sc-type-figure-lg);
+  letter-spacing: var(--sc-type-figure-lg-ls);
+}
+
+.md {
+  font: var(--sc-type-figure-md);
+  letter-spacing: var(--sc-type-figure-md-ls);
+}
+
+.sm {
+  font: var(--sc-type-figure-sm);
+  letter-spacing: var(--sc-type-figure-sm-ls);
+}
+
+.xs {
+  font: var(--sc-type-figure-xs);
+  letter-spacing: var(--sc-type-figure-xs-ls);
+}
+
+/* The one headline that names a screen. Display face, light, sentence case. */
+.title {
+  display: block;
+  margin: 0;
+  color: var(--sc-text);
+  font: var(--sc-type-title);
+  letter-spacing: var(--sc-type-title-ls);
+}
+
+/* On a terracotta or sage fill, the ink is the palette's own light derivation. */
+.onFill {
+  color: var(--sc-knockout);
+}
+
+.onCalm {
+  color: var(--sc-accent-knockout);
+}

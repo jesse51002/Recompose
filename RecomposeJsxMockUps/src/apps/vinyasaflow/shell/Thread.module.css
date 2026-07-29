@@ -1,0 +1,166 @@
+/*
+ * Styles for ./Thread.tsx — the pieces that hang on the line ./Screen.tsx draws.
+ *
+ * Reads ONLY `--sc-*` (plus locally-declared `--vf-*`, which are values this
+ * stylesheet both writes and reads rather than tokens it borrows).
+ *
+ * THE ONE MEASUREMENT EVERYTHING HERE SHARES: the line's CENTRE is at
+ * `--sc-thread-x` + half `--sc-thread-width`, because `.rail` is positioned by
+ * its left edge. Every node in this file is placed by that centre and pulled
+ * back half its own width, so a node stays on the line at any size.
+ */
+
+.region {
+  display: grid;
+  grid-template-columns: var(--sc-thread-inset) 1fr;
+  align-items: center;
+  column-gap: 0;
+}
+
+/*
+ * The node and the label it names are ONE object, so they share a grid row and
+ * centre on each other. Guardrail 13: the gap between a label and the thing it
+ * names must be smaller than the gap to the next region — here it is zero,
+ * because they are the same row.
+ */
+.node {
+  grid-column: 1;
+  justify-self: start;
+  margin-left: calc(var(--sc-thread-x) + var(--sc-thread-width) / 2);
+  transform: translateX(-50%);
+  width: var(--sc-node);
+  height: var(--sc-node);
+  border-radius: var(--sc-radius-circle);
+  box-sizing: border-box;
+}
+
+/*
+ * `open` — a ring the line runs THROUGH. The interior is transparent on
+ * purpose: a bead threaded on a string, which is the metaphor the whole design
+ * is built from, and the reason plain regions use this variant.
+ */
+.nodeOpen {
+  border: var(--sc-node-ring) solid var(--sc-primary);
+  background: transparent;
+}
+
+/* `solid` — the line swelling to a filled stop. Marks a thing happening now. */
+.nodeSolid {
+  border: var(--sc-node-ring) solid var(--sc-primary);
+  background: var(--sc-primary);
+}
+
+/* `calm` — sage. Marks a thing already earned, already attended, already held. */
+.nodeCalm {
+  border: var(--sc-node-ring) solid var(--sc-accent);
+  background: var(--sc-accent);
+}
+
+/*
+ * `carry` — a node big enough to hold a figure. The canvas fill is what masks
+ * the line behind it; every other variant lets it through.
+ */
+.nodeCarry {
+  width: var(--sc-node-lg);
+  height: var(--sc-node-lg);
+  border: var(--sc-node-ring) solid var(--sc-primary);
+  background: var(--sc-background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.say {
+  grid-column: 2;
+  margin: 0;
+  font: var(--sc-type-say);
+  letter-spacing: var(--sc-type-say-ls);
+  color: var(--sc-text);
+}
+
+/*
+ * The region's content. Column 2 so it lines up under the label rather than
+ * under the thread, and `--sc-spacing-medium` above it because it belongs to
+ * the label — the gap to the NEXT region is `--sc-spacing-big`, set by the
+ * caller. That difference is what does the grouping (Guardrail 13).
+ */
+.content {
+  grid-column: 2;
+  grid-row: 2;
+  margin-top: var(--sc-spacing-medium);
+}
+
+/* A region whose content runs to both edges — a full-bleed photograph. */
+.contentBleed {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  margin-top: var(--sc-spacing-medium);
+}
+
+/*
+ * THE SIDEWAYS EXCURSION. The line goes out across the screen, through what it
+ * carries, and back down. This is the only thing in the app that scrolls
+ * sideways, which is why sideways scrolling reads as part of the sequence
+ * rather than a second axis bolted on.
+ */
+.bow {
+  position: relative;
+}
+
+/*
+ * The horizontal stroke, at the row's vertical centre, from the line out to
+ * the right edge. Same weight and same ink as the descent, because it IS the
+ * descent — it has gone sideways, not become a different device.
+ */
+.bowStroke {
+  position: absolute;
+  left: calc(var(--sc-thread-x) + var(--sc-thread-width) / 2);
+  right: 0;
+  top: 50%;
+  height: var(--sc-thread-width);
+  transform: translateY(-50%);
+  background: var(--sc-primary);
+  pointer-events: none;
+}
+
+/*
+ * What the excursion carries. `padding-left` clears the descent so the first
+ * item does not sit on top of it, and the row scrolls when it runs longer than
+ * the screen.
+ */
+.bowItems {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-large);
+  padding-left: var(--sc-thread-inset);
+  padding-right: var(--sc-screen-padding-x);
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.bowItems::-webkit-scrollbar {
+  display: none;
+}
+
+/*
+ * THE CLOSING LOOP — the celebration's one departure from a line that always
+ * continues off the edge.
+ *
+ * A ring in the thread's own stroke with the card's hero inside it. The moment
+ * it closes is the moment the card is settled, which is what gives the card a
+ * single unmistakable finish instead of a set of parts each arriving on its own
+ * schedule.
+ */
+.loop {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--sc-radius-circle);
+  border: var(--sc-thread-width-over) solid var(--sc-primary);
+  box-sizing: border-box;
+}

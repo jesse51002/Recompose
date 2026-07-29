@@ -1,0 +1,90 @@
+/*
+ * Styles for ./ThreadNav.tsx — the thread's last act.
+ *
+ * Reads ONLY `--sc-*`. Never `--gw-*` / `--adm-*` (eslint Gates 2a/2b).
+ */
+
+.nav {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--sc-nav-height);
+  padding-inline: var(--sc-screen-padding-x);
+  /* The four circles need room to breathe off the last region above them. */
+  padding-top: var(--sc-spacing-medium);
+}
+
+/*
+ * The line's final excursion: out from the descent, through the four circles,
+ * and off the right edge. It runs at the circles' centre, so it visibly
+ * THREADS them rather than underlining them.
+ */
+.strand {
+  position: absolute;
+  left: calc(var(--sc-thread-x) + var(--sc-thread-width) / 2);
+  right: 0;
+  /*
+   * The circles' centre, not the band's: the band carries a label row beneath
+   * each circle, so its own midpoint sits below where the discs actually are.
+   */
+  top: calc(
+    var(--sc-spacing-medium) + (var(--sc-nav-height) - var(--sc-spacing-medium)) / 2 - 7px
+  );
+  height: var(--sc-thread-width);
+  background: var(--sc-primary);
+  pointer-events: none;
+}
+
+.item {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sc-spacing-small);
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+.disc {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--sc-nav-disc);
+  height: var(--sc-nav-disc);
+  border-radius: var(--sc-radius-circle);
+  box-sizing: border-box;
+  /*
+   * The canvas fill is what makes the strand appear to pass BEHIND an open
+   * circle rather than through its glyph. Without it the line crosses the icon.
+   */
+  background: var(--sc-background);
+  border: var(--sc-node-ring) solid var(--sc-primary);
+}
+
+/*
+ * Where the member is standing. Filled solid, with its glyph and its name
+ * knocked out — and the knockout ink is `--sc-knockout` (the palette's own
+ * light derivation, 5.54:1 on terracotta) rather than the canvas linen, which
+ * manages only 4.35:1. A nav label is normal-size text.
+ */
+.discHere {
+  background: var(--sc-primary);
+  border-color: var(--sc-primary);
+}
+
+.label {
+  font: var(--sc-type-fine);
+  letter-spacing: var(--sc-type-fine-ls);
+  color: var(--sc-text-2nd);
+  /* Sentence case. This app never sets a label in capitals. */
+  text-transform: none;
+}
+
+.labelHere {
+  color: var(--sc-text);
+}

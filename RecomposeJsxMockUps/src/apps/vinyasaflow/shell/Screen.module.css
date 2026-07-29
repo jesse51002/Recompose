@@ -1,0 +1,99 @@
+/*
+ * Styles for ./Screen.tsx — this fork's scaffold, and the THREAD itself.
+ *
+ * Reads ONLY `--sc-*`, written onto the phone screen root by
+ * ../ShowcaseThemeVars.tsx. Never `--gw-*` / `--adm-*` (eslint Gates 2a/2b).
+ */
+
+.screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: var(--sc-background);
+  color: var(--sc-text);
+  font: var(--sc-type-read);
+  letter-spacing: var(--sc-type-read-ls);
+  overflow: hidden;
+}
+
+/*
+ * THE THREAD. One element, `top: 0` to `bottom: 0`, so it is continuous BY
+ * CONSTRUCTION — there is no arrangement of children that can break it, which
+ * is the whole reason it is drawn here rather than assembled per region.
+ *
+ * It sits behind content (`z-index: 0` against the body's 1) so a node can mask
+ * it, a photograph can cover it, and neither has to coordinate with it. Where a
+ * photograph covers it, the photograph redraws it in the knockout ink on top —
+ * see ./Photo.module.css `.over`.
+ */
+.rail {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--sc-thread-x);
+  width: var(--sc-thread-width);
+  background: var(--sc-primary);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* The room the dynamic island needs. `SafeArea(top: true)`. */
+.safeTop {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  height: var(--phone-status-inset, 0px);
+}
+
+.head {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+}
+
+/*
+ * The body. `min-height: 0` is what lets a flex child shrink below its content
+ * height; without it the body pushes the foot off the screen instead of
+ * scrolling.
+ */
+.body {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/*
+ * `overflow-x` is spelled out rather than left at `visible`: a `visible`
+ * sibling of a scrolling axis COMPUTES to `auto`, so omitting it hands the body
+ * a horizontal scrollbar it never uses and lets a 1px rounding error scroll the
+ * whole screen sideways.
+ *
+ * The scrollbar is hidden because a desktop track drawn down the inside of a
+ * phone mock is the one detail that gives away that this is not a device.
+ */
+.bodyScroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.bodyScroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Screens that paint outside their box (the celebration surfaces) keep it. */
+.bodyClip {
+  overflow: hidden;
+}
+
+.foot {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+}

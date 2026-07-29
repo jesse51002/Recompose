@@ -1,0 +1,113 @@
+/*
+ * Styles for ./Head.tsx — where the thread comes from.
+ *
+ * Reads ONLY `--sc-*`. Never `--gw-*` / `--adm-*` (eslint Gates 2a/2b).
+ */
+
+.head {
+  padding-top: var(--sc-spacing-large);
+  padding-bottom: var(--sc-spacing-medium);
+}
+
+/* The mark and the studio's name are one object: same row, no gap between. */
+.mast {
+  display: grid;
+  grid-template-columns: var(--sc-thread-inset) 1fr;
+  align-items: center;
+}
+
+/*
+ * THE ORIGIN OF THE STROKE. The brand mark is already a circle with a
+ * continuous line inside it, so it is not decorated here — it is placed on the
+ * thread's centre and left alone. The line descends out of it.
+ */
+.mark {
+  grid-column: 1;
+  justify-self: start;
+  margin-left: calc(var(--sc-thread-x) + var(--sc-thread-width) / 2);
+  transform: translateX(-50%);
+  display: block;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--sc-radius-circle);
+  /* Masks the line behind the mark, so the stroke reads as starting here. */
+  background: var(--sc-background);
+  object-fit: contain;
+}
+
+.name {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-small);
+  margin: 0;
+  font: var(--sc-type-title);
+  letter-spacing: var(--sc-type-title-ls);
+  color: var(--sc-text);
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.chevron {
+  flex: 0 0 auto;
+  color: var(--sc-primary);
+}
+
+/*
+ * The four things the member carries. The thread bows sideways to gather them,
+ * which is the same device the week strip and every shelf use.
+ *
+ * `--sc-spacing-large` above it because it is a NEW region, not part of the
+ * masthead — Guardrail 13's grouping rule, where the gap inside an object must
+ * be smaller than the gap to the next one.
+ */
+.carry {
+  margin-top: var(--sc-spacing-large);
+}
+
+.carryItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sc-spacing-small);
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+}
+
+.carryDisc {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: var(--sc-radius-circle);
+  box-sizing: border-box;
+  /* Canvas fill so the bow's stroke passes behind the disc, not through it. */
+  background: var(--sc-background);
+  border: var(--sc-node-ring) solid var(--sc-primary);
+  overflow: hidden;
+}
+
+/* A disc holding a minted object rather than a figure: let the art fill it. */
+.carryArt {
+  padding: 0;
+}
+
+.carryImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.carryLabel {
+  font: var(--sc-type-fine);
+  letter-spacing: var(--sc-type-fine-ls);
+  color: var(--sc-text-2nd);
+}
