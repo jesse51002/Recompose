@@ -1,0 +1,92 @@
+/* The start screen. Same dark ground as the page it leads into, so pressing
+   Start changes what is on screen rather than where you are. */
+
+.shell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 32px;
+  background: var(--sh-ground);
+  color: var(--ink);
+  font-family: var(--sans);
+}
+
+.form {
+  width: 100%;
+  max-width: 46ch;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  margin: 0 0 10px;
+  font: 500 var(--fs-xl) / 1.05 var(--sans);
+  letter-spacing: var(--tr-title);
+}
+
+.lede {
+  margin: 0 0 26px;
+  font: 400 var(--fs-sm) / 1.6 var(--sans);
+  color: var(--ink-2);
+}
+
+.label {
+  font: 500 var(--fs-micro) / 1 var(--mono);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 7px;
+}
+
+.input {
+  padding: 12px 13px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 8px;
+  background: var(--sh-panel);
+  color: var(--ink);
+  font: 400 var(--fs-md) / 1.3 var(--sans);
+}
+
+.input::placeholder {
+  color: var(--ink-4);
+}
+
+.input:focus-visible {
+  outline: 2px solid var(--sh-line-3);
+  outline-offset: 1px;
+}
+
+.start {
+  margin-top: 14px;
+  padding: 11px 16px;
+  border: 1px solid var(--st-you-l);
+  border-radius: 8px;
+  background: var(--st-you-w);
+  color: var(--st-you);
+  font: 500 var(--fs-sm) / 1 var(--sans);
+  cursor: pointer;
+}
+
+.start:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.error {
+  margin: 14px 0 0;
+  padding: 9px 11px;
+  border: 1px solid var(--st-bad-l);
+  border-radius: 7px;
+  background: var(--st-bad-w);
+  color: var(--st-bad);
+  font: 400 var(--fs-xs) / 1.5 var(--sans);
+}
+
+.note {
+  margin: 22px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--sh-line);
+  font: 400 var(--fs-xs) / 1.6 var(--sans);
+  color: var(--ink-3);
+}

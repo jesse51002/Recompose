@@ -6,7 +6,10 @@ request shape every human action uses afterwards.
 
 from __future__ import annotations
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+
+from schema import Customization
+from RecomposeAPI.studio.schema.layout_brief import LayoutBrief
 
 
 class StartSession(BaseModel):
@@ -55,3 +58,28 @@ class SessionTurn(BaseModel):
         if not value.strip():
             raise ValueError("'message' must not be blank")
         return value
+
+
+class SessionAccept(BaseModel):
+    """Accept the open proposal — exactly one of the two halves.
+
+    The reviewed brief comes back VERBATIM rather than being taken from server
+    state, because the review panel is editable: what the owner accepted is
+    what they were looking at, which is not necessarily what the agent last
+    proposed.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    brief: Customization | None = None
+    layout: LayoutBrief | None = None
+
+    @model_validator(mode="after")
+    def _exactly_one(self) -> SessionAccept:
+        """Both or neither is a client bug, and it is not recoverable later —
+        the two open different phases and start different work."""
+        if (self.brief is None) == (self.layout is None):
+            raise ValueError(
+                "accept exactly one of 'brief' or 'layout'"
+            )
+        return self

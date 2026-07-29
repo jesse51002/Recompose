@@ -179,6 +179,28 @@ export async function takeTurn(sessionId: string, message: string): Promise<void
   });
 }
 
+/**
+ * Accept the open proposal — exactly one half.
+ *
+ * The reviewed brief goes back VERBATIM rather than the server reading its own
+ * state, because the review panel is editable: what the owner accepted is what
+ * they were looking at, not necessarily what the agent last proposed.
+ *
+ * A separate route from `takeTurn` because the commit is deterministic and
+ * runs before the agent is told — a brief is never reported saved because a
+ * model said so.
+ */
+export async function acceptProposal(
+  sessionId: string,
+  proposal: { brief: BriefInput } | { layout: LayoutBriefInput },
+): Promise<void> {
+  await send<unknown>(`/sessions/${encodeURIComponent(sessionId)}/accept`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(proposal),
+  });
+}
+
 /** Approve the design and close the session. */
 export async function closeSession(sessionId: string): Promise<void> {
   await send<unknown>(`/sessions/${encodeURIComponent(sessionId)}/close`, {

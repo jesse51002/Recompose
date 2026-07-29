@@ -1,0 +1,129 @@
+/* The Generate view's own shell tokens, ported from design/studio-demo.html.
+ *
+ * WHY THIS VIEW HAS ITS OWN GROUND. The rest of the studio is a daylit control
+ * desk (`--adm-*`) and stays that way; this one page is the surface a buyer
+ * watches a design get made on, and it was designed dark so the generated
+ * theme is the brightest thing in the room. Scoped to `.shell` so nothing
+ * outside it can read these — the Library and Inspect views are unaffected.
+ *
+ * THE COLOUR RULE, and it is the load-bearing one:
+ *
+ *   FUNCTIONAL colour means a state. It lives in the SHELL and never crosses
+ *   into the canvas. DECORATIVE colour belongs to the GENERATED THEME alone,
+ *   and the canvas is where it lives.
+ *
+ * So a hue appearing in the chrome always means something changed, and the
+ * phone is the only place anything is coloured for looks.
+ */
+
+.shell {
+  --sh-void: #06080b;
+  --sh-ground: #0b0e12;
+  --sh-panel: #0f1319;
+  --sh-raised: #151a21;
+  --sh-raised-2: #1c232c;
+  --sh-line: rgba(255, 255, 255, 0.07);
+  --sh-line-2: rgba(255, 255, 255, 0.13);
+  --sh-line-3: rgba(255, 255, 255, 0.22);
+  --ink: #e8ecf2;
+  --ink-2: #98a3b3;
+  --ink-3: #626d7d;
+  --ink-4: #414a56;
+
+  /* STATUS. Each means one state and nothing else. OKLCH, every hue at the
+     same lightness (.80) except the alarm — so relative loudness is a
+     decision rather than a side effect of hue. Colour never carries a state
+     on its own: every one of these ships with a written label too. */
+  --st-wait: #626d7d;
+  --st-run: oklch(0.8 0.126 218);
+  --st-ok: oklch(0.8 0.092 165);
+  --st-you: oklch(0.8 0.118 79);
+  --st-bad: oklch(0.72 0.175 26);
+
+  --st-run-w: oklch(0.8 0.126 218 / 0.13);
+  --st-ok-w: oklch(0.8 0.092 165 / 0.12);
+  --st-you-w: oklch(0.8 0.118 79 / 0.13);
+  --st-bad-w: oklch(0.72 0.175 26 / 0.13);
+  --st-run-l: oklch(0.8 0.126 218 / 0.4);
+  --st-you-l: oklch(0.8 0.118 79 / 0.4);
+  --st-bad-l: oklch(0.72 0.175 26 / 0.42);
+
+  /* PHASE hues, grouped by WHO IS WORKING rather than walked round the wheel.
+     Violet = a person is authoring. Blue = a machine is working. Amber = a
+     person must decide. Green = settled. The transcript is therefore legible
+     twice over: which phase, and whose turn it is. */
+  --ph-layout: oklch(0.8 0.128 332);
+  --ph-brief: oklch(0.8 0.13 305);
+  --ph-gen: oklch(0.8 0.13 262);
+  --ph-design: oklch(0.8 0.126 218);
+  --ph-valid: oklch(0.8 0.11 193);
+  --ph-review: var(--st-you);
+  --ph-done: var(--st-ok);
+
+  --ph-layout-w: oklch(0.8 0.128 332 / 0.13);
+  --ph-brief-w: oklch(0.8 0.13 305 / 0.13);
+  --ph-gen-w: oklch(0.8 0.13 262 / 0.13);
+  --ph-design-w: oklch(0.8 0.126 218 / 0.13);
+  --ph-valid-w: oklch(0.8 0.11 193 / 0.13);
+  --ph-layout-l: oklch(0.8 0.128 332 / 0.4);
+  --ph-brief-l: oklch(0.8 0.13 305 / 0.4);
+  --ph-gen-l: oklch(0.8 0.13 262 / 0.4);
+  --ph-design-l: oklch(0.8 0.126 218 / 0.4);
+  --ph-valid-l: oklch(0.8 0.11 193 / 0.4);
+
+  --sans: 'Archivo', ui-sans-serif, -apple-system, 'Segoe UI', system-ui, sans-serif;
+  --mono: 'Sometype Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Six steps. Not a modular ratio — this is dense tool UI and a strict ratio
+     would blow the density the transcript and the run readout exist for. */
+  --fs-micro: 10px;
+  --fs-xs: 11.5px;
+  --fs-sm: 13.5px;
+  --fs-md: 16px;
+  --fs-lg: 22px;
+  --fs-xl: 32px;
+
+  /* Tracking is a system, not a per-rule guess: mono labels open up because
+     they are set in caps at 10px. */
+  --tr-title: -0.025em;
+  --tr-label: 0.16em;
+}
+
+/* Per-phase colour, in ONE place. Everything that wears a phase hue — the
+   header tag, a transcript marker, a message's pip — reads from here, so the
+   header and the transcript cannot disagree about what the run is doing. */
+.p-brief {
+  --phase: var(--ph-brief);
+  --phase-wash: var(--ph-brief-w);
+  --phase-line: var(--ph-brief-l);
+}
+.p-generating {
+  --phase: var(--ph-gen);
+  --phase-wash: var(--ph-gen-w);
+  --phase-line: var(--ph-gen-l);
+}
+.p-layout {
+  --phase: var(--ph-layout);
+  --phase-wash: var(--ph-layout-w);
+  --phase-line: var(--ph-layout-l);
+}
+.p-designing {
+  --phase: var(--ph-design);
+  --phase-wash: var(--ph-design-w);
+  --phase-line: var(--ph-design-l);
+}
+.p-validating {
+  --phase: var(--ph-valid);
+  --phase-wash: var(--ph-valid-w);
+  --phase-line: var(--ph-valid-l);
+}
+.p-review {
+  --phase: var(--ph-review);
+  --phase-wash: var(--st-you-w);
+  --phase-line: var(--st-you-l);
+}
+.p-approved {
+  --phase: var(--ph-done);
+  --phase-wash: var(--st-ok-w);
+  --phase-line: oklch(0.8 0.092 165 / 0.4);
+}

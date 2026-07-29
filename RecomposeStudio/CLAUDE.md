@@ -7,7 +7,7 @@ The standalone tool. Three views, switched by the tab bar and reachable by URL
 |---|---|
 | *(default)* | **Library** — the catalog, and any design previewed in a phone frame. |
 | `inspect` | **Inspect** — every artifact one pipeline run produced: the four colour roles with their derivations, the flat palette, both typefaces set in themselves, the generated copy, icons and imagery. |
-| `studio` | **Studio** — authoring a brief and watching a run produce a theme. In progress. |
+| `studio` | **Studio** — the Generate page: name a business, answer an interview, and watch the design get made. Three panes over one server-held session. |
 
 See `../CLAUDE.md` for the monorepo map.
 
@@ -33,7 +33,15 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
 
 - `browser/` — the Library view: catalog grid, search, filters, phone-frame preview.
 - `inspect/` — the Inspect view and `artifactModel.ts`, which maps a run's output into what the view renders.
-- `studio/` — the Studio view: brief authoring and run watching, against `ThemeTree/studio`'s local API.
+- `studio/` — the wire contract and the streams: `sessionApi` / `studioApi`,
+  `recordStream` (the replayable-log subscription both streams share),
+  `sessionFold` / `runFold`, and `RunSheet`, which is now the Generate page's
+  Inspect tab rather than a page of its own. Talks to `RecomposeAPI/studio`.
+- `generate/` — the Generate page itself: the transcript column, the canvas,
+  the brief document, and its own dark token scope. **This is the one view with
+  a ground of its own** — the rest of the studio is a daylit control desk, and
+  this page was designed dark so the generated theme is the brightest thing on
+  it. The tokens are scoped to `.shell`, so nothing else can read them.
 - `chrome/`, `widgets/`, `tokens/`, `styles/` — the app shell and its own UI vocabulary. **This is the studio's design system, not the product's** — it is admin chrome, deliberately plain, and must never leak into the mockups.
 - `data/` — defaults and fixtures the views fall back to.
 - `design/` — **a clickable demo of a proposed redesign, not code.** One
@@ -44,10 +52,19 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
 
 ## Rules
 
-- **The studio's own look is not a design surface.** It is a tool. Do not theme it
-  with `recompose-react` resolvers, and do not let its widgets drift toward
+- **The studio's own look is not a design surface.** It is a tool. Do not theme
+  it with `recompose-react` resolvers, and do not let its widgets drift toward
   looking like product UI — the whole point is that the previewed screen is the
   only themed thing on the page.
+- **In `generate/`, colour is functional and nothing else.** A hue in the shell
+  means a state — a phase, a failure, a person is needed. Decorative colour
+  belongs to the generated theme, and the canvas is where it lives. So a hue
+  appearing in the chrome always means something changed.
+- **Phase colour has exactly one source.** `generate/phaseClass.ts` maps a wire
+  phase to the class carrying its `--phase*` properties, and the header tag and
+  the transcript markers both read it. In the demo a single `stamp()` call held
+  that invariant; here the data holds it, and a second mapping would be the way
+  it breaks.
 - **Fail visible.** A missing artifact, a failed run, an empty catalog: show the
   state. A blank pane that could mean "loading" or "broken" is the one failure
   mode that wastes the most time here.

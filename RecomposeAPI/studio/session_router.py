@@ -27,9 +27,11 @@ from collections.abc import AsyncIterator
 
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import StreamingResponse
+from pydantic import ValidationError
 
 from RecomposeAPI.studio.errors import SessionInFlightError, UnknownSessionError
 from RecomposeAPI.studio.schema.session_open import (
+    SessionAccept,
     SessionOpened,
     SessionTurn,
     StartSession,
@@ -126,6 +128,49 @@ async def take_turn(session_id: str, turn: SessionTurn) -> None:
     except UnknownSessionError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)
+        ) from None
+
+
+@session_router.post(
+    "/{session_id}/accept",
+    status_code=status.HTTP_202_ACCEPTED,
+    summary="Accept the open proposal and let the work start",
+    responses={
+        202: {"description": "Committed; the agent takes it from here"},
+        404: {"description": "No such open session"},
+        422: {"description": "The brief is invalid, or both halves were sent"},
+    },
+)
+async def accept(session_id: str, body: SessionAccept) -> None:
+    """Commit the accepted proposal, THEN tell the agent.
+
+    The commit is deterministic and runs first: a blank field or an
+    un-sluggable design name surfaces as a 422 with nothing written. A brief is
+    never reported saved because a model said so — which is why this is a
+    separate route from ``/turn`` rather than a flag on it.
+    """
+    orchestrator = orchestrator_service()
+    try:
+        await session_registry().snapshot(session_id)
+        if body.brief is not None:
+            await orchestrator.accept_brief(session_id, body.brief)
+        else:
+            assert body.layout is not None  # the validator guarantees it
+            await orchestrator.accept_layout(session_id, body.layout)
+    except UnknownSessionError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)
+        ) from None
+    except ValidationError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail=exc.errors(include_url=False, include_context=False),
+        ) from None
+    except ValueError as exc:
+        # The un-sluggable design name. (ValidationError is a ValueError, so
+        # it is caught above this.)
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(exc)
         ) from None
 
 

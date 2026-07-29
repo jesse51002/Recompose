@@ -1,0 +1,177 @@
+/* The Generate page shell. Ported from design/studio-demo.html. */
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--sh-ground);
+  color: var(--ink);
+  font-family: var(--sans);
+}
+
+.attaching {
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── The header ────────────────────────────────────────────────────────── */
+.top {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 11px 16px;
+  background: var(--sh-void);
+  border-bottom: 1px solid var(--sh-line);
+}
+
+.identity {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+}
+
+.product {
+  font: 600 var(--fs-sm) / 1 var(--sans);
+  letter-spacing: var(--tr-title);
+}
+
+.design {
+  font: 400 var(--fs-xs) / 1 var(--sans);
+  color: var(--ink-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+}
+
+/* The phase tag wears the phase's own hue — the same custom properties the
+   transcript's markers read, so the two cannot disagree. */
+.tag {
+  padding: 4px 9px;
+  border: 1px solid var(--phase-line, var(--sh-line-2));
+  border-radius: 999px;
+  background: var(--phase-wash, transparent);
+  color: var(--phase, var(--ink-2));
+  font: 500 var(--fs-micro) / 1 var(--mono);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+}
+
+.transport {
+  font: 400 var(--fs-micro) / 1 var(--mono);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--ink-4);
+}
+
+.approve {
+  padding: 6px 11px;
+  border: 1px solid var(--st-you-l);
+  border-radius: 6px;
+  background: var(--st-you-w);
+  color: var(--st-you);
+  font: 500 var(--fs-xs) / 1 var(--sans);
+  cursor: pointer;
+}
+
+.approve:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.done {
+  padding: 6px 11px;
+  border-radius: 6px;
+  background: var(--st-ok-w);
+  color: var(--st-ok);
+  font: 500 var(--fs-micro) / 1 var(--mono);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+}
+
+/* Fail visible: a write that did not land says so, in the one alarm hue. */
+.error {
+  flex: none;
+  padding: 9px 16px;
+  background: var(--st-bad-w);
+  border-bottom: 1px solid var(--st-bad-l);
+  color: var(--st-bad);
+  font: 400 var(--fs-xs) / 1.5 var(--sans);
+}
+
+/* ── The panes ─────────────────────────────────────────────────────────── */
+.panes {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  /* The transcript is fixed because prose has a comfortable measure and this
+     one is read for an hour; the canvas takes whatever is left. */
+  grid-template-columns: 380px minmax(0, 1fr);
+}
+
+.centre {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: var(--sh-ground);
+}
+
+.tabs {
+  flex: none;
+  display: flex;
+  gap: 2px;
+  padding: 8px 12px 0;
+  border-bottom: 1px solid var(--sh-line);
+}
+
+.tab {
+  padding: 7px 13px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--ink-3);
+  font: 500 var(--fs-xs) / 1 var(--sans);
+  cursor: pointer;
+}
+
+.tab:hover:enabled {
+  color: var(--ink-2);
+}
+
+.tab:disabled {
+  color: var(--ink-4);
+  cursor: default;
+}
+
+.tabOn {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
+
+.stage {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.empty {
+  margin: auto;
+  max-width: 34ch;
+  padding: 24px;
+  text-align: center;
+  font: 400 var(--fs-sm) / 1.6 var(--sans);
+  color: var(--ink-3);
+}

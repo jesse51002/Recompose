@@ -1,0 +1,263 @@
+/* The transcript column. Ported from design/studio-demo.html.
+ *
+ * Every hue in here is FUNCTIONAL — a phase or a failure. Nothing is coloured
+ * for looks, which is what makes a hue appearing mean something changed.
+ */
+
+.column {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  background: var(--sh-panel);
+  border-right: 1px solid var(--sh-line);
+}
+
+.scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px 18px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── A phase marker ────────────────────────────────────────────────────────
+   Spans the column and names the phase in that phase's own hue. It is a rule
+   with a word on it, not a message, because it marks a boundary between
+   messages rather than being one. */
+.phase {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0 2px;
+  font: 500 var(--fs-micro) / 1 var(--mono);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--phase, var(--ink-3));
+}
+
+.phase::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  border: 1.5px solid currentcolor;
+  box-shadow: 0 0 0 3px var(--phase-wash, transparent);
+}
+
+.phase::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--sh-line);
+}
+
+/* ── A message ─────────────────────────────────────────────────────────── */
+.msg {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.msg p {
+  margin: 0;
+  font: 400 var(--fs-sm) / 1.55 var(--sans);
+  color: var(--ink);
+}
+
+.who {
+  font: 500 var(--fs-micro) / 1 var(--mono);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* The owner's own turns sit inset and dimmer: the agent is the voice of the
+   column, and their replies are what they already know they said. */
+.you {
+  padding-left: 12px;
+  border-left: 2px solid var(--sh-line-2);
+}
+
+.you p {
+  color: var(--ink-2);
+}
+
+/* ── A question's chips ────────────────────────────────────────────────── */
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 3px;
+}
+
+.choice {
+  text-align: left;
+  padding: 9px 11px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 7px;
+  background: var(--sh-raised);
+  color: var(--ink);
+  font: 400 var(--fs-sm) / 1.45 var(--sans);
+  cursor: pointer;
+}
+
+.choice:hover:enabled {
+  border-color: var(--sh-line-3);
+  background: var(--sh-raised-2);
+}
+
+/* Answered: still readable, no longer offered. A question whose options
+   vanished would make an earlier decision unreadable later. */
+.choice:disabled {
+  cursor: default;
+  color: var(--ink-3);
+  background: transparent;
+  border-color: var(--sh-line);
+}
+
+/* ── A proposal ────────────────────────────────────────────────────────── */
+.card {
+  margin-top: 4px;
+  padding: 12px 13px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 9px;
+  background: var(--sh-raised);
+}
+
+.card h4 {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 8px;
+  font: 500 var(--fs-micro) / 1 var(--mono);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.cardState {
+  color: var(--st-you);
+}
+
+.cardName {
+  margin: 0 0 3px;
+  font: 500 var(--fs-md) / 1.25 var(--sans);
+  letter-spacing: var(--tr-title);
+  color: var(--ink);
+}
+
+.cardDesc {
+  margin: 0;
+  font: 400 var(--fs-xs) / 1.5 var(--sans);
+  color: var(--ink-2);
+}
+
+.actions {
+  display: flex;
+  gap: 7px;
+  margin-top: 11px;
+}
+
+.btn {
+  padding: 7px 11px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  font: 500 var(--fs-xs) / 1 var(--sans);
+  cursor: pointer;
+}
+
+.btn:hover:enabled {
+  border-color: var(--sh-line-3);
+}
+
+.primary {
+  border-color: var(--st-you-l);
+  background: var(--st-you-w);
+  color: var(--st-you);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* ── A background task's own line ──────────────────────────────────────── */
+.task {
+  display: flex;
+  gap: 9px;
+  align-items: baseline;
+  font: 400 var(--fs-xs) / 1.5 var(--mono);
+  color: var(--ink-3);
+}
+
+.taskName {
+  flex: none;
+  text-transform: uppercase;
+  letter-spacing: var(--tr-label);
+  font-size: var(--fs-micro);
+  color: var(--ink-4);
+}
+
+/* Failure gets the one alarm hue. The pipeline is fault-tolerant by design, so
+   a failed task reading as one more grey line is precisely the failure mode
+   the "fail visible" rule exists to prevent. */
+.taskFailed {
+  color: var(--st-bad);
+}
+
+.taskFailed .taskName {
+  color: var(--st-bad);
+}
+
+/* ── The composer ──────────────────────────────────────────────────────── */
+.composer {
+  flex: none;
+  display: flex;
+  gap: 8px;
+  padding: 12px 14px;
+  border-top: 1px solid var(--sh-line);
+  background: var(--sh-ground);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  padding: 9px 11px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 7px;
+  background: var(--sh-raised);
+  color: var(--ink);
+  font: 400 var(--fs-sm) / 1.4 var(--sans);
+}
+
+.input::placeholder {
+  color: var(--ink-4);
+}
+
+.input:focus-visible {
+  outline: 2px solid var(--sh-line-3);
+  outline-offset: 1px;
+}
+
+.send {
+  flex: none;
+  padding: 9px 14px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 7px;
+  background: var(--sh-raised);
+  color: var(--ink);
+  font: 500 var(--fs-xs) / 1 var(--sans);
+  cursor: pointer;
+}
+
+.send:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
