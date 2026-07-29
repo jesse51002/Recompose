@@ -1,4 +1,12 @@
-"""Public Pydantic v2 schemas for the pipeline's three YAML contracts."""
+"""Public Pydantic v2 schemas for the pipeline's three YAML contracts.
+
+`app.yaml` (`AppFormat`), `customization.yaml` (`Customization`) and the
+produced `output.yaml` (`Output`) — the contracts the PIPELINE reads.
+
+The LAYOUT half of a design has a brief of its own, but it is not here:
+nothing in `ThemeTree/` ever sees a screen, so `LayoutBrief` lives with the
+surface that authors one, `ThemeTree/studio/schema/layout_brief.py`.
+"""
 
 from schema.app_format import AppFormat
 from schema.color_mode import ColorMode
@@ -15,6 +23,8 @@ from schema.output import (
     ExpansionKind,
     FontOutput,
     FontSet,
+    FormatOutput,
+    FormatSet,
     IconAttribution,
     IconOutput,
     IconSet,
@@ -28,10 +38,19 @@ from schema.output import (
     TextOutput,
     TextSet,
 )
-from schema.primitives import AbsolutePath, HexColor, HslColor, OklchColor, RgbColor
+from schema.primitives import (
+    AbsolutePath,
+    HexColor,
+    HslColor,
+    OklchColor,
+    PathSegment,
+    RgbColor,
+)
 from schema.slots import (
     ColorSlot,
     FontSlot,
+    FormatSlot,
+    FormatValue,
     IconSlot,
     ImageSlot,
     SlotBase,
@@ -58,6 +77,10 @@ __all__ = [
     "FontOutput",
     "FontSet",
     "FontSlot",
+    "FormatOutput",
+    "FormatSet",
+    "FormatSlot",
+    "FormatValue",
     "HexColor",
     "HslColor",
     "IconAttribution",
@@ -72,6 +95,7 @@ __all__ = [
     "OklchColor",
     "Output",
     "OverwriteSpecs",
+    "PathSegment",
     "RgbColor",
     "RunCost",
     "SlotBase",

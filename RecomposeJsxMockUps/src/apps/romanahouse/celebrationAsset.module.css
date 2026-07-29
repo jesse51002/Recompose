@@ -1,0 +1,95 @@
+/*
+ * Styles for ./celebrationAsset.tsx — the post-class flow's own scaffold.
+ *
+ * `--sc-*` only. Ports `PostClassScaffold`: the body fills the screen, a tap
+ * during the intro skips it, and the CTA appears only once the card settles.
+ * What this design adds around that is the SERIES MARK — the five cards are
+ * plates in one numbered set, so each one states its place in the order.
+ */
+
+.scaffold {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: var(--sc-background);
+  color: var(--sc-text);
+}
+
+/* The series mark, at the head of every card. */
+.series {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: calc(var(--phone-status-inset, 0px) + 20px);
+  padding-inline: var(--sc-sheet-pad);
+}
+
+.seriesIndex {
+  font: var(--sc-type-fig-sm);
+  letter-spacing: var(--sc-type-fig-sm-ls);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-primary);
+}
+
+/* The rule between the two figures is the set the card sits in. */
+.seriesRule {
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--sc-rule-hair);
+}
+
+.seriesTotal {
+  font: var(--sc-type-fig-sm);
+  letter-spacing: var(--sc-type-fig-sm-ls);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-text-3rd);
+}
+
+/*
+ * `min-height: 0` is what lets this shrink: a flex child's default
+ * `min-height: auto` refuses to go below its content, which would push the CTA
+ * off the bottom of the phone.
+ */
+.body {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/*
+ * THE CTA ZONE IS LAID OUT FROM THE FIRST FRAME, always. The member app
+ * reserves it too (`kCelebrationCtaZone`), and it is the seam between the card
+ * and the ground the action stands on. Only its VISIBILITY changes, so a
+ * settling card never reflows.
+ *
+ * No inset here, unlike the base: the action is a full-bleed walnut band across
+ * the foot of the sheet, which is what every primary action in this design is.
+ */
+.cta {
+  flex: 0 0 auto;
+  opacity: 0;
+  /* Not `display: none` — the button must keep its box so nothing moves when it
+     appears, and must not be tabbable while it is invisible. */
+  visibility: hidden;
+  transition:
+    opacity 260ms ease-out,
+    visibility 0s linear 260ms;
+}
+
+.ctaVisible {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 260ms ease-out,
+    visibility 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta,
+  .ctaVisible {
+    transition: none;
+  }
+}

@@ -1,0 +1,179 @@
+/* Styles for ./RecordSheet.tsx. `--sc-*` only. */
+
+.record {
+  padding-bottom: var(--sc-spacing-big);
+}
+
+/* THE STREAK BLOCK — full bleed, walnut, the one filled thing on this sheet. */
+.streak {
+  margin-top: 18px;
+  padding-block: 24px 26px;
+  padding-inline: var(--sc-sheet-pad);
+  background: var(--sc-primary);
+  color: var(--sc-primary-button-text);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.streakTop {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  opacity: 0.66;
+}
+
+.streakFigure {
+  font: var(--sc-type-fig-xl);
+  letter-spacing: var(--sc-type-fig-xl-ls);
+  font-variant-numeric: tabular-nums;
+  text-transform: uppercase;
+  line-height: 1.02;
+  padding-block: 3px;
+}
+
+.streakBottom {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  /* The brass fitting on this screen. */
+  color: var(--sc-accent);
+}
+
+/*
+ * The award line. The medallion is a generated cut-out, so it FLOATS — no
+ * mount, no frame — beside the rank it stands for.
+ */
+.award {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-inline: var(--sc-sheet-pad);
+  padding-block: 22px;
+  border-bottom: 2px solid var(--sc-rule-solid);
+}
+
+.belt {
+  width: 84px;
+  height: 84px;
+  flex: 0 0 auto;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 12px rgb(0 0 0 / 12%));
+}
+
+.awardNames {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.awardLabel {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+  padding-bottom: 3px;
+}
+
+.rankName {
+  font: var(--sc-type-statement);
+  letter-spacing: var(--sc-type-statement-ls);
+  text-transform: uppercase;
+  line-height: 1.1;
+  color: var(--sc-text);
+}
+
+.rankSub {
+  font: var(--sc-type-prose-sm);
+  letter-spacing: var(--sc-type-prose-sm-ls);
+  color: var(--sc-text-2nd);
+}
+
+.section {
+  padding-top: 26px;
+}
+
+.sectionTitle {
+  margin: 0 var(--sc-sheet-pad) 14px;
+  padding-bottom: 7px;
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+  border-bottom: 1px solid var(--sc-rule-hair);
+}
+
+/* The climb, as a gauge rather than a ring. */
+.gaugeRow {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding-inline: var(--sc-sheet-pad);
+}
+
+.gaugeColumn {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gaugeFigure {
+  font: var(--sc-type-fig-lg);
+  letter-spacing: var(--sc-type-fig-lg-ls);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-text);
+}
+
+.track {
+  display: block;
+  width: 100%;
+  height: 7px;
+  background: var(--sc-rule-hair);
+}
+
+/*
+ * The fill runs at a constant rate and stops exactly at its mark — the motion
+ * direction's rule for a progress bar. It grows from the left because that is
+ * the axis the track is on.
+ */
+.fill {
+  display: block;
+  height: 100%;
+  background: var(--sc-rule-solid);
+  transform-origin: left center;
+  animation: fill 620ms cubic-bezier(0.16, 0.84, 0.3, 1) both;
+}
+
+@keyframes fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fill {
+    animation: none;
+  }
+}
+
+.gaugeLabel {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+}
+
+/* Held back, because it is the rank the member does not have yet. */
+.nextBelt {
+  width: 62px;
+  height: 62px;
+  flex: 0 0 auto;
+  object-fit: contain;
+  opacity: 0.45;
+}

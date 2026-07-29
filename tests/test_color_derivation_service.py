@@ -18,7 +18,6 @@ from schema.output.color_output import ColorOutput
 from schema.output.derivations import Derivations
 from ThemeTree.modules.colors.color_derivation_service import ColorDerivationService
 from ThemeTree.modules.colors.color_models import LLMSlotResponse, LLMPalette
-from ThemeTree.modules.colors.color_node import ColorNode
 from ThemeTree.modules.colors.color_surface_service import (
     ColorSurfaceService,
     SharedSurfaces,

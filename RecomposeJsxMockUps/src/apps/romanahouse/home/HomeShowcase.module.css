@@ -1,0 +1,10 @@
+/* Styles for ./HomeShowcase.tsx. `--sc-*` only. */
+
+/*
+ * The board ends on a rule, and then on air. Without the tail the last entry's
+ * hairline sits flush against the bottom of the phone and reads as a clipped
+ * list rather than a finished one.
+ */
+.tail {
+  height: var(--sc-spacing-big);
+}

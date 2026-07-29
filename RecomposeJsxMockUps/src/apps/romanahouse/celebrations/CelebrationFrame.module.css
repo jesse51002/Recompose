@@ -1,0 +1,87 @@
+/*
+ * Styles for ./CelebrationFrame.tsx — the stage one celebration card plays on.
+ *
+ * `--sc-*` for the design tokens (see ../ShowcaseThemeVars.tsx); `--cf-*` for
+ * this frame's own geometry, which the component derives from the ported
+ * arithmetic and writes inline, so no measurement is restated as a literal here.
+ *
+ * THE THREE BOXES ARE THE BASE'S, DECLARATION FOR DECLARATION, and that is
+ * deliberate rather than lazy. They are a contract with the card bodies:
+ *
+ *   * `.stage` keeps `height: 100%` because three intros are `SizedBox.expand`
+ *     and ask for it — the streak orbit, the points sphere and the giftbox
+ *     burst. A stage that sizes to its content collapses all three to nothing
+ *     and the card renders as a caption floating on an empty screen. It did,
+ *     the first time this file was rewritten.
+ *   * NOTHING HERE MAY CLIP. `overflow: visible` is spelled out on all three:
+ *     ../RewardsCarousel.tsx's cover flow is wider than its slot on purpose and
+ *     ../SparkleBurst.tsx spills past the surface. A scrolling axis anywhere
+ *     here computes the other one to `auto` and crops both.
+ *
+ * What this design changes is the INSETS, which is all an arrangement was ever
+ * allowed to change: the sheet's own gutter, and a tighter vertical inset
+ * because the series mark now sits above the stage and the action band below it.
+ */
+
+.frame {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-inline: var(--cf-frame-inset-x, 0);
+  padding-top: var(--cf-frame-inset-top, 0);
+  padding-bottom: var(--cf-frame-inset-bottom, 0);
+  overflow: visible;
+}
+
+/*
+ * Never a clipping box, and never a raised one here: this design has no
+ * elevated surfaces at all, so a celebration rides the sheet itself.
+ *
+ * `min-height: 0` is what lets it shrink below its content instead of pushing
+ * the reserved action zone off the screen.
+ */
+.surface {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: visible;
+}
+
+/*
+ * `CelebrationStage` — `Align(alignment, child: body)`. A column so a body that
+ * sizes itself settles at the anchor, while a body that asks for `height: 100%`
+ * fills the box instead.
+ *
+ * `box-sizing: border-box` is load-bearing on the VERTICAL axis here, and its
+ * absence is a real bug this fork shipped: `height: 100%` plus `padding-block`
+ * with no border-box makes the stage taller than the surface it sits in, and a
+ * body at `height: 100%` then pushes its last child under the action band. The
+ * points card's running-total caption vanished completely that way. The base
+ * has the same defect — Pass 2b of `mockup-qa` names this file for it.
+ */
+.stage {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: var(--cf-stage-anchor, center);
+  height: 100%;
+  padding-block: var(--cf-stage-inset-top, 0px) var(--cf-stage-inset-bottom, 0px);
+  overflow: visible;
+}
+
+/*
+ * `bleed` — the body takes the stage whole. Written as variables ON the stage
+ * rather than as a competing declaration, so it wins over whatever the frame
+ * set without depending on rule order or specificity.
+ */
+.bleed {
+  --cf-stage-inset-top: 0px;
+  --cf-stage-inset-bottom: 0px;
+}
+
+/* The sheet's own gutter, and room under the series mark. */
+.centerHero {
+  --cf-frame-inset-x: var(--sc-sheet-pad);
+  --cf-stage-inset-top: var(--sc-spacing-large);
+  --cf-stage-inset-bottom: var(--sc-spacing-large);
+}

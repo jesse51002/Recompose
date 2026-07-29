@@ -6,8 +6,10 @@ display_name: CombatDen
 # mirrors ParentGymType in the FastApi backend / the CRM's showcase
 # groups). A run whose category is missing or outside this set is skipped
 # by GET /apps/{id}/styles. The category itself lives per-run in
-# output.yaml (stamped today; a pipeline classification step is the
-# README TODO).
+# output.yaml, produced by the pipeline's classification node — it builds
+# its response schema from this very list, so a value outside it can't be
+# written. `expand` backfills an unclassified run; `regen --slot category`
+# re-files a mis-classified one.
 categories:
   - Fighting
   - Yoga
@@ -166,6 +168,179 @@ images:
       footer next to "You're on an X week streak!"; (3) the ~240px icon hero
       of the post-class Streak screen (the 1st post-class card), revealed by
       the streak celebration animation as it grows in.
+
+  # Class photography — the only SCENE slots in this app.
+  #
+  # Everything above is a cutout asset: an object on a flat field that the
+  # background pass lifts onto transparency. These four are photographs of a
+  # real place, so they set `scene: true` — different prompt rule, cheapest
+  # quality tier, and no background pass (see schema/slots.py ImageSlot.scene).
+  #
+  # They are DELIBERATELY not tied to named classes. The gym's real schedule
+  # is content the app fetches; these are the brand's own imagery of its
+  # space, reused across whatever the schedule happens to hold. Four exist so
+  # a schedule reads as a real week rather than the same photo repeated —
+  # which is also why each asks for a different moment in the room.
+  - id: class_photo_1
+    description: >-
+      A photograph of a class in session at this brand's own space, used as
+      the thumbnail on schedule rows and as the banner on the class detail
+      screen. THE ESTABLISHING SHOT of the four: the widest, showing the most
+      of the room and the most people, so a member scrolling the schedule
+      sees what the place actually looks like. Mid-session and busy, with
+      people genuinely working rather than posed. This is the one that most
+      has to look like somewhere real you could walk into.
+    scene: true
+    depends_on_text:
+      - class_name_1
+  - id: class_photo_2
+    description: >-
+      A second class photograph from the same space, filling the same role as
+      the first on other schedule rows. Deliberately a DIFFERENT MOMENT: a
+      closer, tighter view on two or three people working at whatever this
+      brand's practice actually involves, so the schedule does not read as
+      one photo repeated. Same room, same brand, closer in.
+    scene: true
+    depends_on_text:
+      - class_name_2
+  - id: class_photo_3
+    description: >-
+      A third class photograph from the same space. This one is the QUIET
+      one: fewer people, a calmer beat — warming up, resting between efforts,
+      an instructor showing something to one person. Same room and the same
+      brand, at a lower energy than the other three, so the set spans the
+      real range of a session rather than only its peak.
+    scene: true
+    depends_on_text:
+      - class_name_3
+  - id: class_photo_4
+    description: >-
+      A fourth class photograph from the same space. The DETAIL shot: close
+      on the equipment, surfaces and kit this brand's practice actually uses,
+      with people present but partly out of frame. It carries the texture and
+      materials of the room more than the activity, and completes the set of
+      four so a week of schedule rows never shows the same picture twice.
+    scene: true
+
+  # Reward catalogue — the points store's six items, cheapest to dearest.
+  #
+  # Cutout assets like everything above (`scene` stays false): each is one
+  # object on a flat field, composited onto whatever card renders it.
+  #
+  # Named for their ROLE IN THE LADDER, never for the object CombatDen
+  # happens to use, because the object is exactly what a different brand
+  # must be free to change — a gym redeems gloves, a yoga studio redeems a
+  # bolster, and both are the same rung. The descriptions give examples to
+  # think with, and the image prompt rule already treats an "e.g." list as a
+  # starting point rather than a closed set.
+    depends_on_text:
+      - class_name_4
+  - id: reward_guest_pass
+    description: >-
+      The social reward and the cheapest thing in the store: bringing
+      someone else along for a session. Depict the invitation as an object
+      this brand would really hand over, or as two people arriving together
+      (e.g. a printed guest pass, paired entry tokens, a duplicate
+      membership card, a two-person motif — brand's choice). Reads as
+      generous and easy to reach, being the first thing a new member can
+      afford. Rendered ~150x150 on a points-store card and in the post-class
+      rewards carousel.
+    depends_on_text:
+      - reward_name_guest_pass
+  - id: reward_apparel
+    description: >-
+      The branded APPAREL reward — the item a member wears out of the
+      building and that turns them into advertising (e.g. a t-shirt, a
+      hoodie, a vest, a cap — brand's choice). It should look like real
+      merchandise this business would actually print and be proud of, in the
+      brand's own colours, with NO text, lettering or logo rendered on it.
+      Rendered ~150x150 on a points-store card and in the post-class rewards
+      carousel.
+    depends_on_text:
+      - reward_name_apparel
+  - id: reward_gear
+    description: >-
+      The piece of EQUIPMENT this brand's practice actually needs — the
+      aspirational kit purchase, and the one reward whose object changes
+      most between brands (e.g. gloves for a fight gym, a mat for a yoga
+      studio, a reformer strap for pilates, a jump rope for conditioning —
+      read the brand and pick what its members would genuinely want). Show
+      it as real gear with materials and finish that read as a quality
+      item, not a generic icon. Rendered ~150x150 on a points-store card and
+      in the post-class rewards carousel.
+    depends_on_text:
+      - reward_name_gear
+  - id: reward_session
+    description: >-
+      A one-to-one session with a coach or instructor — the dearest reward
+      and the thing points are saved up for. The subject is the session, so
+      depict what stands for personal instruction in this brand's world
+      (e.g. focus mitts, a single mat set out with a teacher's props, a
+      stopwatch and clipboard, a one-on-one motif — brand's choice) rather
+      than a literal portrait of two people. Reads as attentive, personal
+      and the top of the ladder. Rendered ~150x150 on a points-store card
+      and in the post-class rewards carousel.
+
+  # Video thumbnails — the Videos tab's card art.
+  #
+  # SCENE slots like the class photography, and for the same reason: a
+  # thumbnail is a frame of footage, not an object on a flat field, so the
+  # cutout contract and its background pass would destroy it.
+  #
+  # Four, cycled across however long the feed is (`slotAt` in the mockups'
+  # showcaseSlots.ts), which is the same arrangement the four class photos
+  # use. A feed is however many cards the platform serves and a slot per card
+  # is not a thing an app manifest can declare; four is what makes a scrolling
+  # feed stop reading as one repeated picture, which is the same bar the
+  # schedule had to clear.
+  #
+  # WORTH KNOWING: in the real member app this shelf is THIRD-PARTY content —
+  # the thumbnails belong to the channels whose videos they are. Generating
+  # them is right for the mock, whose job is to show a brand's world end to
+  # end with nothing borrowed, and it is the reason each description asks for
+  # the brand's own practice rather than for a video about it.
+    depends_on_text:
+      - reward_name_session
+  - id: video_thumb_1
+    description: >-
+      The HERO thumbnail at the top of the Videos tab — the largest piece of
+      video art in the app, rendered full-width above a Play button. A single
+      striking frame of this brand's practice being done well: one subject,
+      clear silhouette, enough space around them to survive a title being laid
+      over it. Reads as the most watchable thing on the shelf, because that is
+      the slot it occupies.
+    scene: true
+    depends_on_text:
+      - video_title_1
+  - id: video_thumb_2
+    description: >-
+      A carousel thumbnail, rendered ~160x90 in a horizontally scrolling row.
+      An INSTRUCTIONAL frame: someone demonstrating a technique or position
+      close enough that the detail reads at thumbnail size. Small format is
+      the constraint that matters — one clear subject filling the frame, no
+      wide room shots, nothing that turns to mush at 160px.
+    scene: true
+    depends_on_text:
+      - video_title_2
+  - id: video_thumb_3
+    description: >-
+      A second carousel thumbnail, same ~160x90 format, deliberately a
+      different energy from the others: the EFFORT frame — mid-work, sweat,
+      motion, a moment of real exertion in this brand's practice. It is what
+      stops a row of cards reading as one shoot, so it should look like a
+      different day than the second thumbnail.
+    scene: true
+    depends_on_text:
+      - video_title_3
+  - id: video_thumb_4
+    description: >-
+      A third carousel thumbnail at ~160x90, the CALM one: talking to camera,
+      a coach explaining something, a considered moment away from the work
+      itself. Completes a set of four with enough range that a long feed
+      cycling through them never shows the same picture twice in a row.
+    scene: true
+    depends_on_text:
+      - video_title_4
 colors:
   - id: primary
     description: Dominant brand color. Used for primary CTAs and key accents.
@@ -272,6 +447,155 @@ texts:
     max_words: 5
     min_chars: 8
     max_chars: 28
+
+  # ---- The named inventory: classes, rewards and videos ----
+  #
+  # These twelve are what the four class photos, the four reward products and
+  # the four video thumbnails are pictures OF. Each image slot names its own
+  # via `depends_on_text`, so the run resolves the name first and the picture
+  # is generated to match it (schema/slots.py, ImageSlot.depends_on_text).
+  #
+  # THEY COST NOTHING EXTRA. The text module is atomic — one call resolves the
+  # whole inventory — so going from five slots to seventeen is more tokens in
+  # one request, not twelve more requests. It is also what makes each SET
+  # internally coherent for free: the model writes all four reward names in
+  # one breath, so it can build a ladder rather than four unrelated items.
+  #
+  # Every one of these is an OVERRIDE of content the app otherwise fetches or
+  # ships. The member app falls back to its own strings for any slot a run
+  # does not carry, which is why none of them is load-bearing on its own.
+  - id: class_name_1
+    description: >-
+      The name of this brand's flagship class — the one a newcomer is
+      steered to and the one the schedule leads with. Reads like something
+      printed on a real timetable, not a marketing phrase: a fight gym's
+      might be "Boxing Fundamentals", a yoga studio's "Morning Flow". Names
+      the practice plainly enough that someone who has never trained here
+      knows what they would be doing. Title case.
+    min_words: 1
+    max_words: 4
+    min_chars: 4
+    max_chars: 30
+  - id: class_name_2
+    description: >-
+      A second class on the same timetable, and a DIFFERENT KIND of session
+      from the first — where the first is the flagship, this is the harder or
+      more advanced one that regulars come for. Same brand, same room, same
+      naming convention, so the two read as two lines of one schedule.
+    min_words: 1
+    max_words: 4
+    min_chars: 4
+    max_chars: 30
+  - id: class_name_3
+    description: >-
+      A third class, the GENTLE one on the timetable: recovery, technique,
+      mobility, a beginner's session — whatever this brand's low-intensity
+      offering actually is. It is what makes the schedule read as a real week
+      with a range of energies rather than four versions of the same class.
+    min_words: 1
+    max_words: 4
+    min_chars: 4
+    max_chars: 30
+  - id: class_name_4
+    description: >-
+      A fourth class rounding out the week — this brand's specialist or
+      signature session, the one that is distinctly theirs rather than
+      something every gym in the category runs. Completes a timetable of four
+      that a member could plausibly plan a week around.
+    min_words: 1
+    max_words: 4
+    min_chars: 4
+    max_chars: 30
+  - id: reward_name_guest_pass
+    description: >-
+      What this brand CALLS the social reward — bringing someone along for a
+      session, the cheapest thing in the points store. Named the way it would
+      appear on a real store card ("Bring a Friend", "Guest Day Pass"), in
+      this brand's voice. It sits in a four-rung ladder with the three reward
+      names below and should read as the entry rung of it.
+    min_words: 1
+    max_words: 4
+    min_chars: 4
+    max_chars: 24
+  - id: reward_name_apparel
+    description: >-
+      What this brand calls its APPAREL reward — the item a member wears out
+      of the building. Names the garment this brand would actually print
+      ("Team Tee", "Studio Hoodie"). Second rung of the same four-name
+      ladder, so it should read as a step up from the guest pass and a step
+      below the gear.
+    min_words: 1
+    max_words: 4
+    min_chars: 4
+    max_chars: 24
+  - id: reward_name_gear
+    description: >-
+      What this brand calls its EQUIPMENT reward — the aspirational kit
+      purchase, and the name that varies most between brands because the
+      object does (gloves, a mat, a rope, a strap). This is the name the
+      generated product image is drawn from, so it should name a specific
+      thing rather than gesture at a category. Third rung of the ladder.
+    min_words: 1
+    max_words: 4
+    min_chars: 4
+    max_chars: 24
+  - id: reward_name_session
+    description: >-
+      What this brand calls its one-to-one coaching reward — the dearest item
+      in the store and the top rung of the ladder. Names personal instruction
+      in this brand's own words ("Private Session", "1:1 Coaching"). Should
+      read as clearly the most valuable of the four.
+    min_words: 1
+    max_words: 4
+    min_chars: 4
+    max_chars: 24
+  # The video titles are the widest bounds in this file (16 words / 85 chars)
+  # and that is measured, not generous: the real shelf these seed from runs to
+  # exactly that ("The Fastest Way To Blow Up Your Bench Press (4 Science-Based
+  # Steps) + Sample Program"). A ceiling is not a target — the descriptions do
+  # the steering — but a ceiling narrower than the real content would make the
+  # seeded shelf and the generated one lay out differently, which is the one
+  # thing a prefilled slot must not do.
+  - id: video_title_1
+    description: >-
+      The title of the FEATURED video at the top of the Videos tab, rendered
+      over the hero thumbnail. Reads like a real video someone would click:
+      concrete, specific, promising one thing. This brand's practice, at the
+      level a newcomer or a regular would search for. No clickbait
+      punctuation, no all-caps, no channel name.
+    min_words: 3
+    max_words: 16
+    min_chars: 12
+    max_chars: 85
+  - id: video_title_2
+    description: >-
+      A second video title, in the carousel below the hero — the INSTRUCTIONAL
+      one. Names a technique, a drill or a position in this brand's practice
+      and what watching it gets you. Same voice as the featured title so the
+      shelf reads as one library.
+    min_words: 3
+    max_words: 16
+    min_chars: 12
+    max_chars: 85
+  - id: video_title_3
+    description: >-
+      A third video title — the WORKOUT or follow-along one: a session a
+      member could put on and do. Names the duration or the intensity the way
+      a real fitness video does, in this brand's discipline.
+    min_words: 3
+    max_words: 16
+    min_chars: 12
+    max_chars: 85
+  - id: video_title_4
+    description: >-
+      A fourth video title — the EXPLAINER: the piece about why this brand
+      trains the way it does, a coach talking through an idea, or the mistake
+      everyone makes. Rounds out a four-title shelf that spans instruction,
+      practice and thinking.
+    min_words: 3
+    max_words: 16
+    min_chars: 12
+    max_chars: 85
 
 # The persistent bottom-nav tab icons — the most repeated, brand-defining
 # glyphs in the member app (present on Home, Rank/Profile, Rewards and

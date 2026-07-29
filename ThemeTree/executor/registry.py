@@ -1,14 +1,28 @@
 """ModuleRegistry — builds the run's node graph from the run context.
 
-Emits one ``ColorNode``, one ``FontNode``, optionally one ``TextNode``,
-plus one ``ImageNode`` per image slot. Each image node is assigned its
-dependency keys (``color`` is automatic; declared ``depends_on`` images
-are added). The text, font, and colour nodes are level-0 siblings —
-all three spring from the brand brief and none depend on the others.
-The executor levels and runs them. ``TextNode`` is only built when the
-app declares at least one text slot; an app with no copy overrides
-just has no text root in its graph, and ``text_set`` defaults to an
-empty ``TextSet`` on the assembled ``Output``.
+Emits one ``ColorNode``, one ``FontNode``, optionally a ``TextNode``,
+``IconNode``, ``CategoryNode`` and ``FormatNode``, plus one ``ImageNode`` per
+image slot. Each image node is assigned its dependency keys (``color`` is
+automatic; declared ``depends_on`` images are added, as is ``text`` when the
+slot declares ``depends_on_text``). The colour, font, text, icon,
+classification and format nodes are level-0 siblings — they all spring from
+the brand brief and none depend on the others. The executor levels and runs
+them.
+
+The text edge is the only one an image gains conditionally, and it does not
+change the levelling: text is a level-0 root exactly like colour, so an image
+that names copy sits at the same level it always did. ``AppFormat`` refuses a
+``depends_on_text`` naming an undeclared text slot, which is also what
+guarantees the node this edge points at exists — a text dependency implies at
+least one text slot implies a ``TextNode``.
+
+The four optional roots are built only when the app declares the matching
+inventory: ``TextNode`` needs at least one text slot, ``IconNode`` at least
+one icon slot, ``CategoryNode`` a non-empty ``categories`` vocabulary, and
+``FormatNode`` at least one format slot. An app with no copy overrides / no
+icon overrides / no classification concept / no switchable arrangements just
+has no such root in its graph, and the assembled ``Output`` falls back to an
+empty ``TextSet`` / ``IconSet`` / ``FormatSet`` / a ``None`` ``category``.
 """
 
 from __future__ import annotations
@@ -19,8 +33,13 @@ from pydantic import BaseModel, ConfigDict
 
 from ThemeTree.core.run_context import RunContext
 from ThemeTree.modules.base import DependencyKind
+from ThemeTree.modules.categories.category_node import (
+    CATEGORY_SLOT_ID,
+    CategoryNode,
+)
 from ThemeTree.modules.colors.color_node import ColorNode
 from ThemeTree.modules.fonts.font_node import FontNode
+from ThemeTree.modules.formats.format_node import FormatNode
 from ThemeTree.modules.icons.icon_node import IconNode
 from ThemeTree.modules.images.background_service import BackgroundService
 from ThemeTree.modules.images.complexity_service import ComplexityClassifier
@@ -37,13 +56,14 @@ logger = logging.getLogger(__name__)
 
 class Graph(BaseModel):
     """The run's node set: the colour root, the font root, the optional
-    text and icon roots, plus one node per image slot.
+    text / icon / classification / format roots, plus one node per image slot.
 
     A transport container only (nodes are plain classes, hence
     ``arbitrary_types_allowed``); the executor builds the DAG from each
-    node's ``key``/``deps``. ``text`` and ``icon`` are ``None`` when the
-    app declares no text / icon slots — the registry skips constructing
-    those nodes so an empty-slots run doesn't burn LLM calls on nothing.
+    node's ``key``/``deps``. ``text``, ``icon``, ``category`` and ``format``
+    are ``None`` when the app declares no text slots / no icon slots / no
+    ``categories`` vocabulary / no format slots — the registry skips
+    constructing those nodes so a run doesn't burn LLM calls on nothing.
     """
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
@@ -52,6 +72,8 @@ class Graph(BaseModel):
     font: FontNode
     text: TextNode | None
     icon: IconNode | None
+    category: CategoryNode | None
+    format: FormatNode | None
     images: list[ImageNode]
 
 
@@ -72,17 +94,17 @@ class ModuleRegistry:
         icon_generator: ImageGenerator,
         seed: dict[str, BaseModel] | None = None,
     ) -> Graph:
-        """Construct the colour node, the font node, and one image node
-        per slot.
+        """Construct the colour node, the font node, the optional text /
+        icon / classification / format nodes, and one image node per slot.
 
-        The classifier and background pass are internal sub-services
-        every image node shares (one image resolved end to end stays the
-        atomic unit). Each image node gets ``color`` as an automatic
-        dependency plus its declared ``depends_on`` images (always used
-        as reference, folded into the prompt text). The font node is a
-        level-0 sibling of the colour node — no node depends on it
-        today, but the executor still levels it alongside colour and
-        runs them concurrently.
+        The complexity classifier and background pass are internal
+        sub-services every image node shares (one image resolved end to end
+        stays the atomic unit). Each image node gets ``color`` as an automatic
+        dependency plus its declared ``depends_on`` images (always used as
+        reference, folded into the prompt text). The font, text, icon,
+        classification and format nodes are level-0 siblings of the colour
+        node — no node depends on any of them today, but the executor still
+        levels them alongside colour and runs them concurrently.
 
         The run's steering rides on ``run_ctx`` (``run_ctx.overwrite_specs`` —
         stamped onto whatever each node re-makes); ``seed`` maps slot id →
@@ -140,6 +162,33 @@ class ModuleRegistry:
             if self._run_ctx.app.icons
             else None
         )
+        # No declared vocabulary → no classification node → no LLM call, and
+        # a ``None`` category on the assembled Output. An app with no
+        # classification concept keeps working exactly as before; the styles
+        # API skips the vocabulary check for such an app too.
+        category = (
+            CategoryNode(
+                self._run_ctx,
+                llm=llm,
+                seed=_seed({CATEGORY_SLOT_ID}),  # type: ignore[arg-type]
+            )
+            if self._run_ctx.app.categories
+            else None
+        )
+        # No format slots → no format node → no LLM call, and an empty
+        # ``format_set`` on the assembled Output. The consuming client then
+        # renders whatever arrangement it ships, which is also the honest
+        # answer when the node fails.
+        format_ids = {s.id for s in self._run_ctx.app.formats}
+        formats = (
+            FormatNode(
+                self._run_ctx,
+                llm=llm,
+                seed=_seed(format_ids),  # type: ignore[arg-type]
+            )
+            if self._run_ctx.app.formats
+            else None
+        )
         classifier = ComplexityClassifier(llm=llm)
         background = BackgroundService(bg_remover=bg_remover)
 
@@ -147,8 +196,20 @@ class ModuleRegistry:
             ImageNode(
                 self._run_ctx,
                 slot=slot,
+                # ``color`` always, the declared image references, and — only
+                # when the slot names copy — the text node. The text edge is
+                # to the NODE rather than to each named slot because the text
+                # module is atomic: it resolves the whole inventory in one
+                # call and returns one ``TextSet``, so five named slots and
+                # one are the same single edge. Added conditionally so an
+                # image that names no copy keeps the exact graph it had.
                 deps=frozenset({DependencyKind.COLOR.value})
-                | frozenset(slot.depends_on),
+                | frozenset(slot.depends_on)
+                | (
+                    {DependencyKind.TEXT.value}
+                    if slot.depends_on_text
+                    else frozenset()
+                ),
                 llm=llm,
                 image_gen=image_gen,
                 classifier=classifier,
@@ -158,11 +219,14 @@ class ModuleRegistry:
             for slot in self._run_ctx.app.images
         ]
         logger.debug(
-            "graph: color=%s, font=%s, text=%s, icon=%s, images=%d",
+            "graph: color=%s, font=%s, text=%s, icon=%s, category=%s, "
+            "format=%s, images=%d",
             color.key,
             font.key,
             text.key if text is not None else None,
             icon.key if icon is not None else None,
+            category.key if category is not None else None,
+            formats.key if formats is not None else None,
             len(images),
         )
         return Graph(
@@ -170,5 +234,7 @@ class ModuleRegistry:
             font=font,
             text=text,
             icon=icon,
+            category=category,
+            format=formats,
             images=images,
         )

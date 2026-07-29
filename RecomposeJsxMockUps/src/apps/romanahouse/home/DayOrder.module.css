@@ -1,0 +1,120 @@
+/* Styles for ./DayOrder.tsx. `--sc-*` only. */
+
+.order {
+  display: block;
+}
+
+/*
+ * The day heading is a tracked label under a 2px walnut rule, not a 24px bold
+ * line. A region announces itself quietly here so the entries can outrank it —
+ * the thing worth reading is the work, not the word "Today".
+ */
+.dayLabel {
+  margin: 0;
+  padding-inline: var(--sc-sheet-pad);
+  padding-block: 22px 9px;
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+}
+
+.entries {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 2px solid var(--sc-rule-solid);
+}
+
+/*
+ * The entry. Three columns: the ordinal in its own gutter, the text, the plate
+ * hard against the right margin. Closed by a hairline rather than sitting on a
+ * card — the whole sheet is one surface and a rule is how it divides.
+ */
+.entry {
+  display: grid;
+  grid-template-columns: 26px 1fr 60px;
+  column-gap: 12px;
+  align-items: start;
+  padding-inline: var(--sc-sheet-pad);
+  padding-block: 15px 16px;
+  border-bottom: 1px solid var(--sc-rule-hair);
+  cursor: pointer;
+}
+
+/* THE ORDINAL — the sequence, and the reason this is an order and not a list. */
+.ordinal {
+  font: var(--sc-type-fig-md);
+  letter-spacing: var(--sc-type-fig-md-ls);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-primary);
+  /* Optically aligned to the start time's cap height rather than its box. */
+  padding-top: 5px;
+}
+
+.column {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  /* Lines inside an entry sit close; the space that separates entries is the
+     rule between them. */
+  gap: 2px;
+}
+
+/* The figure the eye lands on. */
+.start {
+  font: var(--sc-type-fig-lg);
+  letter-spacing: var(--sc-type-fig-lg-ls);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-text);
+}
+
+.name {
+  font: var(--sc-type-title);
+  letter-spacing: var(--sc-type-title-ls);
+  line-height: 1.25;
+  color: var(--sc-text);
+  padding-top: 3px;
+}
+
+.mentor {
+  font: var(--sc-type-prose-sm);
+  letter-spacing: var(--sc-type-prose-sm-ls);
+  color: var(--sc-text-2nd);
+}
+
+/* The spec line: what the base carried in its time range's second half. */
+.spec {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+  padding-top: 6px;
+}
+
+.attending {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+  padding-top: 3px;
+}
+
+.attendingIcon {
+  flex: 0 0 auto;
+  color: var(--sc-text-3rd);
+}
+
+/*
+ * The plate is square, not 16:9. A 16:9 thumbnail is the base's shape and it
+ * reads as a media card; a square plate reads as a specimen mounted beside its
+ * entry, which is what the rest of the sheet is doing.
+ */
+.plate {
+  width: 60px;
+  height: 60px;
+  margin-top: 4px;
+}

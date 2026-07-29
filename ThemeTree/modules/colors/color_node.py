@@ -25,7 +25,6 @@ from ThemeTree.core.run_context import RunContext
 from ThemeTree.modules.base import DependencyKind, Node
 from ThemeTree.modules.colors.color_correction_service import ColorCorrectionService
 from ThemeTree.modules.colors.color_derivation_service import ColorDerivationService
-from ThemeTree.modules.colors.color_models import LLMPalette
 from ThemeTree.modules.colors.color_scheme_service import (
     COLOR_MODEL,
     ColorSchemeService,

@@ -1,0 +1,72 @@
+/*
+ * Styles for ./WinsTile.tsx
+ * (ports CRM/lib/showcase/celebrations/wins_tile.dart).
+ *
+ * `--sc-*` for the design tokens (see ../ShowcaseThemeVars.tsx); `--wt-*` for
+ * this tile's reveal, written inline by the component from the ported delay
+ * arithmetic so no timing is a literal here.
+ */
+
+/*
+ * `Container(padding: paddingSmall, border: text @ buttonBorder,
+ * borderRadius: radiusSmall)` over `Column(min, spacing: spacingMedium)`,
+ * wrapped in a `StaggeredReveal(delay)`.
+ */
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding-block: 13px 14px;
+  padding-inline: 6px;
+  /* No box. A cell in a ruled block is bounded by its neighbours' hairlines,
+     which ./WinsTileRow.module.css draws — a 2px outline around each one would
+     be three boxes again. */
+  border: 0;
+  border-radius: 0;
+  animation: winsTileReveal var(--wt-reveal-ms) var(--wt-ease) var(--wt-delay-ms) both;
+}
+
+/* `Icon(weight: iconWeight, color: text, size: iconSizeXl)`. */
+.icon {
+  flex: 0 0 auto;
+  color: var(--sc-text);
+}
+
+/* The `h3` value line — a `CountUpText` or a plain `Text`, centred either way. */
+.value {
+  font: var(--sc-type-fig-lg);
+  letter-spacing: var(--sc-type-fig-lg-ls);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-text);
+  text-align: center;
+}
+
+/* `p` at `text2nd`. */
+.label {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+  text-align: center;
+}
+
+/* `StaggeredReveal`: opacity 0 -> 1 with a 12px slide up, ease-out-quart. */
+@keyframes winsTileReveal {
+  from {
+    opacity: 0;
+    transform: translateY(var(--wt-reveal-offset));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* `MediaQuery.disableAnimationsOf` — the tile renders landed. */
+@media (prefers-reduced-motion: reduce) {
+  .tile {
+    animation: none;
+  }
+}

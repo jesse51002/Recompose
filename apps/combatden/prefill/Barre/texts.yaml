@@ -1,0 +1,23 @@
+# Text seeds for the Barre category.
+#
+# Written by scripts/prefill/fetch_seeds.py from the same source
+# rows as the images beside this file — a class photo and its class
+# name come from ONE entry, which is what keeps a seeded picture and
+# a seeded name describing the same thing.
+#
+# These are PLACEHOLDERS, not brand copy: they are the demo content
+# the mock screens ship, matched to this category. `scripts/regen`
+# re-rolls any of them for a real brand.
+
+class_name_1: Barre Essentials
+class_name_2: Rhythmic Fusion
+class_name_3: Mindful Endurance
+class_name_4: Precision Performance
+reward_name_apparel: Club t-shirt
+reward_name_gear: Grip socks
+reward_name_guest_pass: Bring a friend
+reward_name_session: 1-on-1 PT session
+video_title_1: Ballet Barre Workout | 40 Min Total Body Workout with Sleek Technique
+video_title_2: 30 MIN Full Body Definition | Barre Sculpt At-Home Workout
+video_title_3: BARRE WORKOUT | Full Body| 20 min | No equipment!
+video_title_4: 35 MIN BARRE & PILATES WORKOUT || Full Body Sculpt

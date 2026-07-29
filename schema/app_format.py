@@ -4,12 +4,19 @@ from __future__ import annotations
 
 import re
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_validator,
+    model_validator,
+)
 
 from schema.color_role import ColorRole
 from schema.slots import (
     ColorSlot,
     FontSlot,
+    FormatSlot,
     IconSlot,
     ImageSlot,
     TextSlot,
@@ -17,15 +24,21 @@ from schema.slots import (
 
 _ID_PATTERN = re.compile(r"^[a-z][a-z0-9_]*$")
 
-# Image slot ids that collide with an executor-injected dependency key are
+# Slot ids that collide with an executor-injected dependency key are
 # rejected: a node's resolved-input dict is keyed by these, so an image
 # named "color" would shadow the palette. Source of truth for the values
 # is ``src.modules.base.DependencyKind`` (kept local so schema/ imports no
-# ThemeTree/ — same reason ColorRole lives in schema/). ``font``, ``text`` and
-# ``icon`` are reserved for the same keyspace reason even though no image
-# module depends on any of them today, so a future ``depends_on: font`` /
-# ``depends_on: text`` / ``depends_on: icon`` doesn't get shadowed.
-_EXECUTOR_NODE_NAMES = frozenset({"color", "font", "text", "icon"})
+# ThemeTree/ — same reason ColorRole lives in schema/). ``font``, ``text``,
+# ``icon``, ``category`` and ``format`` are reserved for the same keyspace
+# reason even though no image module depends on any of them today, so a
+# future ``depends_on: font`` / ``depends_on: category`` doesn't get
+# shadowed. ``category`` is additionally the classification node's
+# pseudo-slot id in the slot-level seed, so an image of that name would
+# collide there too. Checked for images and formats — the two slot lists
+# whose ids are free-form enough to hit one by accident.
+_EXECUTOR_NODE_NAMES = frozenset(
+    {"color", "font", "text", "icon", "category", "format"}
+)
 
 
 def _assert_unique_ids(slots: list, *, kind: str) -> None:
@@ -51,16 +64,31 @@ class AppFormat(BaseModel):
     # `category` values this app's runs may carry in their output.yaml.
     # App-agnostic by construction — the code supports "classification",
     # nothing more; the class values are the app's own (this package
-    # never hardcodes them). The style picker's `/styles` endpoint
-    # REQUIRES a run's category to be one of these to list it. Default
-    # keeps the frozen per-run `app.yaml` snapshots (and apps with no
-    # classification concept) valid.
+    # never hardcodes them). This list is what the classification node
+    # builds its per-request response schema from, what the Writer
+    # validates against before dumping, and what the style picker's
+    # `/styles` endpoint REQUIRES a run's category to be in to list it.
+    # Empty ⇒ the app has no classification concept: no node is built,
+    # no check runs. The default also keeps the frozen per-run
+    # `app.yaml` snapshots valid.
     categories: list[str] = Field(default_factory=list)
     images: list[ImageSlot] = Field(default_factory=list)
     colors: list[ColorSlot] = Field(default_factory=list)
     fonts: list[FontSlot] = Field(default_factory=list)
     texts: list[TextSlot] = Field(default_factory=list)
     icons: list[IconSlot] = Field(default_factory=list)
+    # The app-declared arrangement / behaviour choices: one slot per
+    # switchable surface, each carrying its OWN closed vocabulary of
+    # values. App-agnostic by construction — the code supports "pick one
+    # of these per slot"; which surfaces exist and what their values mean
+    # is the app's own (this package never hardcodes either). The format
+    # node builds its per-request response schema from these lists, so a
+    # value outside a slot's vocabulary can't be written; the consuming
+    # client falls back to whatever it ships for any slot the run has no
+    # value for. Empty ⇒ the app has no format concept: no node is built,
+    # no call is made. The default also keeps the frozen per-run
+    # ``app.yaml`` snapshots valid.
+    formats: list[FormatSlot] = Field(default_factory=list)
 
     @field_validator("id")
     @classmethod
@@ -191,3 +219,53 @@ class AppFormat(BaseModel):
         overwrite a slot."""
         _assert_unique_ids(v, kind="icon")
         return v
+
+    @field_validator("formats")
+    @classmethod
+    def _formats_well_formed(cls, v: list[FormatSlot]) -> list[FormatSlot]:
+        """Format-only invariants: unique ids (the format module's
+        per-request closed response model is keyed by slot id, so a
+        collision would silently overwrite a slot) and no shadowing of an
+        executor-injected dependency key — a format slot id IS a seed slot
+        id, so one named ``format`` would collide with the node's own graph
+        key. Per-slot vocabulary invariants live on ``FormatSlot``."""
+        _assert_unique_ids(v, kind="format")
+        reserved = sorted({s.id for s in v} & _EXECUTOR_NODE_NAMES)
+        if reserved:
+            raise ValueError(
+                f"format slot ids {reserved} are reserved executor "
+                "dependency keys (see src.modules.base.DependencyKind)"
+            )
+        return v
+
+    @model_validator(mode="after")
+    def _text_dependencies_resolve(self) -> "AppFormat":
+        """Every ``ImageSlot.depends_on_text`` id names a declared text slot.
+
+        This is the one cross-LIST check in the file, which is why it is a
+        model validator rather than living on ``images`` with the rest of
+        the image invariants: a field validator sees only its own field,
+        and this edge spans two of them.
+
+        An unresolvable name is refused rather than dropped. The whole
+        point of the edge is that the image depicts the copy — a silently
+        ignored dependency would produce a picture of nothing in
+        particular and no error explaining why, which is the failure mode
+        this package spends most of its validation avoiding.
+        """
+        text_ids = {s.id for s in self.texts}
+        for slot in self.images:
+            listed = slot.depends_on_text
+            if len(listed) != len(set(listed)):
+                dupes = sorted({i for i in listed if listed.count(i) > 1})
+                raise ValueError(
+                    f"image slot {slot.id!r} has duplicate "
+                    f"depends_on_text ids: {dupes}"
+                )
+            unknown = sorted(set(listed) - text_ids)
+            if unknown:
+                raise ValueError(
+                    f"image slot {slot.id!r} depends_on_text unknown text "
+                    f"ids: {unknown}"
+                )
+        return self

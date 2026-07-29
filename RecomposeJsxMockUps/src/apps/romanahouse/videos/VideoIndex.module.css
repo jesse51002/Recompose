@@ -1,0 +1,135 @@
+/* Styles for ./VideoIndex.tsx. `--sc-*` only. */
+
+.index {
+  padding-bottom: var(--sc-spacing-big);
+}
+
+/* The scope tabs, as an index row. */
+/*
+ * The scope tabs scroll horizontally, as the base's do
+ * (`SingleChildScrollView(horizontal)`). Wrapping them onto a second line
+ * pushed the featured plate down the page and left one genre stranded on its
+ * own row. `overflow-y: hidden` is spelled out because a visible sibling of a
+ * scrolling axis computes to `auto`.
+ */
+.scope {
+  display: flex;
+  gap: 16px;
+  padding-inline: var(--sc-sheet-pad);
+  padding-block: 14px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scope::-webkit-scrollbar {
+  display: none;
+}
+
+.scopeItem {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+  padding-bottom: 8px;
+  border-bottom: 2px solid transparent;
+}
+
+.scopeItemActive {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-primary);
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--sc-rule-solid);
+}
+
+.featured {
+  padding-top: 22px;
+}
+
+.featuredLabel {
+  margin: 0 0 9px;
+  padding-inline: var(--sc-sheet-pad);
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+}
+
+.featuredInset {
+  padding-inline: var(--sc-sheet-pad);
+}
+
+.featuredPlate {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+/* The caption, outside the frame and under a hairline. */
+.featuredCaption {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding-top: 11px;
+  margin-top: 10px;
+  border-top: 1px solid var(--sc-rule-hair);
+}
+
+.featuredText {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.featuredTitle {
+  font: var(--sc-type-prose);
+  letter-spacing: var(--sc-type-prose-ls);
+  line-height: 1.3;
+  color: var(--sc-text);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+.featuredMeta {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+}
+
+/* The screen's one filled action — full bleed, square, walnut. */
+.play {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  margin-top: 18px;
+  padding-block: 15px;
+  border: 0;
+  border-radius: 0;
+  background: var(--sc-primary);
+  color: var(--sc-primary-button-text);
+  font: var(--sc-type-label-lg);
+  letter-spacing: var(--sc-type-label-lg-ls);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.empty {
+  margin: 0;
+  padding: 40px var(--sc-sheet-pad);
+  font: var(--sc-type-prose);
+  letter-spacing: var(--sc-type-prose-ls);
+  color: var(--sc-text-3rd);
+  text-align: center;
+}

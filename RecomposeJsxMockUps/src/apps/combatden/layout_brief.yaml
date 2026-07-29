@@ -1,0 +1,48 @@
+# The brief this layout was produced from — the LAYOUT half of a design.
+#
+# Its counterpart is the ASSET half's brief, a run's `customization.yaml`
+# (a `design_direction` plus a `colors_direction`). Same shape on purpose: a
+# name, and one direction per thing being directed.
+#
+# Contract: ThemeTree/studio/schema/layout_brief.py (`LayoutBrief`).
+
+name: CombatDen
+
+layout_direction:
+  short_desc: >-
+    The base arrangement: dense, energetic and information-forward — a
+    training board you scan mid-session, not a page you read.
+  long_desc: >-
+    Ported from the production Flutter member app and stripped of every
+    feature. Two assets: the app you click through (schedule, class, booking,
+    store, videos, profile) and the five-card post-class celebration that no
+    tap can reach.
+
+    The arrangement is deliberately CombatDen's own rather than a neutral one.
+    A redesign has to be judged against something a real business actually
+    ships — a blank would make every fork look like an improvement. So this
+    keeps the density that a busy gym app really has: a full week of schedule
+    rows on one screen, four stat tiles to a card, a persistent info bar
+    carrying rank, streak, points and QR at once.
+
+    It belongs to no run. Every other layout in this package is a fork of it,
+    named for the design it was redesigned against, and none of them edits it.
+
+motion_direction:
+  short_desc: >-
+    Kinetic and celebratory — motion that rewards, with the post-class flow as
+    the one place the app genuinely performs.
+  long_desc: >-
+    Everyday surfaces are still: the schedule, the store and the video feed do
+    not animate on arrival, because motion on a screen you open forty times a
+    week becomes friction.
+
+    The celebration is where the budget is spent. Each card plays an entrance
+    it owns — a streak icon growing in, a belt flying in and shrinking to its
+    header slot, a sphere of point tokens collapsing into a burst, a giftbox
+    spinning and scattering — and the CTA is withheld until the card settles.
+    A tap during an entrance means SKIP, never a dead press, so a slow
+    animation can never strand a reviewer.
+
+    There is exactly one animation per asset and no vocabulary to switch
+    between. Changing the motion means editing the motion.

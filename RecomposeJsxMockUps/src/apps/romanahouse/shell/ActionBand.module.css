@@ -1,0 +1,45 @@
+/* Styles for ./ActionBand.tsx. `--sc-*` only. */
+
+/* `box-sizing: border-box`: `width: 100%` plus the sheet's inline padding is
+   exactly the overflow Pass 2b of `mockup-qa` describes — this package has no
+   global reset, so the band would be 40px wider than the sheet it sits in. */
+.band {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 100%;
+  min-height: 66px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding-block: var(--sc-spacing-large);
+  padding-inline: var(--sc-sheet-pad);
+  background: var(--sc-primary);
+  color: var(--sc-primary-button-text);
+  border: 0;
+  border-radius: 0;
+  cursor: pointer;
+  text-align: center;
+  /* Nothing here casts a shadow. A band is the edge of the sheet, not a layer
+     over it. */
+}
+
+.label {
+  font: var(--sc-type-label-lg);
+  letter-spacing: var(--sc-type-label-lg-ls);
+  text-transform: uppercase;
+  color: inherit;
+}
+
+/*
+ * The note sits ABOVE the label at half its weight, so the band reads as a
+ * caption over an instruction rather than two competing lines.
+ */
+.note {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: inherit;
+  opacity: 0.6;
+}
