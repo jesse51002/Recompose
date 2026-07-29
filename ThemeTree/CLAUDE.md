@@ -42,8 +42,8 @@ and the files under `final_images/` / `images/` / `icons/` — are **never edite
 by hand**. To change anything in an existing run you use the scripts:
 `scripts/expand` (fill not-yet-done slots, including a missing `category`),
 `scripts/regen` (re-make colour/font/text/icon slots, or `category`),
-`scripts/regen_image` (images), `scripts/prefill` (seed a not-yet-done
-image slot from a checked-in file instead of generating it),
+`scripts/regen_image` (images), `scripts/prefill` (seed not-yet-done image
+AND text slots from checked-in files instead of generating them),
 `scripts/edit_customization` (a validated, targeted edit of the brief
 `customization.yaml`), or a full pipeline run (`ThemeTree/cli.py`). The brief is the one editable *input* — and even it goes
 through `edit_customization` (which re-validates), not raw text munging;
@@ -80,6 +80,36 @@ recorded on the `ImageOutput` — only the quality it would have picked is
 overridden, so the tier stays visible if that ever needs revisiting. `scene`
 defaults to false, so every existing `app.yaml` and every frozen per-run
 snapshot validates unchanged.
+
+## An image can depend on the copy that names it
+
+`ImageSlot.depends_on_text` lists TEXT slot ids whose resolved copy the image
+must depict. It is a **different relationship** from `depends_on`, not a second
+flavour of it: an image dependency is *reference* (look like that), a text
+dependency is *subject* (be the thing that string names). It exists because a
+slot description written months ago can only offer a choice — "gloves for a
+fight gym, a mat for a yoga studio, brand's choice" — and nothing downstream
+recorded which one the brand actually picked, so a store card and its picture
+were free to disagree.
+
+Three properties worth knowing:
+
+- **The edge is to the text NODE, not to each named slot.** The text module is
+  atomic — one call, one `TextSet` — so twelve named slots cost one graph edge.
+  `ImageNode` receives the whole set and picks out what it declared.
+- **It adds no level.** Text is already a level-0 root beside colour, so an
+  image that names copy sits exactly where it always did.
+- **A missing name degrades, it does not fail.** A text slot that failed its
+  length bounds is simply absent from the set, and the image falls back to its
+  own description. Only a hard provider failure cascades, and that already skips
+  every image through the colour edge.
+
+`AppFormat` refuses a `depends_on_text` naming an undeclared text slot — the one
+cross-list check in that file, and a model validator rather than a field one for
+exactly that reason. Refusing rather than ignoring matters: a dropped image
+dependency costs visual continuity, a dropped text dependency means the picture
+is no longer of the thing the label beside it says, and nothing downstream can
+notice.
 
 ## Core principle: app-agnostic
 

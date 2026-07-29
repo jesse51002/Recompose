@@ -1,0 +1,89 @@
+.screen {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.heroWrap {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.back {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--cafe-radius-pill);
+  background: var(--cafe-bg);
+  color: var(--cafe-ink);
+  font: var(--cafe-type-title);
+  line-height: 1;
+  cursor: pointer;
+}
+
+.body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px var(--cafe-gutter) 0;
+}
+
+.body::-webkit-scrollbar {
+  display: none;
+}
+
+.section {
+  font: var(--cafe-type-meta);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cafe-accent);
+}
+
+.title {
+  font: var(--cafe-type-hero);
+  color: var(--cafe-ink);
+  margin: 0;
+}
+
+.blurb {
+  font: var(--cafe-type-body);
+  color: var(--cafe-ink-soft);
+  margin: 0;
+}
+
+.footer {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--cafe-gap);
+  padding: 16px var(--cafe-gutter) 26px;
+  border-top: 1px solid var(--cafe-line);
+}
+
+.price {
+  font: var(--cafe-type-title);
+  color: var(--cafe-ink);
+}
+
+.add {
+  flex: 1 1 auto;
+  height: var(--cafe-bar-height);
+  border: none;
+  border-radius: var(--cafe-radius-pill);
+  background: var(--cafe-primary);
+  color: var(--cafe-on-primary);
+  font: var(--cafe-type-item);
+  cursor: pointer;
+}

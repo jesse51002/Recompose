@@ -1,0 +1,107 @@
+.screen {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 18px var(--cafe-gutter) 10px;
+}
+
+.brand {
+  font: var(--cafe-type-hero);
+  color: var(--cafe-ink);
+}
+
+.sub {
+  font: var(--cafe-type-meta);
+  color: var(--cafe-ink-soft);
+}
+
+.body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  /* Explicit rather than left at `visible`: when one axis is not `visible` the
+     other COMPUTES to `auto`, so omitting this grows a second sideways
+     scrollbar the screen never uses. */
+  overflow-x: hidden;
+  scrollbar-width: none;
+  padding: 0 var(--cafe-gutter) 90px;
+}
+
+.body::-webkit-scrollbar {
+  display: none;
+}
+
+.section {
+  margin-top: 18px;
+}
+
+.sectionTitle {
+  font: var(--cafe-type-title);
+  color: var(--cafe-ink);
+  margin: 0 0 10px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--cafe-grid-gap);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  border: 1px solid var(--cafe-line);
+  border-radius: var(--cafe-radius-card);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.card:hover {
+  border-color: var(--cafe-primary);
+}
+
+.name {
+  font: var(--cafe-type-item);
+  color: var(--cafe-ink);
+}
+
+.price {
+  font: var(--cafe-type-price);
+  color: var(--cafe-ink-soft);
+}
+
+/* Pinned above the safe area, over the scrolling list. */
+.basket {
+  position: absolute;
+  left: var(--cafe-gutter);
+  right: var(--cafe-gutter);
+  bottom: 22px;
+  height: var(--cafe-bar-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border: none;
+  border-radius: var(--cafe-radius-pill);
+  background: var(--cafe-primary);
+  color: var(--cafe-on-primary);
+  font: var(--cafe-type-item);
+  cursor: pointer;
+}
+
+.basketTotal {
+  font: var(--cafe-type-price);
+}

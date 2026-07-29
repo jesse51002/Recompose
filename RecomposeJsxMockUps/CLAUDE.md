@@ -53,6 +53,8 @@ src/
     useElementSize.ts    duplicated from the studio (see the island rule)
   apps/
     combatden/         one product: its screens, its tokens, its two assets
+    cafe/              the second app — see below
+    index.ts           MOCK_APPS: every app, for a host that names none
   index.ts             the ONLY export surface
 ```
 
@@ -65,15 +67,40 @@ not import `src/apps/`. An app reaches the kit by calling `defineMockAsset` /
 `src/index.ts` is the only export surface. The studio imports the package, never
 a file inside it. If the studio needs something new, export it there.
 
+### `cafe/` exists to keep that claim honest
+
+`apps/cafe/` is a small café ordering app — menu, item, order — and it is here
+as **proof, not product**. Adding it changed `src/kit/` not at all, `dev/` only
+to grow an app switcher, and `apps/combatden/` not at all. It brings its own
+token vocabulary (`--cafe-*`, never `--sc-*`), its own device size (402x874
+against CombatDen's 390x844), its own layout language (a two-column grid where
+CombatDen has a schedule list) and its own state.
+
+Two things it deliberately is not:
+
+- **Not a pipeline app.** There is no `apps/cafe/app.yaml` in the engine, so it
+  resolves only the slot ids every brand manifest declares — the four colour
+  roles and the two font roles (`cafe/cafeSlots.ts`). That is enough to prove
+  theming crosses the app boundary; a real second app would ship a manifest.
+- **Not carrying bundled art.** Every picture on those screens is drawn in CSS
+  from the palette (`cafe/ItemArt.tsx`). With no image slots to resolve, a
+  bundled photograph would look themed while being the one element on screen
+  that never moves — the exact illusion this package exists to avoid.
+
+If a **third** app appears, promote `cx` to `src/kit/` — it is genuinely
+app-agnostic, and two copies is the cheapest correct answer where three is a
+signal.
+
 ## Assets, not screens
 
 The package ships **assets**: self-contained, interactive mocks you click
 through. Not a gallery of stills behind a picker.
 
-| asset | what | routes |
-| --- | --- | --- |
-| `app` | the member app | home, class, booking, store, video, profile |
-| `celebration` | the post-class flow | streak, rank, points, rewards, wins |
+| app | asset | what | routes |
+| --- | --- | --- | --- |
+| combatden | `app` | the member app | home, class, booking, store, video, profile |
+| combatden | `celebration` | the post-class flow | streak, rank, points, rewards, wins |
+| cafe | `order` | the café ordering flow | menu, item, order |
 
 **An asset holds everything reachable by tapping.** The bottom nav switches
 tabs, a schedule row opens a class, its reserve action books it — all one asset.
@@ -133,14 +160,22 @@ a vocabulary, you are rebuilding what was deliberately removed.
 
 ## Looking at it: `npm run dev`
 
-`make dev` (or `npm run dev`) serves the harness in `dev/` on **:8081** — an asset switcher, a
-phone-shaped box, and nothing else. `?asset=celebration` deep-links, so a reload
-lands back where you were instead of making you click through the flow again.
+`make dev` (or `npm run dev`) serves the harness in `dev/` on **:8081** — an app
+switcher, an asset switcher, a phone-shaped box, and nothing else.
+`?app=cafe&asset=order` deep-links, so a reload lands back where you were
+instead of making you click through the flow again.
 
-**It renders UNTHEMED.** No `initializeTheme`, no API: every `--sc-*` token
-falls back to CombatDen's bundled values. That is the honest default for what
-the harness is for — judging layout and interaction. Judging a *generated theme*
-needs a run to point at, which is `../RecomposeStudio`'s job.
+**It names no app.** The switcher lists whatever `src/apps/index.ts` exports, so
+a third app changes no file under `dev/`. The frame takes its aspect ratio from
+the *asset*, not a pinned 390/844 — two apps at two device sizes is the point,
+and a hardcoded frame would letterbox one of them and read as the stage getting
+the scale wrong.
+
+**It opens UNTHEMED.** No `initializeTheme`, no API: every token falls back to
+its app's own bundled values. That is the honest default for what the harness is
+for — judging layout and interaction. The **Load themes** button is opt-in: it
+boots the runtime against `make api` on :8001 and gives you the catalogue; with
+the API down it says so and everything else keeps working.
 
 `dev/` sits **outside `src/`** on purpose. It is a HOST, and hosts are what the
 island rule keeps out of the screens: nothing under `src/` may import it and it
@@ -169,6 +204,12 @@ Where the exit lives, per screen:
 - every celebration card — its CTA, which appears once the card settles; a tap
   anywhere on a still-animating card skips straight to settled, so a slow
   entrance can never strand anyone. The last card wraps to the first.
+- cafe `menu` — the asset root; every card goes forward. The basket bar is
+  hidden on an empty basket, which is not a dead end: the order screen has
+  nothing to show then and every card is still a way on.
+- cafe `item` — **back**, and **Add to order** which also returns to the menu.
+- cafe `order` — **back**, and **Place order** which `nav.reset()`s to the menu
+  and clears the basket, because it is the last screen of the flow.
 
 Two traps this has already sprung, both of which typecheck and lint cleanly:
 
@@ -212,6 +253,28 @@ looping animation the asset relies on.
 **The nav tabs are named for concepts, not screens.** `rank` is the profile and
 `reward` is the store, matching the four `nav_*` icon slots the pipeline
 generates. Renaming them to match the screens would break icon resolution.
+
+**Half the screen is not generated, and it has to follow the theme too.**
+CombatDen's demo classes, rewards and video feed are per-category constants, and
+the category comes from the loaded run — `CombatDenSurface` reads it with
+`useThemeCategory` and passes it to `AppContentProvider`. Drop that and every
+generated slot still resolves perfectly while the screen turns to nonsense: a
+yoga studio's theme painting yoga names and yoga photographs over a boxing feed,
+hero captioned "Nick Drossos Defensive Tactics". Nothing in `make check` sees
+it, and it looks like a theming bug rather than a content one.
+
+**A generated NAME and a generated PICTURE are one claim.** `class_photo_2`
+declares `depends_on_text: [class_name_2]` in `apps/combatden/app.yaml`, so the
+image is generated *from* the copy. On this side that means the two are stamped
+together, by position, in `useShowcaseContent` — split them across two files and
+they drift, and a card captioned one thing while showing another is worse than
+either being un-themed.
+
+**Video titles do not cycle the way thumbnails do.** Four photographs spread
+over a fourteen-card feed read as a brand that owns four good pictures; four
+titles spread the same way read as the same video listed four times. So the
+thumbnail cycles with `slotAt` and the copy applies to the first four entries
+only.
 
 **Directory names are load-bearing.** Gate 2a bans `**/widgets/**`,
 `**/chrome/**` and `**/browser/**` anywhere in this island and matches the

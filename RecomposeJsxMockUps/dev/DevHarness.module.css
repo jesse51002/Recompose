@@ -21,9 +21,29 @@
   flex: 0 0 auto;
 }
 
-.brand {
+/* The APP switcher — squarer than the asset pills so the two rows of buttons
+   in the bar read as two different kinds of choice at a glance. */
+.app,
+.appActive {
+  padding: 5px 12px;
+  border: 1px solid #2c313a;
+  border-radius: 6px;
+  background: transparent;
+  color: #9aa1ad;
+  font: inherit;
   font-weight: 600;
-  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+
+.app:hover {
+  color: #e6e8ec;
+  border-color: #3a4150;
+}
+
+.appActive {
+  background: #2c313a;
+  border-color: #3a4150;
+  color: #e6e8ec;
 }
 
 .tabs {
@@ -74,9 +94,9 @@
 
 /* A phone-ish frame. NOT the studio's PhoneFrame — that one applies its own
    contain-fit, and here the stage does the scaling instead. */
+/* `aspect-ratio` is set INLINE from the asset — see DevHarness.tsx. */
 .phone {
   height: 100%;
-  aspect-ratio: 390 / 844;
   max-width: 100%;
   border: 10px solid #23262c;
   border-radius: 44px;

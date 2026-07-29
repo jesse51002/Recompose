@@ -22,41 +22,68 @@
 
 import { useState } from 'react';
 
-import { COMBATDEN_APP } from '../src/apps/combatden';
+import { MOCK_APPS } from '../src/apps';
 import type { MockAsset } from '../src/kit/asset';
 import { MockAssetStage } from '../src/kit/MockAssetStage';
+import type { MockApp } from '../src/kit/registry';
+import { mockAssetOrFirst } from '../src/kit/registry';
 
 import styles from './DevHarness.module.css';
 import { useHarnessTheme } from './useHarnessTheme';
 
+/** `?app=` / `?asset=`, resolved against the registry rather than trusted. */
+function initialSelection(): { app: MockApp; asset: MockAsset } {
+  const params = new URLSearchParams(window.location.search);
+  const wantedApp = params.get('app');
+  // `?? MOCK_APPS[0]` and `mockAssetOrFirst`: both ids come from a URL, which
+  // is somewhere the harness does not control — a stale bookmark or a deleted
+  // asset should open the first app rather than a blank frame.
+  const app = MOCK_APPS.find((candidate) => candidate.id === wantedApp) ?? MOCK_APPS[0]!;
+  return { app, asset: mockAssetOrFirst(app, params.get('asset')) };
+}
+
 export function DevHarness() {
   const theme = useHarnessTheme();
-  const [asset, setAsset] = useState<MockAsset>(() => {
-    // Deep-link by `?asset=<id>` so a reload lands back where you were —
-    // rebuilding the celebration flow by hand after every edit gets old fast.
-    const wanted = new URLSearchParams(window.location.search).get('asset');
-    return COMBATDEN_APP.assets.find((a) => a.id === wanted) ?? COMBATDEN_APP.assets[0]!;
-  });
+  const [{ app, asset }, setSelection] = useState(initialSelection);
 
-  const select = (next: MockAsset) => {
-    setAsset(next);
+  const select = (nextApp: MockApp, nextAsset: MockAsset) => {
+    setSelection({ app: nextApp, asset: nextAsset });
     const url = new URL(window.location.href);
-    url.searchParams.set('asset', next.id);
+    url.searchParams.set('app', nextApp.id);
+    url.searchParams.set('asset', nextAsset.id);
     window.history.replaceState(null, '', url);
   };
 
   return (
     <div className={styles.root}>
       <header className={styles.bar}>
-        <span className={styles.brand}>{COMBATDEN_APP.label}</span>
+        {/* The APP switcher. It exists to prove the harness is a host and not
+            CombatDen's harness: it lists whatever `src/apps/index.ts` exports
+            and never names an app, so adding a third one changes no file
+            here. Switching app also switches to that app's first asset —
+            asset ids are per-app, so carrying one across would be meaningless. */}
         <nav className={styles.tabs}>
-          {COMBATDEN_APP.assets.map((candidate) => (
+          {MOCK_APPS.map((candidate) => (
+            <button
+              key={candidate.id}
+              type="button"
+              className={candidate.id === app.id ? styles.appActive : styles.app}
+              onClick={() => {
+                select(candidate, candidate.assets[0]!);
+              }}
+            >
+              {candidate.label}
+            </button>
+          ))}
+        </nav>
+        <nav className={styles.tabs}>
+          {app.assets.map((candidate) => (
             <button
               key={candidate.id}
               type="button"
               className={candidate.id === asset.id ? styles.tabActive : styles.tab}
               onClick={() => {
-                select(candidate);
+                select(app, candidate);
               }}
             >
               {candidate.label}
@@ -70,13 +97,21 @@ export function DevHarness() {
         {/* `key` remounts on switch so an asset always opens on its initial
             route with fresh state, rather than resuming wherever its nav was
             left — the same reason the studio reloads its preview. */}
-        <div className={styles.phone}>
-          <MockAssetStage key={asset.id} asset={asset} />
+        {/* The frame follows the ASSET's ratio rather than pinning 390/844.
+            Two apps at two device sizes is the point of the second app, and a
+            hardcoded frame would letterbox one of them and read as the stage
+            getting the scale wrong. */}
+        <div
+          className={styles.phone}
+          style={{ aspectRatio: `${String(asset.width)} / ${String(asset.height)}` }}
+        >
+          <MockAssetStage key={`${app.id}:${asset.id}`} asset={asset} />
         </div>
       </main>
 
       <footer className={styles.foot}>
-        {asset.width}&thinsp;x&thinsp;{asset.height} &middot; scaled to fit &middot;{' '}
+        {app.label} &middot; {asset.width}&thinsp;x&thinsp;{asset.height} &middot; scaled to
+        fit &middot;{' '}
         {theme.status === 'ready' && theme.active !== null
           ? `theme: ${theme.active}`
           : 'unthemed (bundled token fallbacks)'}

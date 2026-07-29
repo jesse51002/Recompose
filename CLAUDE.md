@@ -42,6 +42,12 @@ import `src/apps/`. An app reaches the kit by calling `defineMockAsset` /
 `defineMockApp`, never the reverse — which is what makes a new app a folder
 rather than a change to the machinery. Its own eslint Gate 1 enforces it.
 
+**There are two apps now, and the second one is there to keep that claim
+honest.** `src/apps/cafe/` is a café ordering flow with its own token
+vocabulary, its own device size and its own layout language; adding it changed
+the kit not at all. An app folder also may not import a sibling app folder —
+nothing enforces that yet, but deleting one app must never break another.
+
 The rule predates the package split; it was enforced inside the old single
 package and the split made it structural. If you find yourself wanting to share
 something between the studio and the mockups, duplicate it or push it down into
