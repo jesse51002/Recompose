@@ -11,8 +11,9 @@
 import type { MockApp } from '../kit/registry';
 
 import { COMBATDEN_APP } from './combatden';
+import { ZENBJJ_APP } from './zenbjj';
 
-export const MOCK_APPS: readonly MockApp[] = Object.freeze([COMBATDEN_APP]);
+export const MOCK_APPS: readonly MockApp[] = Object.freeze([COMBATDEN_APP, ZENBJJ_APP]);
 
 /** One app by id, or `undefined`. */
 export function findMockApp(id: string | null | undefined): MockApp | undefined {

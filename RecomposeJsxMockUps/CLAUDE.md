@@ -125,6 +125,20 @@ A redesign folder carries its own `layout_brief.yaml` naming the design it was
 made for. The base's names the base — it belongs to no run, and it is what
 every fork starts from.
 
+**`apps/zenbjj/` is the first one**, and it is the worked example: same two
+assets, same eleven screens, same element set as `apps/combatden/`, rearranged
+for a design whose direction is "calm on the surface, deep power underneath".
+Read its `layout_brief.yaml` for what it argues and why. Two things it shows
+that are worth copying:
+
+- **It changes no shared machinery.** Every difference is a value in one of its
+  own stylesheets, a different arrangement prop passed to a shared component, or
+  one new treatment file beside the one it sits next to. Nothing in `src/kit/`
+  and nothing in `apps/combatden/` moved.
+- **It renames its own surface component** (`ZenBjjSurface`, where the base has
+  `CombatDenSurface`) and nothing else. A fork's token root is still its own
+  `provider`; the file name is the only part of it that belongs to the design.
+
 ## Assets, not screens
 
 The package ships **assets**: self-contained, interactive mocks you click
@@ -134,6 +148,12 @@ through. Not a gallery of stills behind a picker.
 | --- | --- | --- | --- |
 | combatden | `app` | the member app | home, class, booking, store, video, profile |
 | combatden | `celebration` | the post-class flow | streak, rank, points, rewards, wins |
+| zenbjj | `app` | the same member app, redesigned | the same six |
+| zenbjj | `celebration` | the same post-class flow, redesigned | the same five |
+
+A redesign's rows are the base's rows, and that is the point: **the asset and
+route sets are the thing a fork may not change.** If a fork ever needs a row of
+its own here, it has stopped being a redesign.
 
 **An asset holds everything reachable by tapping.** The bottom nav switches
 tabs, a schedule row opens a class, its reserve action books it — all one asset.

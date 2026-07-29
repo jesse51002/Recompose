@@ -1,0 +1,52 @@
+/*
+ * Styles for ./ClassItemLead.tsx — Zen BJJ's lead class row.
+ * `--sc-*` only — see ../../ShowcaseThemeVars.tsx.
+ *
+ * THE PHOTO IS NOT RE-PROPORTIONED. It keeps the 16:9 the schedule art is
+ * authored at (the compact row's 104x62 is the same shape at another size), so
+ * the card gains its prominence from WIDTH rather than from stretching the
+ * picture — which is the one resize that always looks wrong however good the
+ * layout reasoning was.
+ */
+
+/* The card: photo over its meta column, both at the page gutter. */
+.item {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--sc-spacing-large);
+  padding-inline: calc(var(--sc-screen-padding-x) * 1.5);
+  cursor: pointer;
+}
+
+/*
+ * The frame keeps its size when the image fails, showing a flat `card`
+ * rectangle — the same degrade the compact row's thumbnail does.
+ */
+.photo {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--sc-radius-small);
+  overflow: hidden;
+  background: var(--sc-card);
+}
+
+.photoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/*
+ * The meta column. `spacingSmall` inside, against the `spacingLarge` that
+ * separates it from the photo: tight WITHIN the group, open AROUND it, which is
+ * what makes the four lines read as one statement rather than four.
+ */
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sc-spacing-small);
+  min-width: 0;
+}

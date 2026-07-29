@@ -1,0 +1,63 @@
+# The brief this layout was produced from — the LAYOUT half of a design.
+#
+# Its counterpart is the ASSET half's brief, a run's `customization.yaml`
+# (a `design_direction` plus a `colors_direction`). Same shape on purpose: a
+# name, and one direction per thing being directed.
+#
+# Contract: ThemeTree/studio/schema/layout_brief.py (`LayoutBrief`).
+
+name: Zen BJJ
+
+layout_direction:
+  short_desc: >-
+    A composed, deliberate rearrangement of the base: one thing lit at a time,
+    wide gutters and hairline seams.
+  long_desc: >-
+    The layout half of Zen BJJ — an academy app for competitors and
+    first-timers who share one creed: respect, technique, and strength
+    released under control. It is a fork of the CombatDen base with every
+    screen, every route and every element intact; what changed is arrangement,
+    and the whole arrangement argues one thing — that a calm surface is what
+    lets real intensity read as controlled rather than loud.
+
+    Rhythm. Every surface sits on one wide gutter (half again the base's), and
+    the space between blocks opens to one and a half times the base's largest
+    gap while the lines INSIDE a block tighten. Open around, tight within:
+    that single move is what turns the schedule from a ladder of equal rows
+    into a small number of composed groups, and the profile from a queue of
+    widgets into four separate statements.
+
+    Hierarchy. The base treats everything equally and therefore shouts
+    everywhere. Here exactly one thing is lit — the next class today takes a
+    full-width photograph and a larger name, every other class is a compact
+    row. The day heading drops from a bold heading to a tracked eyebrow so the
+    class names outrank the scaffolding. The topbar's mark halves, its name
+    steps down a rung, and its four stats cluster inline as a quiet status
+    line instead of spreading across four columns.
+
+    Weight. Every rule in the app steps down — 2px bars become hairlines, and
+    `text3rd` seams become `divider` ones — and the brand colour is spent only
+    where a member can act: reserve, redeem, play. Selection is a tint and a
+    hairline, never a solid fill. The video feed loses its card surfaces so
+    the photographs sit directly on the canvas; the store loses its two-up
+    grid so each reward gets a full line and a readable title.
+
+motion_direction:
+  short_desc: >-
+    Motion that settles instead of pops — nothing is faster than the base, and
+    several things are deliberately slower.
+  long_desc: >-
+    The post-class cards move from the base's centred-in-an-empty-screen frame
+    to the contained band, so a celebration reads as a lit panel in a dark
+    hall rather than a flash in an empty one — and the action stands on ground
+    that was already there.
+
+    The booking confirmation grows into place over 1100ms from near its final
+    size instead of popping from 0.86 in 720ms, and every reveal travels half
+    as far. Short distances, long durations: that is what makes a movement
+    read as composed rather than eager.
+
+    The base's interaction contract is untouched, because it is what keeps a
+    slow entrance from being a trap — a tap during any entrance still means
+    SKIP, and the CTA still appears only once a card has settled. Calm on the
+    surface, deep power underneath.

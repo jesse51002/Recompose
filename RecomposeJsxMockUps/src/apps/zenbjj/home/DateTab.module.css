@@ -1,0 +1,63 @@
+/*
+ * Styles for ./DateTab.tsx (ports CRM/lib/showcase/home/date_tab.dart +
+ * MobileApp/.../class_schedule/date_tab.dart's `DateTabStyle`).
+ * `--sc-*` only — see ../ShowcaseThemeVars.tsx.
+ */
+
+/*
+ * `Container(padding: symmetric(vertical: spacingMedium, horizontal:
+ * spacingLarge), alignment: center)` with an `h2` label at `text2nd`.
+ *
+ * The transparent bottom border is what keeps an unselected pill exactly as
+ * tall as a selected one — Dart gets that from `Border(bottom:)` only being
+ * added to the decoration, which does not affect layout there.
+ */
+/*
+ * ZEN BJJ: an unselected day recedes further and the selected one is marked
+ * with a hairline rather than a 2px bar.
+ *
+ * The base draws every day at `text2nd` and the active one in full brand
+ * colour under a `buttonBorder` (2px) rule — a rail that competes with the
+ * schedule. Here the days sit at `text3rd`, the active day is simply the one
+ * drawn in `text`, and the brand appears only as the thinnest possible mark
+ * under it. The transparent border still holds the two states to the same
+ * height, exactly as it does in the base.
+ */
+.tab {
+  display: block;
+  padding: var(--sc-spacing-medium) var(--sc-spacing-large);
+  border: 0;
+  border-bottom: var(--sc-divider-thickness) solid transparent;
+  background: none;
+  font: var(--sc-type-h2);
+  letter-spacing: var(--sc-type-h2-ls);
+  color: var(--sc-text-3rd);
+  text-align: center;
+  cursor: pointer;
+}
+
+/* Selected — the ink steps up to `text`, the brand stays a hairline. */
+.selected {
+  border-bottom-color: var(--sc-primary);
+  color: var(--sc-text);
+}
+
+/*
+ * `DateTabStyle.segmented` — a bordered chip per day. The full border replaces
+ * the bottom-only one, so the pill reads as a control rather than as a rail.
+ */
+.segmented {
+  border: var(--sc-divider-thickness) solid var(--sc-divider);
+  border-radius: var(--sc-radius-small);
+}
+
+/*
+ * Selected chip — filled with `primary`, label in `primaryButtonText` so it
+ * stays legible on whatever the tenant's primary turns out to be. AFTER
+ * `.selected` on purpose: it has to beat that rule's `border-bottom-color`.
+ */
+.segmented.selected {
+  background: var(--sc-primary);
+  border-color: var(--sc-primary);
+  color: var(--sc-primary-button-text);
+}
