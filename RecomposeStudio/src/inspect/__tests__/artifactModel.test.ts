@@ -194,16 +194,17 @@ describe('buildInspection', () => {
     expect(primary?.description).toBe('A bold, saturated competition red.');
   });
 
-  it('lists every EXPECTED role, holes included', () => {
+  it('lists the roles the RUN produced, in the payload order', () => {
+    // Off the payload, not off a manifest: this view answers "what did the run
+    // make", so a role the pipeline produced appears whether or not any mock
+    // paints it, and one it never produced is simply not there.
+    //
+    // Order is the payload's, which is output.yaml's, which is app.yaml's — so
+    // roles read primary, background, ... rather than being alphabetised.
     expect(inspection.roles.map((role) => role.slot)).toEqual([
       'primary',
       'background',
-      'text',
-      'accent',
     ]);
-    // `text` and `accent` are absent from the payload: present, but empty.
-    expect(inspection.roles[2]?.color).toBeNull();
-    expect(inspection.roles[2]?.description).toBe('');
   });
 
   it('lists all seven derivations per role in contract order', () => {
@@ -221,13 +222,22 @@ describe('buildInspection', () => {
     expect(inspection.roles[1]?.onColor).toBeNull();
   });
 
-  it('holds a slot for every expected image, font, text and icon', () => {
-    expect(inspection.images).toHaveLength(10);
-    expect(inspection.fonts).toHaveLength(2);
-    expect(inspection.texts).toHaveLength(5);
-    expect(inspection.icons).toHaveLength(4);
-    expect(inspection.images.find((i) => i.slot === 'giftbox')?.value).toBeNull();
-    expect(inspection.texts.find((t) => t.slot === 'reserve_cta')?.value).toBe('Lock it in');
+  it('holds a slot for everything the payload carries, and nothing else', () => {
+    // Each list is exactly what the wire sent. A run that generates a slot no
+    // mock renders still shows it here; a manifest-driven list used to hide it.
+    expect(inspection.images.map((i) => i.slot)).toEqual(
+      Object.keys(parseThemeConfig(wireTheme()).images),
+    );
+    expect(inspection.fonts.map((f) => f.slot)).toEqual(
+      Object.keys(parseThemeConfig(wireTheme()).fonts),
+    );
+    expect(inspection.texts.map((x) => x.slot)).toEqual(
+      Object.keys(parseThemeConfig(wireTheme()).texts),
+    );
+    expect(inspection.icons.map((i) => i.slot)).toEqual(
+      Object.keys(parseThemeConfig(wireTheme()).icons),
+    );
+    expect(inspection.texts.find((x) => x.slot === 'reserve_cta')?.value).toBe('Lock it in');
   });
 
   it('counts only what was actually produced', () => {
@@ -317,9 +327,10 @@ describe('buildInspection on a theme that predates the new wire fields', () => {
 });
 
 describe('groupPalette', () => {
-  const groups = groupPalette(
-    parseThemeConfig(wireTheme()).palette,
-  );
+  // The roles come from the run's own colour map, exactly as `buildInspection`
+  // passes them — the fixture declares primary and background.
+  const config = parseThemeConfig(wireTheme());
+  const groups = groupPalette(config.palette, Object.keys(config.colors));
 
   it('groups by role, then the shared surface tokens', () => {
     expect(groups.map((group) => group.label)).toEqual([
