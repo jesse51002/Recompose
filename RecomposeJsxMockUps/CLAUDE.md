@@ -77,9 +77,18 @@ the same question about the other half.
 
 **Three fields, and no more.** Nothing about routes, sizes or assets: the code
 already declares all of it, and a second copy in YAML would only be a thing to
-keep in sync. `src/apps/__tests__/mockupYaml.test.ts` fails if an app has no
-`mockup.yaml` or leaves any of the three empty — presence and non-emptiness,
-which is all a file this shape can usefully guarantee.
+keep in sync. The code says what a layout CONTAINS; this says what it IS.
+
+Two tests guard it, and they are not redundant:
+
+- **`schema/mockup.py` → `MockupSpec`**, checked by `test_every_mockup_spec_validates`
+  in the engine's suite. That is the real one: it parses the YAML and validates
+  it, and `extra="forbid"` is what actually enforces "three fields and no more"
+  — a typo'd key is rejected rather than ignored. It lives on the Python side
+  because that is where a YAML parser and the schema already are.
+- **`src/apps/__tests__/mockupYaml.test.ts`**, here. Only the TypeScript knows
+  which apps are REGISTERED, so this one asks "does every app in `MOCK_APPS`
+  have a file, with all three filled in?" — the question the engine cannot ask.
 
 **A second app is a sibling folder under `apps/` plus one `defineMockApp`.**
 Not a change to the kit, and not a change to the host. That is the whole reason
