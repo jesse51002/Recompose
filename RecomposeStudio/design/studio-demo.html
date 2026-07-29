@@ -130,31 +130,51 @@ button { font-family: inherit; cursor: pointer; }
 .btn.sm { height: 32px; padding: 0 11px; font-size: var(--fs-xs); border-radius: 5px; }
 .btn:disabled { opacity: .4; cursor: default; }
 
-.steps { margin-top: 30px; display: flex; flex-direction: column; gap: 0; }
-.step {
-  display: flex; align-items: center; gap: 13px; padding: 13px 2px;
-  border-bottom: 1px solid var(--sh-line);
-  opacity: 0; transform: translateY(6px);
-  transition: opacity .45s ease, transform .45s ease;
-}
-.step.in { opacity: 1; transform: none; }
-.step .mk {
-  width: 19px; height: 19px; border-radius: 50%; flex: none; display: grid; place-items: center;
-  border: 1px solid var(--sh-line-2); font-size: var(--fs-micro); color: var(--sh-ground);
-  background: transparent; transition: background .3s ease, border-color .3s ease;
-}
-.step.run .mk { border-color: var(--sh-line-3); box-shadow: 0 0 0 4px rgba(232,236,242,.09); }
-.step.done .mk { background: var(--ink-3); border-color: var(--ink-3); }
-.step .tx { flex: 1; }
-.step .tx b { display: block; font-size: var(--fs-sm); font-weight: 500; color: var(--ink-3); }
-.step.run .tx b, .step.done .tx b { color: var(--ink); }
-.step .tx u { display: block; text-decoration: none; font-size: var(--fs-xs); color: var(--ink-4); margin-top: 3px; }
-.step .el { font: 400 var(--fs-xs)/1 var(--mono); color: var(--ink-4); }
+/* Step ribbon — three named steps, so nothing is glossed over. */
+.ribbon { display: flex; gap: 0; margin: 30px 0 20px; }
+.rstep { flex: 1; display: flex; align-items: center; gap: 10px; padding: 0 14px 14px 0; border-top: 2px solid var(--sh-line); padding-top: 12px; color: var(--ink-4); }
+.rstep.done { border-top-color: var(--ink-3); color: var(--ink-3); }
+.rstep.now { border-top-color: var(--ink); color: var(--ink); }
+.rstep .n { font: 500 var(--fs-micro)/1 var(--mono); letter-spacing: .1em; }
+.rstep b { font-size: var(--fs-sm); font-weight: 500; }
 
-.obdone { margin-top: 26px; display: none; align-items: center; gap: 14px; }
-.obdone.on { display: flex; }
-.obdone .t { flex: 1; font-size: var(--fs-sm); line-height: 1.6; color: var(--ink-3); }
-.obdone .t b { color: var(--ink); font-weight: 500; }
+/* THE AGENT-WORKING TREATMENT. Used on both admin pages. It has to be
+   unmistakable at a glance that a machine is on this right now. */
+.agent {
+  display: flex; align-items: center; gap: 14px;
+  border: 1px solid var(--sh-line-2); border-radius: 9px;
+  background: var(--sh-panel); padding: 16px 18px;
+}
+.agent.live { border-color: var(--sh-line-3); }
+.agent .pulse { width: 11px; height: 11px; border-radius: 50%; background: var(--ink-4); flex: none; }
+.agent.live .pulse { background: var(--ink); animation: pulse 1.5s ease-in-out infinite; }
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(232,236,242,.5); }
+  60%      { box-shadow: 0 0 0 9px rgba(232,236,242,0); }
+}
+.agent .lb { flex: 1; min-width: 0; }
+.agent .lb b { display: block; font-size: var(--fs-md); font-weight: 500; color: var(--ink-3); letter-spacing: -.01em; }
+.agent.live .lb b, .agent.ok .lb b { color: var(--ink); }
+.agent .lb u { display: block; text-decoration: none; font: 400 var(--fs-xs)/1.6 var(--mono); color: var(--ink-4); margin-top: 5px; }
+.agent .el { font: 400 var(--fs-xs)/1 var(--mono); color: var(--ink-4); flex: none; }
+.agent.ok .pulse { background: var(--ink-3); }
+
+.obpanel { display: none; }
+.obpanel.on { display: block; animation: rise .4s ease both; }
+.obacts { margin-top: 18px; display: flex; gap: 8px; align-items: center; }
+.obacts .sp { flex: 1; }
+
+.found { display: flex; gap: 0; margin-top: 4px; border: 1px solid var(--sh-line); border-radius: 9px; overflow: hidden; }
+.found div { flex: 1; padding: 14px 16px; border-right: 1px solid var(--sh-line); }
+.found div:last-child { border-right: 0; }
+.found b { display: block; font: 600 var(--fs-lg)/1 var(--sans); letter-spacing: -.02em; }
+.found u { display: block; text-decoration: none; font: 400 var(--fs-micro)/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-4); margin-top: 7px; }
+
+.disclaim {
+  margin-top: 34px; padding-top: 16px; border-top: 1px solid var(--sh-line);
+  font-size: var(--fs-xs); line-height: 1.7; color: var(--ink-4);
+}
+.disclaim b { color: var(--ink-3); font-weight: 500; }
 
 /* ═══ PAGE 2 — GENERATE (customer) ═══════════════════════════════════════ */
 
@@ -399,24 +419,30 @@ button { font-family: inherit; cursor: pointer; }
 .kpi b { display: block; font: 600 var(--fs-xl)/1 var(--sans); letter-spacing: -.03em; }
 .kpi u { display: block; text-decoration: none; font: 400 var(--fs-xs)/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-4); margin-top: 8px; }
 .kpi.bad b { color: var(--fail); }
-.tblwrap { flex: 1; overflow-y: auto; }
-table { width: 100%; border-collapse: collapse; }
-th { text-align: left; padding: 11px 26px; font: 500 var(--fs-micro)/1 var(--mono); letter-spacing: .11em; text-transform: uppercase; color: var(--ink-4); border-bottom: 1px solid var(--sh-line); }
-th.n, td.n { text-align: right; }
-td { padding: 14px 26px; border-bottom: 1px solid var(--sh-line); font-size: var(--fs-sm); }
-tr:hover td { background: var(--sh-panel); }
-.acell b { display: block; font-size: var(--fs-sm); font-weight: 500; color: var(--ink); }
-.acell u { display: block; text-decoration: none; font: 400 var(--fs-xs)/1.4 var(--mono); color: var(--ink-4); margin-top: 3px; }
-.num { font: 400 var(--fs-sm)/1 var(--mono); color: var(--ink); }
-.dim { font: 400 var(--fs-xs)/1 var(--mono); color: var(--ink-4); }
-.st { display: inline-flex; align-items: center; gap: 8px; font-size: var(--fs-sm); color: var(--ink-2); }
-.st .p { width: 8px; height: 8px; border-radius: 50%; flex: none; background: var(--ink-3); }
-.st.work .p { background: var(--ink); box-shadow: 0 0 0 3px rgba(232,236,242,.15); }
-.st.work { color: var(--ink); }
-.st.bad .p { background: var(--fail); }
-.st.bad { color: var(--fail); }
-.q { font: 400 var(--fs-sm)/1 var(--mono); color: var(--ink-4); }
-.q.has { color: var(--ink); }
+/* Three big cards, not a table. The state has to land at a glance from across
+   a room, and a card working right now has to be obviously alive. */
+.cards { flex: 1; overflow-y: auto; padding: 22px 26px; display: flex; flex-direction: column; gap: 16px; }
+.fcard {
+  border: 1px solid var(--sh-line-2); border-radius: 12px; background: var(--sh-panel);
+  padding: 22px 24px; display: flex; gap: 26px; align-items: center;
+}
+.fcard.live { border-color: var(--sh-line-3); background: var(--sh-raised); }
+.fcard .fwho { width: 260px; flex: none; }
+.fcard .fwho b { display: block; font: 600 var(--fs-lg)/1.2 var(--sans); letter-spacing: -.02em; }
+.fcard .fwho u { display: block; text-decoration: none; font: 400 var(--fs-xs)/1.5 var(--mono); color: var(--ink-4); margin-top: 6px; }
+.fcard .fwho .n { display: block; font-size: var(--fs-xs); color: var(--ink-3); margin-top: 9px; }
+
+.fstate { flex: 1; min-width: 0; display: flex; gap: 14px; align-items: flex-start; }
+.fstate .pulse { width: 12px; height: 12px; border-radius: 50%; background: var(--ink-4); flex: none; margin-top: 5px; }
+.fcard.live .fstate .pulse { background: var(--ink); animation: pulse 1.5s ease-in-out infinite; }
+.fstate .t { min-width: 0; }
+.fstate .t b { display: block; font: 500 var(--fs-md)/1.3 var(--sans); color: var(--ink-2); letter-spacing: -.01em; }
+.fcard.live .fstate .t b { color: var(--ink); }
+.fstate .t u { display: block; text-decoration: none; font-size: var(--fs-sm); line-height: 1.6; color: var(--ink-3); margin-top: 7px; }
+.fstate .t .log { display: block; font: 400 var(--fs-xs)/1.6 var(--mono); color: var(--ink-4); margin-top: 8px; }
+
+.facts { flex: none; display: flex; flex-direction: column; gap: 7px; width: 176px; }
+.facts .btn { height: 36px; width: 100%; justify-content: center; }
 .ffoot { flex: none; padding: 15px 26px; border-top: 1px solid var(--sh-line); background: var(--sh-panel); font-size: var(--fs-xs); color: var(--ink-3); line-height: 1.65; }
 .ffoot b { color: var(--ink-2); font-weight: 500; }
 </style>
@@ -450,21 +476,59 @@ tr:hover td { background: var(--sh-panel); }
          not once per tenant.</p>
 
       <div class="urlbar">
-        <div class="field" id="urlfield"><span class="g"></span><span id="urltext">github.com/combatden/member-app</span></div>
-        <button class="btn pri" id="obgo">Derive fork</button>
+        <div class="field" id="urlfield"><span class="g"></span><span>github.com/combatden/member-app</span></div>
+        <button class="btn pri" id="obgo">Connect</button>
       </div>
 
-      <div class="steps" id="obsteps">
-        <div class="step" data-el="1.4s"><span class="mk">✓</span><div class="tx"><b>Connected</b><u>Read access confirmed · 6 screens, a 5-card post-class flow</u></div><span class="el"></span></div>
-        <div class="step" data-el="12s"><span class="mk">✓</span><div class="tx"><b>Tokenized</b><u>41 hardcoded colour literals across 23 files became slot references</u></div><span class="el"></span></div>
-        <div class="step" data-el="3m 08s"><span class="mk">✓</span><div class="tx"><b>Mirrored</b><u>11 JSX mock screens — no logic, no API calls, no state</u></div><span class="el"></span></div>
-        <div class="step" data-el="0.6s"><span class="mk">✓</span><div class="tx"><b>Fork ready</b><u>The shared base every design forks from, re-derived on each release</u></div><span class="el"></span></div>
+      <div class="ribbon" id="ribbon">
+        <div class="rstep" data-r="1"><span class="n">01</span><b>Connect</b></div>
+        <div class="rstep" data-r="2"><span class="n">02</span><b>Tokenize</b></div>
+        <div class="rstep" data-r="3"><span class="n">03</span><b>Mirror</b></div>
       </div>
 
-      <div class="obdone" id="obdone">
-        <div class="t"><b>combatden is ready.</b> Any number of designs can now be
-          generated against it, and the cost of this step is never paid again.</div>
-        <button class="btn pri" data-go="generate">Open the customer view →</button>
+      <!-- One panel per step. A Next button between them, so it is always
+           obvious which thing is happening rather than one blur of ticks. -->
+      <div class="obpanel" id="ob-1">
+        <div class="agent ok"><span class="pulse"></span>
+          <div class="lb"><b>Connected</b><u>read access confirmed · nothing written</u></div>
+          <span class="el">1.4s</span></div>
+        <div class="found">
+          <div><b>6</b><u>screens</u></div>
+          <div><b>5</b><u>post-class cards</u></div>
+          <div><b>41</b><u>colour literals</u></div>
+          <div><b>18</b><u>asset references</u></div>
+        </div>
+        <div class="obacts"><span class="sp"></span><button class="btn pri" id="ob-next-1">Start tokenizing →</button></div>
+      </div>
+
+      <div class="obpanel" id="ob-2">
+        <div class="agent live" id="ag2"><span class="pulse"></span>
+          <div class="lb"><b>An agent is tokenizing your code</b><u id="ag2log">reading lib/theme/palette.dart…</u></div>
+          <span class="el" id="ag2el"></span></div>
+        <div class="obacts" id="ob2acts" style="display:none">
+          <button class="btn sm" id="ob2repo">View repo</button>
+          <span class="sp"></span>
+          <button class="btn pri" id="ob-next-2">Start mirroring →</button>
+        </div>
+      </div>
+
+      <div class="obpanel" id="ob-3">
+        <div class="agent live" id="ag3"><span class="pulse"></span>
+          <div class="lb"><b>An agent is mirroring your app</b><u id="ag3log">writing home.tsx…</u></div>
+          <span class="el" id="ag3el"></span></div>
+        <div class="obacts" id="ob3acts" style="display:none">
+          <button class="btn sm">View repo</button>
+          <button class="btn sm">View design</button>
+          <span class="sp"></span>
+          <button class="btn pri" data-go="generate">Open the customer view →</button>
+        </div>
+      </div>
+
+      <div class="disclaim">
+        <b>We never touch your main branch.</b> Everything above happens on a
+        fork we maintain — there is no pull request into your repository, no
+        library to install, and no integration work on your side. You grant
+        read access; that is the whole of it.
       </div>
     </div>
   </section>
@@ -493,16 +557,15 @@ tr:hover td { background: var(--sh-panel); }
         <div class="pane on" id="pane-mock"><div class="phone theme" id="phone"></div></div>
         <div class="pane" id="pane-inspect"><div class="sheet theme" id="sheet"></div></div>
         <div id="approved" class="theme">
+          <!-- The tenant's voice, not ours. They do not have a "review
+               environment", they have never heard of a fork, and the company
+               they have a relationship with is the PLATFORM, not Recompose. -->
           <div class="in">
             <div class="mk">✓</div>
-            <h1>Your design is approved.</h1>
-            <p>We're building <b>Stillwater Pilates</b> into the app now. It'll
-               land in your review environment shortly, and you'll get a note
-               the moment it's ready to look at on a real device.</p>
-            <div class="meta">
-              brief → approved · 21m 06s<br>
-              23 slots generated · 11 screens redesigned · arrangement only
-            </div>
+            <h1>Design approved.</h1>
+            <p><b>CombatDen</b> will reach out to you when your new app is
+               ready.</p>
+            <div class="meta">Stillwater Pilates · approved 29 Jul</div>
           </div>
         </div>
       </div>
@@ -512,34 +575,24 @@ tr:hover td { background: var(--sh-panel); }
   <!-- ═══ PAGE 3 — FLEET ═════════════════════════════════════════════════ -->
   <section class="page" id="page-fleet">
     <div class="fhead">
-      <h1>Fleet</h1>
-      <p>Every platform we hold a fork of, and every design derived from it. A
-         redesign is <b>re-applied</b> on each upstream release, never a branch
-         left to drift — so the only number that grows with the fleet is the
-         review queue.</p>
+      <h1>CombatDen · customer apps</h1>
+      <p>Every tenant we hold a design fork for, and what an agent is doing
+         about it right now. A redesign is <b>re-applied</b> on each of your
+         releases rather than left to drift, so these stay current without
+         anyone maintaining a branch.</p>
     </div>
     <div class="kpis">
-      <div class="kpi"><b>6</b><u>platforms</u></div>
-      <div class="kpi"><b>143</b><u>designs live</u></div>
-      <div class="kpi"><b>4</b><u>agents running</u></div>
-      <div class="kpi"><b>7</b><u>awaiting review</u></div>
-      <div class="kpi bad"><b>1</b><u>failed re-derive</u></div>
+      <div class="kpi"><b>3</b><u>customer apps</u></div>
+      <div class="kpi"><b>2</b><u>agents working</u></div>
+      <div class="kpi"><b>1</b><u>in sync</u></div>
+      <div class="kpi"><b>0</b><u>needing you</u></div>
     </div>
-    <div class="tblwrap">
-      <table>
-        <thead><tr>
-          <th>Platform</th><th class="n">Designs</th><th>Their main</th>
-          <th>uat ↔ main</th><th>Agents</th><th class="n">Review queue</th>
-        </tr></thead>
-        <tbody id="fleetrows"></tbody>
-      </table>
-    </div>
+    <div class="cards" id="fleetcards"></div>
     <div class="ffoot">
-      <b>143 designs, 7 things to look at.</b> That ratio is the product — not
-      that the agents are right every time, but that when they are wrong it
-      surfaces in <b>UAT</b> as a queue rather than in production as an
-      incident. Nothing on this page is a pull request into a customer's
-      repository; there is never one.
+      <b>Two agents working, nothing waiting on you.</b> That is the shape the
+      product is for — when an agent is wrong it surfaces in <b>UAT</b> as a
+      queue rather than in production as an incident. None of this is a pull
+      request into a customer's repository; there is never one.
     </div>
   </section>
 </div>
@@ -628,24 +681,76 @@ function go(p) {
 }
 $$('[data-go]').forEach((b) => b.addEventListener('click', () => go(b.dataset.go)));
 
-/* ── PAGE 1: onboarding animation ──────────────────────────────────────── */
-$('#obgo').addEventListener('click', async () => {
+/* ── PAGE 1: onboarding, one deliberate step at a time ─────────────────── */
+
+const TOKEN_LOG = [
+  'reading lib/theme/palette.dart…',
+  'replacing 41 colour literals with slot references',
+  'rewriting features/home/class_list_item.dart',
+  'rewriting shared/widgets/gym_header.dart',
+  '23 files tokenized · 0 written to your repository',
+];
+const MIRROR_LOG = [
+  'writing apps/combatden/home/HomeShowcase.tsx',
+  'stripping API calls and state from class detail',
+  'mirroring the 5-card post-class flow',
+  'mocking empty, loading, error and overflow states',
+  '11 screens mirrored · no logic, no fetching, no state',
+];
+
+function ribbon(n, state) {
+  const el = document.querySelector(`.rstep[data-r="${n}"]`);
+  el.classList.remove('now', 'done');
+  if (state) el.classList.add(state);
+}
+function panel(id) {
+  $$('.obpanel').forEach((p) => p.classList.toggle('on', p.id === id));
+}
+
+/* Run one agent stage: stream its log, then settle it and reveal the actions.
+   The heading swaps on completion — leaving "an agent is …ing" up next to a
+   dead pulse reads as still working. */
+async function runAgent(agentId, logId, elId, actsId, lines, elapsed, doneLabel) {
+  const ag = $('#' + agentId);
+  const head = ag.querySelector('.lb b');
+  head.textContent = head.dataset.live || head.textContent;
+  head.dataset.live = head.textContent;
+  ag.classList.remove('ok');
+  ag.classList.add('live');
+  $('#' + actsId).style.display = 'none';
+  for (const line of lines) {
+    $('#' + logId).textContent = line;
+    await wait(700);
+  }
+  ag.classList.remove('live');
+  ag.classList.add('ok');
+  head.textContent = doneLabel;
+  $('#' + elId).textContent = elapsed;
+  $('#' + actsId).style.display = 'flex';
+}
+
+$('#obgo').addEventListener('click', () => {
   const btn = $('#obgo');
   if (btn.disabled) return;
   btn.disabled = true;
-  btn.textContent = 'Deriving…';
+  btn.textContent = 'Connected';
   $('#urlfield').classList.add('busy');
-  const steps = $$('#obsteps .step');
-  for (const s of steps) {
-    s.classList.add('in', 'run');
-    await wait(620);
-    s.classList.remove('run');
-    s.classList.add('done');
-    s.querySelector('.el').textContent = s.dataset.el;
-    await wait(180);
-  }
-  btn.textContent = 'Fork derived';
-  $('#obdone').classList.add('on');
+  ribbon(1, 'done');
+  panel('ob-1');
+});
+
+$('#ob-next-1').addEventListener('click', async () => {
+  ribbon(2, 'now');
+  panel('ob-2');
+  await runAgent('ag2', 'ag2log', 'ag2el', 'ob2acts', TOKEN_LOG, '12s', 'Your code is tokenized');
+  ribbon(2, 'done');
+});
+
+$('#ob-next-2').addEventListener('click', async () => {
+  ribbon(3, 'now');
+  panel('ob-3');
+  await runAgent('ag3', 'ag3log', 'ag3el', 'ob3acts', MIRROR_LOG, '3m 08s', 'Your app is mirrored');
+  ribbon(3, 'done');
 });
 
 /* ── PAGE 2: the phone ─────────────────────────────────────────────────── */
@@ -939,10 +1044,16 @@ function reset() {
   $('#meter').innerHTML = '<span>brief not committed</span>';
   const btn = $('#obgo');
   btn.disabled = false;
-  btn.textContent = 'Derive fork';
+  btn.textContent = 'Connect';
   $('#urlfield').classList.remove('busy');
-  $('#obdone').classList.remove('on');
-  $$('#obsteps .step').forEach((s) => { s.className = 'step'; s.querySelector('.el').textContent = ''; });
+  $$('.obpanel').forEach((p) => p.classList.remove('on'));
+  [1, 2, 3].forEach((n) => ribbon(n, null));
+  ['ob2acts', 'ob3acts'].forEach((id) => { $('#' + id).style.display = 'none'; });
+  ['ag2', 'ag3'].forEach((id) => {
+    const ag = $('#' + id); ag.classList.remove('ok', 'live');
+    const h = ag.querySelector('.lb b'); if (h.dataset.live) h.textContent = h.dataset.live;
+  });
+  $('#ag2el').textContent = $('#ag3el').textContent = '';
   setView('mock');
   renderPhone();
   emptySheet();
@@ -984,26 +1095,41 @@ $('#popx').addEventListener('click', closeLib);
 $('#scrim').addEventListener('click', closeLib);
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLib(); });
 
-/* ── PAGE 3: fleet rows ────────────────────────────────────────────────── */
+/* ── PAGE 3: three customer apps ───────────────────────────────────────── */
 const FLEET = [
-  ['CombatDen','combatden/member-app',24,'2h ago · 8f3c1ad',['','level'],['work','1 designing'],2],
-  ['Loopwell','loopwell/creator-app',38,'6h ago · 41b90cc',['','level'],null,0],
-  ['Northgate Fit','northgate/members',31,'18m ago · d0a7e52',['work','re-deriving 31'],['work','2 syncing'],3],
-  ['Cadence Studios','cadence/studio-app',19,'4d ago · 6ce1b83',['','level'],null,0],
-  ['Bellwether','bellwether/community',12,'1d ago · 2f44a19',['','level'],null,1],
-  ['Harborline','harborline/app',9,'3h ago · b7d2f60',['bad','1 fork behind'],['bad','re-derive failed'],1],
-  ['Atlas Collective','atlas/member',7,'5d ago · 91ea4d7',['','level'],null,0],
-  ['Verity Wellness','verity/wellness-app',3,'32m ago · 55c8b1e',['work','re-deriving 3'],['work','1 syncing'],0],
+  { name: 'Stillwater Pilates', repo: 'combatden-stillwater', since: 'approved 29 Jul',
+    live: false, state: 'In sync',
+    note: 'uat and main are level with our fork of CombatDen. Nothing to do.',
+    log: 'last re-derived 2h ago against combatden@8f3c1ad · clean' },
+
+  { name: 'Apex MMA', repo: 'combatden-apex', since: 'approved 26 Jul',
+    live: true, state: 'An agent is productionalizing this design',
+    note: 'Turning the approved mock into real Flutter, carrying the arrangement-only invariant.',
+    log: 'rewriting class_screen.dart · 9 of 14 files · started 6m ago' },
+
+  { name: 'Ironline', repo: 'combatden-ironline', since: 'approved 21 Jul',
+    live: true, state: 'An agent is pulling your latest UAT branch',
+    note: 'CombatDen shipped a waitlist. Re-applying this design on top of it so the fork never drifts.',
+    log: 'rebasing on combatden/uat@d41c907 · 3 of 11 screens · started 2m ago' },
 ];
-$('#fleetrows').innerHTML = FLEET.map(([n, repo, d, main, sync, agents, q]) => `
-  <tr>
-    <td class="acell"><b>${n}</b><u>${repo}</u></td>
-    <td class="n"><span class="num">${d}</span></td>
-    <td><span class="dim">${main}</span></td>
-    <td><span class="st ${sync[0]}"><i class="p"></i> ${sync[1]}</span></td>
-    <td>${agents ? `<span class="st ${agents[0]}"><i class="p"></i> ${agents[1]}</span>` : '<span class="dim">—</span>'}</td>
-    <td class="n"><span class="q${q ? ' has' : ''}">${q}</span>${q ? ' <span class="dim">waiting</span>' : ''}</td>
-  </tr>`).join('');
+
+$('#fleetcards').innerHTML = FLEET.map((f) => `
+  <div class="fcard${f.live ? ' live' : ''}">
+    <div class="fwho">
+      <b>${f.name}</b>
+      <u>${f.repo}</u>
+      <span class="n">${f.since}</span>
+    </div>
+    <div class="fstate">
+      <span class="pulse"></span>
+      <div class="t"><b>${f.state}</b><u>${f.note}</u><span class="log">${f.log}</span></div>
+    </div>
+    <div class="facts">
+      <button class="btn sm pri">Talk to an agent</button>
+      <button class="btn sm">View repo</button>
+      <button class="btn sm">View design</button>
+    </div>
+  </div>`).join('');
 
 /* ── Boot ──────────────────────────────────────────────────────────────── */
 renderPhone();
