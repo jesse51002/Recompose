@@ -47,10 +47,10 @@ Three things to read off it that change what layouts are even available:
   photograph with its own background and edges; everything else is a cut-out
   object on transparency. Cutouts float, overlap and composite onto any
   surface; scenes want an edge to sit against and break when you try to float
-  them. CombatDen today is **8 scenes** — the four class photographs and the
-  four video thumbnails — against **14 cutouts**, so its photography is
-  concentrated in exactly two places and everything else is an object you can
-  put anywhere.
+  them. Count each and note *which screens* the scenes land on: that tells you
+  where the app can carry real photography and where it is objects on a field,
+  and a world that wants full-bleed imagery on a screen holding only cutouts is
+  a world you cannot build.
 - **The typefaces are real and specific.** A serif display face and a condensed
   grotesk want different layouts. Build for the pair you were given rather than
   a generic scale — the display face in particular should be doing visible work,
@@ -63,10 +63,11 @@ Use `make api` on :8001 to view them served, or just open the PNGs.
 
 ### 2. The app's skill, PART ONE only
 
-E.g. `mockup-redesign-combatden`. A plain-prose **inventory**: every screen,
-everything on it, every transition. It exists so you can know *what must be
-there* without seeing *how it looks now*. Treat it as a requirements list from
-a client who has not shown you their old app.
+`mockup-redesign-<app>`, whichever app you are forking. PART ONE is a
+plain-prose **inventory**: every screen, everything on it, every transition. It
+exists so you can know *what must be there* without seeing *how it looks now*.
+Treat it as a requirements list from a client who has not shown you their old
+app.
 
 ### 3. Nothing else
 
@@ -150,9 +151,10 @@ reachable*, and says nothing about form. Read it as permission.
   an overlay — all keep the same destinations reachable, which is all the
   invariant asks. Biggest lever, most often left alone.
 - **Change what a screen is made of.** Cards → bare canvas, list → grid, grid →
-  full-bleed pager, vertical → horizontal. A schedule need not be rows.
+  full-bleed pager, vertical → horizontal. A list of things is not required to
+  be rows.
 - **Change information density radically**, either way — one item per screen, or
-  the whole week at once.
+  everything at once.
 - **Reorder a screen's contents** by importance, as long as everything is there.
 - **Replace the type and spatial systems, the motion language, and how imagery
   is presented** outright.
