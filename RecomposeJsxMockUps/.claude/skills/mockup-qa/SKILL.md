@@ -134,18 +134,21 @@ no relationship to the lane above or below it. It reads as an element in
 storage rather than an element on a screen, and it is usually the last thing in
 the scroll because that is where there was room.
 
-Live example in this package: `apps/milemarker/`'s store ends with a lane
-labelled "YOUR RANK" containing a single rank medallion and nothing else. The
-base carries that badge in the topbar, so dropping it would break the
-invariant — but a section of its own at the foot of a shop is not where it
-means anything. **Preserving an element is the floor. Placing it is the job.**
+Found and fixed in `apps/milemarker/`: the store ended with a lane labelled
+"YOUR RANK" containing a single rank medallion and nothing else. The base
+carries that badge in its topbar, so dropping it would break the invariant — but
+a section of its own at the foot of a shop is not where it means anything. It
+now sits beside the balance, which is the pairing the base actually has.
+**Preserving an element is the floor. Placing it is the job.**
 
 **The same fact, twice.** A redesign that re-emphasises freely (which it should)
 can easily state one value in two places without noticing, because each
 placement was decided separately and both look reasonable alone. Same package:
-profile renders the same remaining-classes count as "7 TO GO" beside the
-progress label and again as "7 more classes" one lane below. Neither is wrong;
-together they are noise, and a reader assumes two different numbers were meant.
+profile rendered the same remaining-classes count as "7 TO GO" beside the
+progress label and again as "7 more classes" one lane below. Neither was wrong;
+together they were noise, and a reader assumes two different numbers were meant.
+The cause was structural — one region of the base had been split into two lanes
+— so the fix was to merge them back, not to delete a line.
 
 How to check, per screen — this one is READING, not tooling:
 
@@ -155,6 +158,13 @@ How to check, per screen — this one is READING, not tooling:
   deliberate echo you can justify in one sentence, or a duplicate.
 - Ask whether a member would read the screen as one thing with a structure, or
   as a correct list of parts.
+
+**A duplicate is not always a defect — but it must be justifiable in one
+sentence.** The same screen legitimately keeps the rank target as a figure AND
+as the rating graph's y-axis maximum, because one is the member's target and the
+other is the plot's scale, and a plot without its scale is unreadable. Write the
+justification down next to the code; an unexplained echo will be re-litigated by
+every later sweep.
 
 Report these as **misplaced element** — distinct from missing and from added,
 because the fix is different: nothing is removed and nothing is introduced, the
