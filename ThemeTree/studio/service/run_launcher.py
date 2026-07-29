@@ -21,7 +21,7 @@ from pathlib import Path
 from schema import AppFormat, Customization
 from ThemeTree.core.run_context import APP_FILENAME, RunContext
 from ThemeTree.core.util import load_yaml
-from ThemeTree.executor.orchestrator import Pipeline
+from ThemeTree.executor.orchestrator import Pipeline, PipelineResult
 from ThemeTree.executor.writer import Writer
 from ThemeTree.studio.config import settings
 from ThemeTree.studio.errors import RunNameTakenError, UnknownAppError
@@ -97,24 +97,44 @@ class RunLauncher:
     ) -> None:
         """The background run: pipeline → writer → settle.
 
-        Exactly the CLI's sequence (``ThemeTree/cli.py``), with the registry as
-        the progress sink and no ``prior_category`` — a brand-new run dir has
-        no ``output.yaml`` to carry one from.
+        The CLI's sequence (``ThemeTree/cli.py``) with two additions, both of
+        them about being WATCHED: the registry is the progress sink, and a
+        partial write lands after every level. There is no ``prior_category``
+        — a brand-new run dir has no ``output.yaml`` to carry one from.
 
         Every failure settles the run as ``FAILED`` with the error text, so
         a watching client always sees a terminal record. A crash violent
         enough to skip even this is what the non-terminal log identifies.
         """
+        # One writer for the whole run: the partial path and the final one
+        # must be the same object doing the same arithmetic, or a preview
+        # could disagree with the artifact it is previewing.
+        writer = Writer()
         try:
             run_ctx = RunContext(app, cust, self._apps_root, run_id=run_name)
+
+            async def write_partial(partial: PipelineResult) -> None:
+                """Land the run so far so a watching browser can repaint.
+
+                Off-loop for the same reason the final write is: this is
+                synchronous file I/O plus a sha256 per produced asset, and it
+                now happens repeatedly DURING the run rather than once at the
+                end — so blocking here would stall every other request the
+                studio is serving, including the SSE stream reporting this
+                very run.
+                """
+                await asyncio.to_thread(writer.write_partial, partial, run_ctx)
+
             result = await Pipeline().run(
-                run_ctx, progress=self._registry.sink(run_id)
+                run_ctx,
+                progress=self._registry.sink(run_id),
+                on_partial=write_partial,
             )
             # The writer is synchronous file I/O (yaml dumps + a sha256 per
             # asset). In a server that would block the event loop for every
             # other request, so it runs off-loop — the CLI can afford to
             # call it inline, the studio cannot.
-            await asyncio.to_thread(Writer().write, result, run_ctx)
+            await asyncio.to_thread(writer.write, result, run_ctx)
             await self._registry.settle(run_id, status=RunStatus.SUCCEEDED)
         except Exception as exc:  # noqa: BLE001 - reported, never swallowed
             logger.exception("run %s failed", run_id)

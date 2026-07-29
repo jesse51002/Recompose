@@ -175,6 +175,38 @@ Two rules hold the design together:
 - **A sink must not raise.** An emit failure would abort a paid run over a
   display concern. Swallow and log inside the sink.
 
+### Watching a run: the partial output
+
+`Pipeline.run()` also takes an optional
+`on_partial: Callable[[PipelineResult], Awaitable[None]] | None`, called once
+after **each level settles** with the run assembled so far.
+
+The two seams answer different questions and neither replaces the other. The
+sink says what is *happening* — a level started, a node took 4.2 s, this one
+failed. `on_partial` says what has been *made*. It exists because images have
+their own files and are servable the moment a node reports them, while colour,
+typography and copy exist nowhere except `output.yaml` — so a watcher given
+events alone shows generated imagery over an unthemed shell for the whole run.
+
+- `Writer.write_partial()` is what a caller passes it to. **`output.yaml` only**
+  — no provenance, no asset upload, and above all no ledger entry, because
+  `expansion_cost.yaml` appends and one entry per level would record a dozen
+  phantom passes for a single run.
+- That write is **atomic** (`Writer._dump_model_atomic`: temp file in the same
+  directory plus `os.replace`). The plain dump truncates and then fills, which
+  is harmless when nobody is watching and a fragment when the read API and a
+  browser are polling the path mid-run.
+- **The guard lives in the executor, not the callback.** Unlike a `ProgressSink`
+  — an interface whose contract says implementations must not raise — this is a
+  bare callable with no contract, so `Pipeline._emit_partial` swallows and logs.
+  A watcher must never abort a run that has already spent money.
+- The cost stamped on a partial is the **running** total, read off the same live
+  service instances the final write reads, so a preview and its artifact cannot
+  disagree about what was counted.
+
+`ThemeTree/studio/service/run_launcher.py` passes one; the CLI passes none and
+nothing is assembled between levels.
+
 Every node is timed with `perf_counter` from the moment it acquires the
 concurrency semaphore (its own work, not its queueing), and the run total is
 timed end to end. Both are **logged whether or not a sink is passed** — that

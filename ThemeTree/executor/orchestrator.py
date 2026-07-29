@@ -17,6 +17,13 @@ only place allowed to know: modules carry no progress code whatsoever. Every
 node is timed with ``perf_counter`` (logged either way) and, when the caller
 passes a ``ProgressSink``, reported as a ``ProgressEvent``. With no sink the
 run behaves exactly as it always has.
+
+There are **two** observation seams, and they answer different questions. The
+sink says what is HAPPENING — a level started, a node took 4.2 s, this one
+failed. ``on_partial`` says what has been MADE: the assembled ``Output`` so
+far, handed out after each level settles, for a caller that wants to write it
+and let a live preview repaint mid-run. Both are optional and independent; the
+CLI passes neither.
 """
 
 from __future__ import annotations
@@ -24,6 +31,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import shutil
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from time import perf_counter
 
@@ -163,6 +171,53 @@ class Pipeline:
         if progress is None:
             return
         await progress.emit(event)
+
+    @staticmethod
+    async def _emit_partial(
+        on_partial: Callable[[PipelineResult], Awaitable[None]] | None,
+        run_ctx: RunContext,
+        resolved: dict[str, BaseModel],
+        generated: set[str],
+        *,
+        llm: LLMClient,
+        image_gen: ImageGenerator,
+        bg_remover: BackgroundRemover,
+        icon_gen: ImageGenerator,
+    ) -> None:
+        """Hand out the run so far, if anyone is watching.
+
+        **The guard lives here, unlike ``_emit``'s.** A ``ProgressSink`` is an
+        interface whose contract says implementations must not raise, and its
+        implementations honour that (``RunSink.emit`` swallows and logs). This
+        takes a bare callable with no such contract, so the executor cannot
+        assume anything about it — and a watcher that throws must never abort
+        a run that has already spent real money.
+
+        The services are passed through live rather than snapshotted: their
+        running ``cost`` is exactly the spend so far, so a partial's
+        ``total_cost`` and the finished run's are the same arithmetic on the
+        same objects and cannot drift.
+        """
+        if on_partial is None:
+            return
+        try:
+            await on_partial(
+                PipelineResult(
+                    output=Pipeline._assemble(run_ctx, resolved),
+                    llm=llm,
+                    image_gen=image_gen,
+                    bg_remover=bg_remover,
+                    icon_gen=icon_gen,
+                    generated=frozenset(generated),
+                )
+            )
+        except Exception:  # noqa: BLE001 - a watcher must never fail a run
+            logger.warning(
+                "on_partial raised for run %s/%s; the run continues",
+                run_ctx.app_id,
+                run_ctx.run_id,
+                exc_info=True,
+            )
 
     @staticmethod
     async def _run_capped(
@@ -330,6 +385,7 @@ class Pipeline:
         *,
         seed: dict[str, BaseModel] | None = None,
         progress: ProgressSink | None = None,
+        on_partial: Callable[[PipelineResult], Awaitable[None]] | None = None,
     ) -> PipelineResult:
         """Resolve every node level-by-level, assemble the ``Output``, and
         return it alongside the paid services so the writer can total
@@ -351,6 +407,15 @@ class Pipeline:
         its cost. Given none (the default, and what the CLI passes), nothing is
         emitted and the run behaves exactly as before. The sink is an
         interface: the executor knows nothing of HTTP, SSE or JSON.
+
+        ``on_partial`` is the other half of watching a run, and it exists
+        because ``progress`` cannot answer one question: what does the theme
+        LOOK like so far? Colour, typography and copy have no per-node file to
+        fetch — they exist only in the assembled ``Output`` — so a watcher
+        given events alone can show images arriving over a dead grey shell.
+        Given a callback, this hands out the run so far after every level
+        settles, and a caller that writes it lets the theme runtime repaint
+        mid-run. The CLI passes none and nothing is assembled between levels.
         """
         # A full (unseeded) run pointed at an existing run dir is an in-place
         # re-run: clear its produced artifacts first so it's a clean overwrite.
@@ -471,6 +536,21 @@ class Pipeline:
                 else:
                     resolved[node.key] = result
                     generated |= node.regenerated
+
+            # The level is settled, so what resolved is a coherent snapshot:
+            # every node here either finished or was skipped, and none is
+            # half-written. Handing it out mid-level instead would race the
+            # gather above.
+            await self._emit_partial(
+                on_partial,
+                run_ctx,
+                resolved,
+                generated,
+                llm=llm,
+                image_gen=image_gen,
+                bg_remover=bg_remover,
+                icon_gen=icon_gen,
+            )
 
         output = self._assemble(run_ctx, resolved)
         result = PipelineResult(
