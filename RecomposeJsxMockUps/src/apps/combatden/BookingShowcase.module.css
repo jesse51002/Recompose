@@ -64,14 +64,19 @@
 /*
  * `Padding(bottom: spacingBig)` over `IgnorePointer(AnimatedOpacity(...))`.
  *
- * `pointer-events: none` stands in for the `IgnorePointer`. Dart re-enables the
- * button once the fade lands; here it stays off, because every tap in the
- * showcase is a no-op and a cursor that promises otherwise is the worse lie.
+ * `pointer-events` stands in for the `IgnorePointer`, and like Dart it is off
+ * only WHILE the CTA fades in — the keyframe re-enables it at `to`, and the
+ * `both` fill keeps that final state.
+ *
+ * It used to be pinned off, on the reasoning that every tap here was a no-op
+ * and a live cursor would be the worse lie. That stopped being true when this
+ * became a real screen in a real flow: the CTA is now the ONLY way off
+ * booking, which carries no bottom nav, so an unclickable button was not a
+ * harmless lie but a dead end.
  */
 .ctaRow {
   flex: 0 0 auto;
   padding-bottom: var(--sc-spacing-big);
-  pointer-events: none;
   animation: fadeIn var(--bk-cta-fade-ms) var(--bk-ease) var(--bk-cta-delay-ms) both;
 }
 
@@ -105,10 +110,14 @@
 @keyframes fadeIn {
   from {
     opacity: 0;
+    /* `IgnorePointer` while it is still arriving — a button you cannot see is
+       not a button you should be able to press. */
+    pointer-events: none;
   }
 
   to {
     opacity: 1;
+    pointer-events: auto;
   }
 }
 

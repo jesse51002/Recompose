@@ -134,6 +134,37 @@ is exported from nowhere. It is typechecked and linted (it is in `tsconfig.json`
 Port 8081, not 8080 — the studio pins 8080 with `strictPort`, and running both
 at once is the normal case when checking the harness against the real host.
 
+## No screen may be a dead end
+
+**Every screen must carry a way off it, and the last screen of a flow returns to
+that flow's root.** This is a correctness property, not a nicety: an asset is
+something a reviewer clicks through, and one screen with no exit ends the
+review there.
+
+Where the exit lives, per screen:
+
+- `home` / `store` / `video` / `profile` — the bottom nav. Four tabs, always
+  present, always reset to that tab's root.
+- `class` — the topbar's **back** button, and only that. This screen carries no
+  bottom nav (the member app's does not either), so an unwired back button here
+  is not a cosmetic gap, it is a trap.
+- `booking` — its **Continue**, which `nav.reset()`s to the asset root rather
+  than back through the class detail the member just finished with.
+- every celebration card — its CTA, which appears once the card settles; a tap
+  anywhere on a still-animating card skips straight to settled, so a slow
+  entrance can never strand anyone. The last card wraps to the first.
+
+Two traps this has already sprung, both of which typecheck and lint cleanly:
+
+- **A rendered affordance with no handler.** `class`'s back button and
+  `booking`'s Continue were both drawn and both did nothing.
+- **`pointer-events: none` outliving its reason.** `booking`'s CTA row was
+  pinned unclickable on the argument that every tap was a no-op anyway. True
+  when nothing navigated; a dead end the moment something did.
+
+When adding a screen, walk to it in `make dev` and walk back out. Nothing in
+`make check` can see this.
+
 ## Rules
 
 - **No data fetching, ever.** Content comes from `showcaseContent.ts` /
