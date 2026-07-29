@@ -202,7 +202,7 @@ flowchart LR
   P["build prompt<br/>brief + slot + palette<br/>(+ declared dependencies<br/>as style reference)"]
   C["classify visual<br/>complexity<br/>→ quality tier"]
   G["generate<br/>text-to-image"]
-  B["background — always:<br/>remove flat backdrop<br/>→ grid-trim crop"]
+  B["background — cutout slots only:<br/>remove flat backdrop<br/>→ grid-trim crop<br/>(a scene slot skips it)"]
   P --> C --> G --> B
 ```
 
@@ -210,6 +210,12 @@ Generation is text-to-image only (no style-adherence check, no corrective
 edit), and declared dependencies are folded into the prompt as reference,
 never fed in as input images. The background pass (remove → two-pass
 grid-trim crop) runs no cutout-quality check.
+
+**A slot declaring `scene: true` is the exception, and inverts the contract.**
+It is a photograph of a real place rather than an object on a flat field, so it
+takes its own prompt rule, pins the cheapest quality tier, and **skips the
+background pass** — which would otherwise cut a person out of the room the
+picture is of. See `ThemeTree/CLAUDE.md`, "Two kinds of image".
 
 ### Icons
 
@@ -365,6 +371,13 @@ Three standalone entrypoints (run from the package root, like `make`):
   only *what to change*). The prior image is kept as a numbered file in the
   run's `images/` dir (`<slot>.v1.png`, …); there is no version history in
   `output.yaml`.
+- **`scripts/prefill_images`** — `--run-dir <dir>` (or `--all-runs <app_dir>`).
+  Seeds image slots that are declared but not yet generated from checked-in
+  demo imagery under `apps/<app_id>/prefill/<Category>/`, matched to the run's
+  own `category`. Absent-only and idempotent; it can never overwrite a
+  generated image. Costs nothing and is logged as `kind: prefill`, so a seeded
+  slot stays distinguishable from a real one and can be re-rolled later with
+  `regen_image`. Run `make sync-assets` afterwards.
 - **`scripts/edit_customization`** — `--file <customization.yaml>` plus the
   five flattened optional fields (`--name`, `--short-desc`, `--long-desc`,
   `--colors-description`, `--mode light|dark`). A validated, targeted edit of

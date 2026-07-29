@@ -42,9 +42,10 @@ and the files under `final_images/` / `images/` / `icons/` — are **never edite
 by hand**. To change anything in an existing run you use the scripts:
 `scripts/expand` (fill not-yet-done slots, including a missing `category`),
 `scripts/regen` (re-make colour/font/text/icon slots, or `category`),
-`scripts/regen_image` (images), `scripts/edit_customization` (a validated,
-targeted edit of the brief `customization.yaml`), or a full pipeline run
-(`ThemeTree/cli.py`). The brief is the one editable *input* — and even it goes
+`scripts/regen_image` (images), `scripts/prefill_images` (seed a not-yet-done
+image slot from a checked-in file instead of generating it),
+`scripts/edit_customization` (a validated, targeted edit of the brief
+`customization.yaml`), or a full pipeline run (`ThemeTree/cli.py`). The brief is the one editable *input* — and even it goes
 through `edit_customization` (which re-validates), not raw text munging;
 `app.yaml` is architect-owned.
 
@@ -54,6 +55,31 @@ feature to add to the pipeline. A missing capability is a feature request,
 never a manual edit.
 
 ---
+
+## Two kinds of image: cutout and scene
+
+Every image slot is a CUTOUT by default — an object on a flat field that
+`BackgroundService` lifts onto transparency, so it composites onto whatever
+surface the app paints it on. The prompt rule says so explicitly ("Nothing else
+is in frame — no scene").
+
+A slot declaring **`scene: true`** (`schema/slots.py`, `ImageSlot.scene`) is a
+photograph instead, and inverts three things in `ThemeTree/modules/images/
+image_node.py`:
+
+- it reads `prompts/scene_prompt_rule.md` rather than `image_prompt_rule.md`;
+- it pins `SCENE_QUALITY` regardless of the classified complexity tier — a
+  photograph of a real place is table stakes for an image model in a way a
+  brand's rank insignia is not, so the cheapest tier is genuinely enough;
+- it **skips the background pass entirely**. Running it would be destructive:
+  the pass exists to lift a subject off a known flat field, and a photograph of
+  a room has neither.
+
+The complexity classifier still RUNS for a scene slot and its verdict is still
+recorded on the `ImageOutput` — only the quality it would have picked is
+overridden, so the tier stays visible if that ever needs revisiting. `scene`
+defaults to false, so every existing `app.yaml` and every frozen per-run
+snapshot validates unchanged.
 
 ## Core principle: app-agnostic
 

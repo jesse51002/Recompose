@@ -17,7 +17,7 @@ overrides anything general said here.
 | `RecomposeAPI/` | The **read-only** API over a produced `output.yaml`. GET-only. The only Python surface that ships. | Python |
 | `RecomposeFlutter/` | The Flutter theme runtime. Fetches a tenant's resolved branding at startup and exposes resolvers that never throw. | Dart |
 | `RecomposeReact/` | The **web** theme runtime — the React mirror of `RecomposeFlutter`. Ships no screens and no assets. | TypeScript |
-| `RecomposeJsxMockUps/` | The feature-free mock screens. No logic, no API calls, no state. What the design agent edits and the studio previews. | TypeScript |
+| `RecomposeJsxMockUps/` | The feature-free mock **assets** — interactive mocks you click through, on an app-agnostic kit. No logic, no API calls, no fetching. What the design agent edits and the studio nests. | TypeScript |
 | `RecomposeStudio/` | The standalone theme browser: Library, Inspect and Studio views. | TypeScript |
 
 Dependencies run one way and must keep running one way:
@@ -34,7 +34,13 @@ RecomposeStudio ──> RecomposeJsxMockUps ──> RecomposeReact ──> Recom
 
 `RecomposeJsxMockUps` may import from `RecomposeReact` and from itself. **From
 nothing else.** It may not reach into `RecomposeStudio` for a widget, a token or
-a helper — that is why `cx` is duplicated in both rather than shared.
+a helper — that is why `cx` and `useElementSize` are duplicated in both rather
+than shared.
+
+It carries a second, internal one-way rule: `src/kit/` (app-agnostic) may not
+import `src/apps/`. An app reaches the kit by calling `defineMockAsset` /
+`defineMockApp`, never the reverse — which is what makes a new app a folder
+rather than a change to the machinery. Its own eslint Gate 1 enforces it.
 
 The rule predates the package split; it was enforced inside the old single
 package and the split made it structural. If you find yourself wanting to share
