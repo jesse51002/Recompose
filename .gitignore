@@ -34,3 +34,4 @@ vendor/colormcp/node_modules/
 vendor/colormcp/dist/
 
 assets/**/*
+.gstack/
