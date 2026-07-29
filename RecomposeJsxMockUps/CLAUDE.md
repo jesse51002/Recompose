@@ -60,8 +60,6 @@ src/
   apps/
     combatden/         one product: its screens, its tokens, its two assets
       layout_brief.yaml  the brief this layout came from — REQUIRED
-    zenbjj/            a REDESIGN of the base — a sibling folder, see below
-      layout_brief.yaml
     romanahouse/       a second redesign, for the ReformerClassical run
       layout_brief.yaml
       shell/             its OWN chrome: sheet, head, index, action band, plate
@@ -141,23 +139,23 @@ A redesign folder carries its own `layout_brief.yaml` naming the design it was
 made for. The base's names the base — it belongs to no run, and it is what
 every fork starts from.
 
-**There are four forks, and they are worked examples of different things.**
+**There are three forks, and they are worked examples of different things.**
 
-**`apps/zenbjj/`** was the first: same two assets, same eleven screens, same
-element set as `apps/combatden/`, rearranged for a design whose direction is
-"calm on the surface, deep power underneath". What it shows is how LITTLE a fork
-has to touch — every difference is a value in one of its own stylesheets, a
-different arrangement prop passed to a shared component, or one new treatment
-file beside the one it sits next to. Nothing in `src/kit/` and nothing in
-`apps/combatden/` moved. It also renames its own surface component
-(`ZenBjjSurface`, where the base has `CombatDenSurface`) and nothing else: a
-fork's token root is still its own `provider`, and the file name is the only
-part of it that belongs to the design.
+**A FOURTH FORK, `apps/zenbjj/`, WAS DELETED** — worth knowing because its
+lesson is still live. It was the first one built: same assets, same screens,
+same element set, rearranged for a direction of "calm on the surface, deep power
+underneath". It passed every mechanical gate and still read as the base with the
+spacing tuned, because it adjusted gutters, weights and radii rather than
+committing to a different world. That is the failure mode `mockup-redesign-start`
+exists to prevent, and it is why guardrails alone are not enough to produce a
+redesign. It was removed once three better-worked examples existed; keeping a
+fork whose only value was as a warning is a fork every later agent has to read
+before learning it should not be copied.
 
-It is also the cautionary half. It passes every mechanical gate and still reads
-as the base with the spacing tuned, because it adjusted gutters, weights and
-radii rather than committing to a different world. That is the failure mode
-`mockup-redesign-start` exists to prevent.
+A fork renames its own surface component (`RomanaHouseSurface`,
+`MileMarkerSurface`, `VinyasaFlowSurface`, where the base has
+`CombatDenSurface`) and nothing else: a fork's token root is still its own
+`provider`, and the file name is the only part of it that belongs to the design.
 
 **`apps/romanahouse/`** is the second, built for the theme produced at
 `apps/combatden/ReformerClassical/`, and it shows how far a fork MAY go under
@@ -181,8 +179,8 @@ things it establishes that a later fork should know:
   is a segmented header index, which costs one row of the axis there is more of.
   If a direction seems to need a pattern from a bigger screen, it needs a
   different pattern.
-- **A fork MAY replace its bundled fallbacks**, and this one does where zenbjj
-  does not. Its `showcaseTokens.ts` fallback colours, its two font families and
+- **A fork MAY replace its bundled fallbacks**, and this one does where a
+  palette-agnostic direction would not need to. Its `showcaseTokens.ts` fallback colours, its two font families and
   its bundled cut-out art are the produced run's, not CombatDen's. The reason is
   in the file: the direction is committed to a light canvas, and the harness
   opens UNTHEMED — against CombatDen's near-black canvas the whole arrangement
@@ -300,13 +298,11 @@ through. Not a gallery of stills behind a picker.
 | --- | --- | --- | --- |
 | combatden | `app` | the member app | home, class, booking, store, video, profile |
 | combatden | `celebration` | the post-class flow | streak, rank, points, rewards, wins |
-| zenbjj | `app` | the same member app, redesigned | the same six |
-| zenbjj | `celebration` | the same post-class flow, redesigned | the same five |
-| romanahouse | `app` | the same member app, redesigned again | the same six |
-| romanahouse | `celebration` | the same post-class flow, redesigned again | the same five |
-| milemarker | `app` | the same member app, redesigned a third time | the same six |
+| romanahouse | `app` | the same member app, redesigned | the same six |
+| romanahouse | `celebration` | the same post-class flow, redesigned | the same five |
+| milemarker | `app` | the same member app, redesigned again | the same six |
 | milemarker | `celebration` | the same post-class flow, reframed | the same five |
-| vinyasaflow | `app` | the same member app, redesigned a fourth time | the same six |
+| vinyasaflow | `app` | the same member app, redesigned a third time | the same six |
 | vinyasaflow | `celebration` | the same post-class flow, redesigned again | the same five |
 
 A redesign's rows are the base's rows, and that is the point: **the asset and

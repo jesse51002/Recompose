@@ -58,15 +58,16 @@ import {
 // ---------------------------------------------------------------------------
 //
 // THIS FORK REPLACES THE BASE'S FALLBACKS, as ../romanahouse and ../milemarker
-// do and ../zenbjj does not. That fork kept CombatDen's values on the argument
-// that a redesign changes arrangement rather than palette — true for a
-// palette-agnostic direction, and this one is not. Vinyasa Flow is committed to
-// a WARM LINEN canvas with a terracotta thread drawn on it. Rendered against
-// CombatDen's near-black canvas the thread turns to a dark line on a dark
-// field, every node vanishes, and the one structure the whole design is built
-// from cannot be seen at all. The harness opens UNTHEMED by default (see
-// ../../../CLAUDE.md, "Looking at it"), so these values are what a reviewer
-// actually judges.
+// do. A fork MAY inherit CombatDen's values, on the argument that a redesign
+// changes arrangement rather than palette — true for a palette-agnostic
+// direction, and this one is not. Vinyasa Flow is committed to
+// a WARM LINEN canvas — an off-white paper ground with deep cork brown as its
+// only ink — and that canvas IS the point of difference: most premium fitness
+// apps are stark white or blacked-out, and a warm paper ground is what makes
+// this one feel like a studio with wooden floors rather than a piece of
+// software. Rendered against CombatDen's near-black canvas none of that
+// survives. The harness opens UNTHEMED by default (see ../../../CLAUDE.md,
+// "Looking at it"), so these values are what a reviewer actually judges.
 //
 // Read off the produced run this layout was designed for,
 // `apps/combatden/VinyasaFlow/output.yaml`.

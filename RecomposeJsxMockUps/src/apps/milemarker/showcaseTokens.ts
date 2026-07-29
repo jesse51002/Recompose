@@ -57,9 +57,9 @@ import {
 // MILE MARKER fallbacks — used only when no theme loads.
 // ---------------------------------------------------------------------------
 //
-// THIS FORK DIVERGES FROM ../zenbjj HERE, DELIBERATELY, for the same reason
-// ../romanahouse does. That fork kept the base's CombatDen fallbacks on the
-// argument that a redesign changes arrangement rather than palette. True for a
+// THIS FORK REPLACES THE BASE'S FALLBACKS, DELIBERATELY, for the same reason
+// ../romanahouse does. A fork MAY inherit CombatDen's values, on the argument
+// that a redesign changes arrangement rather than palette — true for a
 // direction that is palette-agnostic; this one is not. Mile Marker is committed
 // to DAYLIGHT — an open sky field with its headline knocked out in white, a
 // pale canvas ground, and white painted lane stripes carrying every division on
