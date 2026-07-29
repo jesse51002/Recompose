@@ -65,6 +65,9 @@ src/
     romanahouse/       a second redesign, for the ReformerClassical run
       layout_brief.yaml
       shell/             its OWN chrome: sheet, head, index, action band, plate
+    milemarker/        a third redesign, for the RunClub run
+      layout_brief.yaml
+      shell/             its OWN chrome: screen, sky, lane, last lane, band, disc
     index.ts           MOCK_APPS: every app, for a host that names none
   index.ts             the ONLY export surface
 ```
@@ -134,7 +137,7 @@ A redesign folder carries its own `layout_brief.yaml` naming the design it was
 made for. The base's names the base — it belongs to no run, and it is what
 every fork starts from.
 
-**There are two forks, and they are worked examples of different things.**
+**There are three forks, and they are worked examples of different things.**
 
 **`apps/zenbjj/`** was the first: same two assets, same eleven screens, same
 element set as `apps/combatden/`, rearranged for a design whose direction is
@@ -190,6 +193,40 @@ things it establishes that a later fork should know:
   `CountUpText`** — a line box shorter than the font's own makes adjacent digit
   cells overlap through the reel's clip, which is a bug this fork shipped once.
 
+**`apps/milemarker/`** is the third, built for the theme produced at
+`apps/combatden/RunClub/` (Mile Marker Run Club). Its direction (read
+`layout_brief.yaml`) is the road seen from the start line: every screen is split
+by a HORIZON, with a fixed field of daylight above it carrying the one live fact
+of that screen knocked out at 60px, a lane-striped ground below it that is the
+only thing that scrolls, and the four destinations as the ground's own last lane
+at the foot. What it adds to what the other two already establish:
+
+- **Guardrail 11 now fixes nav at the FOOT, and this fork was built to it.** The
+  first direction put the four destinations on the horizon line mid-screen; that
+  is not a side rail, but it is not the foot either. The replacement is the
+  ground's last band, opened by a lane stripe like every other lane, with the
+  coral finish tape stretched across the cell the member is standing in.
+- **Contrast is a design input, not a review finding.** Two decisions were forced
+  by it and both are recorded in the brief: the finish tape could not be the
+  navigation FILL (its ink lands at 4.35:1 and fails AA under 18.66px bold), so
+  coral is the marker and track blue is the action band; and a white lane stripe
+  is ~1.25:1 on the pale canvas, so the fork carries TWO stripe colours — blue on
+  the ground, knockout white only over a colour field or a photograph.
+- **It replaces its bundled ART as well as its fallback colours**, which
+  `romanahouse` does not. The filenames stay the base's — they are the keys every
+  ported call site uses — while the bytes are the run's `final_images/`. The
+  harness opens UNTHEMED, so those files are what a reviewer actually judges: left
+  as the base's, a run club renders a fight-club shield in its sky.
+- **Photographs are full-bleed or a disc, never an inset rectangle.** A schedule
+  forty rows long cannot give every thumbnail a stretch of route, and the
+  alternative to a disc is the small rounded rectangle that IS the card this
+  design does not have. A coin is the form this brand already mints.
+
+Its celebration asset is REFRAMED rather than rebuilt: the flow's action is the
+fork's full-width band and every card wears the fork's palette, faces and art,
+but the five card interiors still carry the base's composition. That is the
+honest state of it and the next thing to do there.
+
 It also **deletes the base chrome it replaced** rather than leaving it in place:
 a fork carrying two navigations and two scaffolds, one of them unreachable, is a
 fork the next agent has to reverse-engineer. If a fork replaces a component,
@@ -216,6 +253,8 @@ through. Not a gallery of stills behind a picker.
 | zenbjj | `celebration` | the same post-class flow, redesigned | the same five |
 | romanahouse | `app` | the same member app, redesigned again | the same six |
 | romanahouse | `celebration` | the same post-class flow, redesigned again | the same five |
+| milemarker | `app` | the same member app, redesigned a third time | the same six |
+| milemarker | `celebration` | the same post-class flow, reframed | the same five |
 
 A redesign's rows are the base's rows, and that is the point: **the asset and
 route sets are the thing a fork may not change.** If a fork ever needs a row of

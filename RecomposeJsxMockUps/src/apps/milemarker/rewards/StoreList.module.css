@@ -1,0 +1,109 @@
+/* The points store, in the horizon world. See ../RewardsShowcase.tsx. */
+
+
+
+
+/* The finish tape again — one device for "where you are", used everywhere. */
+
+/* --- A reward: a price-list entry, not a card --- */
+
+.item {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-large);
+  width: 100%;
+  padding-inline: var(--sc-gutter);
+  padding-top: var(--sc-spacing-large);
+  padding-bottom: var(--sc-spacing-large);
+  border-top-style: solid;
+  border-top-width: var(--sc-lane-weight-sm);
+  border-top-color: var(--sc-lane-soft);
+  text-align: left;
+}
+
+.itemFirst {
+  border-top-width: 0;
+  /*
+   * The first entry sits snug under the label that names the list; every other
+   * entry is separated FROM ITS NEIGHBOUR and keeps the full inset. Same rule,
+   * opposite ends of it.
+   */
+  padding-top: var(--sc-spacing-medium);
+}
+
+.itemBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-tiny);
+}
+
+.title {
+  font: var(--sc-type-name);
+  letter-spacing: var(--sc-type-name-ls);
+  color: var(--sc-text);
+  /* The Dart title carries its own newline and the card reserves two lines. */
+  white-space: pre-line;
+}
+
+.price {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-accent);
+}
+
+/*
+ * THE COST IS A FIGURE, hard against the right margin — a price list is read
+ * down its right edge.
+ */
+.cost {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0;
+}
+
+.costFigure {
+  font: var(--sc-type-fig-md);
+  letter-spacing: var(--sc-type-fig-md-ls);
+  color: var(--sc-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.costUnit {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+}
+
+/* --- The balance, in the sky --- */
+
+.balanceAside {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sc-spacing-small);
+}
+
+/*
+ * The member's standing, in the sky's lead row — the rank medallion beside the
+ * balance, which is the pairing the base's topbar has. Knockout, because this
+ * row sits on the saturated field.
+ */
+.standing {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-small);
+  min-height: 32px;
+}
+
+.standingLabel {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-sky-ink-2nd);
+}

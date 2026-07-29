@@ -1,0 +1,30 @@
+/* A photograph at its OWN proportion. See ./Frame.tsx. */
+
+.frame {
+  box-sizing: border-box;
+  position: relative;
+  flex: none;
+  display: block;
+  overflow: hidden;
+  background: var(--sc-primary-card);
+  /*
+   * Square corners and a painted edge, never a radius — a frame in a filmstrip
+   * is not a card, and the moment it gains a corner radius it becomes one.
+   */
+  border-style: solid;
+  border-width: var(--sc-lane-weight-sm);
+  border-color: var(--sc-lane-soft);
+}
+
+/*
+ * `cover` is safe HERE and only here: the box is given the source's own ratio,
+ * so cover crops nothing. It is kept rather than swapped for `contain` because
+ * a thumbnail that is a few pixels off its nominal ratio should fill its frame
+ * rather than letterbox inside it.
+ */
+.img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}

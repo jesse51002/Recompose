@@ -1,0 +1,87 @@
+/* The four destinations, as the ground's last lane. See ./LastLane.tsx. */
+
+.lane {
+  box-sizing: border-box;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  height: var(--sc-tape-h);
+  background: var(--sc-ground);
+  /*
+   * Opened by a lane stripe like every other lane, which is what makes this
+   * read as the ground's last band rather than a bar parked on top of it.
+   */
+  border-top-style: solid;
+  border-top-width: var(--sc-lane-weight);
+  border-top-color: var(--sc-lane);
+}
+
+.cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sc-spacing-tiny);
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  position: relative;
+  color: var(--sc-text-2nd);
+  /* The whole cell is the tap target — a quarter of 390pt, comfortably over 44. */
+  min-width: 0;
+}
+
+.cellActive {
+  color: var(--sc-text);
+}
+
+/*
+ * THE FINISH TAPE — the coral stripe stretched across the lane the member is
+ * standing in. It sits ON the lane stripe that opens the band, replacing it for
+ * the width of that one cell.
+ *
+ * Selection is carried REDUNDANTLY: this stripe plus the label's colour and
+ * weight. Coral on the pale canvas is 2.8:1 as a non-text indicator, just under
+ * the 3:1 an indicator would need if it were the only signal — the label
+ * carries the rest, which is what keeps that honest rather than lucky.
+ */
+.tape {
+  position: absolute;
+  top: calc(-1 * var(--sc-lane-weight));
+  left: 0;
+  right: 0;
+  height: var(--sc-lane-weight);
+  background: var(--sc-tape);
+}
+
+.label {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+}
+
+.labelActive {
+  font: var(--sc-type-label-lg);
+  letter-spacing: var(--sc-type-label-lg-ls);
+}
+
+/*
+ * `AppNavItem.showLabel: false` keeps the label in the accessibility tree while
+ * removing it from the visual layout — never `display: none`, never
+ * `aria-hidden`. Ported verbatim from the base's nav; nothing in this fork uses
+ * it yet, and it stays because dropping it would drop an accessible name.
+ */
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

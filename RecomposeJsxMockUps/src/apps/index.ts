@@ -11,6 +11,7 @@
 import type { MockApp } from '../kit/registry';
 
 import { COMBATDEN_APP } from './combatden';
+import { MILEMARKER_APP } from './milemarker';
 import { ROMANAHOUSE_APP } from './romanahouse';
 import { ZENBJJ_APP } from './zenbjj';
 
@@ -18,6 +19,7 @@ export const MOCK_APPS: readonly MockApp[] = Object.freeze([
   COMBATDEN_APP,
   ZENBJJ_APP,
   ROMANAHOUSE_APP,
+  MILEMARKER_APP,
 ]);
 
 /** One app by id, or `undefined`. */
