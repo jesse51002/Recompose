@@ -20,7 +20,6 @@ from __future__ import annotations
 
 import asyncio
 import logging
-import re
 from pathlib import Path
 
 import yaml
@@ -30,13 +29,9 @@ from ThemeTree.core.util import load_yaml
 from RecomposeAPI.studio.config import BRIEF_SUFFIX, settings
 from RecomposeAPI.studio.errors import UnknownBriefError
 from RecomposeAPI.studio.schema.brief_request import BriefCommitted, BriefRequest
+from RecomposeAPI.studio.service.slug import slugify
 
 logger = logging.getLogger(__name__)
-
-# Slug derivation from a design name: keep letters/digits, everything else
-# becomes a single hyphen, trimmed at both ends. "Iron & Ash MMA" ->
-# "iron-ash-mma".
-_NON_SLUG_CHARS = re.compile(r"[^a-z0-9]+")
 
 
 class BriefService:
@@ -55,7 +50,7 @@ class BriefService:
         slug = (
             str(request.slug)
             if request.slug is not None
-            else self._slugify(request.name)
+            else slugify(request.name)
         )
         path = self._briefs_dir / f"{slug}{BRIEF_SUFFIX}"
         await asyncio.to_thread(self._write, path, brief)
@@ -71,21 +66,6 @@ class BriefService:
             )
         raw = await asyncio.to_thread(load_yaml, path)
         return Customization.model_validate(raw)
-
-    @staticmethod
-    def _slugify(name: str) -> str:
-        """A filename stem from the design name.
-
-        Raises ``ValueError`` when the name has nothing sluggable in it (all
-        punctuation) — better a clear refusal than a file called ``.yaml``.
-        """
-        slug = _NON_SLUG_CHARS.sub("-", name.lower()).strip("-")
-        if not slug:
-            raise ValueError(
-                f"cannot derive a filename from the design name {name!r}; "
-                "pass an explicit 'slug'"
-            )
-        return slug
 
     @staticmethod
     def _write(path: Path, brief: Customization) -> None:

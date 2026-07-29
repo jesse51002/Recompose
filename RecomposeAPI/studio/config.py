@@ -20,17 +20,9 @@ BRIEFS_DIRNAME = "briefs"
 # inside it. Separate directories because they have separate lifetimes — a
 # session outlives every run it starts.
 SESSIONS_DIRNAME = "sessions"
-# One JSON object per line, append-only. See ThemeTree/studio/schema/run_record.py.
+# One JSON object per line, append-only. See ./schema/run_record.py.
 RUN_LOG_SUFFIX = ".jsonl"
 BRIEF_SUFFIX = ".yaml"
-
-# The ThemeReact dev server. It is pinned to 8080 with `strictPort`
-# (ThemeReact/vite.config.ts) because ../FastApiBackend's CORS allowlist has
-# 8080 and not 5173 — so this list follows the React app, never the reverse.
-# Both hostnames are listed because http://localhost:8080 and
-# http://127.0.0.1:8080 are different browser origins.
-_DEFAULT_CORS_ORIGINS = ["http://localhost:8080", "http://127.0.0.1:8080"]
-
 
 class Settings(BaseSettings):
     """Studio config. Env vars (or `.env`) override every default."""
@@ -42,10 +34,16 @@ class Settings(BaseSettings):
     apps_root: Path = _DEFAULT_APPS_ROOT
     # The studio's own durable state (run logs + saved briefs). Gitignored.
     studio_root: Path = _ROOT / STUDIO_DIRNAME
-    # Named apart from the read API's `cors_origins` so a shared `.env`
-    # can't set one from the other: they front different audiences (the
-    # emulator vs. one local browser tab).
-    studio_cors_origins: list[str] = _DEFAULT_CORS_ORIGINS
+    # --- The layout half ---------------------------------------------------
+    # Where a design folder is copied to. This is a TypeScript package's source
+    # tree, which is unusual for Python to write into and is the point: a
+    # design IS a mock app folder, and the dev server already watches this
+    # directory, so an agent's edits hot-reload in the browser.
+    mockup_apps_dir: Path = _ROOT / "RecomposeJsxMockUps" / "src" / "apps"
+    # The layout agent, as ARGV — a list, never a shell string. Empty (the
+    # default) selects the stub, so the flow is walkable with no agent set up.
+    # Set LAYOUT_AGENT_COMMAND to a JSON array in `.env`.
+    layout_agent_command: list[str] = []
 
     # --- The brief agent (ThemeTree/studio/agent/) ------------------------------
     # A BARE Anthropic model name, never a litellm "provider/model" string:

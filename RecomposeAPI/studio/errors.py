@@ -64,6 +64,22 @@ class SessionInFlightError(StudioError):
         self.design_name = design_name
 
 
+class DesignNameTakenError(StudioError):
+    """That generated design folder already exists (maps to HTTP 409).
+
+    Named generations collide by design: two attempts called the same thing
+    ARE the same thing. Refused rather than overwritten, because the copy is
+    the one path in the layout half that could destroy generated work.
+    """
+
+    def __init__(self, design_id: str) -> None:
+        super().__init__(
+            f"a design folder named {design_id!r} already exists; pick "
+            "another name for this generation (or delete that folder)"
+        )
+        self.design_id = design_id
+
+
 class RunNameTakenError(StudioError):
     """The target run directory already exists (maps to HTTP 409).
 

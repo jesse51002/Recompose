@@ -228,6 +228,16 @@ class SessionRegistry:
     # --- reading ---------------------------------------------------------
 
     @property
+    def active_id(self) -> str | None:
+        """The open session's id, without building a whole snapshot.
+
+        A background task reporting progress needs the id and nothing else,
+        and it reports many times — assembling the full record list on each
+        one would be pure waste.
+        """
+        return self._active_id
+
+    @property
     def active(self) -> SessionSnapshot | None:
         """The session currently open, if any."""
         if self._active_id is None:

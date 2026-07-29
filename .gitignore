@@ -35,3 +35,12 @@ vendor/colormcp/dist/
 
 assets/**/*
 .gstack/
+
+# Generated design folders. The studio copies an authored mock app into one of
+# these per layout generation, and a layout agent edits it in place. Each is a
+# produced artifact, not source; the undo is `rm -rf`.
+#
+# A PREFIX rather than an ignore-everything-then-un-ignore-the-real-ones rule:
+# that shape needs a new negation for every authored app, and its failure mode
+# is a real app silently vanishing from git.
+RecomposeJsxMockUps/src/apps/gen-*/
