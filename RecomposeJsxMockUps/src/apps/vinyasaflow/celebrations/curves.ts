@@ -84,6 +84,21 @@ export function cubic(a: number, b: number, c: number, d: number): Curve {
  * site reads `Curves.easeOutBack(t)` — one hop from the Dart it ports.
  */
 export const Curves = Object.freeze({
+  /**
+   * THE BREATH — `Curves.easeInOutSine`, and the JS twin of `BREATH` in
+   * ../shell/breath.ts.
+   *
+   * The only curve a per-frame driver in this fork may sample. It is here
+   * rather than in the ported set above it because it is not ported: the Dart
+   * reaches for `easeOutQuart` / `easeOutExpo` / `easeInQuart`, every one of
+   * which is hard at one end, and this design's whole separation from a brisk
+   * product animation is that it is soft at BOTH (../layout_brief.yaml).
+   *
+   * Keep the control points identical to `BREATH`'s. Two curves that are
+   * *nearly* the same read worse than two that are obviously different,
+   * because the eye reads the mismatch without being able to name it.
+   */
+  easeInOutSine: cubic(0.37, 0, 0.63, 1),
   /** `Curves.easeOut`. */
   easeOut: cubic(0.25, 0.1, 0.25, 1),
   /** `Curves.easeOutQuart` — the app's motion law, and `EASE_OUT_QUART` in CSS. */

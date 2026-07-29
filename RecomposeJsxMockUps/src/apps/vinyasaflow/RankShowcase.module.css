@@ -111,7 +111,7 @@
   transform-origin: left center;
   animation-name: rank-sweep;
   animation-duration: var(--rank-draw-half-ms);
-  animation-timing-function: cubic-bezier(0.12, 0, 0.39, 0);
+  animation-timing-function: var(--vf-breath-in);
   animation-fill-mode: both;
 }
 
@@ -132,7 +132,7 @@
   transform-origin: right center;
   animation-name: rank-sweep;
   animation-duration: var(--rank-draw-half-ms);
-  animation-timing-function: cubic-bezier(0.61, 1, 0.88, 1);
+  animation-timing-function: var(--vf-breath-out);
   animation-fill-mode: both;
   animation-delay: var(--rank-draw-half-ms);
 }
@@ -156,7 +156,7 @@
   row-gap: var(--sc-spacing-small);
   animation-name: rank-arrive;
   animation-duration: var(--rank-settle-ms);
-  animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  animation-timing-function: var(--vf-breath);
   animation-fill-mode: both;
   animation-delay: var(--rank-draw-ms);
 }
@@ -181,7 +181,7 @@
   row-gap: var(--sc-spacing-small);
   animation-name: rank-arrive;
   animation-duration: var(--rank-settle-ms);
-  animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  animation-timing-function: var(--vf-breath);
   animation-fill-mode: both;
   animation-delay: var(--rank-draw-ms);
 }
@@ -228,4 +228,17 @@
   .tally {
     animation: none;
   }
+}
+
+/*
+ * A TAP FINISHES THE DRAW — the rule that outranks the motion
+ * (./shell/useTapToSettle.ts). A negative delay past the longest animation on
+ * the card runs every one of them to its own end and holds it there, which for
+ * the two wedges means "rotated fully off the ring" — a better settled state
+ * than the reduce block's `display: none` and reached without this file
+ * restating what finished looks like.
+ */
+.finished,
+.finished * {
+  animation-delay: -30s !important;
 }

@@ -41,10 +41,11 @@
 // itself is in ./pointSphere.ts, where it can be asserted.
 
 import { useEffect, useRef, useState } from 'react';
-import { CelebrationTimings, ThemedImage } from 'recompose-react';
+import { ThemedImage } from 'recompose-react';
 
 import { CountUpText } from './celebrations/CountUpText';
 import { SHOWCASE_POINTS_STATS } from './celebrations/showcaseCelebrationStats';
+import { cx } from './cx';
 import { formatThousands } from './formatPoints';
 import {
   LOOP_SIZE,
@@ -57,8 +58,10 @@ import {
   starSize,
 } from './pointSphere';
 import styles from './PointsShowcase.module.css';
+import { ARRIVE_MS, BREATH, CLOSE_MS, COUNT_MS, DRAW_MS } from './shell/breath';
 import { Figure } from './shell/Figure';
 import { Loop } from './shell/Thread';
+import { useTapToSettle } from './shell/useTapToSettle';
 import { showcaseAsset } from './showcaseAssets';
 import { SLOT_POINTS_STARS_IMAGE, SLOT_SINGLE_POINT } from './showcaseSlots';
 import { showcaseStyle } from './showcaseTokens';
@@ -76,21 +79,14 @@ import { usePrefersReducedMotion } from './usePrefersReducedMotion';
 // stop"). The curve below is symmetric for exactly that reason, and nothing in
 // this file bounces, springs or overshoots.
 
-/** The breath. Symmetric ease — soft in, soft out. */
-const BREATH = 'cubic-bezier(0.37, 0, 0.63, 1)';
-
 /** The thread drawing itself down the margin. "A full screen draws in about three quarters of a second." */
-const DESCEND_MS = 750;
-
-/** The loop travelling around the hero until it meets itself. */
-const CLOSE_MS = 820;
+const DESCEND_MS = DRAW_MS;
 
 /** The hero fading up inside the ring, while the line is still coming round. */
-const HERO_DELAY_MS = 420;
+const HERO_DELAY_MS = ARRIVE_MS;
 
-/** A reveal's own duration, and the slide it travels. */
-const REVEAL_MS = 520;
-const REVEAL_OFFSET_PX = 12;
+/** A reveal's own duration. Opacity only — see `ptReveal` in the stylesheet. */
+const REVEAL_MS = ARRIVE_MS;
 
 /**
  * The count starts the moment the loop closes — that instant is the card's
@@ -98,11 +94,8 @@ const REVEAL_OFFSET_PX = 12;
  */
 const COUNT_DELAY_MS = CLOSE_MS;
 
-/** "A count travels from zero to its value … lands inside three quarters of a second." */
-const COUNT_MS = 750;
-
 /** The running total waits out the roll plus one standard stagger. */
-const TOTAL_DELAY_MS = COUNT_DELAY_MS + COUNT_MS + CelebrationTimings.revealStaggerMs;
+const TOTAL_DELAY_MS = COUNT_DELAY_MS + COUNT_MS + ARRIVE_MS;
 
 /**
  * The geometry and the tempo the stylesheet reads. Theme-independent, so a
@@ -118,7 +111,6 @@ const POINTS_VARS: Readonly<Record<string, string>> = Object.freeze({
   '--pt-count-delay-ms': `${String(COUNT_DELAY_MS)}ms`,
   '--pt-total-delay-ms': `${String(TOTAL_DELAY_MS)}ms`,
   '--pt-reveal-ms': `${String(REVEAL_MS)}ms`,
-  '--pt-reveal-offset': `${String(REVEAL_OFFSET_PX)}px`,
   '--pt-breath': BREATH,
 });
 
@@ -130,8 +122,22 @@ export interface PointsShowcaseProps {
   onCycleComplete?: (() => void) | undefined;
 }
 
+/**
+ * WHEN THIS CARD IS SETTLED, and it is the moment the loop closes.
+ *
+ * The swarm gathers, hands over to the settled view, and the line comes round
+ * the hero and meets itself — "the moment it closes is the moment the card is
+ * settled and its action appears". It used to be `SPHERE_MS + POINTS_HOLD_MS`,
+ * which reported settling only after the card had also finished SITTING there:
+ * 4.3 seconds before the flow's Continue button existed. The hold is a REPLAY
+ * concern and belongs nowhere near the settle.
+ */
+const SETTLE_MS = SPHERE_MS + CLOSE_MS;
+
 export function PointsShowcase({ loop = true, onCycleComplete }: PointsShowcaseProps) {
   const reduceMotion = usePrefersReducedMotion();
+  // A tap finishes the draw — ./shell/useTapToSettle.ts.
+  const { settled: tapped, bind } = useTapToSettle();
   const [cycle, setCycle] = useState(0);
   const [showPoints, setShowPoints] = useState(false);
 
@@ -151,23 +157,32 @@ export function PointsShowcase({ loop = true, onCycleComplete }: PointsShowcaseP
     const toPoints = window.setTimeout(() => {
       setShowPoints(true);
     }, SPHERE_MS);
-    // `_hold = Timer(_kPointsHold, _restart)`, armed by `_onSphereDone`.
-    // Collapsed into one absolute deadline here so the pair re-arms as a unit
-    // each cycle. Everything the settled view draws has landed well before it,
-    // so what the card ends on is a held stillness rather than a scramble.
-    const restart = window.setTimeout(() => {
+    // THE SETTLE IS ITS OWN DEADLINE, and it is the close of the loop rather
+    // than the end of the hold that follows it. See `SETTLE_MS`.
+    const settle = window.setTimeout(() => {
       onCycleComplete?.();
-      if (!loop) return;
-      setShowPoints(false);
-      setCycle((current) => current + 1);
-    }, SPHERE_MS + POINTS_HOLD_MS);
+    }, SETTLE_MS);
+    // `_hold = Timer(_kPointsHold, _restart)`, armed by `_onSphereDone`.
+    // Collapsed into one absolute deadline here so the trio re-arms as a unit
+    // each cycle. STANDALONE ONLY: in the flow `loop` is false and the card
+    // holds where it landed, which is why nothing the flow depends on is
+    // reported from here.
+    const restart = loop
+      ? window.setTimeout(() => {
+          setShowPoints(false);
+          setCycle((current) => current + 1);
+        }, SETTLE_MS + POINTS_HOLD_MS)
+      : 0;
     return () => {
       window.clearTimeout(toPoints);
+      window.clearTimeout(settle);
       window.clearTimeout(restart);
     };
     // `cycle` is the dependency that re-arms the pair: the restart bumps it, the
     // effect tears down and re-runs, and the branch below remounts on its key.
   }, [cycle, loop, reduceMotion, onCycleComplete]);
+
+  const done = tapped || reduceMotion;
 
   return (
     // No `CelebrationFrame` and no `ShowcaseScaffold`: this card owns the whole
@@ -176,13 +191,21 @@ export function PointsShowcase({ loop = true, onCycleComplete }: PointsShowcaseP
     // would put this card's thread 16px right of the thread on every other
     // screen. The line has to land on the same x here as it does on home, or the
     // claim that moving through the app is one continuous stroke is false.
-    <div className={styles.card} style={showcaseStyle(POINTS_VARS)}>
+    <div
+      className={cx(styles.card, done && styles.finished)}
+      style={showcaseStyle(POINTS_VARS)}
+      {...bind}
+    >
       {/* The descent, outside the switch: the thread is there from frame one and
           does not restart when the swarm does. It ends exactly on the loop's
           nine-o'clock tangent, which is why it reads as meeting the ring rather
           than stopping in mid-air. */}
       <span className={styles.enter} aria-hidden="true" />
-      {showPoints || reduceMotion ? <Settled key={cycle} /> : <PointSphere key={cycle} />}
+      {/* A tap hands straight over to the settled view. The swarm is a per-frame
+          driver, so `.settled`'s negative delay — which finishes every CSS
+          animation on the card — has nothing to fast-forward there; the branch
+          is what completes it. */}
+      {showPoints || done ? <Settled key={cycle} immediate={done} /> : <PointSphere key={cycle} />}
     </div>
   );
 }
@@ -267,7 +290,7 @@ function PointToken() {
  * sweep is a mask, and a mask applies to a whole subtree, so a hero inside the
  * ring would be wiped away with it and arrive in a wedge.
  */
-function Settled() {
+function Settled({ immediate = false }: { immediate?: boolean | undefined }) {
   const stats = SHOWCASE_POINTS_STATS;
   return (
     <div className={styles.settled}>
@@ -299,6 +322,7 @@ function Settled() {
             prefix="+"
             durationMs={COUNT_MS}
             delayMs={COUNT_DELAY_MS}
+            immediate={immediate}
           />
         </Figure>
       </div>

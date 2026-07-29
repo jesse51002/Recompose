@@ -132,7 +132,7 @@ export function RewardsCarousel({
       if (startMs === 0) startMs = now;
       const t = Math.min((now - startMs) / slideMs, 1);
       // Eased soft at both ends, like everything else on this card.
-      applyAll(from + (page - from) * Curves.easeInOutCubic(t));
+      applyAll(from + (page - from) * Curves.easeInOutSine(t));
       if (t < 1) raf = requestAnimationFrame(frame);
     };
     raf = requestAnimationFrame(frame);

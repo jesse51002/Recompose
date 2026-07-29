@@ -58,7 +58,7 @@
    * invisible line, permanently. Split, a missing duration degrades to 0s and
    * the worst case is a stroke that did not animate.
    */
-  animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  animation-timing-function: var(--vf-breath);
   animation-fill-mode: both;
   animation-delay: var(--wr-stem-delay-ms);
 }
@@ -86,7 +86,7 @@
   pointer-events: none;
   animation-name: wins-strand-draw;
   animation-duration: var(--wr-strand-ms);
-  animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  animation-timing-function: var(--vf-breath);
   animation-fill-mode: both;
   animation-delay: var(--wr-strand-delay-ms);
 }

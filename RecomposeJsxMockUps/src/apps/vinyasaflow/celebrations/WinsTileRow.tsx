@@ -21,6 +21,7 @@
 // inset would TERMINATE MID-SCREEN, which the brief forbids outright. It is
 // pulled back out by exactly that token so it leaves through both edges.
 
+import { ARRIVE_MS, BOW_MS } from '../shell/breath';
 import { showcaseStyle } from '../showcaseTokens';
 
 import type { ShowcaseWinTile } from './showcaseCelebrationStats';
@@ -37,18 +38,24 @@ import styles from './WinsTileRow.module.css';
  */
 export const WINS_DISC_PX = 48;
 
-/** How long the stem takes to drop out of the closed loop. */
-export const WINS_STEM_MS = 180;
+/**
+ * How long the stem takes to drop out of the closed loop.
+ *
+ * Half an arrival: it is a short vertical hop between two things the line has
+ * already reached, not a region of its own. Every beat on this row comes off
+ * ../shell/breath.ts so the whole app retimes together.
+ */
+export const WINS_STEM_MS = Math.round(ARRIVE_MS / 2);
 
 /** How long the strand takes to open from the centre out to both edges. */
-export const WINS_STRAND_MS = 380;
+export const WINS_STRAND_MS = BOW_MS;
 
 /**
  * How much later an outer win arrives than the middle one — the time the strand
  * takes to reach it. Short of the full strand duration because the line reaches
  * a win at its circle, not at the screen edge beyond it.
  */
-export const WINS_REACH_MS = 260;
+export const WINS_REACH_MS = Math.round(BOW_MS * 0.7);
 
 /**
  * When win `index` of `count` arrives: the moment the strand, opening from the
@@ -65,9 +72,16 @@ export interface WinsTileRowProps {
   tiles: readonly ShowcaseWinTile[];
   /** When the strand starts opening — the moment the stem has landed. */
   baseDelayMs?: number | undefined;
+  /**
+   * The card is already settled — the member tapped through it, or asked for
+   * reduced motion. Passed down so each win's COUNT lands on its value; the
+   * strokes and the tiles are CSS and are finished by the card's own
+   * `.finished` rule (../shell/useTapToSettle.ts).
+   */
+  immediate?: boolean | undefined;
 }
 
-export function WinsTileRow({ tiles, baseDelayMs = 0 }: WinsTileRowProps) {
+export function WinsTileRow({ tiles, baseDelayMs = 0, immediate = false }: WinsTileRowProps) {
   return (
     <div
       className={styles.row}
@@ -92,6 +106,7 @@ export function WinsTileRow({ tiles, baseDelayMs = 0 }: WinsTileRowProps) {
           key={`${String(index)}-${tile.label}`}
           tile={tile}
           delayMs={winsTileDelayMs(baseDelayMs, index, tiles.length)}
+          immediate={immediate}
         />
       ))}
     </div>

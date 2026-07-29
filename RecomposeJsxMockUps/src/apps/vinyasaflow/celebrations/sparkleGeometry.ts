@@ -26,6 +26,8 @@
 // derived from the Dart painter's own point list, because ../rewards/SparkleHero.tsx
 // reads it. Deleting it would break a screen this file does not own.
 
+import { ARRIVE_MS } from '../shell/breath';
+
 /** `_SparkleStarPainter`'s box: every point below is on a 24-unit grid. */
 const STAR_UNITS = 24;
 
@@ -147,8 +149,14 @@ export const BLOOM_CLOSED_RADIUS_SCALE = 0.88;
 /** The scale a petal grows from. Never below this — nothing here pops. */
 export const BLOOM_START_SCALE = 0.72;
 
-/** How long one petal takes to open. */
-export const BLOOM_PETAL_MS = 380;
+/**
+ * How long one petal takes to open.
+ *
+ * `ARRIVE_MS` from ../shell/breath.ts: a petal is one thing opening where the
+ * line has just reached it, which is exactly what that beat is for. It was 380
+ * here and 320 for a win arriving on the same card — a difference nobody chose.
+ */
+export const BLOOM_PETAL_MS = ARRIVE_MS;
 
 /**
  * The fraction of the loop's draw over which the petals start.

@@ -43,7 +43,6 @@
 // arrivals and the caption's switch are CSS keyframes.
 
 import { useEffect, useRef, useState } from 'react';
-import { CelebrationTimings } from 'recompose-react';
 
 import { RewardsCarousel } from './celebrations/RewardsCarousel';
 import { FEATURED_HEIGHT, SLIDE_MS, wrapIndex } from './celebrations/rewardsCoverFlow';
@@ -71,17 +70,26 @@ import {
   rewardsSignature,
 } from './rewardsCelebration';
 import styles from './RewardsCardShowcase.module.css';
+import { ARRIVE_MS } from './shell/breath';
 import { Figure, Title } from './shell/Figure';
 import { MintedDisc } from './shell/Photo';
 import { Node } from './shell/Thread';
+import { useTapToSettle } from './shell/useTapToSettle';
 import { showcaseAsset } from './showcaseAssets';
 import type { ShowcaseReward } from './showcaseContent';
 import { SLOT_GIFTBOX, SLOT_SINGLE_POINT } from './showcaseSlots';
 import { SC, showcaseStyle } from './showcaseTokens';
 import { usePrefersReducedMotion } from './usePrefersReducedMotion';
 
-/** The stagger between one arrival and the next, once the line is down. */
-const ARRIVAL_STAGGER_MS = CelebrationTimings.revealStaggerMs;
+/**
+ * The stagger between one arrival and the next, once the line is down.
+ *
+ * Half a reveal, so the four overlap rather than queue: they are things the one
+ * stroke has already passed, not four entrances. The library's
+ * `CelebrationTimings.revealStaggerMs` is the base app's beat and is not this
+ * app's clock — see ./shell/breath.ts.
+ */
+const ARRIVAL_STAGGER_MS = Math.round(ARRIVE_MS / 2);
 
 const ms = (value: number): string => `${String(value)}ms`;
 const px = (value: number): string => `${String(value)}px`;
@@ -103,7 +111,7 @@ const REWARDS_VARS: Readonly<Record<string, string>> = Object.freeze({
   '--rw-drop-ms': ms(DROP_WINDOW.durationMs),
   '--rw-ring-delay': ms(RING_WINDOW.delayMs),
   '--rw-ring-ms': ms(RING_WINDOW.durationMs),
-  '--rw-arrive-ms': ms(CelebrationTimings.revealMs),
+  '--rw-arrive-ms': ms(ARRIVE_MS),
   '--rw-arrive-1': ms(0),
   '--rw-arrive-2': ms(ARRIVAL_STAGGER_MS),
   '--rw-arrive-3': ms(ARRIVAL_STAGGER_MS * 2),
@@ -150,6 +158,8 @@ interface RewardsCelebrationProps {
 /** The cycle, the paging and the two views. */
 function RewardsCelebration({ stats, loop, onCycleComplete }: RewardsCelebrationProps) {
   const reduceMotion = usePrefersReducedMotion();
+  // A tap finishes the draw — ../shell/useTapToSettle.ts.
+  const { settled: tapped, bind } = useTapToSettle();
   const firstPage = initialPage(stats.items.length, stats.featuredIndex);
   const [cycle, setCycle] = useState(0);
   const [gathered, setGathered] = useState(false);
@@ -169,18 +179,27 @@ function RewardsCelebration({ stats, loop, onCycleComplete }: RewardsCelebration
     const toShelf = window.setTimeout(() => {
       setGathered(true);
     }, INTRO_TOTAL_MS);
-    // The hold, armed by the handover. Collapsed into one absolute deadline so
-    // the pair re-arms as a unit.
-    const restart = window.setTimeout(() => {
+    // THE SETTLE IS ITS OWN DEADLINE, and it is the intro finishing rather than
+    // the carousel finishing its run. It used to be the latter, which put the
+    // flow's action 8.9 SECONDS out on this card against 0.76 on the streak.
+    // "The moment it closes is the moment the card is settled and its action
+    // appears" (./layout_brief.yaml); the carousel's hold is a replay concern.
+    const settle = window.setTimeout(() => {
       onCycleComplete?.();
-      if (!loop) return;
-      setGathered(false);
-      // Back to the featured item for the next cycle.
-      setPage(firstPage);
-      setCycle((current) => current + 1);
-    }, INTRO_TOTAL_MS + CAROUSEL_HOLD_MS);
+    }, INTRO_TOTAL_MS);
+    // The hold, armed by the handover. STANDALONE ONLY: in the flow the card
+    // holds where it landed and the member's tap advances it.
+    const restart = loop
+      ? window.setTimeout(() => {
+          setGathered(false);
+          // Back to the featured item for the next cycle.
+          setPage(firstPage);
+          setCycle((current) => current + 1);
+        }, INTRO_TOTAL_MS + CAROUSEL_HOLD_MS)
+      : 0;
     return () => {
       window.clearTimeout(toShelf);
+      window.clearTimeout(settle);
       window.clearTimeout(restart);
     };
   }, [cycle, loop, reduceMotion, onCycleComplete, firstPage]);
@@ -200,14 +219,23 @@ function RewardsCelebration({ stats, loop, onCycleComplete }: RewardsCelebration
     };
   }, [gathered, page, advanceDelayMs, reduceMotion]);
 
-  const settled = gathered || reduceMotion;
+  const finished = tapped || reduceMotion;
+  // A tap hands the bloom straight over to the shelf: the bloom is a per-frame
+  // driver, so `.finished`'s negative delay — which finishes every CSS
+  // animation on the card, the thread's four windows included — has nothing to
+  // fast-forward there.
+  const settled = gathered || finished;
 
   return (
     // The card owns its own scaffold rather than the base's celebration frame:
     // a fork owns its `shell/`, and this one's chrome is the thread. Nothing on
     // this subtree may set `overflow` — the bloom paints outside the card on
     // purpose, and one scrolling axis computes the other to `auto`.
-    <div className={styles.card} style={showcaseStyle(REWARDS_VARS)}>
+    <div
+      className={cx(styles.card, finished && styles.finished)}
+      style={showcaseStyle(REWARDS_VARS)}
+      {...bind}
+    >
       {/* The line, drawn once per cycle and then left alone. It does not
           remount when the shelf replaces the box, so the stroke the member
           watched arrive is the same stroke the settled card hangs on.

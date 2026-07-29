@@ -97,3 +97,86 @@
   z-index: 1;
   flex: 0 0 auto;
 }
+
+/*
+ * THE LINE'S TRAVEL — the whole of this fork's screen entrance, in one element.
+ *
+ * A sheet of canvas covering everything from the brand mark's foot to the
+ * bottom edge, whose TOP EDGE descends to the bottom of the screen over one
+ * breath. Because `.rail` sits under it, the line is drawn by the same edge
+ * that uncovers each region: the stagger is a consequence of one stroke passing
+ * each node, not a set of per-element delays that would have to be kept in
+ * sync. Nothing else on an app screen animates, and nothing else needs to.
+ *
+ * `top: var(--vf-origin)` is the mark's own foot. Above it nothing ever moves —
+ * "the brand mark at the head is the origin of that stroke and is the one
+ * element that does not redraw between screens".
+ *
+ * `pointer-events: none` IS THE RULE THAT OUTRANKS THE MOTION. See ./Screen.tsx:
+ * a `clip-path` would have made every covered tap target dead until the line
+ * reached it. This paints over and nothing else.
+ *
+ * THE BASE STATE IS THE SETTLED ONE — `scaleY(0)`, the veil already gone — and
+ * the fill mode is `backwards` rather than `both` so it RETURNS there. A
+ * renderer that cannot run the keyframes therefore shows a finished screen
+ * rather than a blank one, which is the failure mode worth choosing.
+ */
+.veil {
+  position: absolute;
+  z-index: 5;
+  top: var(--vf-origin);
+  right: 0;
+  left: 0;
+  /*
+   * Its own screen tall, hanging off the bottom, and TRANSLATED rather than
+   * scaled. Scaling squashes the feather below with it — a 28px soft edge
+   * becomes a 1px hard one by the time the veil is nearly gone, so the reveal
+   * visibly sharpens as it travels. Translating keeps the edge the same
+   * softness the whole way down. `.screen` clips the overhang.
+   */
+  height: 100%;
+  background: var(--sc-background);
+  /*
+   * THE EDGE IS SOFT because the line's tip is what is passing, not a blade.
+   * A hard cut across the full width reads as a curtain and slices a word in
+   * half on the way past; 28px of gradient reads as the content resolving in
+   * the stroke's wake.
+   */
+  -webkit-mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0), rgb(0 0 0) 28px);
+  mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0), rgb(0 0 0) 28px);
+  /* Settled: already travelled its whole length, so nothing is covered. */
+  transform: translateY(calc(100% - var(--vf-origin)));
+  animation-name: veilDescend;
+  animation-duration: var(--vf-draw);
+  animation-timing-function: var(--vf-breath);
+  animation-fill-mode: backwards;
+  pointer-events: none;
+}
+
+/*
+ * `100% - --vf-origin` and not a bare `100%`: the veil starts at the mark's
+ * foot, so it has the screen's height MINUS that offset left to travel. A bare
+ * 100% would carry the edge past the bottom before the clock ran out and the
+ * last stretch of the line would draw slightly fast.
+ */
+@keyframes veilDescend {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(calc(100% - var(--vf-origin)));
+  }
+}
+
+/*
+ * "Under a reduced-motion preference the line is simply already drawn, every
+ * card is already settled, and every action is already present." Removed rather
+ * than merely un-animated: a veil that stops animating is a veil, and this one
+ * would cover the screen.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .veil {
+    display: none;
+  }
+}

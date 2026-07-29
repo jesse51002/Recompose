@@ -67,7 +67,7 @@
   animation-name: wins-arrive;
   animation-duration: var(--wn-settle-ms);
   /* Soft at both ends — a breath begins gently and finishes gently. */
-  animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  animation-timing-function: var(--vf-breath);
   animation-fill-mode: both;
   animation-delay: var(--wn-header-delay-ms);
 }
@@ -80,7 +80,7 @@
   color: var(--sc-text-2nd);
   animation-name: wins-arrive;
   animation-duration: var(--wn-settle-ms);
-  animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  animation-timing-function: var(--vf-breath);
   animation-fill-mode: both;
   animation-delay: var(--wn-subtitle-delay-ms);
 }
@@ -171,7 +171,7 @@
   transform-origin: left center;
   animation-name: wins-sweep;
   animation-duration: var(--wn-draw-half-ms);
-  animation-timing-function: cubic-bezier(0.12, 0, 0.39, 0);
+  animation-timing-function: var(--vf-breath-in);
   animation-fill-mode: both;
   animation-delay: var(--wn-loop-delay-ms);
 }
@@ -193,7 +193,7 @@
   transform-origin: right center;
   animation-name: wins-sweep;
   animation-duration: var(--wn-draw-half-ms);
-  animation-timing-function: cubic-bezier(0.61, 1, 0.88, 1);
+  animation-timing-function: var(--vf-breath-out);
   animation-fill-mode: both;
   animation-delay: var(--wn-draw-second-half-delay-ms);
 }
@@ -259,4 +259,18 @@
   .subtitle {
     animation: none;
   }
+}
+
+/*
+ * A TAP FINISHES THE DRAW — the rule that outranks the motion
+ * (./shell/useTapToSettle.ts). A negative delay past the longest animation on
+ * the card runs every one of them to its own end and holds it there: the two
+ * wedges rotated fully off the ring, the bloom open, the stem and strand drawn,
+ * every win arrived. Nothing here restates what finished looks like, and the
+ * universal selector is what reaches ./celebrations/'s own stylesheets inside
+ * this card's subtree.
+ */
+.finished,
+.finished * {
+  animation-delay: -30s !important;
 }

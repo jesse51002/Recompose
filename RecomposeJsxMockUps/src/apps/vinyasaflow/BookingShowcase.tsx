@@ -35,13 +35,21 @@
 // vocabulary, which is where the Dart const gets it from too.
 //
 // WHAT THE MOTION DOES DIFFERENTLY, and it is the brief's own instruction: the
-// closing of the loop IS the animation. The ring draws itself at an EVEN rate
-// (linear, because "a ring or an arc fills by drawing, at an even rate, and
-// stops exactly on its mark") and finishes at `BOOKED_CASCADE_MS`, which is the
-// same instant the headline and the action arrive. One unmistakable finish
-// rather than three parts each on its own schedule. Everything else eases soft
-// at BOTH ends — a breath begins gently and finishes gently — which is why the
-// ported `EASE_OUT_QUART` is gone: it accelerates away from its start.
+// closing of the loop IS the animation. The ring finishes at
+// `BOOKED_CASCADE_MS`, which is the same instant the headline and the action
+// arrive — one unmistakable finish rather than three parts each on its own
+// schedule.
+//
+// AND IT CLOSES ON THE BREATH, NOT AT A LINEAR RATE. This screen shipped with
+// `linear` on the argument that "a ring or an arc fills by drawing, at an even
+// rate"; read against the paragraph it sits in, that sentence is about a figure
+// or a gauge reaching a VALUE without a final tick and without overshoot, not a
+// licence for the one curve that stops dead. The line paragraph is
+// unconditional — "nothing here decelerates into a hard stop, and nothing
+// accelerates away from one" — and the four celebration loops all travel on the
+// breath. A fifth closing loop moving differently is the incoherence a motion
+// pass exists to remove. Same reason the ported `EASE_OUT_QUART` is gone: it
+// accelerates away from its start.
 //
 // THE CTA IS THE ONLY WAY OFF THIS SCREEN. It carries no bottom nav, exactly as
 // the member app's does not, so it has been a dead end twice: once with no
@@ -51,17 +59,13 @@
 // first frame regardless of what the line is doing").
 
 import { useEffect, useState } from 'react';
-import {
-  CelebrationTimings,
-  SCALE_REVEAL_START_SCALE,
-  ThemedImage,
-  useThemeText,
-} from 'recompose-react';
+import { SCALE_REVEAL_START_SCALE, ThemedImage, useThemeText } from 'recompose-react';
 
 import { useMockNav } from '../../kit/MockNav';
 
 import styles from './BookingShowcase.module.css';
 import { Action } from './shell/Action';
+import { ARRIVE_MS, BREATH, CLOSE_MS, HOLD_MS } from './shell/breath';
 import { Title } from './shell/Figure';
 import { Screen } from './shell/Screen';
 import { Loop } from './shell/Thread';
@@ -70,14 +74,22 @@ import { SLOT_CELEBRATION_IMAGE, SLOT_CLASS_BOOKED_HEADLINE } from './showcaseSl
 import { SC, showcaseStyle } from './showcaseTokens';
 import { usePrefersReducedMotion } from './usePrefersReducedMotion';
 
-/** `_kImageScaleDuration` — the hero arriving inside the ring. */
-const IMAGE_SCALE_MS = 720;
-/** `_kBookedCascadeDuration` — the pop plus one standard reveal. The loop closes here. */
-const BOOKED_CASCADE_MS = IMAGE_SCALE_MS + CelebrationTimings.revealMs;
-/** `_kCtaFadeIn`. */
-const CTA_FADE_IN_MS = 220;
+/**
+ * THE LOOP CLOSING, WHICH IS THIS SCREEN'S ENTRANCE AND ITS ONLY ONE.
+ *
+ * `_kBookedCascadeDuration` in the Dart. Here it is simply `CLOSE_MS` — the
+ * same number the four celebration loops travel in, because it is the same
+ * stroke going the same way round. The shell's own descent is turned OFF for
+ * this screen (`draws={false}`): the line arriving and closing here IS the
+ * screen drawing itself, and a second descent would be a second line.
+ */
+const BOOKED_CASCADE_MS = CLOSE_MS;
+/** The hero fading up inside the ring while the line is still coming round. */
+const IMAGE_SCALE_MS = CLOSE_MS;
+/** The headline and the action, landing together on the close. */
+const CTA_FADE_IN_MS = ARRIVE_MS;
 /** `_kLoopHold` — how long the finished content sits before the loop restarts. */
-const LOOP_HOLD_MS = 2200;
+const LOOP_HOLD_MS = HOLD_MS;
 /** One full cycle: the cascade, then the hold. */
 const CYCLE_MS = BOOKED_CASCADE_MS + LOOP_HOLD_MS;
 
@@ -124,17 +136,18 @@ const MOTION_VARS = showcaseStyle({
   '--bk-hero-height': `${String(HERO_HEIGHT)}px`,
   '--bk-loop-draw-ms': `${String(BOOKED_CASCADE_MS)}ms`,
   '--bk-image-scale-ms': `${String(IMAGE_SCALE_MS)}ms`,
-  '--bk-reveal-ms': `${String(CelebrationTimings.revealMs)}ms`,
+  '--bk-reveal-ms': `${String(ARRIVE_MS)}ms`,
   '--bk-settle-delay-ms': `${String(BOOKED_CASCADE_MS)}ms`,
   '--bk-cta-fade-ms': `${String(CTA_FADE_IN_MS)}ms`,
-  '--bk-reveal-offset': '12px',
   '--bk-start-scale': String(SCALE_REVEAL_START_SCALE),
   /*
-   * THE BREATH. Soft at both ends — four counts in, four counts out. Nothing in
-   * this app decelerates into a hard stop or accelerates away from one, and
-   * nothing bounces, springs back or overshoots.
+   * THE BREATH — ./shell/breath.ts's, not a second one. This file carried
+   * `cubic-bezier(0.45, 0, 0.55, 1)` while its four sibling celebration loops
+   * carried `(0.37, 0, 0.63, 1)`: both soft at both ends, both defensible
+   * alone, and together the exact kind of near-miss the eye reads as
+   * inconsistency without being able to name it.
    */
-  '--bk-breath': 'cubic-bezier(0.45, 0, 0.55, 1)',
+  '--bk-breath': BREATH,
 });
 
 export interface BookingShowcaseProps {
@@ -173,7 +186,11 @@ export function BookingShowcase({ loop = true, onCycleComplete }: BookingShowcas
   return (
     // No head and no foot. The member app gives this screen neither, so the
     // thread simply passes through it — what is reachable never changes.
-    <Screen>
+    //
+    // `draws={false}`: the shell's descending veil is this app's screen
+    // entrance everywhere else, and here the line's arrival IS the ring closing
+    // around the hero. Two descents would be two lines.
+    <Screen draws={false}>
       <div key={cycle} className={styles.screen} style={MOTION_VARS}>
         <div className={styles.stage}>
           <div className={styles.loopWrap}>

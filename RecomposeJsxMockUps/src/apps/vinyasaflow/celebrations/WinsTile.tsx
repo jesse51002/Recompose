@@ -23,6 +23,7 @@
 // opacity between two endpoints. Only the count-up needs a driver; see
 // ./CountUpText.tsx for why that one is the exception.
 
+import { ARRIVE_MS, COUNT_MS } from '../shell/breath';
 import { Figure } from '../shell/Figure';
 import { SC, showcaseStyle } from '../showcaseTokens';
 import { AwardIcon, GiftIcon, HelpIcon, StarIcon } from '../support/icons';
@@ -35,7 +36,7 @@ import styles from './WinsTile.module.css';
  * How long a win takes to arrive once the strand reaches it. Opacity only —
  * nothing in this app slides, springs or overshoots.
  */
-export const WINS_SETTLE_MS = 320;
+export const WINS_SETTLE_MS = ARRIVE_MS;
 
 /**
  * How long a count takes to roll.
@@ -45,7 +46,7 @@ export const WINS_SETTLE_MS = 320;
  * final tick". Shorter than the library's 1400ms celebration roll, which is a
  * scoreboard tempo rather than a breath.
  */
-export const WINS_COUNT_UP_MS = 750;
+export const WINS_COUNT_UP_MS = COUNT_MS;
 
 /** `_NumericValue` — a `(prefix, integer)` pair the count-up can roll. */
 export interface NumericValue {
@@ -74,9 +75,11 @@ export interface WinsTileProps {
   tile: ShowcaseWinTile;
   /** When the strand reaches this win — its reveal and its count start together. */
   delayMs?: number | undefined;
+  /** The card is already settled: land the count on its value. See ./WinsTileRow.tsx. */
+  immediate?: boolean | undefined;
 }
 
-export function WinsTile({ tile, delayMs = 0 }: WinsTileProps) {
+export function WinsTile({ tile, delayMs = 0, immediate = false }: WinsTileProps) {
   const numeric = parseNumeric(tile.value);
   return (
     <div
@@ -106,6 +109,7 @@ export function WinsTile({ tile, delayMs = 0 }: WinsTileProps) {
               prefix={numeric.prefix}
               delayMs={delayMs}
               durationMs={WINS_COUNT_UP_MS}
+              immediate={immediate}
             />
           )}
         </Figure>

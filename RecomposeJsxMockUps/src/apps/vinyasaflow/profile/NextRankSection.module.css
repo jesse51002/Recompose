@@ -43,7 +43,8 @@
 .sweep {
   fill: none;
   stroke: var(--sc-primary);
-  animation: wind 750ms cubic-bezier(0.37, 0, 0.63, 1) both;
+  /* After the screen's own descent, for the reason ./RatingGraph.module.css gives. */
+  animation: wind var(--vf-bow) var(--vf-breath) var(--vf-draw) both;
 }
 
 @keyframes wind {

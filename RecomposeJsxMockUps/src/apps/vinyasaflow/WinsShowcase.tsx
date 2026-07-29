@@ -49,8 +49,11 @@ import { SparkleBurst } from './celebrations/SparkleBurst';
 import { SHOWCASE_WINS_STATS } from './celebrations/showcaseCelebrationStats';
 import { WINS_SETTLE_MS } from './celebrations/WinsTile';
 import { WINS_STEM_MS, WinsTileRow } from './celebrations/WinsTileRow';
+import { cx } from './cx';
+import { ARRIVE_MS, CLOSE_MS, HOLD_MS } from './shell/breath';
 import { Title } from './shell/Figure';
 import { Loop } from './shell/Thread';
+import { useTapToSettle } from './shell/useTapToSettle';
 import { showcaseAsset } from './showcaseAssets';
 import { SLOT_TROPHY_IMAGE, SLOT_WINS_SUBTITLE, SLOT_WINS_TITLE } from './showcaseSlots';
 import { showcaseStyle } from './showcaseTokens';
@@ -70,7 +73,7 @@ const LOOP_SIZE = 300;
 const WREATH_WIDTH = 228;
 
 /** `_kWinsHold` — how long the finished recap holds before the celebration replays. */
-export const WINS_HOLD_MS = 3200;
+export const WINS_HOLD_MS = HOLD_MS;
 
 /**
  * The headings are named FIRST, before the line reaches the wreath, because the
@@ -78,22 +81,22 @@ export const WINS_HOLD_MS = 3200;
  * screen. One beat between them; nothing here is a per-element delay curve.
  */
 export const HEADER_DELAY_MS = 0;
-export const SUBTITLE_DELAY_MS = 140;
+export const SUBTITLE_DELAY_MS = Math.round(ARRIVE_MS / 2);
 
 /** When the stroke arrives at the loop and starts round it. */
-const LOOP_DELAY_MS = 200;
+const LOOP_DELAY_MS = ARRIVE_MS;
 
 /**
  * How long the line takes to travel once round the wreath.
  *
- * The brief's tempo is literal — a breath, soft at BOTH ends, about three
- * quarters of a second for a full screen to draw. The sweep is split across two
- * half-circles (see the stylesheet), so each half runs for `DRAW_MS / 2`: the
- * first on an ease-IN sine and the second on an ease-OUT sine, which recompose
- * into one ease-in-out across the whole circle and therefore do not stall where
- * they meet.
+ * `CLOSE_MS` from ./shell/breath.ts, which is the same number the four sibling
+ * loops travel in — it is the same stroke going the same way round. The sweep
+ * is split across two half-circles (see the stylesheet), so each half runs for
+ * `DRAW_MS / 2`: the first on `--vf-breath-in` and the second on
+ * `--vf-breath-out`, which recompose into one breath across the whole circle
+ * and therefore do not stall where they meet.
  */
-const DRAW_MS = 800;
+const DRAW_MS = CLOSE_MS;
 
 /**
  * `tileBaseDelay` — when the strand starts opening.
@@ -124,8 +127,20 @@ export interface WinsShowcaseProps {
   onCycleComplete?: (() => void) | undefined;
 }
 
+/**
+ * WHEN THIS CARD IS SETTLED, and it is the moment the loop meets itself.
+ *
+ * It used to be `WINS_HOLD_MS` — the card reported settling only after it had
+ * also finished SITTING there, so in the flow the Continue button appeared 2.2
+ * seconds after the drawing had visibly stopped. The hold is a replay concern
+ * and is now armed separately, standalone only.
+ */
+const SETTLE_MS = LOOP_DELAY_MS + DRAW_MS;
+
 export function WinsShowcase({ loop = true, onCycleComplete }: WinsShowcaseProps) {
   const reduceMotion = usePrefersReducedMotion();
+  // A tap finishes the draw — ./shell/useTapToSettle.ts.
+  const { settled: tapped, bind } = useTapToSettle();
   // Re-keys the body so every CSS entrance replays — Dart's `_cycle`.
   const [cycle, setCycle] = useState(0);
 
@@ -135,40 +150,53 @@ export function WinsShowcase({ loop = true, onCycleComplete }: WinsShowcaseProps
     // the celebration flow renders it — never reported settling and its CTA
     // stayed hidden forever. The sibling cards all fire the callback ahead of
     // their own guard for this reason.
-    if (!loop) {
-      onCycleComplete?.();
-      return;
-    }
     if (reduceMotion) {
       onCycleComplete?.();
       return;
     }
-    const id = window.setInterval(() => {
+    // The loop closes → the card is settled → its action appears.
+    const settle = window.setTimeout(() => {
       onCycleComplete?.();
-      setCycle((current) => current + 1);
-    }, WINS_HOLD_MS);
+    }, SETTLE_MS);
+    const restart = loop
+      ? window.setTimeout(() => {
+          setCycle((current) => current + 1);
+        }, SETTLE_MS + WINS_HOLD_MS)
+      : 0;
     return () => {
-      window.clearInterval(id);
+      window.clearTimeout(settle);
+      window.clearTimeout(restart);
     };
-  }, [loop, reduceMotion, onCycleComplete]);
+  }, [cycle, loop, reduceMotion, onCycleComplete]);
 
   return (
     // The recap's arrangement — `PostClassScaffold`, resolved from the tenant's
     // `celebration_format` (./celebrations/CelebrationFrame.tsx).
     <CelebrationFrame>
-      <WinsContent key={cycle} />
+      <WinsContent key={cycle} finished={tapped || reduceMotion} bind={bind} />
     </CelebrationFrame>
   );
 }
 
 /** The card: what it is called, the held shape, and what was won. */
-function WinsContent() {
+function WinsContent({
+  finished,
+  bind,
+}: {
+  /** The member tapped, or asked for reduced motion: the card is already done. */
+  finished: boolean;
+  bind: { readonly onPointerDownCapture: () => void };
+}) {
   const stats = SHOWCASE_WINS_STATS;
   const title = useThemeText(SLOT_WINS_TITLE, stats.title);
   const subtitle = useThemeText(SLOT_WINS_SUBTITLE, stats.subtitle);
 
   return (
-    <div className={styles.content} style={showcaseStyle(MOTION_VARS)}>
+    <div
+      className={cx(styles.content, finished && styles.finished)}
+      style={showcaseStyle(MOTION_VARS)}
+      {...bind}
+    >
       {/*
         The one headline that names this screen, and the line beneath it. They
         are ONE object and share the tightest gap on the card; the gap to the
@@ -216,7 +244,7 @@ function WinsContent() {
         <SparkleBurst delayMs={LOOP_DELAY_MS} windowMs={DRAW_MS} />
       </div>
 
-      <WinsTileRow tiles={stats.tiles} baseDelayMs={TILE_BASE_DELAY_MS} />
+      <WinsTileRow tiles={stats.tiles} baseDelayMs={TILE_BASE_DELAY_MS} immediate={finished} />
     </div>
   );
 }

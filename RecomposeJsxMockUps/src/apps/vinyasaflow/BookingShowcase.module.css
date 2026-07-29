@@ -72,9 +72,13 @@
  * point of a circle is travelling downward and that is the direction it
  * continues in. `--bk-sweep` runs 360deg (nothing drawn) to 0deg (closed).
  *
- * Linear, deliberately: the brief's one motion exception. Everything else here
- * eases soft at both ends, but "a ring or an arc fills by drawing, at an even
- * rate, and stops exactly on its mark".
+ * ON THE BREATH, like the four celebration loops it is a fifth of. This rule
+ * ran `linear` for one release, reading "a ring or an arc fills by drawing, at
+ * an even rate" as a licence for the one curve that stops dead. It is not: that
+ * sentence sits in the paragraph about figures reaching a VALUE without a final
+ * tick, while the paragraph about the line is unconditional — "nothing here
+ * decelerates into a hard stop, and nothing accelerates away from one".
+ * ../BookingShowcase.tsx's header carries the argument in full.
  *
  * The mask is on this wrapper rather than on the `<Loop>` so that masking the
  * stroke cannot touch the hero, which is a sibling and paints above it.
@@ -90,7 +94,7 @@
    */
   -webkit-mask-image: conic-gradient(from 270deg, transparent var(--bk-sweep), #000 0deg);
   mask-image: conic-gradient(from 270deg, transparent var(--bk-sweep), #000 0deg);
-  animation: closeLoop var(--bk-loop-draw-ms) linear both;
+  animation: closeLoop var(--bk-loop-draw-ms) var(--bk-breath) both;
 }
 
 /*
@@ -125,7 +129,7 @@
   margin-top: var(--sc-spacing-big);
   padding-inline-start: var(--sc-thread-inset);
   padding-inline-end: var(--sc-screen-padding-x);
-  animation: riseIn var(--bk-reveal-ms) var(--bk-breath) var(--bk-settle-delay-ms) both;
+  animation: fadeIn var(--bk-reveal-ms) var(--bk-breath) var(--bk-settle-delay-ms) both;
 }
 
 /*
@@ -175,20 +179,17 @@
   }
 }
 
-/* The headline landing as the loop closes. */
-@keyframes riseIn {
-  from {
-    opacity: 0;
-    transform: translateY(var(--bk-reveal-offset));
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-/* The action, which only ever fades — its box was there all along. */
+/*
+ * The headline and the action land together on the close, and they land by
+ * OPACITY ALONE.
+ *
+ * The headline used to rise 12px into place. Every other surface in this fork
+ * says the same thing in its own comments — "opacity only, nothing here slides"
+ * — because ../layout_brief.yaml opens with it: "A screen does not fade in and
+ * does not slide in… each region arrives at the moment the line reaches it." A
+ * translate is a second idea about how things appear here, and there is only
+ * one. `--bk-reveal-offset` went with it.
+ */
 @keyframes fadeIn {
   from {
     opacity: 0;

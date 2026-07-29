@@ -1,7 +1,16 @@
 // Ports ../../../../../../CRM/lib/shared/widgets/animation/count_up_text.dart —
-// a clone of MobileApp's `CountUpText`: an odometer that rolls 0 → `target` on
-// a steep ease-out-expo curve, one vertical reel per digit position, each
-// translated behind a one-digit window.
+// a clone of MobileApp's `CountUpText`: an odometer that rolls 0 → `target`,
+// one vertical reel per digit position, each translated behind a one-digit
+// window.
+//
+// THE CURVE IS THIS FORK'S, NOT THE DART'S, AND THAT IS THE POINT OF THE FORK.
+// The original rolls on `easeOutExpo` — most of the count in the first third
+// and a visible crawl into the stop. ../layout_brief.yaml asks for the
+// opposite: "A count travels from zero to its value in tabular figures so
+// nothing shifts sideways while it moves, lands inside three quarters of a
+// second, and settles WITHOUT A FINAL TICK." An expo tail is that tick. So the
+// roll is on the breath — soft at both ends, `Curves.easeInOutSine` — like
+// every other movement in this app, and it lands in `COUNT_MS`.
 //
 // WHY IT LIVES IN celebrations/ RATHER THAN A ONE-FILE animation/ FOLDER. The
 // Dart keeps it in `lib/shared/widgets/animation/` because the kiosk's glance
@@ -24,9 +33,9 @@
 
 import type { ReactNode } from 'react';
 import { useEffect, useRef } from 'react';
-import { CelebrationTimings } from 'recompose-react';
 
 import { cx } from '../cx';
+import { COUNT_MS } from '../shell/breath';
 import { usePrefersReducedMotion } from '../usePrefersReducedMotion';
 
 import styles from './CountUpText.module.css';
@@ -40,10 +49,20 @@ const REEL_ATTR = 'data-reel-divisor';
 
 export interface CountUpTextProps {
   target: number;
-  /** `CountUpText.duration` — defaults to the celebration roll (1400ms). */
+  /** `CountUpText.duration` — defaults to this fork's roll, `COUNT_MS`. */
   durationMs?: number | undefined;
   /** `CountUpText.delay`. */
   delayMs?: number | undefined;
+  /**
+   * Land on the value now, and stay there.
+   *
+   * For a card the member has tapped through: "a tap on any still-drawing
+   * celebration card completes the loop immediately and settles it"
+   * (../layout_brief.yaml), and a figure still climbing under a settled card's
+   * action is that card not being settled. Same end state a reduced-motion
+   * preference produces, reached by a different route.
+   */
+  immediate?: boolean | undefined;
   /** `CountUpText.prefix` — e.g. the `+` of `"+160"`. */
   prefix?: string | undefined;
   /** `CountUpText.suffix`. */
@@ -78,8 +97,9 @@ export function reelOffset(eased: number, target: number, divisor: number, maxIn
 
 export function CountUpText({
   target,
-  durationMs = CelebrationTimings.countUpMs,
+  durationMs = COUNT_MS,
   delayMs = 0,
+  immediate = false,
   prefix = '',
   suffix = '',
   className,
@@ -104,8 +124,9 @@ export function CountUpText({
       }
     };
 
-    // `MediaQuery.disableAnimationsOf` — land on the value and stay there.
-    if (reduceMotion) {
+    // `MediaQuery.disableAnimationsOf`, or a card the member tapped through —
+    // land on the value and stay there.
+    if (reduceMotion || immediate) {
       apply(1);
       return;
     }
@@ -116,7 +137,8 @@ export function CountUpText({
     const frame = (now: number): void => {
       if (startMs === 0) startMs = now;
       const t = Math.min((now - startMs) / durationMs, 1);
-      apply(Curves.easeOutExpo(t));
+      // The breath, not the Dart's `easeOutExpo`. See the header.
+      apply(Curves.easeInOutSine(t));
       if (t < 1) raf = requestAnimationFrame(frame);
     };
     // `Future.delayed(delay, () => _ctrl.forward())`.
@@ -130,7 +152,7 @@ export function CountUpText({
       window.clearTimeout(timer);
       cancelAnimationFrame(raf);
     };
-  }, [target, durationMs, delayMs, reduceMotion]);
+  }, [target, durationMs, delayMs, immediate, reduceMotion]);
 
   const positions = digitCountFor(target);
   const reels: ReactNode[] = [];

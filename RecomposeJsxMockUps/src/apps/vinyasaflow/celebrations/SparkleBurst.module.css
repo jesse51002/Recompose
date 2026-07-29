@@ -54,7 +54,7 @@
    * hard stop and nothing overshoots. The same curve ../RankShowcase.module.css
    * settles on.
    */
-  animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  animation-timing-function: var(--vf-breath);
   animation-fill-mode: both;
   animation-delay: var(--sp-delay-ms);
 }

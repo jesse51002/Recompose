@@ -9,8 +9,9 @@
 //   * NOTHING IS THROWN. `easeOutQuart` leaves at full speed and decelerates
 //     into its mark — the shape of a confetti burst, which the brand's own note
 //     rules out by name ("a warm soft golden bloom, a settled breath at the top
-//     of a flow, never confetti"). Every curve below is `easeInOutCubic`, soft
-//     at BOTH ends, because a breath begins gently and finishes gently.
+//     of a flow, never confetti"). Every curve below is the app's one breath,
+//     `Curves.easeInOutSine` (./shell/breath.ts), soft at BOTH ends, because a
+//     breath begins gently and finishes gently.
 //   * NOTHING BOUNCES. The pulse — `scale 1 → 1.06 → 1` — overshot its size and
 //     settled, which the brief bans outright, so it is gone along with the
 //     mirrored decay Bézier that made it exact. The featured caption now simply
@@ -40,6 +41,7 @@
 //     lines arriving rather than one line travelling.
 
 import { Curves, clamp01, phaseProgress } from './celebrations/curves';
+import { ARRIVE_MS, BREATH, CLOSE_MS, DRAW_MS as SCREEN_DRAW_MS, HOLD_MS as SETTLED_HOLD_MS } from './shell/breath';
 import type { ShowcaseRewardItem, ShowcaseRewardsStats } from './celebrations/showcaseCelebrationStats';
 import { SHOWCASE_REWARDS_STATS } from './celebrations/showcaseCelebrationStats';
 import type { ShowcaseAssetFile } from './showcaseAssets';
@@ -125,22 +127,27 @@ export function rewardsSignature(stats: ShowcaseRewardsStats): string {
 
 /**
  * THE TEMPO IS A BREATH AND IT IS LITERAL — a four-count in and a four-count
- * out, with an ease that is soft at both ends. `Curves.easeInOutCubic` is that
- * curve; every phase below is read through it, and `BREATH_EASE` is the same
- * curve as the string a CSS animation takes.
+ * out, with an ease that is soft at both ends.
  *
- * It replaces `easeOutQuart` everywhere on this card. Quart leaves at full
- * speed: it is the right law for a UI acknowledging a tap and the wrong one for
- * a bloom, which has to begin gently or it is a throw.
+ * RE-EXPORTED FROM ../shell/breath.ts, not declared here. This card carried
+ * `easeInOutCubic` (0.645, 0.045, 0.355, 1) while its four siblings carried
+ * `easeInOutSine` (0.37, 0, 0.63, 1): both soft at both ends, both defensible
+ * alone, and side by side in one flow the near-miss reads as inconsistency the
+ * eye can feel and not name. There is one curve in this app.
+ *
+ * It still replaces `easeOutQuart` everywhere on this card, for the reason that
+ * was already written here: quart leaves at full speed, which is the right law
+ * for a UI acknowledging a tap and the wrong one for a bloom, which has to
+ * begin gently or it is a throw.
  */
-export const BREATH_EASE = 'cubic-bezier(0.645, 0.045, 0.355, 1)';
+export const BREATH_EASE = BREATH;
 
 /** The four-count in: the thread travels down, out, down again, and closes. */
-export const DRAW_MS = 980;
+export const DRAW_MS = SCREEN_DRAW_MS;
 /** The held breath at the top of the flow, with the box inside the closed loop. */
-export const HOLD_MS = 300;
+export const HOLD_MS = Math.round(ARRIVE_MS / 2);
 /** The four-count out: the box opens into the bloom and is gone. */
-export const BLOOM_MS = 620;
+export const BLOOM_MS = CLOSE_MS - ARRIVE_MS;
 
 /** The intro's whole timeline. */
 export const INTRO_TOTAL_MS = DRAW_MS + HOLD_MS + BLOOM_MS;
@@ -166,14 +173,22 @@ export interface DrawWindow {
 const window_ = (delayMs: number, durationMs: number): DrawWindow =>
   Object.freeze({ delayMs, durationMs });
 
+/*
+ * The four windows, as fractions of `DRAW_MS` rather than as four numbers of
+ * their own. Retiming the app retimes the stroke; the OVERLAPS, which are what
+ * make four elements read as one line, survive it by construction.
+ */
+const at = (start: number, end: number): DrawWindow =>
+  window_(Math.round(DRAW_MS * start), Math.round(DRAW_MS * (end - start)));
+
 /** The descent, from the top edge down to the bow. */
-export const DESCENT_WINDOW: DrawWindow = window_(0, 300);
+export const DESCENT_WINDOW: DrawWindow = at(0, 0.31);
 /** The sideways excursion that gathers the shelf of rewards. */
-export const BOW_WINDOW: DrawWindow = window_(260, 320);
+export const BOW_WINDOW: DrawWindow = at(0.27, 0.59);
 /** The return, dropping out from behind the featured photograph. */
-export const DROP_WINDOW: DrawWindow = window_(540, 180);
+export const DROP_WINDOW: DrawWindow = at(0.55, 0.74);
 /** The loop closing around the hero — the card's single unmistakable finish. */
-export const RING_WINDOW: DrawWindow = window_(680, 520);
+export const RING_WINDOW: DrawWindow = at(0.7, 1.23);
 
 /**
  * The closing loop's diameter, in the phone's logical px.
@@ -268,10 +283,10 @@ export interface BoxFrame {
  * appearing where it used to be.
  */
 export function boxFrame(elapsedMs: number): BoxFrame {
-  const settle = Curves.easeInOutCubic(
+  const settle = Curves.easeInOutSine(
     phaseProgress(elapsedMs, DROP_WINDOW.delayMs, RING_WINDOW.delayMs + RING_WINDOW.durationMs),
   );
-  const open = Curves.easeInOutCubic(bloomProgress(elapsedMs));
+  const open = Curves.easeInOutSine(bloomProgress(elapsedMs));
   return {
     scale: (0.94 + 0.06 * settle) * (1 + 0.1 * open),
     opacity: settle * (1 - open),
@@ -299,14 +314,14 @@ export function bloomCoinFrame(
   bloomT: number,
   maxRadius: number,
 ): BloomCoinFrame {
-  const distance = Curves.easeInOutCubic(bloomT) * maxRadius * seed.reach;
-  const rise = Curves.easeInOutCubic(clamp01(bloomT / 0.22));
-  const fall = Curves.easeInOutCubic(clamp01((bloomT - 0.5) / 0.5));
+  const distance = Curves.easeInOutSine(bloomT) * maxRadius * seed.reach;
+  const rise = Curves.easeInOutSine(clamp01(bloomT / 0.22));
+  const fall = Curves.easeInOutSine(clamp01((bloomT - 0.5) / 0.5));
   return {
     dx: Math.cos(seed.angle) * distance,
     dy: Math.sin(seed.angle) * distance,
     opacity: rise * (1 - fall),
-    scale: Curves.easeInOutCubic(clamp01(bloomT / 0.3)),
+    scale: Curves.easeInOutSine(clamp01(bloomT / 0.3)),
   };
 }
 
@@ -314,11 +329,22 @@ export function bloomCoinFrame(
 // The paging
 // ---------------------------------------------------------------------------
 
-/** `_kCarouselHold` — how long the carousel runs before the celebration replays. */
-export const CAROUSEL_HOLD_MS = 7000;
+/**
+ * `_kCarouselHold` — how long the carousel runs before the celebration replays.
+ *
+ * A REPLAY CONCERN AND NOTHING ELSE, and it is worth saying because it was not.
+ * The card used to report itself settled only when this expired, so inside the
+ * flow the Continue button appeared 8.9 seconds after the loop had closed: the
+ * longest wait in the asset by a factor of ten, on the one card that also has
+ * the most to look at. See `SETTLE_MS` in ./RewardsCardShowcase.tsx.
+ *
+ * Long, and deliberately: it is the window a reviewer watching the card
+ * standalone gets to see the shelf page through the gym's real catalogue.
+ */
+export const CAROUSEL_HOLD_MS = SETTLED_HOLD_MS * 2;
 
 /** `_idleDelay` — how long a page rests before the carousel advances itself. */
-export const IDLE_MS = 5000;
+export const IDLE_MS = SETTLED_HOLD_MS;
 
 /**
  * `_initialPageBase`. A large offset so the carousel can advance "forever"

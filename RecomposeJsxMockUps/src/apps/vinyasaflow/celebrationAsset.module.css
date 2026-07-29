@@ -37,16 +37,20 @@
   /* Not display:none — the button must keep its box so nothing moves when it
      appears, and must not be tabbable while it is invisible. */
   visibility: hidden;
+  /* The breath, like everything else in this app. `ease-out` was the one
+     hard-stop curve left in the asset, and it sat on the single most-watched
+     moment of the flow — the action arriving as the loop closes.
+     `--vf-switch` is the shared clock (./shell/breath.ts). */
   transition:
-    opacity 260ms ease-out,
-    visibility 0s linear 260ms;
+    opacity var(--vf-switch) var(--vf-breath),
+    visibility 0s linear var(--vf-switch);
 }
 
 .ctaVisible {
   opacity: 1;
   visibility: visible;
   transition:
-    opacity 260ms ease-out,
+    opacity var(--vf-switch) var(--vf-breath),
     visibility 0s;
 }
 

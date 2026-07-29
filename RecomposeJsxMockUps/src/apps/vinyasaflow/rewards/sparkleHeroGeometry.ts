@@ -28,7 +28,7 @@
 // `SPARKLE_STAR_CLIP_PATH` from ../celebrations/sparkleGeometry.ts rather than
 // deriving a second copy of the same polygon.
 
-import { CelebrationTimings } from 'recompose-react';
+import { CLOSE_MS } from '../shell/breath';
 
 /** One entry of `_kSparkles`: `(size, dx, dy, opacity)`. */
 export interface HeroSparkle {
@@ -79,8 +79,18 @@ export const HERO_START_SCALE = 0.5;
 /** `Transform.scale(scale: 0.92 + 0.08 * t)` — the accent block's own entrance. */
 export const ACCENT_START_SCALE = 0.92;
 
-/** How long a single sparkle's fade runs: 0.35 of the 620ms window. */
-export const HERO_FADE_MS = CelebrationTimings.sparkleWindowMs * HERO_FADE_SPAN;
+/**
+ * The whole scatter's window.
+ *
+ * `CLOSE_MS` from ../shell/breath.ts rather than the library's
+ * `sparkleWindowMs`: that constant is the BASE app's beat, and this fork's is
+ * one breath — the same span the line takes to travel once round a hero, which
+ * is what the scatter is doing here.
+ */
+export const HERO_WINDOW_MS = CLOSE_MS;
+
+/** How long a single sparkle's fade runs: 0.35 of the window. */
+export const HERO_FADE_MS = HERO_WINDOW_MS * HERO_FADE_SPAN;
 
 /**
  * `_orderByDistance` — the sparkle indices sorted by squared distance from the
@@ -108,5 +118,5 @@ export function orderByDistance(sparkles: readonly HeroSparkle[]): readonly numb
  */
 export function heroSparkleDelayMs(rank: number, count: number): number {
   if (count <= 0) return 0;
-  return (rank / count) * HERO_STAGGER_SPAN * CelebrationTimings.sparkleWindowMs;
+  return (rank / count) * HERO_STAGGER_SPAN * HERO_WINDOW_MS;
 }

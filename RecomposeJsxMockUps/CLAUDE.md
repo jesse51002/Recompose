@@ -68,6 +68,10 @@ src/
     milemarker/        a third redesign, for the RunClub run
       layout_brief.yaml
       shell/             its OWN chrome: screen, sky, lane, last lane, band, disc
+    vinyasaflow/       a fourth redesign, for the VinyasaFlow run
+      layout_brief.yaml
+      shell/             its OWN chrome: screen, head, thread, nav, photo,
+                         figure, action — plus breath.ts, its motion clock
     index.ts           MOCK_APPS: every app, for a host that names none
   index.ts             the ONLY export surface
 ```
@@ -137,7 +141,7 @@ A redesign folder carries its own `layout_brief.yaml` naming the design it was
 made for. The base's names the base — it belongs to no run, and it is what
 every fork starts from.
 
-**There are three forks, and they are worked examples of different things.**
+**There are four forks, and they are worked examples of different things.**
 
 **`apps/zenbjj/`** was the first: same two assets, same eleven screens, same
 element set as `apps/combatden/`, rearranged for a design whose direction is
@@ -240,6 +244,53 @@ never settle and their action stays hidden until the card is tapped — Guardrai
 `apps/combatden/` and has not been made there**, because this change was scoped
 to the fork.
 
+**`apps/vinyasaflow/`** is the fourth, built for the theme produced at
+`apps/combatden/VinyasaFlow/`. Its direction (read `layout_brief.yaml`) is one
+unbroken thread: a single terracotta line enters at the brand mark, runs the
+whole screen without a break, and every fact the app holds hangs on it. Its
+`shell/` replaces the base chrome outright, as `romanahouse` and `milemarker`
+do. What it establishes that the other three do not is **how a fork holds one
+motion together across eleven screens**, and that is worth reading before
+touching any of it:
+
+- **A fork owns a MOTION CLOCK, and one file is it.** `shell/breath.ts` holds
+  the single easing curve and every duration; `VinyasaFlowSurface` writes them
+  onto the asset root as `--vf-*` beside the `--sc-*` token surface, so a
+  stylesheet reads the same clock a driver samples. It is separate from
+  `showcaseTokens.ts` on purpose: that file is the ported token surface, and
+  keeping motion out of it keeps Guardrail 2's `--sc-*` sweep honest. Both have
+  a sweep of their own — grep for `var(--vf-…)` against `breath.ts`.
+  **Why it exists:** the eleven screens were built in parallel and arrived with
+  three different "breath" curves, four ideas of how long a line takes to
+  travel, and a count-up on `easeOutExpo`. Each was defensible alone; together
+  they read as eleven designers. **Motion is judged across an asset, so it is
+  one pass and one file, not eleven.**
+- **A screen entrance can be ONE element.** `shell/Screen.tsx`'s `.veil` is a
+  sheet of canvas covering everything below the brand mark whose top edge
+  descends over one breath. The rail sits under it, so the line draws itself by
+  the same edge that uncovers each region: the stagger is a consequence of one
+  stroke passing each node, with no per-element delay curve to keep in sync.
+  It is a VEIL and not a `clip-path` because a clip removes what it hides from
+  HIT TESTING — every tap target has to be live from the first frame, and that
+  rule outranks the motion. `booking` opts out with `draws={false}`, because its
+  loop closing already IS the line arriving.
+- **A celebration card settles when its LOOP CLOSES, never when its hold
+  expires.** All five shipped conflating the two, so the flow's action appeared
+  at 0.76s / 4.3s / 8.9s / 2.6s / 3.2s across five cards that look alike. The
+  hold is a REPLAY concern, armed only when a card runs standalone
+  (`loop={true}`). This is Guardrail 5's cousin and just as invisible to
+  `make check`: nothing errors, the action simply is not there yet.
+- **A tap must finish the card, not just reveal its action.**
+  `shell/useTapToSettle.ts` — the scaffold's tap already calls `markDone`, but
+  the callback runs the wrong way for the card to hear it, so the line kept
+  drawing under a card that had announced itself settled. Each card listens for
+  the same `pointerdown` and adds a `.finished` class whose whole body is
+  `animation-delay: -30s !important` on itself and its subtree: every CSS
+  animation runs past its end and holds its own final frame, so no file has to
+  restate what "settled" looks like. Per-frame drivers (the point sphere, the
+  rewards bloom) have no keyframe to fast-forward and are handed over by their
+  component's own branch instead.
+
 ## Assets, not screens
 
 The package ships **assets**: self-contained, interactive mocks you click
@@ -255,6 +306,8 @@ through. Not a gallery of stills behind a picker.
 | romanahouse | `celebration` | the same post-class flow, redesigned again | the same five |
 | milemarker | `app` | the same member app, redesigned a third time | the same six |
 | milemarker | `celebration` | the same post-class flow, reframed | the same five |
+| vinyasaflow | `app` | the same member app, redesigned a fourth time | the same six |
+| vinyasaflow | `celebration` | the same post-class flow, redesigned again | the same five |
 
 A redesign's rows are the base's rows, and that is the point: **the asset and
 route sets are the thing a fork may not change.** If a fork ever needs a row of

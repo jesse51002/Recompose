@@ -19,8 +19,6 @@
 // LOOPING is not this widget's business, in either language: the Points Store
 // is a static surface and the hero animates once on mount.
 
-import { CelebrationTimings, EASE_OUT_QUART } from 'recompose-react';
-
 import { SPARKLE_STAR_CLIP_PATH } from '../celebrations/sparkleGeometry';
 import { showcaseStyle } from '../showcaseTokens';
 
@@ -30,6 +28,7 @@ import {
   HERO_FADE_MS,
   HERO_SPARKLES,
   HERO_START_SCALE,
+  HERO_WINDOW_MS,
   heroSparkleDelayMs,
   orderByDistance,
 } from './sparkleHeroGeometry';
@@ -38,10 +37,19 @@ import {
 const HERO_VARS: Readonly<Record<string, string>> = Object.freeze({
   '--sh-star': SPARKLE_STAR_CLIP_PATH,
   '--sh-fade-ms': `${String(HERO_FADE_MS)}ms`,
-  '--sh-window-ms': `${String(CelebrationTimings.sparkleWindowMs)}ms`,
+  '--sh-window-ms': `${String(HERO_WINDOW_MS)}ms`,
   '--sh-start-scale': String(HERO_START_SCALE),
   '--sh-accent-start-scale': String(ACCENT_START_SCALE),
-  '--sh-ease': EASE_OUT_QUART,
+  /*
+   * THE BREATH, NOT THE PORTED `EASE_OUT_QUART`. This was the last hard-ended
+   * curve on any app screen: quart leaves at full speed and decelerates into
+   * its mark, which is the shape of a firework. ../layout_brief.yaml is
+   * unconditional — "nothing here decelerates into a hard stop, and nothing
+   * accelerates away from one" — and every other surface in this fork lights up
+   * on `--vf-breath`. Read from the same clock rather than restated:
+   * ../shell/breath.ts.
+   */
+  '--sh-ease': 'var(--vf-breath)',
 });
 
 /** `_orderByDistance()` — a `late final` in Dart, a module constant here. */

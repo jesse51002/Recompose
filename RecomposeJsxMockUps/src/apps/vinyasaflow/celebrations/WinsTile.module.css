@@ -41,7 +41,7 @@
   animation-name: wins-win-arrive;
   animation-duration: var(--wt-settle-ms);
   /* Soft at both ends — a breath, not a snap. See ../RankShowcase.module.css. */
-  animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  animation-timing-function: var(--vf-breath);
   animation-fill-mode: both;
   animation-delay: var(--wt-delay-ms);
 }

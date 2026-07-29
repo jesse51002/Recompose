@@ -21,10 +21,21 @@
 // identical values with one fewer round trip. Same trade ./streakOrbit.ts makes.
 
 import { Curves, clamp01 } from './celebrations/curves';
+import { DRAW_MS, HOLD_MS } from './shell/breath';
 import { SC } from './showcaseTokens';
 
-/** `_kSphereDuration` — the swarm's whole timeline. */
-export const SPHERE_MS = 1700;
+/**
+ * `_kSphereDuration` — the swarm's whole timeline, and this card's share of the
+ * app's clock.
+ *
+ * One and a half breaths. The Dart's 1700ms put the card's finish four and a
+ * half seconds out once its hold was counted, which is not "slow and
+ * unhurried", it is slow. A breath and a half turns the swarm once and a half
+ * over, gathers it into the loop, and hands over to a close that takes one more
+ * — so the whole card lands at `SPHERE_MS + CLOSE_MS`, within a beat of every
+ * other celebration in the flow. See ./shell/breath.ts.
+ */
+export const SPHERE_MS = Math.round(DRAW_MS * 1.5);
 
 /** `_kSpinTurns` — full Y-axis turns across that timeline. */
 export const SPIN_TURNS = 1.4;
@@ -49,7 +60,7 @@ export const REFERENCE_EXTENT = 280;
 export const EDGE_PAD = 28;
 
 /** `_kPointsHold` — how long the focused content holds before the sphere replays. */
-export const POINTS_HOLD_MS = 2600;
+export const POINTS_HOLD_MS = HOLD_MS;
 
 // ---------------------------------------------------------------------------
 // THIS FORK'S OWN GEOMETRY — the thread, and the loop it closes into.
@@ -201,7 +212,12 @@ export function sphereFrame(elapsedMs: number, layout: SphereLayout): readonly P
   const t = clamp01(elapsedMs / SPHERE_MS);
   const spin = t * 2 * Math.PI * SPIN_TURNS;
   const converge = clamp01((t - CONVERGE_START) / (1 - CONVERGE_START));
-  const easedConverge = Curves.easeInQuart(converge);
+  // THE BREATH, NOT THE DART'S `easeInQuart`. Quart leaves from a dead stop and
+  // arrives at full speed — the swarm slams into the loop's centre, which is
+  // exactly the shape ../layout_brief.yaml rules out ("nothing here decelerates
+  // into a hard stop, and nothing accelerates away from one"). Sine in and out
+  // gathers the discs and sets them down.
+  const easedConverge = Curves.easeInOutSine(converge);
   const radiusX = (layout.halfWidth - layout.edgePad) * (1 - easedConverge);
   const radiusY = (layout.halfHeight - layout.edgePad) * (1 - easedConverge);
 

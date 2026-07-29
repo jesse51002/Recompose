@@ -35,8 +35,10 @@ import { useEffect, useState } from 'react';
 import { ThemedImage } from 'recompose-react';
 
 import { CountUpText } from './celebrations/CountUpText';
+import { cx } from './cx';
 import { Figure } from './shell/Figure';
 import { Loop } from './shell/Thread';
+import { useTapToSettle } from './shell/useTapToSettle';
 import { showcaseAsset } from './showcaseAssets';
 import { SLOT_STREAK_ICON } from './showcaseSlots';
 import { showcaseStyle } from './showcaseTokens';
@@ -101,6 +103,9 @@ export interface StatsShowcaseProps {
 
 export function StatsShowcase({ loop = true, onCycleComplete }: StatsShowcaseProps) {
   const reduceMotion = usePrefersReducedMotion();
+  // A tap finishes the draw. ./shell/useTapToSettle.ts says why the card has to
+  // hear the tap itself rather than learn about it from the flow.
+  const { settled: tapped, bind } = useTapToSettle();
   const [cycle, setCycle] = useState(0);
 
   useEffect(() => {
@@ -135,8 +140,14 @@ export function StatsShowcase({ loop = true, onCycleComplete }: StatsShowcasePro
     };
   }, [cycle, loop, reduceMotion, onCycleComplete]);
 
+  const done = tapped || reduceMotion;
+
   return (
-    <div className={styles.card} style={showcaseStyle(CARD_VARS)}>
+    <div
+      className={cx(styles.card, done && styles.finished)}
+      style={showcaseStyle(CARD_VARS)}
+      {...bind}
+    >
       {/* Re-keyed per cycle so every CSS entrance below replays with it. */}
       <div key={cycle} className={styles.held}>
         <div className={styles.halo}>
@@ -161,7 +172,12 @@ export function StatsShowcase({ loop = true, onCycleComplete }: StatsShowcasePro
         <div className={styles.statement}>
           <div className={styles.headline}>
             <Figure size="xl" className={styles.count}>
-              <CountUpText target={WEEK_COUNT} durationMs={COUNT_ROLL_MS} delayMs={SETTLE_MS} />
+              <CountUpText
+                target={WEEK_COUNT}
+                durationMs={COUNT_ROLL_MS}
+                delayMs={SETTLE_MS}
+                immediate={done}
+              />
             </Figure>
             <p className={styles.unit}>{WEEK_UNIT}</p>
           </div>

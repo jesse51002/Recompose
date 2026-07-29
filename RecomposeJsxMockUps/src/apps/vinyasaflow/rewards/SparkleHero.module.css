@@ -89,8 +89,9 @@
  * `opacity: eased * s.$4` and `scale: 0.5 + 0.5 * eased`.
  *
  * Both are LINEAR in `eased`, so interpolating each endpoint-to-endpoint under
- * the ease-out-quart timing function reproduces the Dart's per-frame value
- * exactly rather than approximating it.
+ * the timing function reproduces a per-frame driver exactly rather than
+ * approximating it. The function itself is this app's breath rather than the
+ * Dart's `easeOutQuart` — see ./SparkleHero.tsx.
  */
 @keyframes heroSparkleIn {
   from {

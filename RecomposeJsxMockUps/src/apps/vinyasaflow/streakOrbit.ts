@@ -23,24 +23,26 @@
 // else. Changing how a card arrives is arrangement; every element it arrives
 // with is still here.
 
+import { ARRIVE_MS, BOW_MS, BREATH, CLOSE_MS, COUNT_MS, HOLD_MS } from './shell/breath';
+
 /**
- * The breath, and it is the only easing curve on this card.
+ * The breath, and it is the only easing curve on this card — or on any other.
  *
- * Soft at BOTH ends — `easeInOutSine`. The brief is explicit that this is what
- * separates this app's movement from every brisk product animation: "nothing
- * here decelerates into a hard stop, and nothing accelerates away from one." An
- * ease-out lands hard; this one arrives the way a breath finishes.
+ * RE-EXPORTED RATHER THAN DECLARED. It used to be a literal here and a
+ * different literal on three of the four sibling cards; motion is judged across
+ * an asset, so the curve and every duration below now resolve to
+ * ./shell/breath.ts. Nothing in this fork may declare a second one.
  */
-export const BREATH = 'cubic-bezier(0.37, 0, 0.63, 1)';
+export { BREATH };
 
 /**
  * The line's travel around the hero — "a full screen draws in about three
  * quarters of a second, and it is allowed to take that long."
  */
-export const LOOP_DRAW_MS = 760;
+export const LOOP_DRAW_MS = CLOSE_MS;
 
 /** The hero fades up inside the ring while the line is still going round it. */
-export const HERO_FADE_MS = 600;
+export const HERO_FADE_MS = CLOSE_MS;
 
 /**
  * WHEN THE CARD IS SETTLED, and it is the moment the loop closes rather than
@@ -52,20 +54,19 @@ export const HERO_FADE_MS = 600;
 export const SETTLE_MS = LOOP_DRAW_MS;
 
 /** The statement arrives as one block, on the close. Not a per-part stagger. */
-export const STATEMENT_FADE_MS = 420;
+export const STATEMENT_FADE_MS = ARRIVE_MS;
 
 /**
  * The count's roll. "A count travels from zero to its value in tabular figures
  * … lands inside three quarters of a second, and settles without a final tick."
- * Shorter than `CelebrationTimings.countUpMs` (1400) on purpose.
  */
-export const COUNT_ROLL_MS = 720;
+export const COUNT_ROLL_MS = COUNT_MS;
 
 /** The last excursion running out across the screen to gather the week. */
-export const WEEK_SWEEP_MS = 720;
+export const WEEK_SWEEP_MS = BOW_MS;
 
 /** How long a settled card holds before it draws itself again, standalone. */
-export const HOLD_MS = 2600;
+export { HOLD_MS };
 
 /**
  * One full cycle, for the standalone `loop` mode only. The flow passes

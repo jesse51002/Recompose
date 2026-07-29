@@ -284,16 +284,23 @@
   flex: 1 1 0;
 }
 
-/* A reveal: opacity 0 -> 1 with a short rise. Soft at both ends; never a bounce. */
+/*
+ * A reveal: OPACITY ONLY. Soft at both ends; never a bounce, and never a slide.
+ *
+ * This carried a 12px rise until the motion pass. ../layout_brief.yaml's first
+ * sentence about movement is "a screen does not fade in and does not slide in…
+ * each region arrives at the moment the line reaches it", and every sibling
+ * card had already landed on opacity alone — a translate here was this card
+ * having a second idea about how things appear. `--pt-reveal-offset` went with
+ * it.
+ */
 @keyframes ptReveal {
   from {
     opacity: 0;
-    transform: translateY(var(--pt-reveal-offset));
   }
 
   to {
     opacity: 1;
-    transform: none;
   }
 }
 
@@ -315,4 +322,17 @@
   .total {
     animation: none;
   }
+}
+
+/*
+ * A TAP FINISHES THE DRAW — the rule that outranks the motion
+ * (./shell/useTapToSettle.ts). A negative delay past the longest animation on
+ * the card runs every one of them to its own end and holds it there, so
+ * nothing here has to restate what "finished" looks like. The component also
+ * hands the swarm straight over to the settled view, because a JS driver has
+ * no keyframe for this to fast-forward.
+ */
+.finished,
+.finished * {
+  animation-delay: -30s !important;
 }

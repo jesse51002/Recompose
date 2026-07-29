@@ -392,3 +392,16 @@
     animation: none;
   }
 }
+
+/*
+ * A TAP FINISHES THE DRAW — the rule that outranks the motion
+ * (./shell/useTapToSettle.ts). A negative delay past the longest animation on
+ * the card runs every one of them to its own end and holds it there: the
+ * descent, the bow, the drop and the closing ring all complete, and every
+ * arrival lands. The component hands the bloom over to the shelf separately,
+ * because a per-frame driver has no keyframe for this to fast-forward.
+ */
+.finished,
+.finished * {
+  animation-delay: -30s !important;
+}

@@ -30,6 +30,8 @@
 // A neighbour reads as the next frame on a strip, receding, rather than as a
 // card fanned away.
 
+import { BOW_MS } from '../shell/breath';
+
 /** The featured frame's HEIGHT, in px. Its width is whatever its own art makes it. */
 export const FEATURED_HEIGHT = 148;
 
@@ -57,11 +59,12 @@ export const VIEWPORT_FRACTION = 0.45;
 /**
  * One page advance, in ms.
  *
- * Slower than the base's 450: this app's tempo is a breath, and the page tween
- * is already eased soft at both ends (`easeInOutCubic`), so the only thing
- * standing between it and the brief's four-count was its duration.
+ * Slower than the base's 450: this app's tempo is a breath. `BOW_MS` is the
+ * shared clock's beat for the line going out sideways and back
+ * (../shell/breath.ts), which is exactly what a shelf paging along is — the
+ * same excursion, one frame further on.
  */
-export const SLIDE_MS = 640;
+export const SLIDE_MS = BOW_MS;
 
 /** One page's resolved cover-flow transform. */
 export interface CoverFlowTransform {

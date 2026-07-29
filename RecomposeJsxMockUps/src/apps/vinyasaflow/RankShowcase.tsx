@@ -29,10 +29,13 @@ import { useEffect, useState } from 'react';
 
 import { CelebrationFrame } from './celebrations/CelebrationFrame';
 import { CountUpText } from './celebrations/CountUpText';
+import { cx } from './cx';
 import styles from './RankShowcase.module.css';
+import { ARRIVE_MS, CLOSE_MS, COUNT_MS, HOLD_MS } from './shell/breath';
 import { Figure, Title } from './shell/Figure';
 import { MintedDisc } from './shell/Photo';
 import { Loop } from './shell/Thread';
+import { useTapToSettle } from './shell/useTapToSettle';
 import { showcaseAsset } from './showcaseAssets';
 import { SLOT_RANK_BELT } from './showcaseSlots';
 import { showcaseStyle } from './showcaseTokens';
@@ -62,22 +65,24 @@ const CLASSES_LABEL = 'Classes in rank';
 const LOOP_SIZE = 280;
 const MEDALLION_SIZE = 196;
 
-/** `_kRankHold` — how long the settled card holds before a loop replays it. */
-const HOLD_MS = 2600;
-
 /**
  * The tempo, and it is the brief's literal one: a breath, soft at BOTH ends,
  * about three quarters of a second for the line to travel.
  *
+ * `CLOSE_MS` from ./shell/breath.ts rather than a number of this card's own:
+ * this is the same stroke travelling the same distance as the loop on every
+ * other celebration, and it shipped 140ms slower than its siblings for no
+ * reason anyone could have named.
+ *
  * The draw is split across two half-circles (see the stylesheet), so each half
- * runs for `DRAW_MS / 2` — the first on an ease-IN sine and the second on an
- * ease-OUT sine, which recompose into one ease-in-out across the whole circle
+ * runs for `DRAW_MS / 2` — the first on `--vf-breath-in` and the second on
+ * `--vf-breath-out`, which recompose into one breath across the whole circle
  * and therefore do not stall where they meet.
  */
-const DRAW_MS = 900;
+const DRAW_MS = CLOSE_MS;
 
 /** The type's arrival, at the moment the loop closes. Opacity only — nothing slides. */
-const SETTLE_MS = 320;
+const SETTLE_MS = ARRIVE_MS;
 
 const MOTION_VARS = Object.freeze({
   '--rank-draw-ms': `${String(DRAW_MS)}ms`,
@@ -94,6 +99,8 @@ export interface RankShowcaseProps {
 
 export function RankShowcase({ loop = true, onCycleComplete }: RankShowcaseProps) {
   const reduceMotion = usePrefersReducedMotion();
+  // A tap finishes the draw — ./shell/useTapToSettle.ts.
+  const { settled: tapped, bind } = useTapToSettle();
   const [cycle, setCycle] = useState(0);
 
   useEffect(() => {
@@ -106,31 +113,53 @@ export function RankShowcase({ loop = true, onCycleComplete }: RankShowcaseProps
       onCycleComplete?.();
       return;
     }
-    const timer = setTimeout(() => {
+    // THE CLOSE IS THE SETTLE. This used to be one timer at `HOLD_MS`, so the
+    // flow's action appeared 1.7 seconds after the loop had visibly finished —
+    // the card sat there looking done and offering nothing. "The moment it
+    // closes is the moment the card is settled and its action appears"
+    // (./layout_brief.yaml). The hold is a REPLAY concern and is now its own
+    // timer, armed only when this card is running standalone.
+    const settle = window.setTimeout(() => {
       onCycleComplete?.();
-      if (loop) setCycle((n) => n + 1);
-    }, HOLD_MS);
+    }, DRAW_MS);
+    const restart = loop
+      ? window.setTimeout(() => {
+          setCycle((n) => n + 1);
+        }, DRAW_MS + HOLD_MS)
+      : 0;
     return () => {
-      clearTimeout(timer);
+      window.clearTimeout(settle);
+      window.clearTimeout(restart);
     };
   }, [cycle, loop, reduceMotion, onCycleComplete]);
 
   return (
     <CelebrationFrame>
-      <RankContent key={cycle} />
+      <RankContent key={cycle} finished={tapped || reduceMotion} bind={bind} />
     </CelebrationFrame>
   );
 }
 
 /** `_RankContent` — the loop closing on the medallion, the rank it names, and what it cost. */
-function RankContent() {
+function RankContent({
+  finished,
+  bind,
+}: {
+  /** The member tapped, or asked for reduced motion: the card is already done. */
+  finished: boolean;
+  bind: { readonly onPointerDownCapture: () => void };
+}) {
   // NOT themed. `rank_body.dart` has no ThemeText call at all — the rank name
   // and its sub-label come from the live profile, not from a copy slot. The
   // first version of this file read `wins_subtitle`, which belongs to the
   // trophy card; borrowing another card's slot would have re-labelled this one
   // whenever a tenant's wins copy changed.
   return (
-    <div className={styles.content} style={showcaseStyle(MOTION_VARS)}>
+    <div
+      className={cx(styles.content, finished && styles.finished)}
+      style={showcaseStyle(MOTION_VARS)}
+      {...bind}
+    >
       <Loop size={LOOP_SIZE}>
         {/*
           THE DRAWING OF THE LINE, and it is a subtraction rather than an
@@ -177,7 +206,12 @@ function RankContent() {
       <div className={styles.tally}>
         <p className={styles.say}>{CLASSES_LABEL}</p>
         <Figure size="xl">
-          <CountUpText target={CLASSES_AT_RANK} durationMs={DRAW_MS} delayMs={DRAW_MS} />
+          <CountUpText
+            target={CLASSES_AT_RANK}
+            durationMs={COUNT_MS}
+            delayMs={DRAW_MS}
+            immediate={finished}
+          />
         </Figure>
       </div>
     </div>

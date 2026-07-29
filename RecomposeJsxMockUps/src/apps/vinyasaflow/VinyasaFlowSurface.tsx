@@ -28,6 +28,7 @@ import type { ReactNode } from 'react';
 import { useThemeCategory } from 'recompose-react';
 
 import { AppContentProvider } from './appContent';
+import { BREATH_VARS } from './shell/breath';
 import styles from './VinyasaFlowSurface.module.css';
 import { ShowcaseThemeVars } from './ShowcaseThemeVars';
 
@@ -46,7 +47,20 @@ export function VinyasaFlowSurface({ children }: { children: ReactNode }) {
   const category = useThemeCategory();
   return (
     <AppContentProvider category={category === '' ? null : category}>
-      <ShowcaseThemeVars className={styles.root}>{children}</ShowcaseThemeVars>
+      {/*
+        THE CLOCK RIDES ON THE SAME ELEMENT AS THE TOKENS. `--vf-*` is this
+        fork's motion vocabulary (./shell/breath.ts) — one curve and one set of
+        durations, written onto the asset root so every stylesheet under it
+        animates on the same breath. `style` is merged AFTER the `--sc-*`
+        variables and shares no name with them.
+
+        It is NOT in ./showcaseTokens.ts: that file is the ported token surface,
+        and motion is not something this fork inherited. Keeping the two apart
+        also keeps Guardrail 2's `--sc-*` sweep honest.
+      */}
+      <ShowcaseThemeVars className={styles.root} style={BREATH_VARS}>
+        {children}
+      </ShowcaseThemeVars>
     </AppContentProvider>
   );
 }

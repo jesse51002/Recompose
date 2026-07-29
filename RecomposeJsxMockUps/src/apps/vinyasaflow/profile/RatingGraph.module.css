@@ -44,7 +44,16 @@
   stroke: var(--sc-primary);
   stroke-dasharray: 1;
   stroke-dashoffset: 0;
-  animation: draw 750ms cubic-bezier(0.37, 0, 0.63, 1) both;
+  /*
+   * IT DRAWS AFTER THE SCREEN'S OWN DESCENT, not alongside it. The shell's line
+   * travels the length of the screen over `--vf-draw` (../shell/Screen.module.css);
+   * started at zero, this plot was already four fifths drawn by the time the
+   * line reached it and was still drawing after it had passed — a region
+   * arriving before and after its own moment rather than at it. Delayed by the
+   * descent, the sequence reads the way the brief states it: the line comes
+   * down the screen, and the plot is that line continuing sideways.
+   */
+  animation: draw var(--vf-bow) var(--vf-breath) var(--vf-draw) both;
 }
 
 @keyframes draw {

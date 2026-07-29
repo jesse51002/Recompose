@@ -237,6 +237,23 @@
   margin-inline-start: calc(-1 * var(--sc-thread-x));
 }
 
+/*
+ * A TAP FINISHES THE DRAW — the rule that outranks the motion
+ * (./shell/useTapToSettle.ts). Not `animation: none`, which would revert each
+ * element to its BASE style and is only settled-looking here by luck: a
+ * negative delay past the longest animation on the card runs every one of them
+ * to its own end and holds it there, so nothing in this file has to restate
+ * what "finished" means for four different properties.
+ *
+ * `!important` because the delays it overrides are inline `--st-*` values, and
+ * the universal selector because the count's reel and the week strip are other
+ * files' animations inside this card's subtree.
+ */
+.finished,
+.finished * {
+  animation-delay: -30s !important;
+}
+
 /* The card renders settled: already drawn, already closed, already there. */
 @media (prefers-reduced-motion: reduce) {
   .ring,

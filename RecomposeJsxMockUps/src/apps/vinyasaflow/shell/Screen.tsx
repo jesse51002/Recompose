@@ -25,6 +25,29 @@
 // other is not, the `visible` one computes to `auto`. The celebration surfaces
 // paint deliberately outside their box, and a global `overflow-y: auto` would
 // crop every one of them.
+//
+// THE SCREEN DRAWS ITSELF, AND `.veil` IS HOW. ../layout_brief.yaml's motion
+// direction: "A screen does not fade in and does not slide in. Its line enters
+// at the top and travels down, drawing itself stroke-first, and each region
+// arrives at the moment the line reaches it. The stagger is therefore not a
+// stagger at all — it is a consequence of one continuous stroke passing each
+// node in turn, which is why it never needs a per-element delay curve."
+//
+// So there is no per-element delay curve here, and no per-region entrance
+// anywhere in this fork's app screens. There is ONE element: a sheet of canvas
+// covering everything below the brand mark, whose top edge travels to the
+// bottom of the screen over one breath. The rail is UNDER it, so the line
+// literally draws itself as the edge passes; every region under it arrives at
+// the instant the edge clears it, exactly and by construction rather than by
+// arithmetic that has to be kept in sync.
+//
+// IT IS A VEIL AND NOT A `clip-path`, AND THAT IS THE RULE THAT OUTRANKS THE
+// MOTION. A clip removes what it hides from HIT TESTING, so a clipped bottom
+// nav is untappable for as long as the line takes to reach it. The veil is
+// `pointer-events: none` and merely paints over: every tap target on the screen
+// is live from the first frame regardless of what the line is doing. A member
+// standing in a studio doorway with their phone out is never made to wait for a
+// nicety.
 
 import type { ReactNode } from 'react';
 
@@ -47,9 +70,25 @@ export interface ScreenProps {
    * horizontally (see the header), which is wrong for the celebration cards.
    */
   bodyScroll?: boolean | undefined;
+  /**
+   * Let the shell draw this screen's line. ON by default, and the only screen
+   * that turns it off is `booking`, whose whole composition IS the line
+   * arriving and closing into a loop around the hero. Two descents on one
+   * screen is two lines, and this app has one.
+   *
+   * NOT a vocabulary of entrances. There is one animation per asset here and
+   * this is not a second one — it is the one screen that draws its own.
+   */
+  draws?: boolean | undefined;
 }
 
-export function Screen({ children, head, foot, bodyScroll = false }: ScreenProps) {
+export function Screen({
+  children,
+  head,
+  foot,
+  bodyScroll = false,
+  draws = true,
+}: ScreenProps) {
   // `SafeArea(top: !hasHead)`. The frame publishes its status inset as
   // `--phone-status-inset`; there is deliberately no bottom counterpart,
   // because the frame's inset override is `EdgeInsets.only(top:)`.
@@ -64,6 +103,13 @@ export function Screen({ children, head, foot, bodyScroll = false }: ScreenProps
         {children}
       </div>
       {foot !== undefined && foot !== null && <div className={styles.foot}>{foot}</div>}
+      {/*
+        The line's travel. Last in the DOM and painted above everything (see the
+        header), covering the screen from the mark's foot down and lifting away
+        as the stroke descends. `aria-hidden` and `pointer-events: none`: it is
+        the only thing on the screen that is not a fact and not a target.
+      */}
+      {draws && <div className={styles.veil} aria-hidden="true" />}
     </div>
   );
 }
