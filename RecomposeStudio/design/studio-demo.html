@@ -159,12 +159,18 @@ button { font-family: inherit; cursor: pointer; }
 .agent .el { font: 400 var(--fs-xs)/1 var(--mono); color: var(--ink-4); flex: none; }
 .agent.ok .pulse { background: var(--ink-3); }
 
+.longrun {
+  margin-top: 14px; padding: 12px 16px; border: 1px dashed var(--sh-line-2);
+  border-radius: 8px; font-size: var(--fs-xs); line-height: 1.65; color: var(--ink-3);
+}
+.longrun b { color: var(--ink); font-weight: 500; }
+
 .obpanel { display: none; }
 .obpanel.on { display: block; animation: rise .4s ease both; }
 .obacts { margin-top: 18px; display: flex; gap: 8px; align-items: center; }
 .obacts .sp { flex: 1; }
 
-.found { display: flex; gap: 0; margin-top: 4px; border: 1px solid var(--sh-line); border-radius: 9px; overflow: hidden; }
+.found { display: flex; gap: 0; margin-top: 16px; border: 1px solid var(--sh-line); border-radius: 9px; overflow: hidden; }
 .found div { flex: 1; padding: 14px 16px; border-right: 1px solid var(--sh-line); }
 .found div:last-child { border-right: 0; }
 .found b { display: block; font: 600 var(--fs-lg)/1 var(--sans); letter-spacing: -.02em; }
@@ -470,10 +476,8 @@ button { font-family: inherit; cursor: pointer; }
     <div class="ob">
       <div class="kick">Admin · onboard a platform</div>
       <h1>Point us at the app.</h1>
-      <p>We take <b>read access</b> and nothing else. No pull request, no branch
-         on your trunk, no library to install — we derive our own tokenized fork
-         and mirror it into a feature-free JSX mock. <b>Once per platform</b>,
-         not once per tenant.</p>
+      <p>We never touch your code. You give us read access, we keep a
+         <b>managed fork</b>.</p>
 
       <div class="urlbar">
         <div class="field" id="urlfield"><span class="g"></span><span>github.com/combatden/member-app</span></div>
@@ -482,53 +486,52 @@ button { font-family: inherit; cursor: pointer; }
 
       <div class="ribbon" id="ribbon">
         <div class="rstep" data-r="1"><span class="n">01</span><b>Connect</b></div>
-        <div class="rstep" data-r="2"><span class="n">02</span><b>Tokenize</b></div>
-        <div class="rstep" data-r="3"><span class="n">03</span><b>Mirror</b></div>
+        <div class="rstep" data-r="2"><span class="n">02</span><b>Create Design Fork</b></div>
       </div>
 
-      <!-- One panel per step. A Next button between them, so it is always
-           obvious which thing is happening rather than one blur of ticks. -->
+      <!-- Connecting is a CREDENTIALS handshake, not a scan. Nothing has been
+           read yet, so nothing is counted here. -->
       <div class="obpanel" id="ob-1">
         <div class="agent ok"><span class="pulse"></span>
-          <div class="lb"><b>Connected</b><u>read access confirmed · nothing written</u></div>
+          <div class="lb"><b>Connected</b><u>read access confirmed · nothing read, nothing written</u></div>
           <span class="el">1.4s</span></div>
-        <div class="found">
+        <div class="obacts"><span class="sp"></span><button class="btn pri" id="ob-next-1">Create design fork →</button></div>
+      </div>
+
+      <!-- One agent, one step. Tokenizing and mirroring are two halves of the
+           same job and splitting them taught a viewer nothing. -->
+      <div class="obpanel" id="ob-2">
+        <div class="agent live" id="ag2"><span class="pulse"></span>
+          <div class="lb"><b>An agent is creating your design fork</b><u id="ag2log">reading lib/theme/palette.dart…</u></div>
+          <span class="el" id="ag2el"></span></div>
+
+        <!-- This is a long job. Saying so up front, and saying you can leave,
+             is the difference between "working" and "hung". -->
+        <div class="longrun" id="oblong">
+          Usually <b>30–60 minutes</b>. You can close this — we'll email you
+          when the fork is ready.
+        </div>
+
+        <div class="found" id="obfound" style="display:none">
           <div><b>6</b><u>screens</u></div>
           <div><b>5</b><u>post-class cards</u></div>
           <div><b>41</b><u>colour literals</u></div>
           <div><b>18</b><u>asset references</u></div>
         </div>
-        <div class="obacts"><span class="sp"></span><button class="btn pri" id="ob-next-1">Start tokenizing →</button></div>
-      </div>
 
-      <div class="obpanel" id="ob-2">
-        <div class="agent live" id="ag2"><span class="pulse"></span>
-          <div class="lb"><b>An agent is tokenizing your code</b><u id="ag2log">reading lib/theme/palette.dart…</u></div>
-          <span class="el" id="ag2el"></span></div>
         <div class="obacts" id="ob2acts" style="display:none">
-          <button class="btn sm" id="ob2repo">View repo</button>
-          <span class="sp"></span>
-          <button class="btn pri" id="ob-next-2">Start mirroring →</button>
-        </div>
-      </div>
-
-      <div class="obpanel" id="ob-3">
-        <div class="agent live" id="ag3"><span class="pulse"></span>
-          <div class="lb"><b>An agent is mirroring your app</b><u id="ag3log">writing home.tsx…</u></div>
-          <span class="el" id="ag3el"></span></div>
-        <div class="obacts" id="ob3acts" style="display:none">
           <button class="btn sm">View repo</button>
-          <button class="btn sm">View design</button>
           <span class="sp"></span>
           <button class="btn pri" data-go="generate">Open the customer view →</button>
         </div>
       </div>
 
+      <!-- Fine print, not a repeat of the headline. Carries the facts the
+           one-liner drops: no integration work, and the cost is amortized. -->
       <div class="disclaim">
-        <b>We never touch your main branch.</b> Everything above happens on a
-        fork we maintain — there is no pull request into your repository, no
-        library to install, and no integration work on your side. You grant
-        read access; that is the whole of it.
+        No pull request into your repository, no branch on your trunk, no
+        library to install, no integration work on your side.
+        <b>Once per platform</b>, not once per tenant.
       </div>
     </div>
   </section>
@@ -688,19 +691,15 @@ $$('[data-go]').forEach((b) => b.addEventListener('click', () => go(b.dataset.go
 
 /* ── PAGE 1: onboarding, one deliberate step at a time ─────────────────── */
 
-const TOKEN_LOG = [
+/* One log for one job. Tokenizing and mirroring are halves of the same pass. */
+const FORK_LOG = [
   'reading lib/theme/palette.dart…',
   'replacing 41 colour literals with slot references',
   'rewriting features/home/class_list_item.dart',
-  'rewriting shared/widgets/gym_header.dart',
-  '23 files tokenized · 0 written to your repository',
-];
-const MIRROR_LOG = [
-  'writing apps/combatden/home/HomeShowcase.tsx',
-  'stripping API calls and state from class detail',
-  'mirroring the 5-card post-class flow',
+  'mirroring 6 screens into feature-free JSX',
+  'stripping API calls, state and fetching from the mock',
   'mocking empty, loading, error and overflow states',
-  '11 screens mirrored · no logic, no fetching, no state',
+  'created recompose/combatden · 0 written to your repository',
 ];
 
 function ribbon(n, state) {
@@ -747,15 +746,14 @@ $('#obgo').addEventListener('click', () => {
 $('#ob-next-1').addEventListener('click', async () => {
   ribbon(2, 'now');
   panel('ob-2');
-  await runAgent('ag2', 'ag2log', 'ag2el', 'ob2acts', TOKEN_LOG, '12s', 'Your code is tokenized');
+  $('#obfound').style.display = 'none';
+  $('#oblong').style.display = 'block';
+  await runAgent('ag2', 'ag2log', 'ag2el', 'ob2acts', FORK_LOG, '52m',
+                 'Your design fork is ready');
+  $('#oblong').style.display = 'none';
+  // The counts land HERE, because this is the pass that actually read the code.
+  $('#obfound').style.display = 'flex';
   ribbon(2, 'done');
-});
-
-$('#ob-next-2').addEventListener('click', async () => {
-  ribbon(3, 'now');
-  panel('ob-3');
-  await runAgent('ag3', 'ag3log', 'ag3el', 'ob3acts', MIRROR_LOG, '3m 08s', 'Your app is mirrored');
-  ribbon(3, 'done');
 });
 
 /* ── PAGE 2: the phone ─────────────────────────────────────────────────── */
@@ -1011,14 +1009,21 @@ async function runDesign() {
     <strong>HomeNextUpHero</strong> and <strong>HomeTimeSpine</strong>. Same six
     classes, same fields, same taps, <strong>same API calls</strong> — a
     redesign changes arrangement and nothing else.</p>`);
+  say('Recompose', `<p>That took <strong>1m 40s</strong>. Designing is the fast
+    part — checking it is not.</p>`);
 
   /* Validation has NO UI. It is two lines in the chat. */
   await wait(1200);
   $('#chattag').textContent = 'validating';
-  const v = say('Recompose', `<p>Validating all 11 screens against the brief and
-    the invariant…</p>`, 'sys');
+  say('Recompose', `<p>The validator walks every screen in every state, then
+    checks the design against the functional-equivalence gate — that nothing was
+    added, merged, split or removed. It is thorough rather than quick:
+    <strong>usually 20–40 minutes</strong>. You can close this; we'll email you
+    when it's done.</p>`);
+  await wait(1000);
+  const v = say('Recompose', `<p>Validating 11 screens…</p>`, 'sys');
   await wait(2600);
-  v.querySelector('p').innerHTML = 'Validating all 11 screens against the brief and the invariant… <strong>complete</strong>. 11 of 11 pass, including the empty, loading, error and long-string states.';
+  v.querySelector('p').innerHTML = 'Validating 11 screens… <strong>complete in 31m</strong>. 11 of 11 pass, including the empty, loading, error and long-string states.';
 
   await wait(700);
   $('#chattag').textContent = 'review';
@@ -1052,13 +1057,13 @@ function reset() {
   btn.textContent = 'Connect';
   $('#urlfield').classList.remove('busy');
   $$('.obpanel').forEach((p) => p.classList.remove('on'));
-  [1, 2, 3].forEach((n) => ribbon(n, null));
-  ['ob2acts', 'ob3acts'].forEach((id) => { $('#' + id).style.display = 'none'; });
-  ['ag2', 'ag3'].forEach((id) => {
-    const ag = $('#' + id); ag.classList.remove('ok', 'live');
-    const h = ag.querySelector('.lb b'); if (h.dataset.live) h.textContent = h.dataset.live;
-  });
-  $('#ag2el').textContent = $('#ag3el').textContent = '';
+  [1, 2].forEach((n) => ribbon(n, null));
+  ['ob2acts', 'obfound', 'oblong'].forEach((id) => { $('#' + id).style.display = 'none'; });
+  const ag = $('#ag2');
+  ag.classList.remove('ok', 'live');
+  const h = ag.querySelector('.lb b');
+  if (h.dataset.live) h.textContent = h.dataset.live;
+  $('#ag2el').textContent = '';
   setView('mock');
   renderPhone();
   emptySheet();
@@ -1109,13 +1114,13 @@ const FLEET = [
 
   { name: 'Apex MMA', repo: 'combatden-apex', since: 'approved 26 Jul',
     live: true, state: 'An agent is productionalizing this design',
-    note: 'Turning the approved mock into real Flutter, carrying the arrangement-only invariant.',
-    log: 'rewriting class_screen.dart · 9 of 14 files · started 6m ago' },
+    note: 'Turning the approved mock into real Flutter, carrying the arrangement-only invariant. Slow by design — it is the pass whose output ships.',
+    log: 'rewriting class_screen.dart · 9 of 14 files · 34m elapsed, typically 1–2h' },
 
   { name: 'Ironline', repo: 'combatden-ironline', since: 'approved 21 Jul',
     live: true, state: 'An agent is pulling your latest UAT branch',
     note: 'CombatDen shipped a waitlist. Re-applying this design on top of it so the fork never drifts.',
-    log: 'rebasing on combatden/uat@d41c907 · 3 of 11 screens · started 2m ago' },
+    log: 'rebasing on combatden/uat@d41c907 · 3 of 11 screens · 12m elapsed' },
 ];
 
 $('#fleetcards').innerHTML = FLEET.map((f) => `
