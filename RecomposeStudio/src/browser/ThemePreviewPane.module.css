@@ -2,10 +2,11 @@
  * Styles for ./ThemePreviewPane.tsx (ports CRM/lib/features/members/
  * presentation/widgets/member_app/theme_tab/theme_preview_pane.dart).
  *
- * The transition is Dart's `AnimatedSwitcher` + `DualTransitionBuilder`:
- * `_kSlideDuration` 300ms on `Curves.easeOutCubic`, the entering screen sliding
- * in from the direction of travel while the outgoing one leaves the opposite
- * way.
+ * The slide transition this file used to carry is GONE with the stills it
+ * animated between. Dart's `AnimatedSwitcher` + `DualTransitionBuilder` moved
+ * one screenshot aside for the next; the pane now mounts one interactive asset
+ * whose screens are reached by tapping inside the phone, so there is no
+ * outgoing pane to move and no direction of travel to move it in.
  */
 
 .pane {
@@ -35,74 +36,6 @@
   overflow: hidden;
 }
 
-.slide {
-  position: absolute;
-  inset: 0;
-}
-
-.enterRight {
-  animation: enter-right 300ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
-}
-
-.enterLeft {
-  animation: enter-left 300ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
-}
-
-.exitLeft {
-  animation: exit-left 300ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
-}
-
-.exitRight {
-  animation: exit-right 300ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
-}
-
-@keyframes enter-right {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-@keyframes enter-left {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-@keyframes exit-left {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-100%);
-  }
-}
-
-@keyframes exit-right {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(100%);
-  }
-}
-
-/*
- * `MediaQuery.disableAnimationsOf` → `Duration.zero`. The component also stops
- * mounting the outgoing pane under reduced motion, so this only has to silence
- * the entering one.
- */
-@media (prefers-reduced-motion: reduce) {
-  .slide {
-    animation: none;
-  }
-}
-
 .controls {
   display: flex;
   align-items: center;
@@ -117,22 +50,6 @@
   justify-content: center;
   gap: var(--adm-space-small);
   min-width: 0;
-}
-
-.arrow {
-  display: flex;
-  flex: none;
-  padding: var(--adm-space-medium);
-  border: none;
-  border-radius: var(--adm-radius-big);
-  background: var(--adm-card);
-  color: var(--adm-ink);
-  cursor: pointer;
-}
-
-.arrow:hover {
-  background: var(--adm-surface);
-  box-shadow: var(--adm-control-shadow);
 }
 
 .chip {
