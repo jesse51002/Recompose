@@ -199,6 +199,52 @@ purpose.
 
 ---
 
+## Pass 1c — the most important thing LOOKS the most important
+
+**The inventory check asks whether elements are PRESENT. This asks whether the
+right one is PROMINENT**, and a screen can pass every other pass in this file
+while failing here — every element rendered, correctly themed, correctly spaced,
+nothing clipped, and the biggest thing on the screen is the least important
+thing on it.
+
+The app's own skill carries an **EMPHASIS RANKING**, one row per screen: what
+leads, what follows, what supports. Check the render against it, screen by
+screen. A fork may express the ranking any way it likes; it may not reorder it.
+
+**The test is one second long.** Look at the screenshot for a beat and look
+away. *What did you see first?* If that is not the screen's rank 1, the
+hierarchy is inverted, however good each individual choice was. Squinting works
+too — it collapses the screen to contrast and mass, which is what the eye
+actually sorts on.
+
+Then measure the thing you suspect, because "it looks fine" is exactly what was
+said about the case below:
+
+```bash
+$B js "(()=>{const s=document.querySelector('[class*=_screen_]');const out=[];
+s.querySelectorAll('*').forEach(e=>{const t=[...e.childNodes].filter(n=>n.nodeType===3)
+  .map(n=>n.textContent.trim()).join('');if(!t||t.length>40)return;
+const c=getComputedStyle(e);const px=parseFloat(c.fontSize);if(px<15)return;
+out.push(Math.round(px)+'px '+c.fontWeight+'  '+t.slice(0,28));});
+return JSON.stringify([...new Set(out)].sort((a,b)=>parseFloat(b)-parseFloat(a)).slice(0,12));})()"
+```
+
+**Read the top of that list against the ranking.** The largest type on the
+screen should be its rank 1. It is a finding whenever a supporting element — a
+time, a count, a total, a cost — is set larger than the name of the thing it
+describes.
+
+**A NAME AND ITS PICTURE ARE ONE OBJECT AT RANK 1.** The pipeline generates the
+image FROM the copy (`depends_on_text`), so they are one claim about one thing.
+The failure to look for is not "the photograph is too big" — it is **"the name
+is too small for the photograph it belongs to."**
+
+This pass exists because `apps/vinyasaflow/` shipped a schedule with the start
+time at 40px above a class name at 17px. The loudest element on the screen a
+member opens to choose a class was the clock. `make check` passed, the token
+sweep passed, the inventory check passed, and nothing in this file caught it
+until it was added.
+
 ## Pass 2 — every affordance is actually hittable
 
 A button can be visible, correctly labelled, and unclickable. Check the ones
@@ -581,7 +627,8 @@ State the scope you actually covered: **N screens of M, across K assets.**
 For each finding: the screen, what is wrong, the evidence (screenshot path,
 `BLOCKED by …`, console error), and whether it is a **dead end** (blocking), a
 **missing element**, an **added element** (both break the invariant), a
-**misplaced element** (present but meaningless where it landed — Pass 1b), a
+**misplaced element** (present but meaningless where it landed — Pass 1b), an
+**inverted hierarchy** (the wrong thing leads the screen — Pass 1c), a
 **mangled image** (a photograph in a box of the wrong ratio — Pass 2c), a
 **spacing** finding (missing, inconsistent, or ungrouped — Pass 2d), or
 **cosmetic**.

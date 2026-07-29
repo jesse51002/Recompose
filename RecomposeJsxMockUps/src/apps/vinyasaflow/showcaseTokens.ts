@@ -358,46 +358,54 @@ export const SC = Object.freeze({
   dividerThickness: 1,
 
   // -------------------------------------------------------------------------
-  // THE THREAD — this fork's own structure, extending the ported ramp.
+  // EDITORIAL LAYOUT — this fork's own measurements, extending the ported ramp.
   // -------------------------------------------------------------------------
   //
   // A fork MAY extend `--sc-*` in its own token module (../../../CLAUDE.md,
   // "romanahouse"). Guardrail 2's sweep still holds because every `var(--sc-…)`
   // any stylesheet here reads is a string in THIS file.
   //
-  // The design has one structural line and everything hangs off it, so these
-  // measurements are load-bearing rather than decorative: change `threadX` and
-  // every screen's left edge moves with it, which is the point of it being one
-  // number.
+  // THE `thread*` AND `node*` NAMES ARE RETIRED, NOT DELETED, and the values are
+  // what does the retiring. An earlier direction for this run built every screen
+  // on one continuous line down the left edge; it was thrown out for failing the
+  // realism gate in `mockup-redesign-start` — no shipping app is built that way,
+  // so it read as a gimmick rather than as design.
+  //
+  // Zeroing the stroke here is what removes it EVERYWHERE at once: some thirty
+  // stylesheets position against these, and a stroke of zero width paints
+  // nothing no matter which of them still asks for one. The names survive so
+  // Guardrail 2's sweep stays green while the screens are worked back one at a
+  // time; they should disappear as each stylesheet is next touched.
 
-  /** The descending line's own weight, on the linen canvas. */
-  threadWidth: 2,
+  /** Retired. Zero, so no leftover rule can paint a line. */
+  threadWidth: 0,
+  /** Retired. Zero, for the same reason. */
+  threadWidthOver: 0,
   /**
-   * The same line where it crosses a photograph or a filled field. One pixel
-   * heavier because it has to hold against detail rather than against a flat
-   * ground — the same line in two inks, not two devices.
+   * REPURPOSED as the editorial outer margin, and it is the single most visible
+   * measurement in this design. Space is the material here: a wide margin is
+   * most of what separates a premium wellness layout from a dense utility one.
    */
-  threadWidthOver: 3,
-  /** The x of the descent, from the screen's left edge. */
-  threadX: 26,
+  threadX: 24,
   /**
-   * Where content begins, right of the thread. Not `threadX` + a gap chosen at
-   * a call site: a node is centred ON the line and is `nodeSizeLg` across, so
-   * this has to clear the widest node plus a real gutter or the largest nodes
-   * collide with their own labels.
+   * The same margin. It used to be "where content begins, right of the line";
+   * with no line, content begins at the margin, so the two are one number.
    */
-  threadInset: 56,
+  threadInset: 24,
 
-  /** An ordinary node — the swell where a region begins. */
-  nodeSize: 13,
-  /** A node carrying something: a count, a day, a cost. */
+  /** Retired. Zero — a node was a swell on a line that no longer exists. */
+  nodeSize: 0,
+  /** Retained: the head's stat marks are still small discs. */
   nodeSizeLg: 26,
-  /** A node's stroke. Drawn in the same weight as the line it is part of. */
-  nodeRing: 2,
+  /** Retired. */
+  nodeRing: 0,
 
-  /** The thread's last act: the band at the foot carrying the four circles. */
-  navHeight: 88,
-  navDisc: 42,
+  /** The bottom tab bar — a standard one, which is the whole point. */
+  navHeight: 64,
+  navDisc: 26,
+
+  /** The editorial hero's corner. Soft, not a card with an event. */
+  radiusSoft: 14,
 });
 
 // ---------------------------------------------------------------------------
@@ -543,6 +551,7 @@ export function showcaseCssVars(
     '--sc-node-ring': px(SC.nodeRing),
     '--sc-nav-height': px(SC.navHeight),
     '--sc-nav-disc': px(SC.navDisc),
+    '--sc-radius-soft': px(SC.radiusSoft),
 
     // --- Type ramp (body slot) ---
     '--sc-type-h1': typeShorthand(700, 24, bodyStack),

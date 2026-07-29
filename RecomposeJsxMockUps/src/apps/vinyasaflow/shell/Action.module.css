@@ -60,5 +60,5 @@
 .open {
   background: transparent;
   color: var(--sc-primary);
-  border: var(--sc-thread-width) solid var(--sc-primary);
+  border: var(--sc-button-border) solid var(--sc-primary);
 }

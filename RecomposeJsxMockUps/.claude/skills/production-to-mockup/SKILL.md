@@ -127,6 +127,41 @@ It must list:
 4. **How every screen exits**, in a table. Flag the ones whose single affordance
    is the only way out, because those are the ones that become dead ends.
 5. **The order of any flow**, and which source proved it. Name the file.
+6. **THE EMPHASIS RANKING — one row per screen, and it is not optional.** For
+   every screen, name what LEADS, what comes second and third, and what merely
+   supports. This is the one place the inventory is allowed to talk about
+   prominence, and it has to, because everything else here deliberately does
+   not.
+
+   **Why it lives here rather than in a redesign.** "A member scanning a
+   schedule is looking for the class, not the clock" is a fact about the
+   PRODUCT, true of every fork ever built from it. Decided once here, every
+   redesign inherits the same answer; left out, each fork invents its own and
+   three of them are wrong. A fork may express the ranking however it likes —
+   scale, weight, colour, position, space — but may not reorder it.
+
+   Write it as a table: screen, rank 1, rank 2, rank 3, supporting. Rank 1 is
+   the thing a member is scanning for — usually **the name of a thing, TOGETHER
+   WITH the picture of that thing.**
+
+   **A name and its picture are ONE object at rank 1, not a thing and its
+   decoration.** Where the pipeline generates an image from a piece of copy
+   (`depends_on_text` in the app's `app.yaml`), that dependency is the proof:
+   they are one claim about one item, and they get sized, placed and emphasised
+   together. Splitting them — big picture, small name — produces the
+   thumbnail-beside-caption row that every app in the category looks identical
+   in.
+
+   **Derive it from what the member came to do, not from what the source app
+   made biggest.** The origin app may have got it wrong too; you are recording
+   the product's intent, and where you disagree with the shipped screen, say so
+   in PART TWO.
+
+   This exists because a redesign shipped here with every element present,
+   correctly themed and correctly spaced, and the largest thing on its schedule
+   was the start time at 40px above a class name at 17px. No gate in this
+   package could see it — an inventory check passes when everything is there,
+   and everything was.
 
 Write it so a reader can reconstruct the whole app in their head, in order,
 without opening a single file. If a screen's description does not say what it

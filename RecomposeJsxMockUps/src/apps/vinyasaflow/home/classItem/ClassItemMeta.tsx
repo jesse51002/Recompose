@@ -10,9 +10,17 @@
 // compact row and the lead class share these lines at two different measures
 // without either of them re-typing one.
 //
-// TIME FIRST, THEN THE NAME. The base led with the name; a schedule is scanned
-// by time, and this design puts the figure where the eye lands first
-// (../../layout_brief.yaml). Nothing is added or removed by the reorder.
+// THE NAME LEADS, AND IT LEADS WITH ITS PHOTOGRAPH. This file briefly did the
+// opposite, on the reasoning that "a schedule is scanned by time" — which is
+// wrong, and produced a screen whose loudest element was the clock. A member
+// opens a schedule to choose a CLASS; the time is how they choose between
+// classes once one has caught their eye.
+//
+// `mockup-redesign-combatden`'s emphasis ranking is the authority: rank 1 on
+// `home` is the class name TOGETHER WITH its photograph — one object, not a
+// thing and its decoration, because the pipeline generates the picture FROM the
+// name (`class_photo_2` declares `depends_on_text: [class_name_2]`). The time,
+// the instructor and the attending count are supporting.
 //
 // The person and check glyphs the base drew beside the count and the booked
 // mark are gone. This app contains three forms — the line, the circle and the
@@ -36,10 +44,15 @@ export interface ClassItemMetaProps {
    */
   className: string | undefined;
   /**
-   * False only where the treatment hoists <ClassItemTime> above this column and
-   * sets it as a figure (the lead class). The time MOVES; it is never dropped.
+   * False only where the treatment places <ClassItemTime> itself. The time
+   * MOVES; it is never dropped.
    */
   showTime?: boolean;
+  /**
+   * The day's first class, which is given the width and a display-size name.
+   * Only the SCALE of the name changes — every line here is present either way.
+   */
+  lead?: boolean | undefined;
 }
 
 export function ClassItemMeta({
@@ -47,11 +60,12 @@ export function ClassItemMeta({
   showBookings,
   className,
   showTime = true,
+  lead = false,
 }: ClassItemMetaProps) {
   return (
     <div className={className}>
+      <span className={lead ? styles.nameLead : styles.name}>{classData.name}</span>
       {showTime && <ClassItemTime classData={classData} />}
-      <span className={styles.name}>{classData.name}</span>
       <span className={styles.quiet}>{classData.mentor}</span>
       {classData.attending !== undefined && (
         <span className={styles.quiet}>{String(classData.attending)} attending</span>

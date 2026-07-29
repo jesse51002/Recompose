@@ -1,77 +1,41 @@
 /*
- * Styles for ./Thread.tsx — the pieces that hang on the line ./Screen.tsx draws.
+ * Styles for ./Thread.tsx — the editorial section, the shelf, and the hero well.
  *
- * Reads ONLY `--sc-*` (plus locally-declared `--vf-*`, which are values this
- * stylesheet both writes and reads rather than tokens it borrows).
+ * Reads ONLY `--sc-*` (eslint Gates 2a/2b).
  *
- * THE ONE MEASUREMENT EVERYTHING HERE SHARES: the line's CENTRE is at
- * `--sc-thread-x` + half `--sc-thread-width`, because `.rail` is positioned by
- * its left edge. Every node in this file is placed by that centre and pulled
- * back half its own width, so a node stays on the line at any size.
+ * THE FILE KEEPS ITS NAME AND ITS EXPORTS, AND NOTHING ELSE FROM WHAT IT WAS.
+ * It used to draw nodes on a continuous line down the left of the screen. The
+ * line is gone (see ./Screen.tsx); a `Region` is now simply a section with a
+ * heading, which is what a magazine page and every premium wellness app already
+ * use. The exports survive so ~30 stylesheets and 13 screens keep resolving
+ * while they are worked back one at a time.
  */
 
+/*
+ * A section. Full content width, separated from its neighbours by SPACE rather
+ * than by a rule or a box — the brief's "sections are separated by space, not by
+ * rules or boxes", and the reason there is no divider anywhere in this app.
+ */
 .region {
-  display: grid;
-  grid-template-columns: var(--sc-thread-inset) 1fr;
-  align-items: center;
-  column-gap: 0;
+  display: block;
+  padding-inline: var(--sc-thread-inset);
 }
 
 /*
- * The node and the label it names are ONE object, so they share a grid row and
- * centre on each other. Guardrail 13: the gap between a label and the thing it
- * names must be smaller than the gap to the next region — here it is zero,
- * because they are the same row.
+ * A section that runs to both edges — a full-bleed photograph. It cancels the
+ * margin its siblings carry rather than being positioned differently.
  */
-.node {
-  grid-column: 1;
-  justify-self: start;
-  margin-left: calc(var(--sc-thread-x) + var(--sc-thread-width) / 2);
-  transform: translateX(-50%);
-  width: var(--sc-node);
-  height: var(--sc-node);
-  border-radius: var(--sc-radius-circle);
-  box-sizing: border-box;
+.regionBleed {
+  display: block;
+  padding-inline: 0;
 }
 
 /*
- * `open` — a ring the line runs THROUGH. The interior is transparent on
- * purpose: a bead threaded on a string, which is the metaphor the whole design
- * is built from, and the reason plain regions use this variant.
+ * The heading. Sentence case at a modest size: this app never sets a heading in
+ * capitals and never tracks one out, because the voice is a teacher speaking
+ * rather than an instrument panel (../layout_brief.yaml).
  */
-.nodeOpen {
-  border: var(--sc-node-ring) solid var(--sc-primary);
-  background: transparent;
-}
-
-/* `solid` — the line swelling to a filled stop. Marks a thing happening now. */
-.nodeSolid {
-  border: var(--sc-node-ring) solid var(--sc-primary);
-  background: var(--sc-primary);
-}
-
-/* `calm` — sage. Marks a thing already earned, already attended, already held. */
-.nodeCalm {
-  border: var(--sc-node-ring) solid var(--sc-accent);
-  background: var(--sc-accent);
-}
-
-/*
- * `carry` — a node big enough to hold a figure. The canvas fill is what masks
- * the line behind it; every other variant lets it through.
- */
-.nodeCarry {
-  width: var(--sc-node-lg);
-  height: var(--sc-node-lg);
-  border: var(--sc-node-ring) solid var(--sc-primary);
-  background: var(--sc-background);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .say {
-  grid-column: 2;
   margin: 0;
   font: var(--sc-type-say);
   letter-spacing: var(--sc-type-say-ls);
@@ -79,62 +43,41 @@
 }
 
 /*
- * The region's content. Column 2 so it lines up under the label rather than
- * under the thread, and `--sc-spacing-medium` above it because it belongs to
- * the label — the gap to the NEXT region is `--sc-spacing-big`, set by the
- * caller. That difference is what does the grouping (Guardrail 13).
+ * `--sc-spacing-medium` under a heading against `--sc-spacing-big` BETWEEN
+ * sections: the gap inside a group must be smaller than the gap to the next
+ * one, or the heading reads as the previous section's footer. That difference
+ * is the whole of Guardrail 13 and it is the one spacing rule that carries
+ * hierarchy rather than merely being consistent.
  */
 .content {
-  grid-column: 2;
-  grid-row: 2;
   margin-top: var(--sc-spacing-medium);
 }
 
-/* A region whose content runs to both edges — a full-bleed photograph. */
-.contentBleed {
-  grid-column: 1 / -1;
-  grid-row: 2;
-  margin-top: var(--sc-spacing-medium);
+/* A node was a swell on a line that no longer exists. It renders nothing. */
+.node {
+  display: none;
 }
 
 /*
- * THE SIDEWAYS EXCURSION. The line goes out across the screen, through what it
- * carries, and back down. This is the only thing in the app that scrolls
- * sideways, which is why sideways scrolling reads as part of the sequence
- * rather than a second axis bolted on.
+ * A HORIZONTAL SHELF — a row that scrolls sideways, which is the standard
+ * pattern every content app uses for a set of covers. It bleeds past the right
+ * edge on purpose: a shelf that stops inside the margin looks finished, and a
+ * member does not know to scroll it.
  */
 .bow {
-  position: relative;
+  display: block;
 }
 
-/*
- * The horizontal stroke, at the row's vertical centre, from the line out to
- * the right edge. Same weight and same ink as the descent, because it IS the
- * descent — it has gone sideways, not become a different device.
- */
+/* Retired: the shelf's stroke. Kept so any leftover reference resolves. */
 .bowStroke {
-  position: absolute;
-  left: calc(var(--sc-thread-x) + var(--sc-thread-width) / 2);
-  right: 0;
-  top: 50%;
-  height: var(--sc-thread-width);
-  transform: translateY(-50%);
-  background: var(--sc-primary);
-  pointer-events: none;
+  display: none;
 }
 
-/*
- * What the excursion carries. `padding-left` clears the descent so the first
- * item does not sit on top of it, and the row scrolls when it runs longer than
- * the screen.
- */
 .bowItems {
-  position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--sc-spacing-large);
-  padding-left: var(--sc-thread-inset);
-  padding-right: var(--sc-screen-padding-x);
+  padding-inline: var(--sc-thread-inset);
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-x: contain;
@@ -147,20 +90,17 @@
 }
 
 /*
- * THE CLOSING LOOP — the celebration's one departure from a line that always
- * continues off the edge.
+ * THE HERO WELL — the celebration's centred stage.
  *
- * A ring in the thread's own stroke with the card's hero inside it. The moment
- * it closes is the moment the card is settled, which is what gives the card a
- * single unmistakable finish instead of a set of parts each arriving on its own
- * schedule.
+ * It used to be a ring in the thread's stroke that closed around the hero. With
+ * no thread there is no ring: a generated cut-out is square, centre-weighted and
+ * transparent-edged, and it looks best given room and left alone. So this is a
+ * centring box and nothing more — no border, no fill, no shadow.
  */
 .loop {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--sc-radius-circle);
-  border: var(--sc-thread-width-over) solid var(--sc-primary);
-  box-sizing: border-box;
+  margin-inline: auto;
 }

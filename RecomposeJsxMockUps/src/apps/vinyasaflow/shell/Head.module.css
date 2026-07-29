@@ -1,48 +1,45 @@
 /*
- * Styles for ./Head.tsx — where the thread comes from.
+ * Styles for ./Head.tsx — the editorial topbar.
  *
- * Reads ONLY `--sc-*`. Never `--gw-*` / `--adm-*` (eslint Gates 2a/2b).
+ * Reads ONLY `--sc-*` (eslint Gates 2a/2b).
  */
 
 .head {
+  padding-inline: var(--sc-thread-inset);
   padding-top: var(--sc-spacing-large);
-  padding-bottom: var(--sc-spacing-medium);
+  padding-bottom: var(--sc-spacing-large);
 }
 
-/* The mark and the studio's name are one object: same row, no gap between. */
+/* The mark and the studio's name are one object: same row, small gap. */
 .mast {
-  display: grid;
-  grid-template-columns: var(--sc-thread-inset) 1fr;
+  display: flex;
   align-items: center;
+  gap: var(--sc-spacing-medium);
 }
 
-/*
- * THE ORIGIN OF THE STROKE. The brand mark is already a circle with a
- * continuous line inside it, so it is not decorated here — it is placed on the
- * thread's centre and left alone. The line descends out of it.
- */
 .mark {
-  grid-column: 1;
-  justify-self: start;
-  margin-left: calc(var(--sc-thread-x) + var(--sc-thread-width) / 2);
-  transform: translateX(-50%);
   display: block;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--sc-radius-circle);
-  /* Masks the line behind the mark, so the stroke reads as starting here. */
-  background: var(--sc-background);
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
   object-fit: contain;
 }
 
 .name {
-  grid-column: 2;
   display: flex;
   align-items: center;
   gap: var(--sc-spacing-small);
   margin: 0;
-  font: var(--sc-type-title);
-  letter-spacing: var(--sc-type-title-ls);
+  /*
+   * THE MASTHEAD MAY NOT COMPETE WITH THE SCREEN'S RANK 1. Set at the display
+   * size it briefly carried, the studio's name tied with the class name for
+   * the largest type on the schedule — so the eye had two places to land and
+   * the emphasis ranking was not being carried, even though every element was
+   * correct on its own. The name of the studio is chrome: a member knows which
+   * studio they opened.
+   */
+  font: var(--sc-type-name);
+  letter-spacing: var(--sc-type-name-ls);
   color: var(--sc-text);
   border: none;
   background: none;
@@ -53,24 +50,30 @@
 
 .chevron {
   flex: 0 0 auto;
-  color: var(--sc-primary);
+  color: var(--sc-text-3rd);
 }
 
 /*
- * The four things the member carries. The thread bows sideways to gather them,
- * which is the same device the week strip and every shelf use.
+ * THE FOUR THINGS THE MEMBER CARRIES, as one quiet line rather than four
+ * decorated circles.
  *
- * `--sc-spacing-large` above it because it is a NEW region, not part of the
- * masthead — Guardrail 13's grouping rule, where the gap inside an object must
- * be smaller than the gap to the next one.
+ * They are status, not the subject of the screen: the photograph below them is
+ * the subject. A row of ornamented badges above an editorial hero competes with
+ * it and makes the top of every screen the busiest part, which is the opposite
+ * of what this design is for.
+ *
+ * `--sc-spacing-large` above it because it is a separate object from the
+ * masthead — Guardrail 13's grouping rule.
  */
 .carry {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-large);
   margin-top: var(--sc-spacing-large);
 }
 
 .carryItem {
   display: flex;
-  flex-direction: column;
   align-items: center;
   gap: var(--sc-spacing-small);
   border: none;
@@ -80,34 +83,16 @@
   color: inherit;
 }
 
-.carryDisc {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 46px;
-  height: 46px;
-  border-radius: var(--sc-radius-circle);
-  box-sizing: border-box;
-  /* Canvas fill so the bow's stroke passes behind the disc, not through it. */
-  background: var(--sc-background);
-  border: var(--sc-node-ring) solid var(--sc-primary);
-  overflow: hidden;
-}
-
-/* A disc holding a minted object rather than a figure: let the art fill it. */
-.carryArt {
-  padding: 0;
-}
-
+/* A minted cut-out at status size. Square art, so a circle costs it nothing. */
 .carryImg {
   display: block;
-  width: 100%;
-  height: 100%;
+  width: 22px;
+  height: 22px;
   object-fit: contain;
 }
 
-.carryLabel {
-  font: var(--sc-type-fine);
-  letter-spacing: var(--sc-type-fine-ls);
+.carryText {
+  font: var(--sc-type-quiet);
+  letter-spacing: var(--sc-type-quiet-ls);
   color: var(--sc-text-2nd);
 }

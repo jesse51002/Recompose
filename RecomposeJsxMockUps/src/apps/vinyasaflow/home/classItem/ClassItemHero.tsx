@@ -19,7 +19,6 @@
 
 import { ClassItemMeta } from './ClassItemMeta';
 import { ClassItemPhoto } from './ClassItemPhoto';
-import { ClassItemTime } from './ClassItemTime';
 import styles from './ClassItemHero.module.css';
 import { useOpenClass } from './useOpenClass';
 import type { ShowcaseClass } from '../homeClass';
@@ -46,12 +45,15 @@ export function ClassItemHero({ classData, showBookings }: ClassItemHeroProps) {
     >
       <ClassItemPhoto classData={classData} bleed />
       <div className={styles.text}>
-        <ClassItemTime classData={classData} lead />
+        {/*
+          The photograph and the name directly beneath it are ONE object and
+          rank 1 on this screen. Everything else in this column supports them.
+        */}
         <ClassItemMeta
           classData={classData}
           showBookings={showBookings}
-          showTime={false}
           className={styles.info}
+          lead
         />
       </div>
     </div>

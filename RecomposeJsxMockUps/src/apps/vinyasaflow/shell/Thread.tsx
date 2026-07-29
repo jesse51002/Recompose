@@ -1,16 +1,16 @@
-// The pieces that hang on the line ./Screen.tsx draws.
+// THE EDITORIAL SECTION, THE SHELF, AND THE HERO WELL.
 //
-// The line itself is NOT here — it is one element on the screen root, so it
-// cannot be broken by anything assembled below. What is here is everything that
-// attaches to it: the swell where a region begins, the sideways excursion where
-// the app needs to hold a row of things, and the closing loop the celebration
-// ends on.
+// THE FILE KEEPS ITS NAME AND ITS EXPORTS, AND NOTHING ELSE FROM WHAT IT WAS.
+// It used to hang nodes off one continuous line running down the left of every
+// screen. That direction failed the realism gate in `mockup-redesign-start` —
+// no shipping app is built on a rail — so the line is gone and a `Region` is now
+// what a magazine page and every premium wellness app already use: a section
+// with a heading, separated from its neighbours by SPACE.
 //
-// A REGION IS A NODE PLUS A SPOKEN LABEL PLUS ITS CONTENT, and the label is
-// sentence case because this app never sets one in capitals. That is a rule of
-// the design rather than a default: the voice is a teacher with a hand on your
-// shoulder, and a tracked uppercase caption is the voice of an instrument
-// panel. See ../layout_brief.yaml.
+// The names survive because ~30 stylesheets and 13 screens resolve against them
+// and this fork is being worked back one screen at a time. They should be
+// renamed as each screen is next touched; `Node` in particular now renders
+// nothing at all and every call to it is dead weight.
 
 import type { ReactNode } from 'react';
 
@@ -19,54 +19,31 @@ import { cx } from '../cx';
 import styles from './Thread.module.css';
 
 /**
- * How a node is drawn.
- *
- * `open` lets the line run through it — a bead on a string, and the default
- * for anything that is simply a place on the sequence. `solid` is the line
- * swelling to a stop, for the thing happening now. `calm` is the same in sage,
- * which this design spends only on a thing already earned or attended.
- * `carry` is the one variant big enough to hold a figure, and the only one
- * that masks the line behind it.
+ * Retired. Every variant renders nothing — a node was a swell on a line that no
+ * longer exists.
  */
 export type NodeKind = 'open' | 'solid' | 'calm' | 'carry';
 
-// `string | undefined` because CSS-module lookups are typed that way under
-// `noUncheckedIndexedAccess`, and `cx` already drops an undefined. Widening it
-// here beats a non-null assertion that would hide a genuinely missing class —
-// which is Guardrail 2's second trap: `styles.x` for a class the stylesheet
-// does not define is `undefined`, renders as no class at all, and produces an
-// unstyled element with no error anywhere.
-function nodeClass(kind: NodeKind): string | undefined {
-  if (kind === 'solid') return styles.nodeSolid;
-  if (kind === 'calm') return styles.nodeCalm;
-  if (kind === 'carry') return styles.nodeCarry;
-  return styles.nodeOpen;
-}
-
 export interface NodeProps {
   kind?: NodeKind | undefined;
-  /** Only a `carry` node has room for anything inside it. */
   children?: ReactNode;
 }
 
-/** The swell on the line. Placed by the line's CENTRE, so it stays on it at any size. */
-export function Node({ kind = 'open', children }: NodeProps) {
-  return (
-    <span className={cx(styles.node, nodeClass(kind))} aria-hidden={children === undefined}>
-      {children}
-    </span>
-  );
+/** Renders nothing. Retained so existing screens keep resolving. */
+export function Node(_props: NodeProps) {
+  return null;
 }
 
 export interface RegionProps {
   /**
-   * What this region announces itself as, in the app's own voice. Sentence
-   * case, always. Omitted where the content names itself.
+   * The section's heading, in the app's own voice. Sentence case, always.
+   * Omitted where the content names itself.
    */
   label?: string | undefined;
+  /** Retired — a section no longer carries a mark. */
   kind?: NodeKind | undefined;
   /**
-   * Let the content run to BOTH edges instead of sitting right of the thread —
+   * Let the content run to BOTH edges instead of sitting inside the margin —
    * for a full-bleed photograph, which is the only thing that earns it.
    */
   bleed?: boolean | undefined;
@@ -74,21 +51,23 @@ export interface RegionProps {
 }
 
 /**
- * One place on the sequence: a node, the label beside it, and what hangs below.
+ * One section: a heading, and what sits under it.
  *
- * The label and the node share a grid ROW, so they are one object and cannot
- * drift apart; the content sits under the label rather than under the thread.
- * The gap inside a region is `--sc-spacing-medium` and the gap BETWEEN regions
- * is the caller's `--sc-spacing-big` — that difference is what does the
- * grouping, and getting it backwards is the failure Guardrail 13 describes.
+ * The gap under the heading is `--sc-spacing-medium` and the gap BETWEEN
+ * sections is the caller's `--sc-spacing-big`. That difference is what carries
+ * the grouping; equal gaps everywhere is a screen that reads as a list of parts
+ * even though no single value is wrong (Guardrail 13).
  */
-export function Region({ label, kind = 'open', bleed = false, children }: RegionProps) {
+export function Region({ label, bleed = false, children }: RegionProps) {
   return (
-    <section className={styles.region}>
-      <Node kind={kind} />
-      {label !== undefined && label !== '' ? <p className={styles.say}>{label}</p> : null}
+    <section className={cx(bleed ? styles.regionBleed : styles.region)}>
+      {label !== undefined && label !== '' ? (
+        <p className={cx(styles.say, bleed && styles.region)}>{label}</p>
+      ) : null}
       {children !== undefined && children !== null ? (
-        <div className={bleed ? styles.contentBleed : styles.content}>{children}</div>
+        <div className={label === undefined || label === '' ? undefined : styles.content}>
+          {children}
+        </div>
       ) : null}
     </section>
   );
@@ -99,40 +78,37 @@ export interface BowProps {
 }
 
 /**
- * The line going out sideways to gather a row of things, and back down.
+ * A horizontal shelf — the standard pattern every content app uses for a set of
+ * covers, and the only sideways scrolling in this app.
  *
- * A week of days, a shelf of films, a strip of tokens. It is the only
- * horizontal scroller in the app, which is what makes sideways movement read as
- * part of one sequence rather than as a second axis.
+ * It bleeds past the right edge on purpose: a shelf that stops inside the margin
+ * looks finished, and a member does not know to scroll it.
  */
 export function Bow({ children }: BowProps) {
   return (
     <div className={styles.bow}>
-      <div className={styles.bowStroke} aria-hidden="true" />
       <div className={styles.bowItems}>{children}</div>
     </div>
   );
 }
 
 export interface LoopProps {
-  /** Diameter, in the phone's logical px. */
+  /** The stage's width, in the phone's logical px. */
   size: number;
   children?: ReactNode;
 }
 
 /**
- * The celebration's closing loop — the one place the line completes instead of
- * continuing off the edge.
+ * The celebration's centred stage.
  *
- * Sized by the caller because what it encircles differs per card, and a ring
- * that does not fit its hero is worse than no ring.
+ * No border and no fill: a generated cut-out is square, centre-weighted and
+ * transparent-edged, and it reads best given room and left alone. `size` sets
+ * the width only — the height follows what is inside it, so nothing gets
+ * squashed to fit a square that no longer has a reason to be square.
  */
 export function Loop({ size, children }: LoopProps) {
   return (
-    <div
-      className={styles.loop}
-      style={{ width: `${String(size)}px`, height: `${String(size)}px` }}
-    >
+    <div className={styles.loop} style={{ width: `${String(size)}px` }}>
       {children}
     </div>
   );

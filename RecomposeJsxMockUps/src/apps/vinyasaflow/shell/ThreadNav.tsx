@@ -1,16 +1,21 @@
-// THE THREAD'S LAST ACT — the four destinations, at the foot.
+// THE FOUR DESTINATIONS, at the foot — a STANDARD bottom tab bar.
 //
-// Replaces the base's `support/ShowcaseBottomNav.tsx`. The line runs to the
-// bottom of the screen and there goes out sideways one final time, looping
-// through four circles before leaving the edge: navigation made of the same
-// stroke as everything above it, so the app ends the way it began.
+// Replaces the base's `support/ShowcaseBottomNav.tsx`. An earlier direction for
+// this run drew them as four circles threaded on a line; that failed the realism
+// gate in `mockup-redesign-start`, because no shipping app navigates that way
+// and a member should never have to learn a control. This is the icon-over-label
+// bar every phone owner already knows, with the current tab in terracotta and
+// the rest in quiet ink.
 //
-// GUARDRAIL 11: primary navigation sits at the FOOT. Not a side rail, not the
-// top. What a fork chooses is the FORM — here, four circles on a strand — never
-// the position. And Guardrail 12: this behaves exactly like the bottom bar
-// every phone owner already knows. Four labelled targets, tap to switch,
-// immediate, with the current one marked. The invention is entirely in how it
-// is drawn.
+// The file keeps its name so ~3 screens keep resolving; it should be renamed
+// when they are next touched.
+//
+// GUARDRAIL 11: primary navigation sits at the FOOT. A fork chooses the FORM,
+// never the position — and this fork's answer to "what form" is now "the
+// ordinary one", which is a design decision rather than a failure of nerve.
+// GUARDRAIL 12 is the reason: a control must look like what it is and behave the
+// way its platform behaves, and a member must be able to use the screen
+// correctly the first time having only ever used other phone apps.
 //
 // The four glyphs are BRAND-OVERRIDABLE: each resolves the theme's matching
 // `nav_*` icon slot through the library's <ThemeIcon>, which masks the tenant
@@ -73,27 +78,23 @@ export function ThreadNav({ selected }: ThreadNavProps) {
 
   return (
     <nav className={styles.nav}>
-      <div className={styles.strand} aria-hidden="true" />
       {TABS.map(({ tab, slot, label, Icon }) => {
         const here = tab === selected;
-        // The glyph's tint. On the filled circle it is the knockout ink; on an
-        // open one it is the thread's own terracotta, because the glyph is part
-        // of the same drawing as the ring around it.
-        const tint = here ? 'var(--sc-knockout)' : 'var(--sc-primary)';
+        const tint = here ? 'var(--sc-primary)' : 'var(--sc-text-3rd)';
         return (
           <button
             key={tab}
             type="button"
-            className={styles.item}
+            className={cx(styles.item, here && styles.itemHere)}
             aria-current={here ? 'page' : undefined}
             onClick={() => {
               nav.reset(TAB_ROUTES[tab]);
             }}
           >
-            <span className={cx(styles.disc, here && styles.discHere)}>
+            <span className={styles.glyph}>
               <ThemeIcon slot={slot} fallback={<Icon />} color={tint} size={ICON_SIZE} />
             </span>
-            <span className={cx(styles.label, here && styles.labelHere)}>{label}</span>
+            <span className={styles.label}>{label}</span>
           </button>
         );
       })}

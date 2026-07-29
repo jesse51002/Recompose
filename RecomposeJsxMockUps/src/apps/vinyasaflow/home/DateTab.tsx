@@ -32,8 +32,7 @@ export interface DateTabProps {
 
 export function DateTab({ label, isSelected }: DateTabProps) {
   return (
-    <button type="button" className={styles.day} aria-pressed={isSelected}>
-      <span className={cx(styles.disc, isSelected && styles.discHere)} aria-hidden="true" />
+    <button type="button" className={cx(styles.day, isSelected && styles.dayHere)} aria-pressed={isSelected}>
       <span className={cx(styles.label, isSelected && styles.labelHere)}>{label}</span>
     </button>
   );

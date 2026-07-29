@@ -460,6 +460,44 @@ the NEXT thing added to it. Both spacing bugs here came from exactly that: a
 label placed into a lane whose padding had been deliberately removed for a
 photograph.
 
+## GUARDRAIL 14 — the most important thing must LOOK the most important
+
+**Hierarchy is yours, but its ORDER is not.** Every app's skill carries an
+EMPHASIS RANKING — one row per screen naming what leads, what follows, and what
+merely supports. You choose how to express it (scale, weight, colour, position,
+space, contrast); you may not reorder it.
+
+**A screen can render every element on its inventory, correctly themed and
+correctly spaced, and still be wrong**, because the inventory only asks whether
+things are PRESENT. Nothing in `make check`, nothing in the token sweep and
+nothing in the inventory check can see that the biggest thing on the screen is
+the least important thing on it.
+
+That shipped here. `apps/vinyasaflow/`'s schedule set the start time at 40px
+above a class name at 17px — so the loudest element on a screen a member opens
+to choose a class was the clock. Every gate passed.
+
+**A NAME AND ITS PICTURE ARE ONE OBJECT AT RANK 1.** Where the pipeline
+generates an image from a piece of copy — `class_photo_2` declares
+`depends_on_text: [class_name_2]` — the two are one claim about one thing, and
+they are sized and emphasised together. The photograph may be large; the name
+has to hold its own beside it. The failure is rarely "the photo is too big" and
+almost always **"the name is too small for the photo it belongs to."**
+
+**Two habits that produce this, both of which feel like good typography:**
+
+- **A display face makes a FIGURE look wonderful at size.** Times, counts,
+  totals and costs drift upward in scale because they photograph well, while
+  the name of the thing stays at body size. Be suspicious of any screen whose
+  largest element is a number.
+- **Reaching for the biggest rung you have** because a screen looks empty. If a
+  region needs filling, it needs more space or a larger PICTURE — not a
+  rank-3 element promoted to 40px.
+
+The check: squint at the screenshot, or look at it for one second and look away.
+**What did you see first?** If it is not that screen's rank 1, the hierarchy is
+inverted no matter how good each individual choice was.
+
 ## GUARDRAIL 12 — invent the look, not the interaction
 
 **Be creative within industry standards.** A member must be able to use the app

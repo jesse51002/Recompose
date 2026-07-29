@@ -7,7 +7,22 @@
  * These are the lines inside it, identical in both.
  */
 
-/* The name of the class. The body face, at the register a thing in a list gets. */
+/*
+ * THE NAME IS RANK 1 ON THIS SCREEN, together with its photograph.
+ *
+ * `.nameLead` is the display face at editorial size, for the day's first class
+ * — the one given the full-width picture. The two are one object and are sized
+ * together: the failure this replaces was not "the photograph is too big", it
+ * was "the name is too small for the photograph it belongs to".
+ */
+.nameLead {
+  display: block;
+  font: var(--sc-type-title);
+  letter-spacing: var(--sc-type-title-ls);
+  color: var(--sc-text);
+}
+
+/* The name on a compact row. The body face, at the register a list item gets. */
 .name {
   display: block;
   font: var(--sc-type-name);

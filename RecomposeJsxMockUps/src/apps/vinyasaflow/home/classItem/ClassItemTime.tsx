@@ -19,37 +19,18 @@
 // second 40px figure three rows down would flatten the hierarchy the lead class
 // is there to create.
 
-import { Figure } from '../../shell/Figure';
 import type { ShowcaseClass } from '../homeClass';
 
 import styles from './ClassItemTime.module.css';
 
 export interface ClassItemTimeProps {
   classData: ShowcaseClass;
-  /** The lead class's form: the start time as a figure, the rest beneath it. */
-  lead?: boolean;
 }
 
-export function ClassItemTime({ classData, lead = false }: ClassItemTimeProps) {
-  const minutes = `${String(classData.durationMinutes)} min`;
-  if (!lead) {
-    return (
-      <span className={styles.meta}>
-        {classData.timeRange} · {minutes}
-      </span>
-    );
-  }
-  // `timeRange.split(' - ')` — the start alone, then whatever follows it. A
-  // range that does not carry the separator (a tenant format this preview has
-  // never seen) falls back to the whole string as the figure, so the time is
-  // never silently truncated.
-  const [start = classData.timeRange, end] = classData.timeRange.split(' - ');
+export function ClassItemTime({ classData }: ClassItemTimeProps) {
   return (
-    <span className={styles.lead}>
-      <Figure size="md">{start}</Figure>
-      <span className={styles.tail}>
-        {end === undefined ? minutes : `– ${end} · ${minutes}`}
-      </span>
+    <span className={styles.meta}>
+      {classData.timeRange} · {String(classData.durationMinutes)} min
     </span>
   );
 }

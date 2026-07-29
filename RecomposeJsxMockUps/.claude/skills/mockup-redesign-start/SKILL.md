@@ -79,6 +79,24 @@ exists so you can know *what must be there* without seeing *how it looks now*.
 Treat it as a requirements list from a client who has not shown you their old
 app.
 
+**It also carries the EMPHASIS RANKING, and that is not optional reading.** For
+every screen it names what leads, what comes second, and what merely supports.
+The inventory says what must be PRESENT; the ranking says what must be
+PROMINENT, and a design can satisfy the first completely while failing the
+second — every element rendered, correctly themed, and the biggest thing on the
+screen is the least important thing on it.
+
+**The ranking is a property of the product, not of your design.** It is decided
+once, in the app's skill, so every fork inherits the same answer instead of each
+one guessing. You may express it however you like — scale, weight, colour,
+position, space, contrast — but you may NOT reorder it. If you think a screen's
+ranking is wrong, fix it in the app's skill and say so; do not quietly design
+against it.
+
+**If the app's skill has no emphasis ranking, stop and write one**, screen by
+screen, before going further. An app skill without one is incomplete, and the
+next three forks will each invent a different answer.
+
 ### 3. Nothing else
 
 Read the code later, when you build — not while you are deciding what the thing
@@ -100,6 +118,13 @@ two people reading your answer would build recognisably the same app:
 - **Typography as structure**, for the two families the theme actually resolved.
   Where hierarchy comes from — scale, weight, case, tracking, rules, position,
   colour, or omitting the heading entirely — and what the display face is for.
+- **What the display face is allowed to be spent ON**, checked against the
+  emphasis ranking. This is where rank 1 usually gets lost: a display face makes
+  a FIGURE look wonderful at size, so times, counts and totals drift upward in
+  scale because they photograph well, and the name of the thing — which is what
+  the member is actually scanning for — stays at body size. Decide explicitly
+  which of your rungs each screen's rank 1 gets, and check that no rank-3
+  element is set larger than it.
 - **The navigation pattern.** See *What you may change*; this is the biggest
   lever you have.
 - **Imagery, named per slot.** Full-bleed, inset, masked, duotone, tiny, absent
@@ -116,6 +141,41 @@ it serve that brand, and does it make those specific images and typefaces look
 like they were chosen for it? And against whether a designer would be proud to
 have committed to it. Do not judge it against the base; measuring distance from
 the incumbent is how you end up next to it.
+
+### THE REALISM GATE — run it before you write a line of YAML
+
+**Name a real app, shipping today, that looks like this.** Write the name down.
+If you cannot name one, the direction is bad — discard it and pick another. This
+gate outranks every other consideration in this step, including distinctiveness.
+
+**Distinctiveness is not the bar. A good mobile app a real business would
+actually ship is the bar.** No design may look unprofessional or extreme.
+
+Why it is absolute: Recompose sells redesigns to white-label platforms whose
+tenants ship them to real end users. A fork that reads as an art project is
+unsellable, and it is WORSE than a reskin — a reskin is merely unambitious,
+where an extreme design is actively embarrassing to the platform. Both fail; only
+one of them also looks like you were trying.
+
+**So differentiation comes from what real apps genuinely differ on** —
+typography, colour, imagery treatment, density, hierarchy, motion — and NOT from
+inventing chrome or navigation. Real apps have a bottom tab bar; keep it. If your
+thesis requires a control the world has never shipped, the thesis is the problem.
+
+This gate exists because `apps/vinyasaflow/` was built once without it. Its
+direction was "the app is one unbroken thread" — a single terracotta line down
+the left of every screen, with circle-only navigation. It passed the four
+anti-reskin tests, passed `make check`, passed a full `mockup-qa` sweep, and was
+thrown out anyway, because no production app is built that way and it therefore
+read as a gimmick rather than as design. Every one of those gates measures
+whether a fork differs from the base. **None of them measures whether it is
+any good**, and this one does.
+
+Useful references, because "a good app" is easier to recognise than to define:
+Alo Moves, Apple Fitness+ and Peloton for editorial, photography-led wellness;
+ClassPass and Mindbody for schedule-first utility; Nike Training Club for bold
+typographic hierarchy. Pick the lineage your theme belongs to and commit to it
+properly rather than inventing a fourth thing.
 
 ---
 
@@ -284,6 +344,14 @@ Then, outside the workflow and in this order:
 - **Hand every screen agent the `layout_brief.yaml` verbatim.** It is the only
   thing holding the parallel work together. Summarising it per agent is how
   drift starts.
+- **Tell each agent to REDESIGN its screen. Do not hand it a list of moves.**
+  No per-screen "here is the opportunity on this one", no "make the first row a
+  hero", no "use a disc here". The brief plus the screen's inventory is the whole
+  input. The moment you supply the moves, the agent stops designing and starts
+  applying a diff — you get your ideas rendered by eleven hands rather than
+  eleven readings of one direction, and any weakness in your guesses is now in
+  every screen. Say what the screen must CONTAIN and what the app IS; let the
+  agent decide what that means for its own screen.
 - **Scope each agent to its own screen's files, and name them.** Screens live
   in separate folders; that is what makes this safe. Two agents editing one
   file is lost work.

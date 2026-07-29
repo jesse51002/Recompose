@@ -5,201 +5,145 @@
 # name, and one direction per thing being directed.
 #
 # Contract: ThemeTree/studio/schema/layout_brief.py (`LayoutBrief`).
+#
+# THE REALISM GATE (mockup-redesign-start, STEP 2). Real apps this resembles:
+# ALO MOVES and APPLE FITNESS+, with ClassPass's schedule discipline underneath.
+# That is not a disclaimer, it is the specification — a tenant ships this to real
+# members, so it has to look like something a real studio would put its name on.
+# An earlier direction for this same run was thrown out for failing exactly that
+# test: it was distinctive and no app in the world was built that way.
 
 name: Vinyasa Flow
 
 layout_direction:
   short_desc: >-
-    One unbroken thread — a single terracotta line enters at the mark, runs the
-    whole screen without ever breaking, and everything the app holds is threaded
-    onto it.
+    A warm editorial magazine of a studio — big photography, generous quiet
+    space, and one clear thing to do on every screen.
   long_desc: >-
-    Vinyasa Flow teaches one thing: a class is not a list of postures, it is a
-    single continuous sequence stitched to the breath. Inhale, move, exhale,
-    settle — and the thread never drops. This app is that thread. A single
-    terracotta line, two pixels wide, enters every screen at the brand mark and
-    runs to the bottom edge without one break, and every fact the app holds
-    hangs on it. Nothing is beside the thread; everything is ON it.
+    Vinyasa Flow is a modern flow-yoga studio, and this app is the way that
+    studio would present itself in print: a warm, unhurried editorial layout
+    built on large photography, a lot of quiet space, and typography confident
+    enough not to shout. It belongs to the same family as Alo Moves and Apple
+    Fitness+ — premium wellness apps that lead with a picture and let the page
+    breathe — and it should be immediately usable by anyone who has used one of
+    those. NOTHING in this app is a pattern a member has to learn.
 
-    THE THREAD IS THE WHOLE STRUCTURE, and it is not decoration. It descends
-    through the left margin of the screen, and it bows: where a region begins,
-    the line swells into a NODE — a small open circle drawn in the same stroke,
-    never a separate shape dropped on top — and that region's content hangs to
-    the right of it. Where the app needs to hold a row of things it does not
-    stack, the thread bows sideways instead, running out across the screen,
-    through what it carries, and back down. A week of days, a shelf of films, a
-    strip of point tokens: the line goes out to gather them and returns. That
-    horizontal excursion is the only thing in this app that scrolls sideways,
-    and it is why sideways scrolling reads as part of the sequence rather than
-    as a second axis bolted on.
+    THE CANVAS IS THE POINT OF DIFFERENCE, not the chrome. This app is warm
+    linen, not white and not near-black: an off-white paper ground with deep cork
+    brown as its only ink, fired terracotta as the single action colour, and
+    dusty sage reserved for one job. Most premium fitness apps are stark white
+    or blacked-out; a warm paper ground is what makes this one feel like a studio
+    with wooden floors and morning light rather than a piece of software. Every
+    other decision serves that.
 
-    The thread may cross itself, loop, and pass behind a photograph, but it may
-    NEVER terminate mid-screen and it may never be dashed, dotted or segmented.
-    A broken line is a broken breath. On a warm linen ground the thread is
-    terracotta; where it runs across a photograph or a filled field it is linen
-    white and one pixel heavier, because it has to hold against detail. Those
-    are the same line in two inks, not two devices.
+    PHOTOGRAPHY LEADS EVERY SCREEN. The studio photography is wide, warm and full
+    of long horizontals, and it earns real size — the first thing on a screen is
+    a large photograph, run to the full content width at its own proportion, with
+    its title and its details set beneath it rather than over it. Type over a
+    photograph is a legibility gamble that depends on what the tenant's picture
+    happens to contain, and this design does not take it. Below that hero the
+    screen becomes a quiet list.
 
-    THERE ARE THREE FORMS IN THIS APP AND NO OTHERS: the line, the circle, and
-    the photograph. Every piece of chrome is drawn from the first two. A count
-    sits in a circle, a rank sits in a circle, a day sits in a circle, an avatar
-    sits in a circle, a destination sits in a circle. Anything that is not a
-    line or a circle is a photograph, and a photograph is the only rectangle
-    this app contains. There is no card, no panel, no tile, no shadow, no
-    elevation, no tinted container and no bordered box anywhere — not because
-    boxes are forbidden in the abstract, but because a box would be a fourth
-    form, and three is what the brand mark is built from: one continuous stroke,
-    looping, enclosed by a circle. The mark is this app's construction drawing.
+    SPACE IS THE MOST VISIBLE MATERIAL HERE. This design is generous to the point
+    that a reviewer should notice it: a wide outer margin, big vertical gaps
+    between regions, and a comfortable measure for reading. Where a screen could
+    fit one more row, it should not. Calm is the product — a member arrives at
+    this app tired, and a dense screen contradicts everything the brand says.
+    Sections are separated by space, not by rules or boxes.
 
-    Navigation is the thread's last act. The line runs to the foot of the
-    screen and there it goes out sideways one final time, looping through FOUR
-    CIRCLES — the four destinations — before leaving the bottom edge. Each
-    circle carries its icon; the one the member is standing in is filled solid
-    terracotta with its glyph and its name knocked out in linen, and the other
-    three are drawn open, in line only, with their names in cork brown. It is a
-    bar at the foot of the screen with four labelled targets that switch on tap,
-    which is the pattern every phone owner already knows; what is different is
-    that it is made of the same stroke as everything above it, so the app ends
-    the way it began. It is present wherever the base's tabs are and absent on
-    the two screens that have none, so what is reachable never changes.
+    CONTENT SITS ON SOFT CARDS, AND THE CARDS ARE QUIET. A list row is a gently
+    rounded surface a shade off the canvas, holding a small photograph at its own
+    proportion, a name, and one line of detail. No borders, no drop shadows, no
+    elevation stacks, no tinted status panels. A card here is a way of grouping
+    a row's parts, not a visual event, and two adjacent cards should read as one
+    calm list rather than as two objects competing.
 
-    COLOUR LIVES IN FILLS, NOT IN INK. Fired terracotta on warm linen measures
-    4.35:1 and dusty sage measures 3.89:1, so neither may set running copy —
-    both are legibility failures dressed as brand moments. Terracotta is
-    therefore a FILL, reserved for the thread itself, the one destination the
-    member is standing in, and the single primary action on a screen. What is
-    knocked out of that fill is the palette's own LIGHT derivation of the same
-    colour, not the page ink and not the canvas: the light derivation reads at
-    5.54:1 on terracotta where the canvas linen manages only 4.35:1, and a
-    button label is normal-size text. Sage is the second fill and the quieter
-    one — it marks a thing already earned, already attended, already held — and
-    it knocks out its own light derivation for the same reason, at 5.03:1. All
-    type on the canvas is deep cork brown, which reads at 11.88:1.
-    Exactly one terracotta fill large enough to set type on may appear per
-    screen. A screen that wants a second one wants a different arrangement.
+    TYPOGRAPHY CARRIES THE HIERARCHY. The display face is a geometric sans set
+    LIGHT, and it does two jobs: the headline that names a screen or a class, at
+    a real editorial size, and every figure the app counts. Weight 300 at a large
+    size is the brand's whole register — unhurried confidence rather than volume.
+    The body sans does everything else at a genuine reading size, never smaller
+    than a member would want on a phone. Section headings are set in sentence
+    case at a modest size; this app never sets a heading in capitals and never
+    tracks a label out into a technical caption, because the voice is a teacher
+    speaking, not an instrument panel.
 
-    TYPE IS SENTENCE CASE THROUGHOUT, AND THAT IS A RULE. This app never sets a
-    label in capitals and never tracks one out into a technical micro-caption.
-    Its voice is a teacher with a hand on your shoulder — "inhale and lengthen,
-    exhale, settle a little deeper" — and a tracked uppercase label is the voice
-    of an instrument panel. Regions announce themselves the way that teacher
-    would: a short phrase in the body sans at reading size, set beside its node,
-    in cork brown at reduced strength. Hierarchy comes from SCALE and from
-    LIGHTNESS OF WEIGHT, never from case, rules, or a heavier bar.
+    COLOUR IS SPENT ALMOST NOWHERE, WHICH IS WHY IT WORKS. Terracotta appears as
+    the single primary action on a screen and as the marker on the selected tab,
+    and effectively nowhere else. Sage has exactly one job: a thing already
+    booked, already earned, already attended. Everything else is ink on linen.
+    Both brand colours fail AA as running text on this canvas — terracotta reads
+    4.35:1 and sage 3.31:1 — so both are FILLS, and what knocks out of a fill is
+    that colour's own light derivation (5.54:1 and 5.03:1), never the canvas and
+    never the pipeline's regular_text, which resolves to the canvas here.
 
-    The display face is the geometric sans and it does exactly two jobs, both at
-    LIGHT weight, because this brand's confidence is unhurried rather than loud:
-    the one headline that names a screen, and every FIGURE the app counts — a
-    streak, a points total, a rank count, a class time, a cost — set large, from
-    32px to 72px, in a light weight with open spacing. A big number set light is
-    the single most characteristic thing on any screen here, and it is what the
-    eye lands on first. The body sans does everything else at a real reading
-    measure: class names, descriptions, instructor bios, reward titles, the
-    running copy of the app. The two never trade jobs.
+    NAVIGATION IS A STANDARD BOTTOM TAB BAR and it is not where this design
+    expresses itself. Four destinations, each with its icon above its label in
+    sentence case, the current one in terracotta and the rest in quiet ink,
+    sitting on the canvas with a hairline above it. That is what every phone
+    owner already knows, and a redesign that reinvents it spends the member's
+    goodwill to say nothing. What is ours is the type, the colour, the imagery
+    and the space — the things real apps genuinely differ on.
 
     PHOTOGRAPHS ARE GIVEN A BOX OF THEIR OWN RATIO, ALWAYS, AND THIS OUTRANKS
-    EVERY SHAPE PREFERENCE ABOVE. A photograph arrives already composed — a
-    video still carries its title burnt into the frame and its subject set
-    against the edges — so a box of a different ratio does not resize it, it
-    destroys it. The circle belongs to the objects this brand minted, the
-    cut-outs on transparency: the roundel, the medallion, the struck coins, the
-    ribbon glyph. Those are square, centre-weighted and transparent-edged, so a
-    circle costs them nothing. A landscape photograph is not square and must
-    never be put in one. The class photography is 3:2 and gets a 3:2 box; the
-    video stills are 16:9 and get 16:9 boxes; where a shelf holds stills of
-    differing proportion they are aligned on a common HEIGHT and allowed to
-    differ in width, like frames on a strip, so not one of them is ever cropped
-    to match its neighbour.
+    EVERY OTHER PREFERENCE HERE. A photograph arrives already composed — a video
+    still carries its title burnt into the frame — so a box of a different ratio
+    does not resize it, it destroys it. The class photography is 3:2, the video
+    stills are 16:9 with one 4:3 among them, and each gets a box of its own
+    shape; where a shelf holds stills of differing proportion they align on a
+    common HEIGHT and differ in width. The generated cut-outs are a separate
+    thing entirely: the roundel, the medallion and the struck coins are square,
+    centre-weighted and transparent-edged, so a circle costs them nothing and
+    suits them. A landscape photograph never goes in a circle. A headshot may,
+    and its crop is chosen deliberately rather than inherited.
 
-    Within that, size is decided by what the picture is FOR. The studio
-    photography is warm, wide, full of the long horizontals of a floor and a row
-    of mats — it earns width, so where a photograph is the subject of its screen
-    or the head of a list it runs FULL BLEED, edge to edge at its own 3:2, with
-    the thread crossing it in linen white. Where a photograph is one of many in
-    a list it is small and inline at the same 3:2, beside its node. Hierarchy is
-    used deliberately and unequally: the first thing in a list may be given a
-    full-bleed photograph while everything below it stays compact, because a
-    schedule where every row is a hero is a gallery, and a schedule where
-    nothing is a hero is a spreadsheet.
+    The reward photography is the one imagery this app is handed that does not
+    belong to its world — loud, saturated stock frames of a different kind of
+    gym. It is not hidden or recoloured; it is held small at its own ratio, with
+    the reward's name and cost leading. That is a layout answer to an imagery
+    problem and it is the honest one.
 
-    The reward photography is the one place the app is handed pictures that do
-    not belong to its world — loud, saturated stock frames of a different kind
-    of gym. They are not to be hidden, recoloured or cropped away; they are to
-    be held SMALL, at their own ratio, with the type and the cost leading and
-    the picture supporting. That is a layout answer to an imagery problem, and
-    it is the honest one.
-
-    The celebration is where the thread closes. Those cards play after a class,
-    one after another, and each is a single held shape: the thread draws itself
-    around that card's hero, comes round, and CLOSES into a loop — the only
-    place in the app where the line completes rather than continuing off the
-    edge. The hero sits inside the loop, its figure set large and light beneath,
-    and the card's action waits at the foot, inside the thread's final curve,
-    in the space it will occupy from the first frame so its arrival never moves
-    anything.
-
-    Three things this app deliberately does not do. It does not set a single
-    word in capitals or track a label out — the voice is warm and spoken, not
-    instrumented. It does not put anything in a box, a card or a panel, because
-    a fourth form would break the mark the whole system is drawn from. And it
-    does not reach for the ornament this category reaches for by reflex: no
-    mandala, no lotus rosette, no incense-and-candle mysticism, no Sanskrit worn
-    as decoration. The brand was given one continuous ribbon and a set of
-    terracotta discs, and those are enough.
+    The post-class celebration is the one place the app raises its voice, and
+    even there it stays within the same system: one large generated object
+    centred on the canvas, one very large light figure beneath it, a short line
+    of supporting copy, and the action waiting at the foot in the space it will
+    occupy from the first frame.
 
 motion_direction:
   short_desc: >-
-    The line draws itself, at the pace of a breath — four counts in, four counts
-    out, nothing ever bounces.
+    Content settles into place — a short rise and fade, one soft curve, nothing
+    that bounces or draws attention to itself.
   long_desc: >-
-    Everything in this app moves the way the thread is made: by being DRAWN. A
-    screen does not fade in and does not slide in. Its line enters at the top
-    and travels down, drawing itself stroke-first, and each region arrives at
-    the moment the line reaches it. The stagger is therefore not a stagger at
-    all — it is a consequence of one continuous stroke passing each node in
-    turn, which is why it never needs a per-element delay curve and never reads
-    as a flourish. If the line has not reached a thing yet, that thing is not
-    there yet.
+    Motion in this app is the motion of a well-made premium app and nothing more
+    inventive than that, because motion is the fastest way to make a calm design
+    feel cheap. Content ARRIVES by rising a short distance — sixteen pixels, not
+    a hundred — while fading in, and settles. That is the entire vocabulary.
 
-    THE TEMPO IS A BREATH AND IT IS LITERAL. Motion here is slow, even and
-    unhurried — a four-count in and a four-count out — with an ease that is soft
-    at BOTH ends, because a breath begins gently and finishes gently. That is
-    the one thing that separates this app's movement from every brisk product
-    animation: nothing here decelerates into a hard stop, and nothing accelerates
-    away from one. A full screen draws in about three quarters of a second, and
-    it is allowed to take that long.
+    THE CURVE IS SOFT AT BOTH ENDS and the duration is short: around a third of a
+    second for a single element. Nothing overshoots, nothing springs, nothing
+    rubber-bands, nothing scales up past its size and settles back. There is no
+    elastic easing anywhere in this app. A bounce reads as a design pleased with
+    itself, and this brand is unhurried rather than pleased.
 
-    Nothing bounces, nothing springs back, nothing overshoots its size and
-    settles, nothing rubber-bands. There is no elastic easing anywhere in this
-    app. The brand's whole claim is that it is unhurried and grounded; a bounce
-    is the sound of a design being pleased with itself, and this one is not.
+    A screen's regions arrive in reading order on a SHORT stagger — the hero
+    first, then each section a beat behind the one above it — with the whole
+    screen settled well inside a second. The stagger exists so the eye is led
+    down the page once; it is not a performance, and a member who is already
+    reading should never be waiting on it.
 
-    Between screens the thread does not restart. The old screen's line completes
-    its travel and leaves through the bottom edge while the new screen's line
-    enters through the top, so moving through the app reads as ONE continuous
-    stroke that never lifts — the same claim the classes make about a sequence
-    of postures. The brand mark at the head is the origin of that stroke and is
-    the one element that does not redraw between screens; it is where the line
-    comes from.
+    Photographs do not animate on entry beyond the same fade. They do not zoom,
+    do not pan, and do not parallax. A large photograph is the most expensive
+    thing on the screen and moving it is what turns an editorial layout into a
+    slideshow.
 
     Figures roll. A count travels from zero to its value in tabular figures so
     nothing shifts sideways while it moves, lands inside three quarters of a
-    second, and settles without a final tick. A ring or an arc fills by drawing,
-    at an even rate, and stops exactly on its mark. A progress line is the
-    thread continuing, so it fills the way the thread travels and by the same
-    rule.
+    second, and stops on its value without a final tick. A progress arc fills at
+    an even rate and stops flat on its mark.
 
-    On the celebration, the closing of the loop IS the animation. The line
-    travels around the hero and meets itself, and the moment it closes is the
-    moment the card is settled and its action appears. That gives the card a
-    single unmistakable finish rather than a set of parts each arriving on its
-    own schedule.
-
-    Interaction is never held hostage to any of this. A tap on any still-drawing
-    celebration card completes the loop immediately and settles it, every card's
-    action zone is laid out from its first frame so nothing reflows when the
-    action arrives, and every tap target is live from the first frame regardless
-    of what the line is doing. A member standing in a studio doorway with their
-    phone out is never made to wait for a nicety. Under a reduced-motion
-    preference the line is simply already drawn, every card is already settled,
-    and every action is already present.
+    Interaction is never held hostage to any of this. Every tap target is live
+    from the first frame. A tap on a still-animating celebration card settles it
+    immediately, and every card's action zone is laid out from the first frame so
+    its arrival moves nothing. Under a reduced-motion preference everything is
+    simply already in place: no rise, no fade, every card settled and every
+    action present.
