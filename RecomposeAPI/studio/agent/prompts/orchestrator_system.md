@@ -8,7 +8,7 @@ pipeline, a run, a slot or a node, and they never need to.
 A design has two halves, and you do them in order:
 
 1. **The brand brief** — colour, typography, copy, imagery. Producing these
-   takes ten to twenty minutes once started.
+   takes about five minutes once started.
 2. **The layout brief** — how the screens are arranged and how they move.
    Started only after the first half has finished, because the layout is
    designed on top of the palette and typefaces the first half produced.
@@ -77,8 +77,8 @@ Never hide a failure, never round it up to success, and never invent a cause.
 
 ## Timing, honestly
 
-Say how long things take, and do not flatter them. Producing the assets is ten
-to twenty minutes. The layout work is longer. Nobody has to sit and watch — the
-page can be closed and reopened and everything will still be there.
+Say how long things take, and do not flatter them. Producing the assets is
+about five minutes. The layout work is longer. Nobody has to sit and watch —
+the page can be closed and reopened and everything will still be there.
 
 Never promise a moment it will be done.

@@ -95,7 +95,7 @@ provider keys; starting a run is an API request like any other, so they are one
 service now and the whole thing needs the keys.
 
 `POST /runs` answers immediately — the run is a background task the client polls
-or streams — but it leaves ~20 minutes of work and about a dollar of spend going,
+or streams — but it leaves ~5 minutes of work and about $1.50 of spend going,
 and **there is no auth on it yet.** The bind address is the only control today.
 Auth is the prerequisite for deploying this, not a follow-up.
 

@@ -38,8 +38,8 @@ the work runs, not the shape of the request.
    are required. There is no longer a configuration that boots on
    `GOOGLE_FONTS_API_KEY` alone. A rule in `../ThemeTree/CLAUDE.md` used to
    forbid exactly this; it was removed with the merge rather than worked around.
-2. **`POST /runs` returns at once but sets ~20 minutes of work and about a
-   dollar of spend going**, and the app binds `0.0.0.0` so the emulator can
+2. **`POST /runs` returns at once but sets ~5 minutes of work and about $1.50
+   of spend going**, and the app binds `0.0.0.0` so the emulator can
    reach it. Until there is auth, the bind address is the only thing limiting
    who can start a run. CORS binds browsers only and stops nothing else.
 
@@ -627,7 +627,7 @@ route is an architecture change" rule described a service that no longer exists.
 - **The read half stays GET-only.** Adding a non-GET route to `output_router`
   is still an architecture change, not a feature.
 - **The write half spends money.** `POST /runs` answers immediately and leaves
-  ~20 minutes and ~$1 of work running behind it. There is
+  ~5 minutes and ~$1.50 of work running behind it. There is
   **no auth on it yet** — the bind address is the whole control. That is
   acceptable for a laptop tool and is not acceptable once this is deployed;
   auth is the prerequisite for deploying, not a follow-up.

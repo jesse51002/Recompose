@@ -14,6 +14,7 @@ from pydantic import BaseModel
 from ThemeTree.core.errors import ProviderError, SchemaValidationError
 from ThemeTree.shared.services.background_remover import RecraftBackgroundRemover
 from ThemeTree.shared.services.litellm_image_generator import LiteLLMImageGenerator
+from ThemeTree.shared.services import llm_client as llm_client_module
 from ThemeTree.shared.services.llm_client import LiteLLMClient, _loggable
 from ThemeTree.shared.services.provider_keys import provider_api_key
 
@@ -113,6 +114,106 @@ def test_complete_maps_litellm_error_to_provider_error(monkeypatch):
                 model=_MODEL,
             )
         )
+
+
+def _no_waiting(monkeypatch) -> list[float]:
+    """Swallow the retry backoff so a test runs instantly, recording the
+    waits it would have taken."""
+    waits: list[float] = []
+
+    async def fake_sleep(seconds: float) -> None:
+        waits.append(seconds)
+
+    monkeypatch.setattr(llm_client_module.asyncio, "sleep", fake_sleep)
+    return waits
+
+
+def _service_unavailable() -> Exception:
+    """The real shape of the failure this retry exists for: Gemini
+    answering 503 ``high demand`` on the image-complexity classifier."""
+    return litellm.exceptions.ServiceUnavailableError(
+        message="high demand", llm_provider="gemini", model="gemini-2.5-flash-lite"
+    )
+
+
+def test_a_transient_completion_failure_is_retried_and_can_succeed(monkeypatch):
+    """A 503 that clears costs a wait, not the call.
+
+    This is the whole point: the classifier's 503 used to kill an image
+    node outright, discarding the Opus prompt already paid for and
+    dropping the slot from ``output.yaml``.
+    """
+    waits = _no_waiting(monkeypatch)
+    calls = {"n": 0}
+
+    async def fake_acompletion(**kwargs):
+        calls["n"] += 1
+        if calls["n"] < 3:
+            raise _service_unavailable()
+        return _FakeCompletion("done")
+
+    monkeypatch.setattr(litellm, "acompletion", fake_acompletion)
+
+    message = asyncio.run(
+        LiteLLMClient().complete(
+            [{"role": "user", "content": "hi"}], model=_MODEL
+        )
+    )
+
+    assert message["content"] == "done"
+    assert calls["n"] == 3
+    assert waits == list(llm_client_module.RETRY_BACKOFF_SECONDS[:2])
+
+
+def test_a_transient_failure_that_never_clears_gives_up(monkeypatch):
+    """The ladder is finite — an outage that outlasts it still fails."""
+    _no_waiting(monkeypatch)
+    calls = {"n": 0}
+
+    async def fake_acompletion(**kwargs):
+        calls["n"] += 1
+        raise _service_unavailable()
+
+    monkeypatch.setattr(litellm, "acompletion", fake_acompletion)
+
+    with pytest.raises(ProviderError, match="after 4 attempts"):
+        asyncio.run(
+            LiteLLMClient().complete(
+                [{"role": "user", "content": "hi"}], model=_MODEL
+            )
+        )
+
+    assert calls["n"] == len(llm_client_module.RETRY_BACKOFF_SECONDS) + 1
+
+
+def test_a_permanent_completion_failure_is_not_retried(monkeypatch):
+    """A bad request fails on the first attempt, not the fourth.
+
+    ``BadRequestError`` shares the ``litellm.exceptions.APIError`` base
+    with every retryable type, so a retry set written as that base would
+    burn the full 50-second ladder on a fault no wait can fix — and would
+    do it once per node. This test is what keeps the set specific.
+    """
+    waits = _no_waiting(monkeypatch)
+    calls = {"n": 0}
+
+    async def fake_acompletion(**kwargs):
+        calls["n"] += 1
+        raise litellm.exceptions.BadRequestError(
+            message="malformed", llm_provider="gemini", model="gemini-2.5-flash-lite"
+        )
+
+    monkeypatch.setattr(litellm, "acompletion", fake_acompletion)
+
+    with pytest.raises(ProviderError):
+        asyncio.run(
+            LiteLLMClient().complete(
+                [{"role": "user", "content": "hi"}], model=_MODEL
+            )
+        )
+
+    assert calls["n"] == 1
+    assert waits == []
 
 
 # --------------------------------------------------------------------------

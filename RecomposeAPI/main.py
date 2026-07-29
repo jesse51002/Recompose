@@ -23,7 +23,7 @@ and its four provider keys (Anthropic, Gemini, OpenAI, Recraft) are required.
 There is no longer a configuration in which this boots on
 ``GOOGLE_FONTS_API_KEY`` alone.
 
-**And what it exposes.** ``POST /runs`` returns immediately but sets ~20 minutes
+**And what it exposes.** ``POST /runs`` returns immediately but sets ~5 minutes
 of work and about a dollar of provider spend going. The studio half used to bind
 loopback, which is what actually kept it unreachable; this app binds ``0.0.0.0``
 so the emulator can reach it. Until there is auth, the bind address is the only

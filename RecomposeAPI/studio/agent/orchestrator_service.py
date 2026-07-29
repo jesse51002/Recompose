@@ -166,7 +166,7 @@ class OrchestratorService:
             """Start generating the palette, typography, copy and imagery.
 
             Call this only after the owner has accepted the brand brief.
-            Returns immediately; the run itself takes 10-20 minutes and
+            Returns immediately; the run itself takes about five minutes
             reports its own progress. Never call it twice.
 
             Args:

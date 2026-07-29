@@ -182,6 +182,35 @@ not introduce blocking I/O — use async clients (`litellm.acompletion` /
 independently awaitable so they can be gathered concurrently later without a
 refactor.
 
+### Transient provider failures are retried, permanent ones are not
+
+Both litellm-backed services retry a **transient** failure on an increasing
+backoff (`RETRY_BACKOFF_SECONDS = (5, 15, 30)` — three retries on top of the
+first attempt) before wrapping it as `ProviderError`:
+
+- `LiteLLMImageGenerator._call_with_retry` — the image call and its write, and
+- `LiteLLMClient._acompletion` — every chat turn, structured or not.
+
+**The retryable set is listed type by type, never by a shared base.** In
+litellm's taxonomy `BadRequestError`, `AuthenticationError` and
+`ContentPolicyViolationError` inherit from the same `APIError` as
+`ServiceUnavailableError` and `RateLimitError`, so a retry set written as
+`APIError` would spend the whole 50-second ladder on a fault no wait can fix —
+once per node. `RETRYABLE_COMPLETION_ERRORS` in `llm_client.py` is that list,
+and a test asserts a bad request costs exactly one attempt.
+
+The chat guard was **added on 2026-07-29 after its absence cost slots.** An
+image node authors its prompt (Opus) and classifies it (`gemini-2.5-flash-lite`)
+before generating anything, and neither call was retried while the generation
+between them sat behind two nested retry layers — so a single `503 high demand`
+on the cheapest call in the node discarded the paid prompt, dropped the slot
+from `output.yaml`, and skipped every slot depending on it. One Gemini outage
+took 6 of 22 slots in a run, `celebration_image` among them, which then hid the
+finished theme from the styles list (it is that list's card art).
+
+The lesson generalises: **a node is only as reliable as its least-guarded
+call**, and that is rarely the expensive one.
+
 ### Watching a run: the progress sink
 
 `Pipeline.run()` takes an optional `progress: ProgressSink | None`. Given

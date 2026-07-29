@@ -3,6 +3,7 @@ providers directly (no proxy hop)."""
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 from pathlib import Path
@@ -27,6 +28,30 @@ SCHEMA_CORRECTION_PROMPT_PATH = (
 # Logged prompts elide base64 data URLs so a vision call's image payload
 # isn't dumped into the logs.
 DATA_URL_MARKER = ";base64,"
+
+# Wait (seconds) before each retry of a TRANSIENT completion failure, in
+# order. Its length sets the retry count: 3 here → up to 3 retries on top
+# of the first attempt (4 calls worst case). Deliberately its own constant
+# rather than shared with `LiteLLMImageGenerator`'s identical ladder — a
+# chat turn and an image generation have different latencies and should be
+# tunable apart.
+RETRY_BACKOFF_SECONDS = (5, 15, 30)
+
+# The failures worth another attempt: provider overload, rate limiting, a
+# 5xx, a dropped connection, a timeout (`Timeout` subclasses
+# `APIConnectionError`).
+#
+# Listed individually rather than by their shared
+# `litellm.exceptions.APIError` base ON PURPOSE — `BadRequestError`,
+# `AuthenticationError` and `ContentPolicyViolationError` inherit from it
+# too, and retrying those would burn the whole 50-second ladder on a fault
+# no amount of waiting can fix.
+RETRYABLE_COMPLETION_ERRORS = (
+    litellm.exceptions.ServiceUnavailableError,
+    litellm.exceptions.RateLimitError,
+    litellm.exceptions.InternalServerError,
+    litellm.exceptions.APIConnectionError,
+)
 
 
 def _loggable(value: Any) -> Any:
@@ -130,13 +155,49 @@ class LiteLLMClient(CostTracking, LLMClient):
         }
 
     async def _acompletion(self, kwargs: dict, model_name: str) -> Any:
-        """One litellm call; any SDK/transport failure → ``ProviderError``."""
-        try:
-            return await litellm.acompletion(**kwargs)
-        except Exception as exc:
-            raise ProviderError(
-                f"completion failed for model {model_name!r}: {exc}"
-            ) from exc
+        """One litellm call; any SDK/transport failure → ``ProviderError``.
+
+        A **transient** failure is retried first, on the increasing
+        ``RETRY_BACKOFF_SECONDS`` backoff; anything else fails at once.
+
+        This is the only transport guard chat calls have, and it exists
+        because its absence was silently costing whole image slots. An
+        image node authors its prompt (Opus) and classifies it
+        (flash-lite) before generating anything, and NEITHER call was
+        retried — while the generation on the far side sat behind two
+        nested retry layers. So one ``503 high demand`` on the cheapest
+        call in the node threw away the prompt already paid for, dropped
+        the slot from ``output.yaml`` entirely, and skipped every slot
+        depending on it. One such outage cost 6 of 22 slots in a single
+        run, including the ``celebration_image`` the styles list needs
+        as card art — which then hid the finished theme from the picker.
+        """
+        total = len(RETRY_BACKOFF_SECONDS) + 1
+        for i in range(total):
+            try:
+                return await litellm.acompletion(**kwargs)
+            except RETRYABLE_COMPLETION_ERRORS as exc:
+                if i == total - 1:
+                    raise ProviderError(
+                        f"completion failed for model {model_name!r} after "
+                        f"{total} attempts: {exc}"
+                    ) from exc
+                wait = RETRY_BACKOFF_SECONDS[i]
+                logger.warning(
+                    "completion attempt %d/%d failed for model %r (%s); "
+                    "retrying in %ds",
+                    i + 1,
+                    total,
+                    model_name,
+                    exc,
+                    wait,
+                )
+                await asyncio.sleep(wait)
+            except Exception as exc:
+                raise ProviderError(
+                    f"completion failed for model {model_name!r}: {exc}"
+                ) from exc
+        raise AssertionError("unreachable: retry loop returns or raises")
 
     @staticmethod
     def _message_content(message: Any) -> str:
