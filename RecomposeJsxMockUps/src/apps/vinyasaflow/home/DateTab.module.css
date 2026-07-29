@@ -17,7 +17,7 @@
   align-items: center;
   justify-content: center;
   padding-block: var(--sc-spacing-medium);
-  padding-inline: var(--sc-spacing-large);
+  padding-inline: var(--sc-spacing-medium);
   border: none;
   border-radius: var(--sc-radius-circle);
   background: none;

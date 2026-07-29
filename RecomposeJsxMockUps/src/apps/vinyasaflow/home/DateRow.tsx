@@ -3,7 +3,13 @@
 // Ports MobileApp/lib/features/home/presentation/widgets/class_schedule/
 // date_row.dart — five days, the current one marked — and rebuilds it in this
 // fork's own vocabulary: the descending line goes out across the screen,
-// through five circles, and back down. It is <Bow>, the same excursion the head
+// THE WHOLE WEEK HAS TO FIT. It briefly used the shared <Bow> shelf, whose gap
+// is tuned for video covers — five day pills at that gap overflowed by 89px and
+// the fifth day, Sunday, was simply not on screen. The base shows five; a
+// selector that silently hides one of its own options has removed it as far as
+// a member is concerned. This row owns its measurements so the week fits.
+//
+// It was once an excursion of a line running
 // uses to gather the four things the member carries and the foot uses to thread
 // the four destinations, which is what makes sideways movement here read as
 // part of one sequence rather than as a second axis bolted on.
@@ -26,7 +32,6 @@
 // row that detaches from it to float over the content below would cut the line
 // the design's one absolute says may never break.
 
-import { Bow } from '../shell/Thread';
 
 import { DateTab } from './DateTab';
 import styles from './DateRow.module.css';
@@ -42,7 +47,7 @@ export interface DateRowProps {
 export function DateRow({ dayOffsets, currentDayIndex }: DateRowProps) {
   return (
     <div className={styles.week}>
-      <Bow>
+      <div className={styles.days}>
         {dayOffsets.map((offset) => (
           <DateTab
             key={offset}
@@ -50,7 +55,7 @@ export function DateRow({ dayOffsets, currentDayIndex }: DateRowProps) {
             isSelected={offset === currentDayIndex}
           />
         ))}
-      </Bow>
+      </div>
     </div>
   );
 }
