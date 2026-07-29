@@ -322,33 +322,50 @@ class OrchestratorService:
             RUN_SETTLED.format(summary=summary, design_id=design_id),
         )
 
+    async def start_layout(self, session_id: str) -> str:
+        """Launch the layout agent on this session's run. RAISES on failure.
+
+        The manual door, behind `POST /sessions/{id}/layout/start`. A person
+        pressing a button is owed the reason it did not work, so unlike the
+        automatic path this propagates — the route turns a
+        `LayoutInFlightError` into a 409 and a missing run into a 422.
+        """
+        convo = self._require(session_id)
+        if convo.run_name is None:
+            raise ValueError(
+                "there is no finished asset run to design against yet"
+            )
+        design_id = await self._layout.start(
+            app=convo.app_id, theme_run=convo.run_name
+        )
+        await self._sessions.phase(session_id, SessionPhase.DESIGNING)
+        await self._sessions.task(
+            session_id, task="layout", state="started", design_id=design_id
+        )
+        return design_id
+
     async def _start_layout(
         self, session_id: str, convo: _Conversation
     ) -> str:
-        """Make the design folder and launch the agent on it.
+        """The AUTOMATIC start, when an asset run settles.
 
-        **Never raises.** The assets are made and the theme is watchable; a
-        layout that could not start is one half missing, not a dead session.
-        It is reported as a failed task — which is a visible red state in the
-        transcript — and the conversation carries on.
+        **Never raises**, which is the difference from `start_layout`. Nobody
+        pressed anything here: the assets are made and the theme is watchable,
+        so a layout that could not start is one half missing, not a dead
+        session. It is reported as a failed task — a visible red state in the
+        transcript, with a Start button beside it — and the conversation
+        carries on.
         """
-        if convo.run_id is None:
+        if convo.run_name is None:
             return "(none)"
         try:
-            design_id = await self._layout.start(
-                app=convo.app_id, theme_run=convo.run_name or ""
-            )
+            return await self.start_layout(session_id)
         except Exception as exc:
             logger.exception("could not start the layout for %s", session_id)
             await self._sessions.task(
                 session_id, task="layout", state="failed", error=str(exc)
             )
             return "(it could not be started)"
-        await self._sessions.phase(session_id, SessionPhase.DESIGNING)
-        await self._sessions.task(
-            session_id, task="layout", state="started", design_id=design_id
-        )
-        return design_id
 
     def close(self, session_id: str) -> None:
         """Drop the conversation. The durable transcript is the JSONL."""

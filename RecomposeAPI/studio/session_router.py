@@ -29,7 +29,11 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import StreamingResponse
 from pydantic import ValidationError
 
-from RecomposeAPI.studio.errors import SessionInFlightError, UnknownSessionError
+from RecomposeAPI.studio.errors import (
+    LayoutInFlightError,
+    SessionInFlightError,
+    UnknownSessionError,
+)
 from RecomposeAPI.studio.schema.session_open import (
     SessionAccept,
     SessionOpened,
@@ -193,6 +197,53 @@ async def close_session(session_id: str) -> None:
     # Approving ends the design, so nothing should still be redesigning it.
     # Closing the page is not what stops an agent — this is.
     await layout_task().stop()
+
+
+@session_router.post(
+    "/{session_id}/layout/start",
+    status_code=status.HTTP_202_ACCEPTED,
+    summary="Start (or restart) the layout agent",
+    responses={
+        202: {"description": "Started; it reports itself on the stream"},
+        404: {"description": "No such open session"},
+        409: {"description": "An agent is already running on this design"},
+        422: {"description": "No settled asset run to design against yet"},
+    },
+)
+async def start_layout(session_id: str) -> dict[str, str]:
+    """Start the layout agent by hand.
+
+    **It normally starts itself** when the asset run settles — a finished run
+    is the only precondition the layout ever had, so there is nothing to judge
+    and nothing to ask. This is the manual door, and it exists because Stop
+    without Start would be a one-way door: the only way back to another layout
+    attempt would be regenerating the whole theme, which would make stopping a
+    bad run cost more than letting it finish.
+
+    So it covers exactly the cases the automatic path cannot: after a Stop,
+    after a crash, and when another pass is wanted on a design that already
+    has one. Starting on an existing folder CONTINUES it rather than
+    re-copying the base — see `LayoutTask._prepare`.
+    """
+    try:
+        await session_registry().snapshot(session_id)
+    except UnknownSessionError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)
+        ) from None
+    try:
+        design_id = await orchestrator_service().start_layout(session_id)
+    except LayoutInFlightError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail=str(exc)
+        ) from None
+    except ValueError as exc:
+        # No settled run yet. A 422 rather than a 404: the session is real,
+        # the request is just premature.
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(exc)
+        ) from None
+    return {"design_id": design_id}
 
 
 @session_router.post(

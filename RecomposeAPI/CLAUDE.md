@@ -79,6 +79,16 @@ the work runs, not the shape of the request.
   that a Ctrl-C would leave the expensive half of the system running,
   reparented to init and invisible. `POST /sessions/{id}/layout/stop` is the
   same kill on demand.
+- **Stop and start are a PAIR.** `POST /sessions/{id}/layout/start` is the
+  manual door, and it exists because a Stop with no way back would mean
+  regenerating a whole theme to get another layout attempt — so stopping a bad
+  run would cost more than letting it finish. It also recovers an automatic
+  start that failed, and runs another pass on a finished design. **Starting on
+  an existing folder CONTINUES it**, never re-copies the base: the folder is
+  named after the run, so an existing one can only mean this run has been laid
+  out before, and re-copying would delete the last agent's work. What is
+  exclusive is the AGENT, not the folder — a second one on the same design is a
+  409, because two agents editing one tree lose each other's writes.
 - **Which account pays for it is a decision, not an accident.** A coding-agent
   CLI bills to `ANTHROPIC_API_KEY` when it finds one in its environment and to
   its own logged-in subscription when it does not. `layout_agent_inherit_api_key`

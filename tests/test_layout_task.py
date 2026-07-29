@@ -20,7 +20,7 @@ from pathlib import Path
 import pytest
 
 from RecomposeAPI.studio.config import settings
-from RecomposeAPI.studio.errors import DesignNameTakenError, UnknownAppError
+from RecomposeAPI.studio.errors import LayoutInFlightError, UnknownAppError
 from RecomposeAPI.studio.service.layout_task import (
     ANTHROPIC_KEY_VAR,
     GENERATED_PREFIX,
@@ -90,18 +90,23 @@ def test_the_studio_writes_no_layout_brief(task) -> None:
     assert not (apps / design_id / "layout_brief.yaml").exists()
 
 
-def test_a_repeated_run_is_refused_not_overwritten(task) -> None:
-    """THE test in this file. One design per run, so a second start means the
-    run has been laid out already; overwriting would delete an agent's work."""
+def test_a_second_start_continues_the_folder_and_never_re_copies(task) -> None:
+    """THE test in this file: an agent's work must survive a restart.
+
+    Starting again on the same run means "carry on with this design" — after
+    a Stop, or for another pass. Re-copying the base would silently delete
+    everything the previous agent wrote, and refusing outright would make Stop
+    a one-way door whose only escape was regenerating the whole theme.
+    """
     layout, apps = task
     design_id = asyncio.run(layout.start(app="combatden", theme_run=RUN))
-    (apps / design_id / "index.ts").write_text("// edited\n", encoding="utf-8")
+    (apps / design_id / "index.ts").write_text("// redesigned\n", encoding="utf-8")
 
-    with pytest.raises(DesignNameTakenError):
-        asyncio.run(layout.start(app="combatden", theme_run=RUN))
+    again = asyncio.run(layout.start(app="combatden", theme_run=RUN))
 
-    # The edit survives, which is the point of refusing.
-    assert (apps / design_id / "index.ts").read_text() == "// edited\n"
+    assert again == design_id
+    # The work survives, which is the whole point.
+    assert (apps / design_id / "index.ts").read_text() == "// redesigned\n"
 
 
 def test_an_unknown_base_app_is_refused(task) -> None:
@@ -238,7 +243,7 @@ def test_stopping_kills_the_agents_whole_process_tree(tmp_path: Path) -> None:
 
     async def scenario() -> tuple[int, list[int]]:
         await task.start(app="combatden", theme_run=RUN)
-        proc = next(iter(task._running.values()))
+        _, proc = next(iter(task._running.values()))
         group = os.getpgid(proc.pid)
         # The backgrounded `sleep` has to actually exist before we can prove
         # it was reaped with its parent.
@@ -283,3 +288,24 @@ def _pids_in_group(pgid: int) -> list[int]:
         except (ProcessLookupError, PermissionError, ValueError):
             continue
     return found
+
+
+def test_a_second_agent_on_one_design_is_refused(tmp_path: Path) -> None:
+    """The one exclusivity the layout half needs.
+
+    Two agents editing one folder interleave writes into the same files, and
+    the loser's work is unrecoverable — nothing records what it was about to
+    write. Note this is the AGENT being exclusive, not the folder: starting
+    again after the first has exited is allowed and expected.
+    """
+    task = _sleeper_task(tmp_path)
+
+    async def scenario() -> None:
+        await task.start(app="combatden", theme_run=RUN)
+        try:
+            with pytest.raises(LayoutInFlightError):
+                await task.start(app="combatden", theme_run=RUN)
+        finally:
+            await task.stop()
+
+    asyncio.run(scenario())

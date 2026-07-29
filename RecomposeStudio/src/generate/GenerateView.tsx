@@ -24,6 +24,7 @@ import { useSessionStream } from '../studio/useSessionStream';
 import {
   acceptProposal,
   closeSession,
+  startLayout,
   stopLayout,
   takeTurn,
 } from '../studio/sessionApi';
@@ -208,6 +209,26 @@ export function GenerateView({ sessionId, onDone }: GenerateViewProps) {
                 closing the tab does not stop it. A permanent button would
                 offer to stop something that mostly is not running; this
                 appears exactly when there is something to stop. */}
+            {/* STARTING IT BY HAND. The agent starts itself when the assets
+                settle, so this is not the normal path — it is what makes Stop
+                reversible, and what recovers a start that failed. It appears
+                only once there is a finished run to design against, because
+                before that there is nothing for an agent to look at. */}
+            {!view.layoutRunning && view.themeId !== null && (
+              <button
+                type="button"
+                className={styles.start}
+                disabled={busy}
+                title={
+                  view.designId === null
+                    ? 'Redesign the screens for this theme.'
+                    : 'Run the layout agent again on this design, continuing what is already there.'
+                }
+                onClick={() => act(async () => void (await startLayout(sessionId)))}
+              >
+                {view.designId === null ? 'Start the agent' : 'Run the agent again'}
+              </button>
+            )}
             {view.layoutRunning && (
               <button
                 type="button"

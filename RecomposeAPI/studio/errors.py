@@ -67,18 +67,25 @@ class SessionInFlightError(StudioError):
         self.design_name = design_name
 
 
-class DesignNameTakenError(StudioError):
-    """That generated design folder already exists (maps to HTTP 409).
+class LayoutInFlightError(StudioError):
+    """A layout agent is already running (maps to HTTP 409).
 
-    Named generations collide by design: two attempts called the same thing
-    ARE the same thing. Refused rather than overwritten, because the copy is
-    the one path in the layout half that could destroy generated work.
+    The one thing a second start must never do. Two agents editing one folder
+    would interleave writes into the same files, and the loser's work is not
+    recoverable — nothing records what it was about to write.
+
+    **This replaced a folder-exists refusal**, which stopped making sense once
+    the folder's name became the run's. An existing folder used to mean "a
+    different design wants this name"; now it can only mean "this run has been
+    laid out before", and the useful answer to that is to carry on editing it,
+    not to refuse. What is genuinely exclusive is the AGENT, so that is what is
+    checked.
     """
 
     def __init__(self, design_id: str) -> None:
         super().__init__(
-            f"a design folder named {design_id!r} already exists; pick "
-            "another name for this generation (or delete that folder)"
+            f"a layout agent is already running on {design_id!r}; stop it "
+            "before starting another"
         )
         self.design_id = design_id
 

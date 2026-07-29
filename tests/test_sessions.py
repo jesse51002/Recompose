@@ -288,3 +288,32 @@ def test_shutting_the_server_down_stops_the_layout_agents(monkeypatch) -> None:
         pass  # opening and closing the app is the whole scenario
 
     assert stopped == [True], "shutdown did not stop the layout agents"
+
+
+def test_starting_the_layout_before_a_run_is_a_422(studio) -> None:
+    """The manual door refuses politely when there is nothing to design for.
+
+    A 422 rather than a 404: the session is real, the request is premature.
+    The layout is built FOR a specific set of produced images, so before a
+    run has settled there is nothing for an agent to look at.
+    """
+    client, _ = studio
+    opened = _open(client)
+
+    resp = client.post(f"/sessions/{opened['session_id']}/layout/start")
+
+    assert resp.status_code == 422
+    assert "asset run" in resp.json()["detail"]
+
+
+def test_stopping_the_layout_when_none_runs_reports_zero(studio) -> None:
+    """Not an error — asking twice is the normal way to be sure, and the
+    count is how the page says 'nothing was running' rather than implying it
+    stopped something."""
+    client, _ = studio
+    opened = _open(client)
+
+    resp = client.post(f"/sessions/{opened['session_id']}/layout/stop")
+
+    assert resp.status_code == 200
+    assert resp.json() == {"stopped": 0}

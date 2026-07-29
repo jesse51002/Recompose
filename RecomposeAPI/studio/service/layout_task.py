@@ -49,7 +49,7 @@ from pathlib import Path
 from typing import Protocol
 
 from RecomposeAPI.studio.config import settings
-from RecomposeAPI.studio.errors import DesignNameTakenError, UnknownAppError
+from RecomposeAPI.studio.errors import LayoutInFlightError, UnknownAppError
 from RecomposeAPI.studio.service.session_registry import (
     SessionRegistry,
     session_registry,
@@ -120,6 +120,10 @@ class LayoutTask(Protocol):
         Idempotent, and safe when nothing is running. Exists because a layout
         agent is the most expensive thing this service can start and the only
         one that keeps spending after the page that started it is closed.
+
+        Its counterpart is `start`, and they are a PAIR: a Stop with no way
+        back would mean regenerating a whole theme to get another layout
+        attempt, so stopping would cost more than letting a bad run finish.
         """
         ...
 
@@ -128,10 +132,9 @@ class _LayoutTaskBase:
     """The half both implementations share: name the folder, copy the base.
 
     Split out rather than duplicated because getting the copy wrong is the one
-    step that can destroy work — an existing folder must be refused, never
-    overwritten — and a stub that skipped that check would be a stub that
-    behaves differently from the thing it stands in for in exactly the way
-    that matters.
+    step that can destroy work — an existing folder must be reused, never
+    re-copied over — and a stub that skipped that would behave differently
+    from the thing it stands in for in exactly the way that matters.
     """
 
     def __init__(self, apps_dir: Path, sessions: SessionRegistry) -> None:
@@ -139,13 +142,22 @@ class _LayoutTaskBase:
         self._sessions = sessions
 
     async def _prepare(self, app: str, theme_run: str) -> tuple[str, Path]:
-        """Copy the base app to ``gen-<theme_run>/``.
+        """Ensure ``gen-<theme_run>/`` exists as a copy of the base app.
 
         The folder's name is the RUN's, so a design's two halves are legible as
         a pair from the filesystem alone — ``apps/combatden/bike-maniacs/`` and
         ``src/apps/gen-bike-maniacs/`` — with no field in either pointing at
         the other. The run name is already a slug (the launcher only ever
         creates one), so there is nothing left to slugify.
+
+        **An existing folder is reused, never re-copied.** It used to be
+        refused, on the reasoning that two designs wanting one name are the
+        same design. That reasoning died with the naming: the folder is the
+        run's now, so an existing one can only mean this run has been laid out
+        before — and the right answer to that is to carry on editing it. Both
+        alternatives are worse than reuse: refusing makes Stop a one-way door
+        (the only way back would be redoing the whole theme), and re-copying
+        the base would silently delete whatever the last agent wrote.
         """
         design_id = f"{GENERATED_PREFIX}{theme_run}"
         base = self._apps_dir / app
@@ -157,15 +169,27 @@ class _LayoutTaskBase:
             raise UnknownAppError(f"no such mock app {app!r}")
         if not await asyncio.to_thread(base.is_dir):
             raise UnknownAppError(f"no such mock app {app!r} (expected {base})")
-        if await asyncio.to_thread(target.exists):
-            # One design per run, so this means the run has been laid out
-            # already. Refused rather than overwritten — it is the one path
-            # here that could destroy generated work.
-            raise DesignNameTakenError(design_id)
 
-        await asyncio.to_thread(shutil.copytree, base, target)
-        logger.info("prepared design folder %s from %s", design_id, app)
+        if await asyncio.to_thread(target.exists):
+            logger.info("reusing existing design folder %s", design_id)
+        else:
+            await asyncio.to_thread(shutil.copytree, base, target)
+            logger.info("prepared design folder %s from %s", design_id, app)
         return design_id, target
+
+    def _refuse_if_running(self, design_id: str) -> None:
+        """One agent per design, because two would corrupt the folder.
+
+        Two agents editing one tree interleave writes into the same files and
+        the loser's work is gone — nothing records what it was about to write.
+        This is the only exclusivity the layout half needs.
+        """
+        if self._live_design_ids() & {design_id}:
+            raise LayoutInFlightError(design_id)
+
+    def _live_design_ids(self) -> set[str]:
+        """Design ids with an agent running. Empty unless overridden."""
+        return set()
 
     @staticmethod
     def _prompt(app: str, theme_run: str, target: Path) -> str:
@@ -206,9 +230,13 @@ class SubprocessLayoutTask(_LayoutTaskBase):
         # Every agent currently running, by pid. The ONE thing this service
         # holds that must not be lost: an agent nobody has a handle to is an
         # agent nobody can stop, and it bills for as long as it lives.
-        self._running: dict[int, asyncio.subprocess.Process] = {}
+        self._running: dict[int, tuple[str, asyncio.subprocess.Process]] = {}
+
+    def _live_design_ids(self) -> set[str]:
+        return {design_id for design_id, _ in self._running.values()}
 
     async def start(self, *, app: str, theme_run: str) -> str:
+        self._refuse_if_running(f"{GENERATED_PREFIX}{theme_run}")
         design_id, target = await self._prepare(app, theme_run)
         # A LIST, never a shell string, and never passed through a shell — the
         # prompt is a single argv element, so nothing in it can be read as a
@@ -228,7 +256,7 @@ class SubprocessLayoutTask(_LayoutTaskBase):
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.STDOUT,
         )
-        self._running[proc.pid] = proc
+        self._running[proc.pid] = (design_id, proc)
         logger.info(
             "layout agent for %s started as pid %d", design_id, proc.pid
         )
@@ -247,7 +275,7 @@ class SubprocessLayoutTask(_LayoutTaskBase):
         Returns how many were signalled, so a caller can say "nothing was
         running" rather than implying it stopped something.
         """
-        running = list(self._running.values())
+        running = [proc for _, proc in self._running.values()]
         for proc in running:
             self._signal_group(proc, signal.SIGTERM)
         if not running:

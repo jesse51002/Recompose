@@ -106,10 +106,15 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
   the options — a chip press posts the option's own text, so the records
   genuinely cannot tell a pick from typing. Without it a finished interview
   scrolled back as identical grey rows: every question kept, every answer lost.
-- **Stopping the layout agent is offered only while one runs.** It is the most
-  expensive thing the page can start and closing the tab does not stop it, so
-  the control exists — but an offer to stop something that is not running is
-  worse than no offer. `view.layoutRunning` gates it.
+- **Stop and Start share one slot, and only one is ever shown.** The layout
+  agent is the most expensive thing the page can start and closing the tab does
+  not stop it, so Stop exists — gated on `view.layoutRunning`, because an offer
+  to stop something that is not running is worse than no offer. Start is its
+  pair: without it, stopping would be a one-way door out of the whole design.
+  It appears only once `view.themeId` exists, since before a run has settled
+  there is nothing for an agent to look at, and it reads "Run the agent again"
+  once a design folder is there — starting continues that folder rather than
+  discarding it.
 - **Fail visible.** A missing artifact, a failed run, an empty catalog: show the
   state. A blank pane that could mean "loading" or "broken" is the one failure
   mode that wastes the most time here.

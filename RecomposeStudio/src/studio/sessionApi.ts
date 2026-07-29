@@ -194,6 +194,24 @@ export async function acceptProposal(
 }
 
 /**
+ * Start (or restart) the layout agent on this session's run.
+ *
+ * **It normally starts itself** when the asset run settles. This is the
+ * manual door, and it exists because Stop without Start would be a one-way
+ * door — the only way back to another layout attempt would be regenerating
+ * the whole theme, which would make stopping a bad run cost more than letting
+ * it finish. Starting on an existing folder continues it rather than
+ * re-copying the base.
+ */
+export async function startLayout(sessionId: string): Promise<string> {
+  const body = await send<{ design_id: string }>(
+    `/sessions/${encodeURIComponent(sessionId)}/layout/start`,
+    { method: 'POST' },
+  );
+  return body.design_id;
+}
+
+/**
  * Stop the running layout agent, whole process tree.
  *
  * **The one control over the most expensive thing the studio starts.** A

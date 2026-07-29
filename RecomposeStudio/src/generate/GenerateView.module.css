@@ -117,6 +117,25 @@
 
 .approve:disabled { opacity: 0.5; cursor: default; }
 
+/* Starting the layout agent by hand. Neutral chrome, not a state hue: it
+   offers work rather than reporting anything, and in this shell a hue always
+   means a state (../../CLAUDE.md). Its counterpart `.stop` IS coloured,
+   because a running agent is a state and stopping one is destructive. */
+.start {
+  flex: none;
+  margin-right: 8px;
+  padding: 7px 12px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 6px;
+  background: var(--sh-raised);
+  color: var(--ink);
+  font: 500 var(--fs-xs) / 1 var(--sans);
+  cursor: pointer;
+}
+
+.start:hover:enabled { border-color: var(--sh-line-3); background: var(--sh-raised-2); }
+.start:disabled { opacity: 0.5; cursor: default; }
+
 /* Stopping the layout agent. In the alarm hue rather than the neutral chrome,
    because this is destructive and irreversible — the agent does not resume —
    and because in this shell a hue always means a state (../../CLAUDE.md).
