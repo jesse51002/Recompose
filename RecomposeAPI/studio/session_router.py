@@ -35,6 +35,7 @@ from RecomposeAPI.studio.schema.session_open import (
     StartSession,
 )
 from RecomposeAPI.studio.schema.session_snapshot import SessionSnapshot
+from RecomposeAPI.studio.agent.orchestrator_service import orchestrator_service
 from RecomposeAPI.studio.service.session_registry import session_registry
 
 logger = logging.getLogger(__name__)
@@ -83,6 +84,13 @@ async def open_session(request: StartSession) -> SessionOpened:
                 "active_design_name": exc.design_name,
             },
         ) from None
+    # The agent opens the interview. It speaks over the stream like everything
+    # else, so there is exactly one path a transcript reaches the browser by.
+    await orchestrator_service().open(
+        snapshot.session_id,
+        app_id=snapshot.app_id,
+        design_name=snapshot.design_name,
+    )
     return SessionOpened(
         session_id=snapshot.session_id,
         app_id=snapshot.app_id,
@@ -112,9 +120,9 @@ async def take_turn(session_id: str, turn: SessionTurn) -> None:
     here would have two places to render the conversation from.
     """
     try:
-        await session_registry().said(
-            session_id, who="you", text=turn.message
-        )
+        # Resolve before the agent is touched, so a bad id costs nothing.
+        await session_registry().snapshot(session_id)
+        await orchestrator_service().say(session_id, turn.message)
     except UnknownSessionError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)
@@ -139,6 +147,7 @@ async def close_session(session_id: str) -> None:
     """
     try:
         await session_registry().settle(session_id)
+        orchestrator_service().close(session_id)
     except UnknownSessionError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)

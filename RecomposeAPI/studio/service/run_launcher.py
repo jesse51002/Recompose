@@ -50,6 +50,16 @@ class RunLauncher:
         # finishes.
         self._tasks: set[asyncio.Task[None]] = set()
 
+    @property
+    def registry(self) -> RunRegistry:
+        """The registry this launcher records into.
+
+        Exposed so a caller that launched a run can FOLLOW it — the launcher
+        returns as soon as the run is registered, so anything wanting to know
+        how it ended has to watch the same stream a browser does.
+        """
+        return self._registry
+
     async def launch(self, request: LaunchRequest) -> LaunchAccepted:
         """Validate, reserve the run slot, and start generating.
 

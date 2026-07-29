@@ -22,6 +22,7 @@ from RecomposeAPI.studio.schema.session_record import (
     SessionRecord,
     SessionRecordKind,
 )
+from RecomposeAPI.studio.agent import orchestrator_service as orchestrator_module
 from RecomposeAPI.studio.service import session_registry as session_registry_module
 from RecomposeAPI.studio.service.session_registry import SessionRegistry
 
@@ -41,6 +42,10 @@ def studio(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr(
         session_registry_module, "_registry", SessionRegistry(settings.sessions_dir)
     )
+    # The orchestrator captures the registry when it is built, so swapping the
+    # registry without clearing this would leave the agent writing into the
+    # PREVIOUS test's transcript.
+    monkeypatch.setattr(orchestrator_module, "_service", None)
     with TestClient(app) as client:
         yield client, settings.sessions_dir
 
@@ -75,9 +80,10 @@ def test_opening_writes_a_header_and_reports_itself_active(studio) -> None:
     assert active["session_id"] == opened["session_id"]
     assert active["design_name"] == DESIGN
     assert active["status"] == "running"
-    # No phase has been declared yet, and that is not the same as a default.
-    assert active["phase"] is None
-    assert [r["kind"] for r in active["records"]] == ["opened"]
+    # Opening puts the session in the brief phase and takes the agent's first
+    # turn, so the header is never alone.
+    assert active["phase"] == "brief"
+    assert [r["kind"] for r in active["records"]][:2] == ["opened", "phase"]
 
 
 def test_only_one_session_at_a_time(studio) -> None:
@@ -117,9 +123,15 @@ def test_a_turn_lands_in_the_transcript(studio) -> None:
 
     assert resp.status_code == 202
     records = client.get(f"/sessions/{session_id}").json()["records"]
-    assert records[-1]["kind"] == "said"
-    assert records[-1]["who"] == "you"
-    assert records[-1]["text"] == "Warm, not clinical."
+    # Asserted as a MEMBER of the transcript rather than as its last record:
+    # the agent replies to it, so what follows is not this test's business.
+    assert {
+        "kind": "said",
+        "who": "you",
+        "text": "Warm, not clinical.",
+    }.items() <= next(
+        r for r in records if r.get("text") == "Warm, not clinical."
+    ).items()
 
 
 def test_a_blank_turn_is_refused(studio) -> None:
@@ -149,14 +161,13 @@ def test_the_stream_replays_from_zero_and_ends_on_the_terminal_record(
 
     frames = _frames(client, session_id)
 
-    assert [f["kind"] for f in frames] == [
-        "opened",
-        "said",
-        "said",
-        "settled",
-    ]
+    # Both turns are in the replay, in order, and the stream ends terminally.
+    said = [f["text"] for f in frames if f["who"] == "you"]
+    assert said == ["one", "two"]
+    assert frames[0]["kind"] == "opened"
+    assert frames[-1]["kind"] == "settled"
     # Indices are dense and 0-based; they are also the SSE `id:`.
-    assert [f["index"] for f in frames] == [0, 1, 2, 3]
+    assert [f["index"] for f in frames] == list(range(len(frames)))
 
 
 def test_the_snapshot_carries_the_same_records_as_the_stream(studio) -> None:
@@ -190,7 +201,8 @@ def test_a_log_with_no_terminal_line_reads_as_crashed(studio) -> None:
     snapshot = client.get(f"/sessions/{session_id}").json()
     assert snapshot["status"] == "crashed"
     assert snapshot["design_name"] == DESIGN
-    assert [r["kind"] for r in snapshot["records"]] == ["opened", "said"]
+    assert snapshot["records"][0]["kind"] == "opened"
+    assert "mid-flight" in [r.get("text") for r in snapshot["records"]]
 
     # And the stream still TERMINATES, with a synthetic terminal record that
     # was never written — otherwise an EventSource would reconnect forever

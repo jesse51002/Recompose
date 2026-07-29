@@ -15,6 +15,7 @@ from __future__ import annotations
 from pydantic import BaseModel, ConfigDict, Field
 
 from schema import Customization
+from RecomposeAPI.studio.schema.layout_brief import LayoutBrief
 
 # A chip row wider than this stops being a choice and starts being a list; two
 # is the minimum that makes it a choice at all.
@@ -63,6 +64,36 @@ class BriefProposal(BaseModel):
     brief: Customization
 
 
+class LayoutProposal(BaseModel):
+    """The finished layout brief: a chat ``message`` AND the ``brief``.
+
+    The layout half's mirror of ``BriefProposal``, and separate from it because
+    the two open different review tabs and carry different models — a single
+    proposal type discriminated by a field would push that branch into every
+    consumer.
+
+    Same rule: never silent. A proposal always arrives with a sentence.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    message: str = Field(
+        min_length=1,
+        description=(
+            "A short chat message accompanying the proposal — what you put "
+            "together, and an invitation to review and accept it or say what "
+            "to change."
+        ),
+    )
+    brief: LayoutBrief
+
+
 # Free text (the next question or a quick acknowledgement), a multiple-choice
 # question, or the finished proposal. Nothing else: the agent has zero tools.
 BriefAgentOutput = str | BriefProposal | AgentQuestion
+
+# What the ORCHESTRATOR can emit. The brief agent's three arms plus the layout
+# proposal — one agent conducts both interviews, because they are the same
+# ritual (ask, propose, accept) about two halves of one design, and splitting
+# them would mean two transcripts the person has to reconcile.
+OrchestratorOutput = str | BriefProposal | AgentQuestion | LayoutProposal
