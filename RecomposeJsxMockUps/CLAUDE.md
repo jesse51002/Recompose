@@ -115,6 +115,25 @@ arrangements rendered alike.
 That is the point of the mock screens. If you find yourself adding a switch over
 a vocabulary, you are rebuilding what was deliberately removed.
 
+## Looking at it: `npm run dev`
+
+`npm run dev` serves the harness in `dev/` on **:8081** — an asset switcher, a
+phone-shaped box, and nothing else. `?asset=celebration` deep-links, so a reload
+lands back where you were instead of making you click through the flow again.
+
+**It renders UNTHEMED.** No `initializeTheme`, no API: every `--sc-*` token
+falls back to CombatDen's bundled values. That is the honest default for what
+the harness is for — judging layout and interaction. Judging a *generated theme*
+needs a run to point at, which is `../RecomposeStudio`'s job.
+
+`dev/` sits **outside `src/`** on purpose. It is a HOST, and hosts are what the
+island rule keeps out of the screens: nothing under `src/` may import it and it
+is exported from nowhere. It is typechecked and linted (it is in `tsconfig.json`
+`include`), because a harness that silently breaks is worse than none.
+
+Port 8081, not 8080 — the studio pins 8080 with `strictPort`, and running both
+at once is the normal case when checking the harness against the real host.
+
 ## Rules
 
 - **No data fetching, ever.** Content comes from `showcaseContent.ts` /

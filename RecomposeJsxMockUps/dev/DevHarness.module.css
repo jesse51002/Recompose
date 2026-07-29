@@ -1,0 +1,92 @@
+/* Harness chrome. Deliberately plain and deliberately NOT --sc-*: those tokens
+   belong to the phone, and a harness that shared them would re-skin itself
+   every time the theme changed, making it impossible to tell the mock from the
+   frame around it. */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #14161a;
+  color: #e6e8ec;
+  font: 13px/1.4 ui-sans-serif, system-ui, sans-serif;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 16px;
+  border-bottom: 1px solid #262a31;
+  flex: 0 0 auto;
+}
+
+.brand {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.tab,
+.tabActive {
+  padding: 5px 12px;
+  border: 1px solid #2c313a;
+  border-radius: 999px;
+  background: transparent;
+  color: #9aa1ad;
+  font: inherit;
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: #e6e8ec;
+  border-color: #3a4150;
+}
+
+.tabActive {
+  background: #e6e8ec;
+  border-color: #e6e8ec;
+  color: #14161a;
+  font-weight: 600;
+}
+
+.hint {
+  color: #6b7280;
+  margin-left: auto;
+  max-width: 46ch;
+  text-align: right;
+}
+
+/* The stage area gives the phone a definite box to contain-fit inside — the
+   whole reason MockAssetStage measures rather than trusting CSS. */
+.stageArea {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+/* A phone-ish frame. NOT the studio's PhoneFrame — that one applies its own
+   contain-fit, and here the stage does the scaling instead. */
+.phone {
+  height: 100%;
+  aspect-ratio: 390 / 844;
+  max-width: 100%;
+  border: 10px solid #23262c;
+  border-radius: 44px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgb(0 0 0 / 45%);
+}
+
+.foot {
+  flex: 0 0 auto;
+  padding: 8px 16px;
+  border-top: 1px solid #262a31;
+  color: #6b7280;
+}

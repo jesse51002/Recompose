@@ -11,6 +11,7 @@
     ".": "./src/index.ts"
   },
   "scripts": {
+    "dev": "vite",
     "typecheck": "tsc -b --pretty",
     "lint": "eslint . --max-warnings 0",
     "test": "vitest run"
