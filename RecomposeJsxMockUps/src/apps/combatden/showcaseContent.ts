@@ -91,6 +91,12 @@ export interface ShowcaseVideo {
   readonly viewCount: number | null;
   readonly thumbnailUrl: string;
   /**
+   * The generated thumbnail slot this card paints with, on every surface that
+   * shows it — the hero and the carousel card both. Assigned by position where
+   * the feed is resolved, exactly like `ShowcaseClassInfo.themeSlot`.
+   */
+  readonly themeSlot?: string | undefined;
+  /**
    * Routinely EMPTY — the shared pool carries no avatar for many channels, and
    * the field arrives as `''` rather than null. Empty means NO avatar, and the
    * card omits the circle entirely (`creator_avatar.dart`).

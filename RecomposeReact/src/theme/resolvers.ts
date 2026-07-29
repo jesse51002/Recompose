@@ -120,3 +120,22 @@ export function themeDesignName(fallback = ''): string {
   const name = themeStoreOrNull()?.current?.designName ?? '';
   return name === '' ? fallback : name;
 }
+
+/**
+ * The loaded run's classification bucket (`Fighting`, `Yoga`, …) — the
+ * pipeline's own `category`, a run-wide field like `designName` rather than a
+ * slot.
+ *
+ * It is here because a HOST needs it, not a screen. A theme changes how an app
+ * looks; the category says what KIND of business it is, which is what picks the
+ * demo content a mock renders around the theme. Without it a host has no way to
+ * know that the design it just loaded is a yoga studio, so it keeps rendering
+ * whatever it defaulted to — and a yoga theme ends up captioning a boxing feed.
+ *
+ * Empty when the run predates classification or the app declares no vocabulary,
+ * so a caller's fallback is the honest answer rather than a guess.
+ */
+export function themeCategory(fallback = ''): string {
+  const category = themeStoreOrNull()?.current?.category ?? '';
+  return category === '' ? fallback : category;
+}

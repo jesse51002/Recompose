@@ -108,6 +108,61 @@ export const SLOT_REWARDS: readonly string[] = Object.freeze([
   'reward_session',
 ]);
 
+/**
+ * The video shelf's generated card art, cycled across the feed the same way
+ * the class photos are cycled across the schedule.
+ *
+ * A feed is however many cards the platform serves — fourteen here — and a
+ * slot per card is not something an app manifest can declare, so four is what
+ * makes a scrolling shelf stop reading as one repeated picture. Index 0 is the
+ * hero: `featuredVideo` takes the first card of the already-ranked feed, so
+ * position 0 is the one rendered full-width above the Play button.
+ */
+export const SLOT_VIDEO_THUMBS: readonly string[] = Object.freeze([
+  'video_thumb_1',
+  'video_thumb_2',
+  'video_thumb_3',
+  'video_thumb_4',
+]);
+
+/**
+ * The NAMES of the four classes, four rewards and four videos above.
+ *
+ * These pair one-to-one with the image lists, and that pairing is load-bearing
+ * on the pipeline side too: each image slot declares `depends_on_text` naming
+ * its own, so the picture is generated FROM the name (`apps/combatden/app.yaml`).
+ * Keeping the two lists in the same order here is what makes position `i` mean
+ * the same thing on both sides.
+ *
+ * UNLIKE THE IMAGE SLOTS, THE TITLES ARE NOT CYCLED. A repeated photograph in
+ * a long feed reads as a brand with four good pictures; a repeated *title*
+ * reads as the same video listed twice. So the copy is applied to the first
+ * four entries and the rest keep what they shipped with — see
+ * ./useShowcaseContent.ts.
+ */
+export const SLOT_CLASS_NAMES: readonly string[] = Object.freeze([
+  'class_name_1',
+  'class_name_2',
+  'class_name_3',
+  'class_name_4',
+]);
+
+/** Cheapest-first, paired position-for-position with `SLOT_REWARDS`. */
+export const SLOT_REWARD_NAMES: readonly string[] = Object.freeze([
+  'reward_name_guest_pass',
+  'reward_name_apparel',
+  'reward_name_gear',
+  'reward_name_session',
+]);
+
+/** Paired position-for-position with `SLOT_VIDEO_THUMBS`; index 0 is the hero. */
+export const SLOT_VIDEO_TITLES: readonly string[] = Object.freeze([
+  'video_title_1',
+  'video_title_2',
+  'video_title_3',
+  'video_title_4',
+]);
+
 /** The slot for the item at `index`, cycling if a list runs longer than the set. */
 export function slotAt(slots: readonly string[], index: number): string {
   return slots[index % slots.length]!;

@@ -36,7 +36,7 @@ export function VideoReccCard({ video }: VideoReccCardProps) {
     <div className={styles.card} {...{ [PART_ATTR]: VIDEO_PARTS.reccCard }}>
       {/* `AspectRatio(16 / 9)` over the cover image. */}
       <div className={styles.thumbFrame}>
-        <VideoThumbnail src={video.thumbnailUrl} />
+        <VideoThumbnail video={video} />
       </div>
       {/*
         `Padding(horizontal: paddingSmall) > Row(center, spacing: spacingMedium)`.

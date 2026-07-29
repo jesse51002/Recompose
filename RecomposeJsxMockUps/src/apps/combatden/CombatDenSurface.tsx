@@ -25,14 +25,27 @@
 // may know a screen name.
 
 import type { ReactNode } from 'react';
+import { useThemeCategory } from 'recompose-react';
 
 import { AppContentProvider } from './appContent';
 import styles from './CombatDenSurface.module.css';
 import { ShowcaseThemeVars } from './ShowcaseThemeVars';
 
 export function CombatDenSurface({ children }: { children: ReactNode }) {
+  // THE DEMO CONTENT FOLLOWS THE LOADED DESIGN. Without this the provider
+  // defaults to the Fighting group no matter which theme is on, and the result
+  // is not subtly wrong, it is incoherent: a yoga studio's theme renders yoga
+  // class names and yoga photographs over a boxing video feed, captioned "Nick
+  // Drossos Defensive Tactics". Every generated slot was right and the screen
+  // was still nonsense, because the half of the content that ISN'T generated
+  // never moved.
+  //
+  // An empty category — a run predating classification — passes through as
+  // null, which is the provider's own "use the default group" and exactly what
+  // it did before.
+  const category = useThemeCategory();
   return (
-    <AppContentProvider>
+    <AppContentProvider category={category === '' ? null : category}>
       <ShowcaseThemeVars className={styles.root}>{children}</ShowcaseThemeVars>
     </AppContentProvider>
   );
