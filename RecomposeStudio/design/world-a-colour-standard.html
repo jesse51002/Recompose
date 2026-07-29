@@ -283,9 +283,11 @@ button { font-family: inherit; cursor: pointer; }
 }
 .msg p { margin: 0; font-size: var(--t3); line-height: 1.62; color: rgba(231,231,230,.86); }
 .msg strong { color: #fff; font-weight: 600; }
+/* The tenant's own line is a card seated on the mount. The mount/card contrast
+   already separates it; a coloured side rule would only be decoration. */
 .msg.you p {
-  color: var(--ink); background: var(--card); padding: 11px 13px;
-  border-left: 3px solid var(--onmount-2);
+  color: var(--ink); background: var(--card); padding: 12px 14px;
+  box-shadow: var(--seat);
 }
 .msg.sys p { font-family: var(--note); font-size: var(--t2); color: rgba(231,231,230,.5); line-height: 1.7; }
 
