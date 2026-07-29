@@ -1,0 +1,162 @@
+/* The profile, in the horizon world. See ./ProfileShowcase.tsx. */
+
+.rankRow {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-large);
+}
+
+.rankCol {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.rankName {
+  font: var(--sc-type-name-lg);
+  letter-spacing: var(--sc-type-name-lg-ls);
+  color: var(--sc-text);
+}
+
+.rankSub {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+}
+
+/*
+ * THE PROGRESS LANE. A track filled at a constant rate and stopped flat against
+ * its mark — never a ring, because a ring is a shape this design does not use
+ * for measurement, and never a rounded pill.
+ */
+.track {
+  position: relative;
+  width: 100%;
+  height: 10px;
+  background: var(--sc-primary-card);
+  margin-top: var(--sc-spacing-medium);
+}
+
+.fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--sc-primary);
+}
+
+/* The mark the fill stops against. */
+.mark {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: var(--sc-lane-weight);
+  background: var(--sc-tape);
+}
+
+.progressRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sc-spacing-medium);
+}
+
+.figure {
+  font: var(--sc-type-fig-lg);
+  letter-spacing: var(--sc-type-fig-lg-ls);
+  color: var(--sc-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.unit {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+}
+
+.stats {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sc-spacing-big);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+/* --- The timeframe pills, marked with the same tape --- */
+
+.frames {
+  display: flex;
+  align-items: stretch;
+  gap: var(--sc-spacing-large);
+}
+
+.frame {
+  position: relative;
+  padding-bottom: var(--sc-spacing-small);
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+}
+
+.frameActive {
+  color: var(--sc-text);
+  font: var(--sc-type-label-lg);
+  letter-spacing: var(--sc-type-label-lg-ls);
+}
+
+.frameTape {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--sc-lane-weight);
+  background: var(--sc-tape);
+}
+
+/* --- The level-up shelf --- */
+
+.shelf {
+  display: flex;
+  gap: var(--sc-spacing-large);
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-inline: var(--sc-gutter);
+  scrollbar-width: none;
+}
+
+.shelf::-webkit-scrollbar {
+  display: none;
+}
+
+.card {
+  flex: none;
+  width: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-small);
+  align-items: flex-start;
+}
+
+.cardTitle {
+  font: var(--sc-type-lede-sm);
+  letter-spacing: var(--sc-type-lede-sm-ls);
+  color: var(--sc-text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.nextRow {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-large);
+}

@@ -1,0 +1,56 @@
+/* `PostClassScaffold` — the card fills the screen and the CTA stands on the
+   canvas beneath it. */
+
+.scaffold {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: var(--sc-background);
+}
+
+/* The card itself takes everything the CTA does not. `min-height: 0` because a
+   flex child's default `min-height: auto` refuses to shrink below its content,
+   which would push the CTA off the bottom of the phone. */
+.body {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* The CTA zone is ALWAYS laid out, even before the card settles — the member
+   app reserves it too (`kCelebrationCtaZone`), and it is the seam between the
+   card and the canvas the action stands on. Only its visibility changes, so a
+   settling card never reflows. */
+.cta {
+  flex: 0 0 auto;
+  /*
+   * NO INSET. In this fork the primary action is a full-width band seated at
+   * the very foot of the screen — the same band every app screen carries — so
+   * the celebration's action zone runs to both edges rather than standing on
+   * the canvas inside a gutter.
+   */
+  opacity: 0;
+  /* Not display:none — the button must keep its box so nothing moves when it
+     appears, and must not be tabbable while it is invisible. */
+  visibility: hidden;
+  transition:
+    opacity 260ms ease-out,
+    visibility 0s linear 260ms;
+}
+
+.ctaVisible {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 260ms ease-out,
+    visibility 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta,
+  .ctaVisible {
+    transition: none;
+  }
+}

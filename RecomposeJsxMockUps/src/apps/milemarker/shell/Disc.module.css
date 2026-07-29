@@ -1,0 +1,69 @@
+/* The circle — this brand's own form. See ./Disc.tsx. */
+
+.disc {
+  position: relative;
+  flex: none;
+  border-radius: var(--sc-radius-circle);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--sc-primary-card);
+}
+
+.discImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/*
+ * A cut-out sits INSIDE its disc rather than filling it — the generated objects
+ * are struck marks with their own margins, and cropping one to the circle's
+ * edge cuts the mark.
+ */
+.discObject {
+  width: 74%;
+  height: 74%;
+  object-fit: contain;
+}
+
+.ring {
+  background: none;
+  border-style: solid;
+  border-width: var(--sc-lane-weight);
+  border-color: var(--sc-lane);
+}
+
+/* A stat: a figure over its tracked label, with the mark beside it. */
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sc-spacing-small);
+  min-width: 0;
+}
+
+.statFigure {
+  font: var(--sc-type-fig-md);
+  letter-spacing: var(--sc-type-fig-md-ls);
+  color: var(--sc-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.statLabel {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-3rd);
+  white-space: nowrap;
+}
+
+.statRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-medium);
+  width: 100%;
+}
