@@ -20,7 +20,7 @@
 // `make api` on :8001; with the API down it says so and everything else keeps
 // working.
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { MOCK_APPS } from '../src/apps';
 import type { MockAsset } from '../src/kit/asset';
@@ -31,28 +31,59 @@ import { mockAssetOrFirst } from '../src/kit/registry';
 import styles from './DevHarness.module.css';
 import { useHarnessTheme } from './useHarnessTheme';
 
-/** `?app=` / `?asset=`, resolved against the registry rather than trusted. */
-function initialSelection(): { app: MockApp; asset: MockAsset } {
+interface Selection {
+  app: MockApp;
+  asset: MockAsset;
+  /** Where inside the asset. `null` means "wherever the asset opens". */
+  route: string | null;
+}
+
+/** `?app=` / `?asset=` / `?route=`, resolved against the registry, not trusted. */
+function initialSelection(): Selection {
   const params = new URLSearchParams(window.location.search);
   const wantedApp = params.get('app');
   // `?? MOCK_APPS[0]` and `mockAssetOrFirst`: both ids come from a URL, which
   // is somewhere the harness does not control — a stale bookmark or a deleted
-  // asset should open the first app rather than a blank frame.
+  // asset should open the first app rather than a blank frame. The route needs
+  // no such guard: the stage ignores one the asset does not declare.
   const app = MOCK_APPS.find((candidate) => candidate.id === wantedApp) ?? MOCK_APPS[0]!;
-  return { app, asset: mockAssetOrFirst(app, params.get('asset')) };
+  return { app, asset: mockAssetOrFirst(app, params.get('asset')), route: params.get('route') };
+}
+
+function writeUrl({ app, asset, route }: Selection) {
+  const url = new URL(window.location.href);
+  url.searchParams.set('app', app.id);
+  url.searchParams.set('asset', asset.id);
+  if (route === null) url.searchParams.delete('route');
+  else url.searchParams.set('route', route);
+  window.history.replaceState(null, '', url);
 }
 
 export function DevHarness() {
   const theme = useHarnessTheme();
-  const [{ app, asset }, setSelection] = useState(initialSelection);
+  const [{ app, asset, route }, setSelection] = useState(initialSelection);
 
+  // THE SCREEN SURVIVES THE SWITCH. Comparing a base against a redesign fork
+  // means looking at the SAME screen in both, and re-navigating to it after
+  // every switch is most of the work of comparing. So the route is carried
+  // across — forks share the base's route ids, and the stage falls back to the
+  // asset's own root for an app that does not declare it.
   const select = (nextApp: MockApp, nextAsset: MockAsset) => {
-    setSelection({ app: nextApp, asset: nextAsset });
-    const url = new URL(window.location.href);
-    url.searchParams.set('app', nextApp.id);
-    url.searchParams.set('asset', nextAsset.id);
-    window.history.replaceState(null, '', url);
+    const next: Selection = { app: nextApp, asset: nextAsset, route };
+    setSelection(next);
+    writeUrl(next);
   };
+
+  // Reported by the stage as the member navigates, so a reload — and the next
+  // switch — lands where they actually were rather than at the root.
+  const rememberRoute = useCallback((next: string) => {
+    setSelection((current) => {
+      if (current.route === next) return current;
+      const updated = { ...current, route: next };
+      writeUrl(updated);
+      return updated;
+    });
+  }, []);
 
   return (
     <div className={styles.root}>
@@ -60,8 +91,9 @@ export function DevHarness() {
         {/* The APP switcher. It exists to prove the harness is a host and not
             CombatDen's harness: it lists whatever `src/apps/index.ts` exports
             and never names an app, so adding a third one changes no file
-            here. Switching app also switches to that app's first asset —
-            asset ids are per-app, so carrying one across would be meaningless. */}
+            here. Switching app KEEPS your place — same asset and same screen
+            where the target declares them — because the reason to have more
+            than one app open is to compare them. */}
         <nav className={styles.tabs}>
           {MOCK_APPS.map((candidate) => (
             <button
@@ -69,7 +101,10 @@ export function DevHarness() {
               type="button"
               className={candidate.id === app.id ? styles.appActive : styles.app}
               onClick={() => {
-                select(candidate, candidate.assets[0]!);
+                // Same asset id where the target app has one, else its first.
+                // A fork carries the base's asset ids; an unrelated app does
+                // not, and `mockAssetOrFirst` is the forgiving lookup for it.
+                select(candidate, mockAssetOrFirst(candidate, asset.id));
               }}
             >
               {candidate.label}
@@ -94,9 +129,11 @@ export function DevHarness() {
       </header>
 
       <main className={styles.stageArea}>
-        {/* `key` remounts on switch so an asset always opens on its initial
-            route with fresh state, rather than resuming wherever its nav was
-            left — the same reason the studio reloads its preview. */}
+        {/* `key` remounts on switch so an asset starts with FRESH STATE — a
+            half-filled basket or a mid-flight animation must not survive into
+            another app. The screen itself is not state in that sense and is
+            handed back in through `initialRoute`, so a remount lands where you
+            were rather than at the root. */}
         {/* The frame follows the ASSET's ratio rather than pinning 390/844.
             Two apps at two device sizes is the point of the second app, and a
             hardcoded frame would letterbox one of them and read as the stage
@@ -105,7 +142,12 @@ export function DevHarness() {
           className={styles.phone}
           style={{ aspectRatio: `${String(asset.width)} / ${String(asset.height)}` }}
         >
-          <MockAssetStage key={`${app.id}:${asset.id}`} asset={asset} />
+          <MockAssetStage
+            key={`${app.id}:${asset.id}`}
+            asset={asset}
+            initialRoute={route ?? undefined}
+            onRouteChange={rememberRoute}
+          />
         </div>
       </main>
 

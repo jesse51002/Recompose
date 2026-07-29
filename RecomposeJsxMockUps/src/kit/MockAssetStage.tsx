@@ -21,6 +21,7 @@
 // exists (below): a host that already scales must not scale twice.
 
 import type { CSSProperties } from 'react';
+import { useEffect } from 'react';
 
 import type { MockAsset } from './asset';
 import { MockNavProvider, useMockNav } from './MockNav';
@@ -45,6 +46,21 @@ export interface MockAssetStageProps {
   /** Extra style for the outer measured box (positioning, background). */
   style?: CSSProperties | undefined;
   className?: string | undefined;
+  /**
+   * Open on this route instead of the asset's own initial one.
+   *
+   * For a host restoring where someone was — a reload, or switching between an
+   * app and a redesign fork of it, where landing back on the root would mean
+   * re-navigating to the screen you were comparing.
+   *
+   * **Silently ignored when the asset does not declare it**, which is what
+   * makes it safe to hand the same route to two different apps: a fork carries
+   * the base's route ids, an unrelated app does not, and the second case falls
+   * back to that asset's own root rather than throwing.
+   */
+  initialRoute?: string | undefined;
+  /** Called whenever the showing route changes, so a host can remember it. */
+  onRouteChange?: ((route: string) => void) | undefined;
 }
 
 /**
@@ -56,6 +72,8 @@ export function MockAssetStage({
   fit = 'contain',
   style,
   className,
+  initialRoute,
+  onRouteChange,
 }: MockAssetStageProps) {
   const [measureRef, { width, height }] = useElementSize<HTMLDivElement>();
 
@@ -84,8 +102,17 @@ export function MockAssetStage({
       style={{ position: 'relative', width: '100%', height: '100%', ...style }}
     >
       <div style={screenStyle}>
-        <MockNavProvider initialRoute={asset.initialRoute}>
-          <MockAssetBody asset={asset} />
+        {/* A route the asset does not declare falls back to its own root —
+            see `initialRoute` above for why that is silent rather than an
+            error. */}
+        <MockNavProvider
+          initialRoute={
+            initialRoute !== undefined && initialRoute in asset.routes
+              ? initialRoute
+              : asset.initialRoute
+          }
+        >
+          <MockAssetBody asset={asset} onRouteChange={onRouteChange} />
         </MockNavProvider>
       </div>
     </div>
@@ -93,10 +120,42 @@ export function MockAssetStage({
 }
 
 /** The route, wrapped in the asset's provider when it declares one. */
-function MockAssetBody({ asset }: { asset: MockAsset }) {
+function MockAssetBody({
+  asset,
+  onRouteChange,
+}: {
+  asset: MockAsset;
+  onRouteChange?: ((route: string) => void) | undefined;
+}) {
   const Provider = asset.provider;
-  const route = <MockAssetRoute asset={asset} />;
+  const route = (
+    <>
+      <RouteReporter onRouteChange={onRouteChange} />
+      <MockAssetRoute asset={asset} />
+    </>
+  );
   return Provider === undefined ? route : <Provider>{route}</Provider>;
+}
+
+/**
+ * Reports the showing route up to the host. Renders nothing.
+ *
+ * A separate component so the notification does not re-render the screen: it
+ * reads the nav and runs an effect, and the actual route lives one sibling
+ * over. It sits INSIDE the provider because that is the only place the route
+ * is readable, and it is deliberately not merged into `MockAssetRoute` — a
+ * screen should not re-render because a host wanted to know where it is.
+ */
+function RouteReporter({
+  onRouteChange,
+}: {
+  onRouteChange?: ((route: string) => void) | undefined;
+}) {
+  const { route } = useMockNav();
+  useEffect(() => {
+    onRouteChange?.(route);
+  }, [route, onRouteChange]);
+  return null;
 }
 
 /**
