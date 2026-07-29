@@ -180,6 +180,34 @@ exactly that shape.
 
 ---
 
+## When a themed image will not change — the checklist
+
+"The new images do not show" was diagnosed four separate ways in one session,
+and only one of them was the mockup's fault. Work down this list before
+touching a component; every rung has actually been the cause.
+
+1. **Is the API pointing at a CDN?** `RecomposeAPI/config.py`'s
+   `assets_cdn_base_url` used to default to a prod CDN whose deploy plumbing was
+   dropped, so the API handed clients absolute URLs for bytes nothing uploads
+   any more. They 404, and every client correctly falls back to its bundled
+   asset — which looks exactly like the wiring being broken. It now defaults to
+   empty (serve off disk); if you ever see a `cdn.` URL in the DOM and the image
+   is the old one, this is why.
+2. **Does the run actually have the slot?** `curl
+   localhost:8001/apps/<app>/<Run> | jq '.image_set.images | keys'`. A run
+   generated before a slot existed simply does not have it. `scripts/prefill_images`
+   seeds them; nothing else will.
+3. **Is the API serving the right catalogue?** From a git worktree, produced
+   runs are gitignored (`apps/*/*/`) so a fresh worktree has NONE and every
+   styles request 404s. `setup_worktree_env.sh` at the root checkout symlinks
+   them in. A 404 here is missing data, not a broken route.
+4. **Is the component wired — and is it PASSED the slot?** An optional
+   `themeSlot` prop that no caller passes typechecks, lints and passes every
+   test while silently taking the untokenised path. Grep the callers, not just
+   the component (Guardrail 7).
+
+Only after all four does it make sense to suspect the resolver.
+
 ## Reporting
 
 State the scope you actually covered: **N screens of M, across K assets.**

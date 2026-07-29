@@ -134,6 +134,37 @@ built.
 
 # PART TWO — the gotchas
 
+## Running it against real themes
+
+`make -C RecomposeJsxMockUps dev` needs nothing. Seeing a real THEME needs the
+read API, and from a git worktree that takes one setup step first:
+
+```bash
+/var/home/jm/Documents/Recompose/codebase/setup_worktree_env.sh   # once per worktree
+make api                                                          # then :8001
+```
+
+**Why the setup step.** Produced runs are gitignored (`apps/*/*/`), so a fresh
+worktree has zero of them and every `GET /apps/combatden/styles` answers 404 —
+which reads as a broken API and is really an empty directory. The script copies
+`.env`, symlinks the `.venv` and each `node_modules`, and symlinks every run dir
+from the root checkout. It is local and uncommitted, the sibling of CombatDen's
+script of the same name.
+
+Two things that used to break this and are now fixed — worth knowing because
+either symptom is confusing:
+
+- `RecomposeAPI/config.py` derived the repo root one `.parent` too far, so from
+  a worktree `apps_root` pointed at `.claude/worktrees/apps`, which does not
+  exist. Every run invisible, every styles request 404.
+- `assets_cdn_base_url` defaulted to a CDN whose deploy plumbing had been
+  dropped, so images resolved to 404s and every client silently fell back.
+
+In the harness, the theme picker is **opt-in** — click *Load themes*. With the
+API down it says so rather than failing quietly.
+
+
+
 ## The celebration order is the Dart's
 
 **streak → points → rewards → rank → wins.**

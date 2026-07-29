@@ -142,6 +142,26 @@ What will break the next agent, which the inventory cannot tell them:
 Then link it: this skill, `mockup-redesign-general`, and the app's own file
 should each point at the others.
 
+## Seeding an existing catalogue
+
+Adding an image slot leaves every already-produced run without it. `scripts/prefill_images`
+fills them at zero cost, category-matched:
+
+```bash
+poetry run python scripts/prefill_images/run.py \
+  --all-runs apps/<app> --app-yaml apps/<app>/app.yaml \
+  --seed-root apps/<app>/prefill        # only when seeds and runs are in different checkouts
+```
+
+`--seed-root` exists for exactly the branch case: the seed set is committed on
+the branch that added it while the catalogue lives in the root checkout, and
+the two must meet. Without it the script skips every run with "no seed folder
+for category X", which looks like a category bug and is a path one.
+
+Wire the mockups and seed the catalogue **together**. Wiring alone makes every
+existing theme fall through to whatever bundled asset the app ships, which is
+visibly worse than before the change.
+
 ## Also update
 
 - `RecomposeJsxMockUps/CLAUDE.md` — structure and rules, in the same change.

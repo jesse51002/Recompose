@@ -157,6 +157,18 @@ grep -rhoE "var\(--sc-[a-z0-9-]+\)" src/apps/<app> --include=*.css | sort -u |
   done
 ```
 
+**The same trap, one layer over: CSS-module class names.** `styles.whatever`
+for a class the stylesheet does not define is `undefined`, which React renders
+as no class at all. No error, no warning, no type error — the element simply
+arrives unstyled. This happened three times in one session (`styles.circleImg`,
+`styles.photoImg`, and a `treatmentClass()` helper that never existed), every
+time from writing the name that *seemed* right instead of opening the
+stylesheet.
+
+Before using `styles.x`, confirm `x` is in the `.module.css`. When adding
+markup beside existing markup, copy the class names off the neighbour rather
+than inventing parallel ones.
+
 ## GUARDRAIL 3 — longhands, never shorthands, with var()
 
 **A shorthand containing one unresolvable `var()` is invalid at computed-value
