@@ -6,8 +6,12 @@ from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# This file is <root>/RecomposeAPI/config.py; runs live in <root>/apps.
-_ROOT = Path(__file__).resolve().parent.parent.parent
+# This file is <root>/RecomposeAPI/config.py; runs live in <root>/apps — so the
+# root is TWO hops up (config.py -> RecomposeAPI -> root), not three. The third
+# hop was invisible in the main checkout, where <root>/.. happens to contain a
+# sibling that no request ever reached for, and fatal inside a git worktree,
+# where it lands on `.claude/worktrees/` and every styles request 404s.
+_ROOT = Path(__file__).resolve().parent.parent
 _DEFAULT_APPS_ROOT = _ROOT / "apps"
 
 
