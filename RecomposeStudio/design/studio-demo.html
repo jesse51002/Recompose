@@ -16,11 +16,21 @@
      3  Fleet     ADMIN     — every customer app and its state
 
    THE COLOUR RULE
-   The shell is achromatic. The only chromatic thing is the GENERATED THEME,
-   which is why the Inspect sheet keeps the theme's own ground and sits inside
-   the dark chrome like a document in an editor. The single exception is
-   failure, which gets a hue, because a failed node reading as one more
-   neutral is what "fail visible" exists to prevent.
+   Two kinds of colour, and the line between them is the whole system.
+
+   FUNCTIONAL colour means a state: waiting, working, settled, needs-you, out
+   of tolerance. It lives in the SHELL — the stamp, the ribbon, the agent
+   readouts, the fleet tags and counts — and it never crosses into the canvas.
+   Five semantic tokens, no more, and it never carries a state alone: every
+   one of them ships with a written label as well.
+
+   DECORATIVE colour belongs to the GENERATED THEME alone, and the canvas is
+   where it lives — the phone and the Inspect sheet, which keeps the theme's
+   own ground and sits inside the dark chrome like a document in an editor.
+
+   That is why the shell reads achromatic even now: nothing in it is coloured
+   for looks. A count with no colour means zero; a hue appearing means
+   something changed.
 
    Everything here is fake. Nothing is fetched, nothing is generated.
    =========================================================================== */
@@ -38,9 +48,38 @@
   --ink-2: #98a3b3;
   --ink-3: #626d7d;
   --ink-4: #414a56;
-  --fail: #ff6f5e;
-  --fail-wash: rgba(255,111,94,.11);
-  --fail-line: rgba(255,111,94,.42);
+  /* ── STATUS ────────────────────────────────────────────────────────────
+     Functional colour. Each of these means one state and nothing else.
+
+     This refines the old rule rather than breaking it. The shell was
+     achromatic so the GENERATED THEME could be the only chroma — but that
+     rule was protecting the CANVAS, not the chrome. So status colour lives
+     in the shell and never crosses into the phone or the Inspect sheet,
+     where the artifact is actually judged.
+
+     OKLCH, and every hue sits at the same lightness (.80) except the alarm.
+     That is the point: none of them shouts louder than another by accident,
+     so relative loudness is a decision instead of a side effect of hue.
+
+     Colour never carries a state on its own — every one of these ships with
+     a written label and a pip too. */
+  --st-wait: #626d7d;               /* not started; absence is the signal  */
+  --st-run:  oklch(.80 .126 218);   /* an agent is on it right now         */
+  --st-ok:   oklch(.80 .092 165);   /* settled, in sync, nothing to do     */
+  --st-you:  oklch(.80 .118 79);    /* a person is required                */
+  --st-bad:  oklch(.72 .175 26);    /* out of tolerance                    */
+
+  --st-run-w: oklch(.80 .126 218 / .13);
+  --st-ok-w:  oklch(.80 .092 165 / .12);
+  --st-you-w: oklch(.80 .118 79 / .13);
+  --st-bad-w: oklch(.72 .175 26 / .13);
+  --st-run-l: oklch(.80 .126 218 / .40);
+  --st-you-l: oklch(.80 .118 79 / .40);
+  --st-bad-l: oklch(.72 .175 26 / .42);
+
+  --fail: var(--st-bad);
+  --fail-wash: var(--st-bad-w);
+  --fail-line: var(--st-bad-l);
 
   --sans: 'Archivo', ui-sans-serif, -apple-system, 'Segoe UI', system-ui, sans-serif;
   --mono: 'Sometype Mono', ui-monospace, 'SF Mono', Menlo, monospace;
@@ -199,8 +238,8 @@ button { font-family: inherit; cursor: pointer; }
 /* Step ribbon — three named steps, so nothing is glossed over. */
 .ribbon { display: flex; gap: 0; margin: 30px 0 20px; }
 .rstep { flex: 1; display: flex; align-items: center; gap: 10px; padding: 12px 14px 14px 0; border-top: 2px solid var(--sh-line-2); color: var(--ink-3); }
-.rstep.done { border-top-color: var(--ink-3); color: var(--ink-3); }
-.rstep.now { border-top-color: var(--ink); color: var(--ink); }
+.rstep.done { border-top-color: var(--st-ok); color: var(--ink-2); }
+.rstep.now { border-top-color: var(--st-run); color: var(--ink); }
 .rstep .n { font: 500 var(--fs-micro)/1 var(--mono); letter-spacing: .1em; }
 .rstep b { font-size: var(--fs-sm); font-weight: 500; }
 
@@ -211,19 +250,19 @@ button { font-family: inherit; cursor: pointer; }
   border: 1px solid var(--sh-line-2); border-radius: 9px;
   background: var(--sh-panel); padding: 16px 18px;
 }
-.agent.live { border-color: var(--sh-line-3); }
-.agent .pulse { width: 11px; height: 11px; border-radius: 50%; background: var(--ink-4); flex: none; }
-.agent.live .pulse { background: var(--ink); animation: pulse 1.5s ease-in-out infinite; }
+.agent.live { border-color: var(--st-run-l); background: var(--st-run-w); }
+.agent .pulse { width: 11px; height: 11px; border-radius: 50%; background: var(--st-wait); flex: none; }
+.agent.live .pulse { background: var(--st-run); animation: pulse 1.5s ease-in-out infinite; }
 @keyframes pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(232,236,242,.5); }
-  60%      { box-shadow: 0 0 0 9px rgba(232,236,242,0); }
+  0%, 100% { box-shadow: 0 0 0 0 oklch(.80 .126 218 / .55); }
+  60%      { box-shadow: 0 0 0 9px oklch(.80 .126 218 / 0); }
 }
 .agent .lb { flex: 1; min-width: 0; }
 .agent .lb b { display: block; font-size: var(--fs-md); font-weight: 500; color: var(--ink-3); letter-spacing: -.01em; }
 .agent.live .lb b, .agent.ok .lb b { color: var(--ink); }
 .agent .lb u { display: block; text-decoration: none; font: 400 var(--fs-xs)/1.6 var(--mono); color: var(--ink-4); margin-top: 5px; }
 .agent .el { font: 400 var(--fs-xs)/1 var(--mono); color: var(--ink-4); flex: none; }
-.agent.ok .pulse { background: var(--ink-3); }
+.agent.ok .pulse { background: var(--st-ok); }
 
 .longrun {
   margin-top: 14px; padding: 12px 16px; border: 1px dashed var(--sh-line-2);
@@ -261,6 +300,9 @@ button { font-family: inherit; cursor: pointer; }
 .phead .push { margin-left: auto; }
 .tag { font: 500 var(--fs-micro)/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; border: 1px solid var(--sh-line-2); border-radius: 4px; padding: 4px 6px; color: var(--ink-3); }
 .tag.live { border-color: var(--sh-line-3); color: var(--ink); }
+.tag.s-run { border-color: var(--st-run-l); background: var(--st-run-w); color: var(--st-run); }
+.tag.s-you { border-color: var(--st-you-l); background: var(--st-you-w); color: var(--st-you); }
+.tag.s-ok  { border-color: oklch(.80 .092 165 / .40); background: var(--st-ok-w); color: var(--st-ok); }
 
 .msgs { flex: 1; overflow-y: auto; padding: 15px 13px; display: flex; flex-direction: column; gap: 15px; }
 .msg { display: flex; flex-direction: column; gap: 6px; animation: rise .4s ease both; }
@@ -312,6 +354,7 @@ button { font-family: inherit; cursor: pointer; }
 .bar .push { margin-left: auto; }
 .meter { font: 400 var(--fs-xs)/1 var(--mono); color: var(--ink-3); display: flex; gap: 15px; }
 .meter b { color: var(--ink); font-weight: 500; }
+.meter .m-run, .meter .m-run b { color: var(--st-run); }
 
 .stage { flex: 1; min-height: 0; position: relative; overflow: hidden; }
 .pane { position: absolute; inset: 0; display: none; }
@@ -490,7 +533,12 @@ button { font-family: inherit; cursor: pointer; }
 .kpi:last-child { border-right: 0; }
 .kpi b { display: block; font: 600 var(--fs-xl)/1 var(--sans); letter-spacing: -.03em; }
 .kpi u { display: block; text-decoration: none; font: 400 var(--fs-xs)/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-4); margin-top: 8px; }
-.kpi.bad b { color: var(--fail); }
+.kpi.s-run b { color: var(--st-run); }
+.kpi.s-ok b  { color: var(--st-ok); }
+/* "needing you" stays neutral at zero and turns amber the moment it is not.
+   Colour appearing IS the signal; a permanently amber zero would be noise. */
+.kpi.s-you b { color: var(--st-you); }
+.kpi.bad b { color: var(--st-bad); }
 /* Three big cards, not a table. The state has to land at a glance from across
    a room, and a card working right now has to be obviously alive. */
 .cards { flex: 1; overflow-y: auto; padding: 22px 26px; display: flex; flex-direction: column; gap: 16px; }
@@ -498,15 +546,32 @@ button { font-family: inherit; cursor: pointer; }
   border: 1px solid var(--sh-line-2); border-radius: 12px; background: var(--sh-panel);
   padding: 22px 24px; display: flex; gap: 26px; align-items: center;
 }
-.fcard.live { border-color: var(--sh-line-3); background: var(--sh-raised); }
+.fcard.live { border-color: var(--st-run-l); background: var(--sh-raised); }
 .fcard .fwho { width: 260px; flex: none; }
 .fcard .fwho b { display: block; font: 600 var(--fs-lg)/1.2 var(--sans); letter-spacing: -.02em; }
 .fcard .fwho u { display: block; text-decoration: none; font: 400 var(--fs-xs)/1.5 var(--mono); color: var(--ink-4); margin-top: 6px; }
 .fcard .fwho .n { display: block; font-size: var(--fs-xs); color: var(--ink-3); margin-top: 9px; }
 
 .fstate { flex: 1; min-width: 0; display: flex; gap: 14px; align-items: flex-start; }
-.fstate .pulse { width: 12px; height: 12px; border-radius: 50%; background: var(--ink-4); flex: none; margin-top: 5px; }
-.fcard.live .fstate .pulse { background: var(--ink); animation: pulse 1.5s ease-in-out infinite; }
+.fstate .pulse { width: 12px; height: 12px; border-radius: 50%; background: var(--st-wait); flex: none; margin-top: 5px; }
+
+/* The status tag. Colour needed a region it could actually own — an 8px pip
+   cannot carry state across a room, which is the whole job here. Reads as a
+   word first and a hue second, so it survives being printed in grey. */
+.stag {
+  display: inline-flex; align-items: center; gap: 7px; margin-bottom: 10px;
+  border: 1px solid var(--sh-line-2); border-radius: 3px; padding: 5px 9px 5px 7px;
+  font: 600 var(--fs-micro)/1 var(--mono); letter-spacing: .15em; text-transform: uppercase;
+  color: var(--ink-3);
+}
+.stag i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex: none; }
+.stag.s-run { color: var(--st-run); border-color: var(--st-run-l); background: var(--st-run-w); }
+.stag.s-ok  { color: var(--st-ok);  border-color: oklch(.80 .092 165 / .40); background: var(--st-ok-w); }
+.stag.s-you { color: var(--st-you); border-color: var(--st-you-l); background: var(--st-you-w); }
+.stag.s-bad { color: var(--st-bad); border-color: var(--st-bad-l); background: var(--st-bad-w); }
+.stag.s-run i { animation: pulse 1.5s ease-in-out infinite; }
+.fcard.live .fstate .pulse { display: none; }
+.fstate > .pulse { display: none; }
 .fstate .t { min-width: 0; }
 .fstate .t b { display: block; font: 500 var(--fs-md)/1.3 var(--sans); color: var(--ink-2); letter-spacing: -.01em; }
 .fcard.live .fstate .t b { color: var(--ink); }
@@ -652,12 +717,7 @@ button { font-family: inherit; cursor: pointer; }
          releases rather than left to drift, so these stay current without
          anyone maintaining a branch.</p>
     </div>
-    <div class="kpis">
-      <div class="kpi"><b>3</b><u>customer apps</u></div>
-      <div class="kpi"><b>2</b><u>agents working</u></div>
-      <div class="kpi"><b>1</b><u>in sync</u></div>
-      <div class="kpi"><b>0</b><u>needing you</u></div>
-    </div>
+    <div class="kpis" id="kpis"></div>
     <div class="cards" id="fleetcards"></div>
     <div class="ffoot">
       <b>Two agents working, nothing waiting on you.</b> That is the shape the
@@ -974,13 +1034,29 @@ async function fillSheet() {
     await wait(i === 4 ? 1100 : 700);
     secs[i].classList.add('in');
     secs[i].scrollIntoView({ behavior: 'smooth', block: 'center' });
-    $('#meter').innerHTML = `<span>resolving <b>${labels[i]}</b></span><span>cost <b>$${costs[i].toFixed(2)}</b></span>`;
+    $('#meter').innerHTML = `<span class="m-run">resolving <b>${labels[i]}</b></span><span>cost <b>$${costs[i].toFixed(2)}</b></span>`;
   }
   await wait(500);
   $('#pane-inspect').scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 /* ── PAGE 2: the conversation ──────────────────────────────────────────── */
+/* One place that knows which state wears which hue. The label always changes
+   too — colour is the second signal here, never the only one. */
+const STAMP = {
+  brief:      '',
+  generating: 's-run',
+  designing:  's-run',
+  validating: 's-run',
+  review:     's-you',
+  approved:   's-ok',
+};
+function stamp(state) {
+  const el = $('#chattag');
+  el.textContent = state;
+  el.className = 'tag live ' + (STAMP[state] || '');
+}
+
 function say(who, html, cls = '') {
   const d = document.createElement('div');
   d.className = 'msg ' + cls;
@@ -1037,7 +1113,7 @@ function proposeBrief(choice) {
 
 async function runGeneration() {
   $('#accept').disabled = true;
-  $('#chattag').textContent = 'generating';
+  stamp('generating');
   say('Recompose', `<p>Committed. Running <strong>23 nodes</strong> — colour,
     type, copy, icons and classification from the brief, then 18 images.</p>`);
   setView('inspect');
@@ -1065,7 +1141,7 @@ async function runGeneration() {
 
 async function runDesign() {
   $('#design').disabled = true;
-  $('#chattag').textContent = 'designing';
+  stamp('designing');
   setView('mock');
   say('Recompose', `<p>Promoting the next class to a hero with its photo behind
     it, and collapsing the rest onto a time spine. The date row goes — the day
@@ -1082,7 +1158,7 @@ async function runDesign() {
 
   /* Validation has NO UI. It is two lines in the chat. */
   await wait(1200);
-  $('#chattag').textContent = 'validating';
+  stamp('validating');
   say('Recompose', `<p>The validator walks every screen in every state, then
     checks the design against the functional-equivalence gate — that nothing was
     added, merged, split or removed. It is thorough rather than quick:
@@ -1094,7 +1170,7 @@ async function runDesign() {
   v.querySelector('p').innerHTML = 'Validating 11 screens… <strong>complete in 31m</strong>. 11 of 11 pass, including the empty, loading, error and long-string states.';
 
   await wait(700);
-  $('#chattag').textContent = 'review';
+  stamp('review');
   const d = say('Recompose', `<p>Ready for your sign-off.</p>`);
   const card = document.createElement('div');
   card.className = 'card';
@@ -1103,7 +1179,7 @@ async function runDesign() {
   d.append(card);
   $('#msgs').scrollTop = $('#msgs').scrollHeight;
   $('#approve').addEventListener('click', () => {
-    $('#chattag').textContent = 'approved';
+    stamp('approved');
     say('You', `<p>Approved.</p>`, 'you');
     approved = true;
     applyTheme($('#approved'));
@@ -1118,7 +1194,7 @@ function reset() {
   $('#themename').textContent = theme.name;
   $('.chipbtn .swatch').style.background = theme.v['--t-primary'];
   $('#approved').classList.remove('on');
-  $('#chattag').textContent = 'brief';
+  stamp('brief');
   $('#meter').innerHTML = '<span>brief not committed</span>';
   const btn = $('#obgo');
   btn.disabled = false;
@@ -1173,20 +1249,31 @@ $('#popx').addEventListener('click', closeLib);
 $('#scrim').addEventListener('click', closeLib);
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLib(); });
 
+/* A count only earns a hue when it is non-zero. "0 needing you" rendered in
+   amber would be noise; the colour ARRIVING is the signal. */
+const KPIS = [
+  { n: 3, label: 'customer apps', tone: '' },
+  { n: 2, label: 'agents working', tone: 's-run' },
+  { n: 1, label: 'in sync', tone: 's-ok' },
+  { n: 0, label: 'needing you', tone: 's-you' },
+];
+$('#kpis').innerHTML = KPIS.map((k) =>
+  `<div class="kpi ${k.n > 0 ? k.tone : ''}"><b>${k.n}</b><u>${k.label}</u></div>`).join('');
+
 /* ── PAGE 3: three customer apps ───────────────────────────────────────── */
 const FLEET = [
   { name: 'Stillwater Pilates', repo: 'combatden-stillwater', since: 'approved 29 Jul',
-    live: false, state: 'In sync',
+    live: false, tag: 'In sync', tone: 's-ok', state: 'Nothing to do',
     note: 'uat and main are level with our fork of CombatDen. Nothing to do.',
     log: 'last re-derived 2h ago against combatden@8f3c1ad · clean' },
 
   { name: 'Apex MMA', repo: 'combatden-apex', since: 'approved 26 Jul',
-    live: true, state: 'An agent is productionalizing this design',
+    live: true, tag: 'Working', tone: 's-run', state: 'An agent is productionalizing this design',
     note: 'Turning the approved mock into real Flutter, carrying the arrangement-only invariant. Slow by design — it is the pass whose output ships.',
     log: 'rewriting class_screen.dart · 9 of 14 files · 34m elapsed, typically 1–2h' },
 
   { name: 'Ironline', repo: 'combatden-ironline', since: 'approved 21 Jul',
-    live: true, state: 'An agent is pulling your latest UAT branch',
+    live: true, tag: 'Working', tone: 's-run', state: 'An agent is pulling your latest UAT branch',
     note: 'CombatDen shipped a waitlist. Re-applying this design on top of it so the fork never drifts.',
     log: 'rebasing on combatden/uat@d41c907 · 3 of 11 screens · 12m elapsed' },
 ];
@@ -1199,8 +1286,10 @@ $('#fleetcards').innerHTML = FLEET.map((f) => `
       <span class="n">${f.since}</span>
     </div>
     <div class="fstate">
-      <span class="pulse"></span>
-      <div class="t"><b>${f.state}</b><u>${f.note}</u><span class="log">${f.log}</span></div>
+      <div class="t">
+        <span class="stag ${f.tone}"><i></i>${f.tag}</span>
+        <b>${f.state}</b><u>${f.note}</u><span class="log">${f.log}</span>
+      </div>
     </div>
     <div class="facts">
       <button class="btn sm pri">Talk to an agent</button>
