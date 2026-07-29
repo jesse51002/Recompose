@@ -12,7 +12,7 @@
 // testable without a browser (see ./__tests__/artifactModel.test.ts).
 
 import type { Rgba, ThemeConfig } from 'recompose-react';
-import { alphaBlend, rgba, ThemeDerivation } from 'recompose-react';
+import { alphaBlend, rgba, ThemeDerivation, themeImageSrc } from 'recompose-react';
 
 import {
   EXPECTED_COLORS,
@@ -312,8 +312,15 @@ function slotViews(
  * stays the authority here too.
  */
 function imageView(config: ThemeConfig, slot: string): SlotView<ImageView> {
-  const url = config.images[slot] ?? '';
-  if (url === '') return { slot, value: null };
+  // PRESENCE is read off the raw config, but the URL handed to an <img> is the
+  // RESOLVED one. Since the API stopped defaulting to a CDN it emits relative
+  // paths, and a relative src on this page resolves against the studio's own
+  // origin (:8080) rather than the API's (:8001) — so every plate 404'd and
+  // reported "failed to load" while the phone beside it, which goes through
+  // the runtime's resolver, was fine.
+  const raw = config.images[slot] ?? '';
+  if (raw === '') return { slot, value: null };
+  const url = themeImageSrc(slot, raw);
   return { slot, value: { url, complexity: config.imageComplexity[slot] ?? '' } };
 }
 

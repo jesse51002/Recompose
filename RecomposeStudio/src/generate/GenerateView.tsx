@@ -13,6 +13,7 @@
 // easiest to lose here by keeping state the records already carry.
 
 import { useState } from 'react';
+import { MOCK_APPS, findMockApp } from 'recompose-jsx-mockups';
 
 import { cx } from '../widgets/cx';
 import { AppSpinner } from '../widgets/AppSpinner';
@@ -26,6 +27,7 @@ import { BriefSheet } from './BriefSheet';
 import { GenerateCanvas } from './GenerateCanvas';
 import { RunMeter } from './RunMeter';
 import { SessionChat } from './SessionChat';
+import { MockupChip, MockupPopup } from './MockupPicker';
 import { ThemeChip } from './ThemeChip';
 import { ThemePopup } from './ThemePopup';
 import { phaseClass, SHELL_CLASS } from './phaseClass';
@@ -51,10 +53,19 @@ export function GenerateView({ sessionId, designName, onDone }: GenerateViewProp
   const { records } = useSessionStream(sessionId);
   const [pane, setPane] = useState<Pane>('mockup');
   const [library, setLibrary] = useState(false);
+  const [mockups, setMockups] = useState(false);
+  // The MOCKUP axis, independent of the theme. It follows a layout generation
+  // when one appears, because that is the thing the agent just made — but a
+  // person can switch away and the generation stays put.
+  const [appId, setAppId] = useState(MOCK_APPS[0]!.id);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const view = foldSession(records);
+  // A generation the agent produced wins until someone picks otherwise; the
+  // fallback keeps a deleted folder from blanking the canvas.
+  const app =
+    findMockApp(appId) ?? findMockApp(view.designId) ?? MOCK_APPS[0]!;
 
   /** Every write shares one guard: one in flight, and failures are shown. */
   const act = (work: () => Promise<void>): void => {
@@ -119,6 +130,7 @@ export function GenerateView({ sessionId, designName, onDone }: GenerateViewProp
               <Seg now={pane} me="inspect" set={setPane} label="Inspect" />
               <Seg now={pane} me="brief" set={setPane} label="Brief" />
             </div>
+            <MockupChip app={app} onOpen={() => setMockups(true)} />
             <ThemeChip onOpen={() => setLibrary(true)} />
             <span className={styles.push} />
             <RunMeter runId={view.runId} />
@@ -135,7 +147,7 @@ export function GenerateView({ sessionId, designName, onDone }: GenerateViewProp
           {error !== null && <div className={styles.error}>{error}</div>}
 
           <div className={styles.stage}>
-            {pane === 'mockup' && <GenerateCanvas view={view} />}
+            {pane === 'mockup' && <GenerateCanvas view={view} app={app} />}
             {/* The artifact sheet — every slot the run produced, filling in as
                 the partial output.yaml grows. This IS the Inspect view; it is
                 not a separate destination any more. */}
@@ -150,6 +162,13 @@ export function GenerateView({ sessionId, designName, onDone }: GenerateViewProp
       </div>
 
       {library && <ThemePopup onClose={() => setLibrary(false)} />}
+      {mockups && (
+        <MockupPopup
+          activeId={app.id}
+          onPick={setAppId}
+          onClose={() => setMockups(false)}
+        />
+      )}
     </div>
   );
 }

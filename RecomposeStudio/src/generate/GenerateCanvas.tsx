@@ -13,18 +13,17 @@
 // This component only picks WHICH app to mount. Everything else is a
 // consequence of decisions made elsewhere, and that is why it is short.
 
-import { COMBATDEN_APP, MockAssetStage, type MockAsset } from 'recompose-jsx-mockups';
+import { MockAssetStage, type MockApp, type MockAsset } from 'recompose-jsx-mockups';
 
 import { PhoneFrame } from '../widgets/PhoneFrame';
 import type { SessionView } from '../studio/sessionFold';
 
 import styles from './GenerateCanvas.module.css';
 
-export function GenerateCanvas({ view }: { view: SessionView }) {
-  // The base app until a generation exists. `designId` arrives on the layout
-  // task's own record, so the switch happens exactly when there is something
-  // else to show — never speculatively.
-  const asset: MockAsset = COMBATDEN_APP.assets[0]!;
+export function GenerateCanvas({ view, app }: { view: SessionView; app: MockApp }) {
+  // Whichever mockup the bar has selected. `defineMockApp` rejects an empty
+  // asset list, so index 0 always exists.
+  const asset: MockAsset = app.assets[0]!;
 
   return (
     <div className={styles.canvas}>
@@ -36,7 +35,7 @@ export function GenerateCanvas({ view }: { view: SessionView }) {
             // left. A THEME change deliberately does not remount: that is the
             // same screen repainted, and bouncing the reviewer to home every
             // time a level lands would make the run unwatchable.
-            key={view.designId ?? 'base'}
+            key={`${app.id}-${view.designId ?? 'base'}`}
             asset={asset}
             // PhoneFrame already scales its whole body to 390x844; scaling
             // here too would compound into a doubly-shrunk screen.
@@ -46,9 +45,9 @@ export function GenerateCanvas({ view }: { view: SessionView }) {
       </PhoneFrame>
 
       <p className={styles.caption}>
-        {view.designId === null
-          ? 'The base layout. It repaints as the theme is generated.'
-          : `Layout generation ${view.designId} — edits appear here as they are made.`}
+        {view.designId !== null && view.designId === app.id
+          ? `Layout generation ${app.id} — edits appear here as they are made.`
+          : `${app.label} — it repaints as the theme is generated.`}
       </p>
     </div>
   );
