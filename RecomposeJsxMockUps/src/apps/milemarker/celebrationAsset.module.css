@@ -31,6 +31,23 @@
    * the celebration's action zone runs to both edges rather than standing on
    * the canvas inside a gutter.
    */
+
+  /*
+   * ITS OWN STACKING LEVEL, and this is a dead-end fix rather than tidiness.
+   *
+   * A celebration card paints DELIBERATELY outside its box — the sparkle
+   * burst, the cover flow and the point sphere all rely on
+   * `overflow: visible` up the whole chain in ./celebrations/CelebrationFrame.module.css.
+   * The base contains that by wrapping the frame in ../support/ShowcaseScaffold.tsx;
+   * this fork deleted that scaffold, so the frame's `.stage` extended over the
+   * action band and `document.elementFromPoint` at the band's centre returned
+   * the stage, not the button. The band rendered perfectly and was visible,
+   * correctly labelled, and UNCLICKABLE — the exact shape of Guardrail 4's
+   * second trap, caught by `mockup-qa`'s Pass 2 hit test and by nothing else.
+   */
+  position: relative;
+  z-index: 1;
+
   opacity: 0;
   /* Not display:none — the button must keep its box so nothing moves when it
      appears, and must not be tabbable while it is invisible. */
