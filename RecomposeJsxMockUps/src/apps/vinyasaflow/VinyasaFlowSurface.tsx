@@ -7,7 +7,7 @@
 // onto a single element, and CSS custom properties inherit — so if no ancestor
 // carries them, they do not resolve to a fallback, they resolve to NOTHING.
 // Type drops to the browser default, every padding and gap collapses, and an
-// image sized only by `width: var(--sc-icon-size-md)` renders at its natural
+// image sized only by `width: var(--sc-icon-md)` renders at its natural
 // resolution — a 1024px PNG filling the phone.
 //
 // It used to be `showcaseScreen.tsx` that rendered it. That file was the old
