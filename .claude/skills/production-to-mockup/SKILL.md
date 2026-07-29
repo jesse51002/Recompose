@@ -164,6 +164,11 @@ $B goto http://localhost:8081/ ; $B screenshot /tmp/app.png ; $B console --error
 Read the PNGs. Re-snapshot between navigations — refs go stale after a route
 change and a stale click silently hits the wrong element.
 
+Then run **`mockup-qa`** — the full sweep, which checks the render against the
+inventory you just wrote. If the sweep cannot find a screen the inventory
+promises, one of the two is wrong; fix whichever it is before calling the port
+done.
+
 The port is complete when: every screen renders styled, every screen exits,
-every flow's last screen returns to its root, and the app's guardrail skill
-exists.
+every flow's last screen returns to its root, `mockup-qa` passes in full, and
+the app's guardrail skill exists with both halves.

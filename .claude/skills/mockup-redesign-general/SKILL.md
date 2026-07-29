@@ -189,7 +189,10 @@ and the last screen of any flow returns to its root.
 change, and clicking a stale ref silently hits the wrong element and looks like
 a broken handler.
 
-`/design-review` on the running harness is the right tool for visual polish.
+**`mockup-qa` is the full sweep** — every screen, every transition, every
+affordance, checked against the app's inventory. Run it after a redesign, not a
+spot-check. `/design-review` on the running harness handles visual polish; the
+two answer different questions.
 
 ---
 
