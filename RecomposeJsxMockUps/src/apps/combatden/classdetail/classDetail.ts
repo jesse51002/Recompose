@@ -44,6 +44,15 @@ export interface ClassCard {
   /** Instructor display name. */
   readonly mentor: string;
   readonly imageUrl: string;
+  /**
+   * The generated class-photo slot the banner paints with.
+   *
+   * THE SAME ASSET AS THE SCHEDULE ROW'S THUMBNAIL. It is carried here rather
+   * than re-derived because a class opened from the schedule must show the
+   * same photo on both screens — tokenising the thumbnail alone left this one
+   * on the content ladder and the two silently disagreed.
+   */
+  readonly themeSlot?: string | undefined;
   readonly description: string;
   readonly instructorBio: string;
   readonly instructorImageUrl: string;
@@ -115,6 +124,7 @@ const FALLBACK_CARD: ClassCard = Object.freeze({
   durationMinutes: 55,
   mentor: 'Coach',
   imageUrl: '',
+  themeSlot: undefined,
   description: FALLBACK_DESCRIPTION,
   instructorBio: FALLBACK_INSTRUCTOR_BIO,
   instructorImageUrl: '',
@@ -170,6 +180,7 @@ export function previewClassCard(
     durationMinutes: scheduled?.durationMinutes ?? FALLBACK_CARD.durationMinutes,
     mentor: info.instructorName,
     imageUrl: info.imageUrl,
+    themeSlot: info.themeSlot,
     description: info.description ?? bundled?.description ?? FALLBACK_DESCRIPTION,
     instructorBio: info.instructorBio ?? bundled?.instructorBio ?? FALLBACK_INSTRUCTOR_BIO,
     instructorImageUrl: info.instructorImageUrl ?? bundled?.instructorImageUrl ?? '',

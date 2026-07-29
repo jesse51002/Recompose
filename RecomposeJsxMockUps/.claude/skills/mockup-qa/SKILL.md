@@ -124,6 +124,13 @@ Walk the app's transition table. For each row: perform the trigger, confirm you
 land on the stated screen, and confirm the history behaved (push leaves a way
 back; reset does not).
 
+Also check that **an asset shown on two screens is the SAME asset**. Open a
+class from the schedule and compare its banner to the row's thumbnail; compare
+a reward on the store to the same reward in the celebration carousel. A picture
+that changes between two screens showing one thing means one consumer was
+tokenised and another was not — it errors nowhere and is invisible to every
+gate but this one.
+
 Also check **reachability**, which is where a hierarchy change can go wrong
 without adding or removing anything: every destination a member could reach
 before must still be reachable, in the same number of taps or fewer. A

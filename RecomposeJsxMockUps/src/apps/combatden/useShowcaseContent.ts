@@ -28,6 +28,7 @@
 import type { ShowcaseClassInfo, ShowcaseReward, ShowcaseVideo } from './showcaseContent';
 import { fillSlots } from './showcaseContent';
 import { bundledClasses, bundledRewards, showcaseGroupFor } from './showcaseGroupDefaults';
+import { SLOT_CLASS_PHOTOS, slotAt } from './showcaseSlots';
 import { bundledVideos } from './showcaseVideoDefaults';
 
 /** What the phone renders: four class cards, four reward cards, and a video feed. */
@@ -64,7 +65,12 @@ export function useShowcaseContent(
   // and `showcaseGroupFor(null)` is the default group, so the key is never null.
   const key = category ?? showcaseGroupFor(null);
   return {
-    classes: fillSlots(realClasses, bundledClasses(key)),
+    // The photo slot is stamped HERE, once, so every screen that renders this
+    // class agrees on which image it uses.
+    classes: fillSlots(realClasses, bundledClasses(key)).map((c, i) => ({
+      ...c,
+      themeSlot: slotAt(SLOT_CLASS_PHOTOS, i),
+    })),
     rewards: fillSlots(realRewards, bundledRewards(key)),
     videos:
       realVideos === null || realVideos === undefined || realVideos.length === 0

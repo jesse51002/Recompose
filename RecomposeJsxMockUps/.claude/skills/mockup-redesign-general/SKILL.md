@@ -212,13 +212,43 @@ rearranges a screen; an imported constant is not.
 `nav.go` pushes, `nav.replace` advances a flow without leaving the old card
 behind, `nav.reset` returns to the root. Tab switches reset.
 
-## GUARDRAIL 7 — no data fetching, ever
+## GUARDRAIL 7 — one asset, every screen that shows it
+
+**When you tokenise an image, find every screen that renders it.** The same
+asset almost always appears more than once, and wiring one consumer leaves the
+others on the old path — so the picture silently CHANGES between two screens
+showing the same thing.
+
+Real: a class photo appears on the schedule row AND on the class detail banner.
+A reward appears on the store card AND in the celebration carousel. Tokenising
+the thumbnail and the store card alone meant opening a class showed a different
+photo than the row you tapped, and a reward changed picture between the store
+and the celebration. Nothing errored; nothing was missing; the two screens just
+disagreed.
+
+Before you wire one, list them all:
+
+```bash
+grep -rn "showcaseAssetOrNetwork\|<ThemedImage\|imageAsset" src/apps/<app> --include=*.tsx
+```
+
+Then check every hit, including the ones that use a different helper — the
+class banner went through `DegradingImage` rather than the shared ladder, so a
+grep for the ladder alone missed it.
+
+**Stamp the slot at the source, not at each call site.** Put it on the data
+object where the list is resolved (`useShowcaseContent`), so every screen that
+renders that item inherits the same slot and cannot drift. A call site that
+picks its own slot is a second source of truth, and the two will disagree the
+first time one of them is edited.
+
+## GUARDRAIL 8 — no data fetching, ever
 
 Content comes from the app's bundled demo data, or is passed in through
 `useShowcaseContent`'s `real*` arguments. A `fetch` here is a bug: a screen that
 reaches the network can fail in ways a redesign cannot be judged against.
 
-## GUARDRAIL 8 — fixed size, uniform scale
+## GUARDRAIL 9 — fixed size, uniform scale
 
 Assets are authored at one device size and scaled by `transform: scale()`, never
 reflowed. `MockAssetStage` computes `min(w/W, h/H)` in JS because CSS re-derives

@@ -47,6 +47,12 @@ export interface ShowcaseReward {
  */
 export interface ShowcaseClassInfo {
   readonly name: string;
+  /**
+   * The generated class-photo slot this class paints with, on EVERY screen
+   * that shows it — the schedule thumbnail and the detail banner both.
+   * Assigned by position where the list is resolved.
+   */
+  readonly themeSlot?: string | undefined;
   /** Network image — the gym serves URLs. */
   readonly imageUrl: string;
   /** Shown as the class mentor. */
