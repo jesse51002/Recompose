@@ -144,11 +144,11 @@ should each point at the others.
 
 ## Seeding an existing catalogue
 
-Adding an image slot leaves every already-produced run without it. `scripts/prefill_images`
+Adding an image slot leaves every already-produced run without it. `scripts/prefill`
 fills them at zero cost, category-matched:
 
 ```bash
-poetry run python scripts/prefill_images/run.py \
+poetry run python scripts/prefill/run.py \
   --all-runs apps/<app> --app-yaml apps/<app>/app.yaml \
   --seed-root apps/<app>/prefill        # only when seeds and runs are in different checkouts
 ```

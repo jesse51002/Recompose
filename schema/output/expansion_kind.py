@@ -7,7 +7,7 @@ post-run pass. Each entry's ``kind`` says which operation it was:
 - ``REGENERATE`` — re-made an existing slot under a free-text override
   (the ``regen`` / ``regen_image`` scripts).
 - ``PREFILL``    — seeded a not-yet-done image slot from a checked-in file
-  instead of generating it (``scripts/prefill_images``). Always costs
+  instead of generating it (``scripts/prefill``). Always costs
   nothing, and is the one kind whose slots were never sent to a model —
   which is exactly why it is distinguishable: a prefilled slot is a
   placeholder holding a slot's shape until someone regenerates it for

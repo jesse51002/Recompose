@@ -71,6 +71,29 @@ class ImageSlot(SlotBase):
     reserved key) live on ``AppFormat``; cycle detection lives on the
     executor graph — a slot in isolation cannot see its siblings.
 
+    ``depends_on_text`` lists TEXT slot ids whose resolved copy this image
+    must depict. It is a different relationship from ``depends_on``, not a
+    second flavour of it: an image dependency is *reference* (make this
+    look like that), whereas a text dependency is *subject* (this picture
+    is of the thing that string names). A reward whose generated name came
+    back "Ringside Seat" has to be a picture of a ringside seat, and no
+    amount of description written months earlier can say that — only the
+    run's own copy can.
+
+    **The edge is to the text NODE, not to an individual slot.** The text
+    module resolves its whole inventory in one call and returns one
+    ``TextSet`` (the atomic-module rule), so the executor keys it under a
+    single ``DependencyKind.TEXT`` and this list selects *from* what
+    arrives. That is the same shape as the always-present colour edge, and
+    it is why naming five text slots costs no extra graph edges.
+
+    Consequence worth knowing: an image that names text is now a dependent
+    of the text node, so a HARD text failure skips it. Per-slot text
+    failures are not hard — a slot that fails its length bounds is simply
+    absent from the ``TextSet`` — and the image degrades to its
+    description for that name. Only a provider-level failure cascades, and
+    that already skips every image through the colour edge.
+
     ``scene`` flips the slot from the pipeline's default CUT-OUT contract
     to a photographic one. The default asset is an object on a flat field
     that the background pass then lifts onto transparency — the prompt
@@ -84,6 +107,7 @@ class ImageSlot(SlotBase):
     """
 
     depends_on: list[str] = Field(default_factory=list)
+    depends_on_text: list[str] = Field(default_factory=list)
     scene: bool = False
 
 

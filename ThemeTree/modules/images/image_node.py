@@ -8,6 +8,14 @@ automatic dependency; declared ``depends_on`` images arrive as resolved
 inputs and are always used as *reference* (their look is folded into the
 prompt text for visual continuity — never fed in as an input image).
 
+A slot declaring ``depends_on_text`` additionally receives the run's whole
+resolved ``TextSet`` and folds the copy it named into the prompt as the
+SUBJECT. That is the opposite relationship from an image dependency: an
+image dep says *look like this*, a text dep says *be this*. It is what
+closes the loop on a description written as an open choice — "gloves for a
+fight gym, a mat for a yoga studio, brand's choice" — because by the time
+the image runs, the run's own copy has already made that choice.
+
 A slot declaring ``scene: true`` inverts two of those steps: it is a
 photograph rather than a cutout asset, so it takes the scene prompt rule,
 pins the cheapest quality tier, and never reaches the background pass.
@@ -54,6 +62,12 @@ SCENE_PROMPT_PATH = Path(__file__).parent / "prompts" / "scene_prompt_rule.md"
 # listing. Kept separate so the common no-dependency prompt carries no
 # dependency wording at all. Dependencies are always reference.
 RELATED_ASSETS_PATH = Path(__file__).parent / "prompts" / "related_assets.md"
+# Injected ONLY when the slot declares ``depends_on_text``: the run's own
+# resolved copy for the slots it named, framed as the SUBJECT rather than as
+# reference. A reward described as "gloves, a mat, a jump rope — brand's
+# choice" has already had that choice made by the time its name exists, and
+# this is what tells the prompt writer which one was picked.
+NAMED_SUBJECT_PATH = Path(__file__).parent / "prompts" / "named_subject.md"
 # Injected into the main prompt ONLY when a reopen-time ``--spec`` is present:
 # the user's change request wrapped in a high-priority "obey this exactly"
 # frame so it outranks the subject's example imagery (the create-new path used
@@ -266,6 +280,7 @@ class ImageNode(Node):
             related_assets = Template(fragment).safe_substitute(dependencies=listing)
         else:
             related_assets = ""
+        names = self._named_subject()
         # The reopen-time change request: dropped here historically, now folded
         # in as a high-priority override so create-new actually obeys --spec.
         spec = self._run_ctx.overwrite_specs.specs
@@ -283,6 +298,7 @@ class ImageNode(Node):
             palette=palette_summary,
             theme_background=(THEME_BG_DARK if dark_mode else THEME_BG_LIGHT),
             subject=self._slot.description,
+            names=names,
             related_assets=related_assets,
             override=override,
         )
@@ -292,6 +308,45 @@ class ImageNode(Node):
             model=model,
         )
         return result.prompt
+
+    def _named_subject(self) -> str:
+        """The named-subject fragment, or ``""`` when the slot names no copy.
+
+        The text node hands over its WHOLE ``TextSet`` under one key (it is
+        atomic — one call, one output), so this picks out the slots this
+        image actually declared and ignores the rest.
+
+        **A missing name is skipped, not fatal.** A text slot that failed
+        its length-bound retry loop is simply absent from the set, and the
+        honest response to "we could not write a name for this" is to fall
+        back to the slot description that already describes the thing in
+        general — not to abort an image over copy. If every named slot is
+        missing the fragment is empty and the prompt is exactly what it
+        would have been without the dependency.
+        """
+        if not self._slot.depends_on_text:
+            return ""
+        # ``.get``: the executor injects only dependencies that resolved, so
+        # a hard text failure leaves the key absent rather than present-empty.
+        text_set = self.inputs.get(DependencyKind.TEXT.value)
+        if text_set is None:
+            return ""
+        resolved: dict[str, str] = getattr(text_set, "texts", {})
+        listing = "\n".join(
+            f"  {slot_id}: {resolved[slot_id].value}"
+            for slot_id in self._slot.depends_on_text
+            if slot_id in resolved
+        )
+        if not listing:
+            logger.warning(
+                "image %s declared depends_on_text %s but none resolved; "
+                "generating from the slot description alone",
+                self._slot.id,
+                self._slot.depends_on_text,
+            )
+            return ""
+        fragment = NAMED_SUBJECT_PATH.read_text(encoding="utf-8")
+        return Template(fragment).safe_substitute(names=listing)
 
     async def _generate(self, prompt: str, quality: str) -> Path:
         """Generate the raw image (subject on a plain solid background).

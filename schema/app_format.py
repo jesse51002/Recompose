@@ -4,7 +4,13 @@ from __future__ import annotations
 
 import re
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_validator,
+    model_validator,
+)
 
 from schema.color_role import ColorRole
 from schema.slots import (
@@ -231,3 +237,35 @@ class AppFormat(BaseModel):
                 "dependency keys (see src.modules.base.DependencyKind)"
             )
         return v
+
+    @model_validator(mode="after")
+    def _text_dependencies_resolve(self) -> "AppFormat":
+        """Every ``ImageSlot.depends_on_text`` id names a declared text slot.
+
+        This is the one cross-LIST check in the file, which is why it is a
+        model validator rather than living on ``images`` with the rest of
+        the image invariants: a field validator sees only its own field,
+        and this edge spans two of them.
+
+        An unresolvable name is refused rather than dropped. The whole
+        point of the edge is that the image depicts the copy — a silently
+        ignored dependency would produce a picture of nothing in
+        particular and no error explaining why, which is the failure mode
+        this package spends most of its validation avoiding.
+        """
+        text_ids = {s.id for s in self.texts}
+        for slot in self.images:
+            listed = slot.depends_on_text
+            if len(listed) != len(set(listed)):
+                dupes = sorted({i for i in listed if listed.count(i) > 1})
+                raise ValueError(
+                    f"image slot {slot.id!r} has duplicate "
+                    f"depends_on_text ids: {dupes}"
+                )
+            unknown = sorted(set(listed) - text_ids)
+            if unknown:
+                raise ValueError(
+                    f"image slot {slot.id!r} depends_on_text unknown text "
+                    f"ids: {unknown}"
+                )
+        return self

@@ -1,12 +1,20 @@
-"""Prefill an existing run's image slots from checked-in seed files.
+"""Prefill an existing run's image and text slots from checked-in seed files.
 
-Adding an image slot to ``app.yaml`` leaves every already-produced run
-missing it. The honest fix is to regenerate, which costs real money per run
-and, across a whole back catalogue, is a bill nobody asked for just to make a
-new slot exist. This script is the cheap alternative: it SEEDS the missing
-slots from the demo imagery the mock screens already ship, so the slot is
-present and renderable immediately, and regenerating it per brand becomes an
-opt-in improvement rather than a prerequisite.
+Adding a slot to ``app.yaml`` leaves every already-produced run missing it.
+The honest fix is to regenerate, which costs real money per run and, across a
+whole back catalogue, is a bill nobody asked for just to make a new slot
+exist. This script is the cheap alternative: it SEEDS the missing slots from
+the demo content the mock screens already ship, so the slot is present and
+renderable immediately, and regenerating it per brand becomes an opt-in
+improvement rather than a prerequisite.
+
+**Both halves, in one pass.** Images come from ``<Category>/<slot>.jpg`` and
+copy from ``<Category>/texts.yaml``, and the two are seeded together rather
+than by two scripts. That is not tidiness: an image slot can now declare
+``depends_on_text``, so a seeded picture and a seeded name are two halves of
+one claim about what the thing IS. Seeding one without the other produces a
+photo of a boxing class labelled "Sunrise Flow", which is worse than seeding
+neither.
 
 **A prefilled slot is a placeholder, and the ledger says so.** The bytes were
 never generated for this brand — they are stock demo content matched to the
@@ -24,15 +32,13 @@ some default — silently giving a pilates studio boxing imagery is the exact
 failure this arrangement exists to avoid.
 
 **Absent-only.** A slot already in ``output.yaml`` is never touched, so the
-script is idempotent and can never overwrite a genuinely generated image.
+script is idempotent and can never overwrite a genuinely generated image or
+a genuinely written line of copy.
 
 Run from the package root (so ``.env`` is found):
 
-    poetry run python scripts/prefill_images/run.py --run-dir apps/combatden/ZenBJJ
-    poetry run python scripts/prefill_images/run.py --all-runs apps/combatden
-
-Then ``make sync-assets`` — the new bytes have to reach S3/CloudFront or the
-API will emit CDN URLs for images that are not there.
+    poetry run python scripts/prefill/run.py --run-dir apps/combatden/ZenBJJ
+    poetry run python scripts/prefill/run.py --all-runs apps/combatden
 """
 
 from __future__ import annotations
@@ -47,9 +53,10 @@ _REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
+import yaml
 from PIL import Image
 
-from schema import ImageOutput
+from schema import ImageOutput, TextOutput
 from ThemeTree.core.errors import PipelineError
 from ThemeTree.core.run_context import (
     FINAL_IMAGES_DIRNAME,
@@ -60,6 +67,9 @@ from ThemeTree.executor.writer import Writer
 
 RULE = "=" * 72
 PREFILL_DIRNAME = "prefill"
+# The per-category text seeds, written beside that category's images by
+# ``fetch_seeds.py``: ``{text_slot_id: value}``.
+TEXTS_FILENAME = "texts.yaml"
 # Seeds are checked in as JPEG (see fetch_seeds.py: the sources are already
 # JPEG, and storing them as PNG would be 8x the bytes for nothing). What a run
 # DELIVERS is always ``<slot>.png`` — the API, the CDN sync and the
@@ -78,7 +88,7 @@ PREFILL_PROMPT = (
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        prog="prefill_images",
+        prog="prefill",
         description=(
             "Seed an existing run's not-yet-generated image slots from the "
             "checked-in per-category demo imagery."
@@ -122,11 +132,41 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
+def _load_texts(path: Path) -> dict[str, str]:
+    """One category's text seeds, or ``{}`` when it has none.
+
+    A missing file is not an error: text seeding is additive, and a category
+    folder that predates it still seeds its images exactly as before.
+    Blank or non-string values are dropped rather than written — ``TextOutput``
+    rejects empty copy, and failing a whole run over one bad seed line would
+    be a worse trade than skipping the slot.
+    """
+    if not path.is_file():
+        return {}
+    raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    return {
+        str(k): v.strip()
+        for k, v in raw.items()
+        if isinstance(v, str) and v.strip()
+    }
+
+
 def _run_dirs(args: argparse.Namespace) -> list[Path]:
-    """The run directories to act on, in a stable order."""
+    """The run directories to act on, in a stable order.
+
+    ``absolute()``, never ``resolve()``. A run directory is routinely a
+    SYMLINK into another checkout — that is what ``setup_worktree_env.sh``
+    creates so a worktree can see the real catalogue without copying it —
+    and resolving one silently relocates the run into the checkout it points
+    at. The seed folder is then looked for beside THAT copy, where a branch
+    that just added seeds has none, and the run is skipped with "no seed
+    folder for category X": a path bug wearing a category bug's clothes.
+    ``--all-runs`` never resolved (``iterdir`` yields the link itself), so
+    resolving here also made the two modes disagree on the same run.
+    """
     if args.run_dir is not None:
-        return [args.run_dir.resolve()]
-    app_dir: Path = args.all_runs.resolve()
+        return [args.run_dir.absolute()]
+    app_dir: Path = args.all_runs.absolute()
     if not app_dir.is_dir():
         raise SystemExit(f"no app directory at {app_dir}")
     # A run directory is one holding an output.yaml; `prefill/` and any other
@@ -166,16 +206,28 @@ def _prefill_one(
         if seed.is_file():
             todo.append((slot.id, seed))
 
-    if not todo:
+    # The TEXT half, same three rules: declared by app.yaml, absent from
+    # output.yaml, and present in this category's seed file.
+    seeded_texts = _load_texts(seed_dir / TEXTS_FILENAME)
+    text_todo: list[tuple[str, str]] = [
+        (slot.id, seeded_texts[slot.id])
+        for slot in app.texts
+        if slot.id not in output.text_set.texts and slot.id in seeded_texts
+    ]
+
+    if not todo and not text_todo:
         return ("nothing to do", [])
+    seeded_ids = [s for s, _ in todo] + [s for s, _ in text_todo]
     if dry_run:
-        return (f"would seed from {category}", [s for s, _ in todo])
+        return (f"would seed from {category}", seeded_ids)
 
     final_dir = run_dir / FINAL_IMAGES_DIRNAME
     final_dir.mkdir(parents=True, exist_ok=True)
     run_ctx = RunContext(
         app, cust, out_root=run_dir.parent.parent, run_id=run_dir.name
     )
+    for slot_id, value in text_todo:
+        output.text_set.texts[slot_id] = TextOutput(value=value)
     for slot_id, seed in todo:
         dest = Path(str(run_ctx.image_path(slot_id)))
         # JPEG seed -> the PNG a run delivers. Re-encoded rather than renamed:
@@ -193,8 +245,16 @@ def _prefill_one(
             complexity=None,
         )
 
-    Writer().write_prefill(output, run_ctx, prefilled=[s for s, _ in todo])
-    return (f"seeded from {category}", [s for s, _ in todo])
+    # Only the IMAGE ids go to ``prefilled``: that argument drives asset
+    # upload, and a text slot is not an asset. Both kinds are reported to the
+    # caller, and both land in the ledger entry the writer appends.
+    Writer().write_prefill(
+        output,
+        run_ctx,
+        prefilled=[s for s, _ in todo],
+        also_seeded=[s for s, _ in text_todo],
+    )
+    return (f"seeded from {category}", seeded_ids)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -222,7 +282,15 @@ def main(argv: list[str] | None = None) -> int:
 
     print(f"\n{RULE}\n{seeded_runs} run(s), {seeded_slots} slot(s)")
     if seeded_slots and not args.dry_run:
-        print("next: make sync-assets  (push the new bytes to S3/CloudFront)")
+        # Only when a CDN is actually configured. ``ASSETS_CDN_BASE_URL``
+        # defaults to empty, which means the API serves the bytes straight
+        # off disk and the new files are already live — telling everyone to
+        # push to S3 would send the common case chasing infrastructure it
+        # does not use.
+        print(
+            "seeded bytes are served off disk by default; run "
+            "`make sync-assets` only if ASSETS_CDN_BASE_URL is set."
+        )
     print(RULE)
     return 0
 

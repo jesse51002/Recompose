@@ -195,7 +195,7 @@ touching a component; every rung has actually been the cause.
    is the old one, this is why.
 2. **Does the run actually have the slot?** `curl
    localhost:8001/apps/<app>/<Run> | jq '.image_set.images | keys'`. A run
-   generated before a slot existed simply does not have it. `scripts/prefill_images`
+   generated before a slot existed simply does not have it. `scripts/prefill`
    seeds them; nothing else will.
 3. **Is the API serving the right catalogue?** From a git worktree, produced
    runs are gitignored (`apps/*/*/`) so a fresh worktree has NONE and every

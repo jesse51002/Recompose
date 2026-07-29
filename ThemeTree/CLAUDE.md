@@ -42,7 +42,7 @@ and the files under `final_images/` / `images/` / `icons/` — are **never edite
 by hand**. To change anything in an existing run you use the scripts:
 `scripts/expand` (fill not-yet-done slots, including a missing `category`),
 `scripts/regen` (re-make colour/font/text/icon slots, or `category`),
-`scripts/regen_image` (images), `scripts/prefill_images` (seed a not-yet-done
+`scripts/regen_image` (images), `scripts/prefill` (seed a not-yet-done
 image slot from a checked-in file instead of generating it),
 `scripts/edit_customization` (a validated, targeted edit of the brief
 `customization.yaml`), or a full pipeline run (`ThemeTree/cli.py`). The brief is the one editable *input* — and even it goes

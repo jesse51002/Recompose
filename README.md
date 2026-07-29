@@ -371,7 +371,7 @@ Three standalone entrypoints (run from the package root, like `make`):
   only *what to change*). The prior image is kept as a numbered file in the
   run's `images/` dir (`<slot>.v1.png`, …); there is no version history in
   `output.yaml`.
-- **`scripts/prefill_images`** — `--run-dir <dir>` (or `--all-runs <app_dir>`).
+- **`scripts/prefill`** — `--run-dir <dir>` (or `--all-runs <app_dir>`).
   Seeds image slots that are declared but not yet generated from checked-in
   demo imagery under `apps/<app_id>/prefill/<Category>/`, matched to the run's
   own `category`. Absent-only and idempotent; it can never overwrite a

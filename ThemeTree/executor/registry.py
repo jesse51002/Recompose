@@ -3,10 +3,18 @@
 Emits one ``ColorNode``, one ``FontNode``, optionally a ``TextNode``,
 ``IconNode``, ``CategoryNode`` and ``FormatNode``, plus one ``ImageNode`` per
 image slot. Each image node is assigned its dependency keys (``color`` is
-automatic; declared ``depends_on`` images are added). The colour, font, text,
-icon, classification and format nodes are level-0 siblings — they all spring
-from the brand brief and none depend on the others. The executor levels and
-runs them.
+automatic; declared ``depends_on`` images are added, as is ``text`` when the
+slot declares ``depends_on_text``). The colour, font, text, icon,
+classification and format nodes are level-0 siblings — they all spring from
+the brand brief and none depend on the others. The executor levels and runs
+them.
+
+The text edge is the only one an image gains conditionally, and it does not
+change the levelling: text is a level-0 root exactly like colour, so an image
+that names copy sits at the same level it always did. ``AppFormat`` refuses a
+``depends_on_text`` naming an undeclared text slot, which is also what
+guarantees the node this edge points at exists — a text dependency implies at
+least one text slot implies a ``TextNode``.
 
 The four optional roots are built only when the app declares the matching
 inventory: ``TextNode`` needs at least one text slot, ``IconNode`` at least
@@ -188,8 +196,20 @@ class ModuleRegistry:
             ImageNode(
                 self._run_ctx,
                 slot=slot,
+                # ``color`` always, the declared image references, and — only
+                # when the slot names copy — the text node. The text edge is
+                # to the NODE rather than to each named slot because the text
+                # module is atomic: it resolves the whole inventory in one
+                # call and returns one ``TextSet``, so five named slots and
+                # one are the same single edge. Added conditionally so an
+                # image that names no copy keeps the exact graph it had.
                 deps=frozenset({DependencyKind.COLOR.value})
-                | frozenset(slot.depends_on),
+                | frozenset(slot.depends_on)
+                | (
+                    {DependencyKind.TEXT.value}
+                    if slot.depends_on_text
+                    else frozenset()
+                ),
                 llm=llm,
                 image_gen=image_gen,
                 classifier=classifier,

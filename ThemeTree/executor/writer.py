@@ -180,9 +180,16 @@ class Writer:
         run_ctx: RunContext,
         *,
         prefilled: list[str],
+        also_seeded: list[str] | None = None,
     ) -> None:
-        """Write a prefill pass — image slots seeded from checked-in files
-        rather than generated — back in place.
+        """Write a prefill pass — slots seeded from checked-in files rather
+        than generated — back in place.
+
+        ``prefilled`` is the image slots and ``also_seeded`` anything else
+        (today: text). They are separate parameters because only the first
+        names an ASSET — a file on disk to hash and upload — while both
+        belong in the ledger's ``generated`` list, which records what the
+        pass touched. Collapsing them would either upload copy or hide it.
 
         The same two files a reopen pass touches, and nothing else. It is a
         sibling of ``write_expansion`` rather than a caller of it because a
@@ -202,13 +209,14 @@ class Writer:
 
         self._upload_assets(run_ctx, prefilled, [])
 
+        seeded = sorted(prefilled) + sorted(also_seeded or [])
         ledger_path = run_ctx.expansion_cost_path()
         log = self._load_expansion_log(ledger_path)
         log.expansions.append(
             ExpansionEntry(
                 kind=ExpansionKind.PREFILL,
                 expanded_at=datetime.now(timezone.utc).strftime(RUN_ID_FORMAT),
-                generated=sorted(prefilled),
+                generated=seeded,
                 # Every bucket spelled out rather than defaulted: a prefill
                 # spends nothing anywhere, and a reader summing the ledger
                 # should see four explicit zeros, not absent fields.
@@ -226,7 +234,7 @@ class Writer:
         logger.debug(
             "prefill %s: seeded %s; ledger now %d entr%s",
             run_ctx.run_dir,
-            sorted(prefilled),
+            seeded,
             len(log.expansions),
             "y" if len(log.expansions) == 1 else "ies",
         )
