@@ -174,6 +174,63 @@ class Writer:
             "y" if len(log.expansions) == 1 else "ies",
         )
 
+    def write_prefill(
+        self,
+        output: Output,
+        run_ctx: RunContext,
+        *,
+        prefilled: list[str],
+    ) -> None:
+        """Write a prefill pass — image slots seeded from checked-in files
+        rather than generated — back in place.
+
+        The same two files a reopen pass touches, and nothing else. It is a
+        sibling of ``write_expansion`` rather than a caller of it because a
+        prefill has no ``PipelineResult`` behind it: no node ran, no provider
+        was called, and there is no cost to sum. What it does share is the
+        part that matters — ``_stamp_versions`` runs over the merged output,
+        so a seeded slot gets the same content-hash ``?v=`` token a generated
+        one does and the API can serve it without knowing the difference.
+
+        ``cost`` on ``output.yaml`` is whatever was loaded and is never
+        touched; the ledger entry is a genuine zero. That is not a placeholder
+        for an unknown figure — a prefill provably spends nothing, and a
+        reader summing the ledger should see that.
+        """
+        self._stamp_versions(output, run_ctx)
+        self._dump_model(output, run_ctx.output_path())
+
+        self._upload_assets(run_ctx, prefilled, [])
+
+        ledger_path = run_ctx.expansion_cost_path()
+        log = self._load_expansion_log(ledger_path)
+        log.expansions.append(
+            ExpansionEntry(
+                kind=ExpansionKind.PREFILL,
+                expanded_at=datetime.now(timezone.utc).strftime(RUN_ID_FORMAT),
+                generated=sorted(prefilled),
+                # Every bucket spelled out rather than defaulted: a prefill
+                # spends nothing anywhere, and a reader summing the ledger
+                # should see four explicit zeros, not absent fields.
+                cost=RunCost(
+                    total=0.0,
+                    llm=0.0,
+                    image_generation=0.0,
+                    background_removal=0.0,
+                    icon_generation=0.0,
+                ),
+            )
+        )
+        self._dump_model(log, ledger_path)
+
+        logger.debug(
+            "prefill %s: seeded %s; ledger now %d entr%s",
+            run_ctx.run_dir,
+            sorted(prefilled),
+            len(log.expansions),
+            "y" if len(log.expansions) == 1 else "ies",
+        )
+
     @staticmethod
     def _resolve_category(
         produced: str | None,

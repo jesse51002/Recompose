@@ -12,6 +12,15 @@ __pycache__/
 # subdirectories one level deeper are ignored.
 apps/*/*/
 
+# ...except the prefill seed set, which is an app-level INPUT rather than a
+# produced run: checked-in demo imagery, one folder per declared category,
+# that scripts/prefill_images seeds missing image slots from. It has to be
+# tracked for the same reason app.yaml is — a fresh clone that lacks it
+# cannot prefill, and the whole point of vendoring the bytes was that they
+# stop depending on a third-party host being up.
+!apps/*/prefill/
+!apps/*/prefill/**
+
 # Local dev secrets (never commit)
 .env
 
