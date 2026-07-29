@@ -550,6 +550,13 @@ because consistency is not distribution.
 a celebration hero and its one line, an empty state, a confirmation, a splash.
 One thing, centred, with its caption. Never a list, never running copy.
 
+**It is also right for an IDENTITY at the head of a screen** — a masthead, a
+logo and the studio's name, a screen title. That is what most apps do, and it is
+what lets a full-width row beneath it read as deliberate instead of as two
+blocks disagreeing about where the screen ends. The distinction is identity
+versus content: centring the masthead is not licence to centre the days, the
+list rows or the names under it.
+
 **Right alignment is right for numerals that should line up on their digits** in
 a column, and for a trailing action or value at the end of a row.
 

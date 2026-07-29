@@ -561,16 +561,26 @@ row is correct.
 typically a row that was stretched to full width by `space-between` or `flex: 1`
 sitting under a block sized by its own content.
 
-**THE FIX IS NOT TO CENTRE ANYTHING.** Centring a masthead to match a row
-beneath it trades one problem for a worse one — wrapping text must stay left
-aligned and anything scanned reads better from one left edge. The honest fixes,
-in order of preference:
+The honest fixes, in order of preference:
 
-- let the stretched block size to its content instead, with a gap generous
-  enough that it still is not packed (Guardrail 15);
-- give the short block something that legitimately belongs at its trailing edge,
-  if the inventory already contains such an element — never invent one;
-- accept it, and say why in the report.
+- **If the short block is an IDENTITY or a TITLE — a masthead, a screen name, a
+  logo and its word — CENTRE IT.** This is the common case at the head of a
+  screen, it is what most apps do, and it is what makes a full-width row beneath
+  read as deliberate rather than as two blocks disagreeing about where the
+  screen ends. Do not pull the wide row in to meet a left-aligned masthead; that
+  was tried here and is worse, because it re-introduces a ragged middle and
+  buys nothing.
+- If the short block is neither — it is content — let the stretched block size
+  to its content instead, with a gap generous enough that it is still not packed
+  (Guardrail 15).
+- Give the short block something that legitimately belongs at its trailing edge,
+  if the inventory already contains such an element — never invent one.
+- Accept it, and say why in the report.
+
+**Centring the masthead is NOT licence to centre the screen.** Everything that
+is scanned — days, list rows, names, times — and every piece of wrapping text
+stays on the left margin. The distinction is identity versus content, not
+"top of the screen versus the rest".
 
 **3. Does the spacing GROUP?** This is the half no script can check, and it is
 the half that decides whether a screen reads. **Related things sit closer

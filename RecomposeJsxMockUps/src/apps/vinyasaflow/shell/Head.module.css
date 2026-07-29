@@ -10,10 +10,22 @@
   padding-bottom: var(--sc-spacing-large);
 }
 
-/* The mark and the studio's name are one object: same row, small gap. */
+/*
+ * THE MASTHEAD IS CENTRED, and it is the one thing on this screen that is.
+ *
+ * The mark and the studio's name are one object — same row, small gap — and
+ * that object is the app's identity rather than content to be scanned. Centring
+ * a title block at the head of a screen is what most apps do, and it is what
+ * makes the full-width row beneath it read as deliberate rather than as two
+ * blocks that disagree about where the screen ends.
+ *
+ * This is not licence to centre anything else here. Everything below is scanned
+ * — days, classes, names, times — and stays on the left margin.
+ */
 .mast {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--sc-spacing-medium);
 }
 
@@ -73,25 +85,23 @@
  * off the scale, and the row still wrong, because consistency is not
  * distribution.
  *
- * A GENEROUS UNIFORM GAP, not `space-between`. Stretching the row to the full
- * measure did separate the four facts — but it also made the row span margin to
- * margin directly beneath a masthead that stops in the left third, so the head
- * had two disagreeing right edges and read as misaligned. That is mockup-qa's
- * Pass 2d.2c, and the fix it prescribes is exactly this: size the stretched
- * block to its content, with a gap big enough that it is still not packed.
+ * `space-between` ACROSS THE FULL MEASURE. Behind a single small gap these four
+ * bunched into the left third with the right third empty — every gap correctly
+ * off the scale and the row still wrong, because consistency is not
+ * distribution (Guardrail 15).
  *
- * `--sc-spacing-big` is double the gap that caused the packing and half the
- * screen's remaining slack, so the four read as four without the row claiming
- * an edge the block above it does not.
+ * The head reads as deliberate because the CENTRED masthead above it is the
+ * balance for a full-width row, not because the row was pulled back in. Sizing
+ * this row to its content instead was tried and is worse: it re-introduces a
+ * ragged middle for no gain.
  *
  * Each item keeps its OWN gap tight (see `.carryItem`), which is what still
- * says "this mark and this number are one fact". Nothing here is centred: the
- * row stays left-anchored at the page margin like everything else on screen.
+ * says "this mark and this number are one fact".
  */
 .carry {
   display: flex;
   align-items: center;
-  gap: var(--sc-spacing-big);
+  justify-content: space-between;
   margin-top: var(--sc-spacing-large);
 }
 
