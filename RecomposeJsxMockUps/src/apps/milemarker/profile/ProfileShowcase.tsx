@@ -22,6 +22,7 @@ import type { ShowcaseVideo } from '../showcaseContent';
 import { SLOT_NEXT_RANK_BELT_IMAGE, SLOT_RANK_BELT } from '../showcaseSlots';
 import { cx } from '../cx';
 import { Disc } from '../shell/Disc';
+import { Frame } from '../shell/Frame';
 import { Lane } from '../shell/Lane';
 import { LastLane } from '../shell/LastLane';
 import { Screen } from '../shell/Screen';
@@ -144,7 +145,7 @@ export function ProfileShowcase({
           <div className={styles.shelf}>
             {levelUp.map((video) => (
               <span key={video.videoId} className={styles.card}>
-                <Disc size={84} slot={video.themeSlot} src={video.thumbnailUrl} />
+                <Frame width={140} ratio={16 / 9} slot={video.themeSlot} src={video.thumbnailUrl} />
                 <span className={styles.cardTitle}>{video.title}</span>
                 <span className={styles.rankSub}>{videoMetaLabel(video)}</span>
               </span>

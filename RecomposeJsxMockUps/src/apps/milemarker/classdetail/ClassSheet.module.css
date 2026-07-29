@@ -70,7 +70,13 @@
   box-sizing: border-box;
   display: block;
   width: 100%;
-  height: 132px;
+  /*
+   * The SOURCE's ratio, not a height picked to suit the lane. The bundled map
+   * is 2:1; at 390pt wide a fixed 132px height makes the box 2.95 and crops a
+   * third of the tile away — including, on a map, whatever sits at the edges.
+   * See Guardrail 10b.
+   */
+  aspect-ratio: 2 / 1;
   object-fit: cover;
   border-top-style: solid;
   border-bottom-style: solid;

@@ -20,18 +20,29 @@ export interface RouteImageProps {
   slot?: string | undefined;
   /** The bundled art behind the slot. */
   src: string;
-  /** Height in px. The width is always the full screen. */
-  height: number;
+  /**
+   * The SOURCE's aspect ratio. The width is always the full screen, so this is
+   * what sets the height — a hardcoded pixel height forces the box to whatever
+   * ratio the screen width implies and crops the picture to fit it, which is
+   * the same mistake as putting a 16:9 still in a disc, made on the other axis.
+   * 3/2 for class and reward photography, 16/9 for a video still.
+   */
+  ratio: number;
   /** The tracked label above the caption. */
   captionLabel?: string | undefined;
   /** The caption itself, in the lane beneath the frame. */
   caption?: string | undefined;
 }
 
-export function RouteImage({ slot, src, height, captionLabel, caption }: RouteImageProps) {
+export function RouteImage({ slot, src, ratio, captionLabel, caption }: RouteImageProps) {
   return (
     <>
-      <div className={styles.frame} style={{ height: `${String(height)}px` }}>
+      {/*
+        `aspect-ratio` is safe here and this is the case the package's own note
+        describes: it re-derives an axis only when the size it derives FROM is
+        definite, and the width is 100% of a definite 390pt ground.
+      */}
+      <div className={styles.frame} style={{ aspectRatio: String(ratio) }}>
         {slot === undefined ? (
           <img className={styles.img} src={src} alt="" />
         ) : (

@@ -35,7 +35,8 @@ import {
   SLOT_SINGLE_POINT,
   SLOT_STREAK_ICON,
 } from '../showcaseSlots';
-import { Disc, DiscStat } from '../shell/Disc';
+import { DiscStat } from '../shell/Disc';
+import { Frame } from '../shell/Frame';
 import { Lane } from '../shell/Lane';
 import { LastLane } from '../shell/LastLane';
 import { RouteImage } from '../shell/RouteImage';
@@ -241,7 +242,7 @@ function HeadSession({ classData }: { classData: ShowcaseClass }) {
         nav.go(ROUTE_CLASS);
       }}
     >
-      <RouteImage slot={classData.themeSlot} src={src} height={168} />
+      <RouteImage slot={classData.themeSlot} src={src} ratio={3 / 2} />
       <span className={styles.leadMeta}>
         <span className={styles.leadCol}>
           <span className={styles.leadName}>{classData.name}</span>
@@ -306,7 +307,7 @@ function SessionRow({ classData }: { classData: ShowcaseClass }) {
           </span>
         )}
       </span>
-      <Disc size={52} slot={classData.themeSlot} src={src} />
+      <Frame width={92} ratio={3 / 2} slot={classData.themeSlot} src={src} />
     </button>
   );
 }

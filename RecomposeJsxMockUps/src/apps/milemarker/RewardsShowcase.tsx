@@ -16,6 +16,11 @@
 // mark and headline), the points headline, the two category tabs, and every
 // reward with its image, title, points cost and price label.
 //
+// THE REWARD IMAGES ARE FRAMES, NOT DISCS. Every generated reward photograph is
+// 3:2 (1200x800); the generated cut-outs are 0.99-1.00. A disc costs a cut-out
+// nothing and costs a landscape photograph a third of its width, which is the
+// rule ../layout_brief.yaml now states outright.
+//
 // THE HERO'S SPARKLE SCATTER IS GONE, and it is the one thing on this screen
 // that is a genuine removal of ORNAMENT rather than of content. The figure it
 // decorated is still here and larger; the scatter was a treatment of that
@@ -36,6 +41,7 @@ import type { ShowcasePointsStoreItem } from './rewards/mockPointsStore';
 import { SHOWCASE_POINTS_STORE_DATA } from './rewards/mockPointsStore';
 import styles from './rewards/StoreList.module.css';
 import { Disc } from './shell/Disc';
+import { Frame } from './shell/Frame';
 import { Lane } from './shell/Lane';
 import { LastLane } from './shell/LastLane';
 import { Screen } from './shell/Screen';
@@ -129,6 +135,7 @@ export function RewardsShowcase({
 
       {/* The rank badge the base's topbar carries. */}
       <Lane label="Your rank">
+        {/* A disc, correctly: the rank medallion is a 0.99 cut-out. */}
         <Disc
           size={56}
           slot={SLOT_RANK_BELT}
@@ -144,7 +151,7 @@ function StoreEntry({ item, first }: { item: ShowcasePointsStoreItem; first: boo
   const src = showcaseAssetOrNetwork(item.imageUrl, item.imageAsset ?? 'reward_gloves.png');
   return (
     <div className={cx(styles.item, first && styles.itemFirst)}>
-      <Disc size={52} slot={item.themeSlot} src={src} />
+      <Frame width={78} ratio={3 / 2} slot={item.themeSlot} src={src} />
       <span className={styles.itemBody}>
         <span className={styles.title}>{item.title}</span>
         <span className={styles.price}>{item.priceLabel}</span>

@@ -87,7 +87,7 @@ export function ClassDetailShowcase({
       <RouteImage
         slot={classData.themeSlot}
         src={classData.imageUrl}
-        height={196}
+        ratio={3 / 2}
       />
 
       <Lane label="The session">

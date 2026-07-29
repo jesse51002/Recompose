@@ -180,6 +180,65 @@ means the whole surface was written the same way.
 
 ---
 
+## Pass 2c — no photograph is in a box of the wrong ratio
+
+**This is the easiest way in the whole package to make a screen look terrible,
+and it passes every other check.** The layout is fine, the tokens are fine,
+nothing overflows, nothing is a dead end — and the pictures are ruined.
+
+A photograph arrives ALREADY COMPOSED. A 16:9 video still has its title burnt
+into the top third and its subject framed against the edges; a 3:2 class
+photograph is cropped by whoever shot it. Put one in a box of a different ratio
+and `object-fit: cover` does not resize it, it **throws part of it away** —
+silently, with no error and no visual cue that anything is missing. Mask that
+box to a circle and the corners go too.
+
+The numbers are not marginal. Cropping 16:9 to 1:1 discards **44% of the
+width**; a circular mask on top of that leaves barely half the original frame,
+centre-weighted. It renders as unreadable fragments of burnt-in text — real
+output from this package: `ENDARY`, `KING`, `1-6 D`.
+
+Run this on every screen carrying imagery:
+
+```bash
+$B js "(()=>{const bad=[];document.querySelectorAll('img').forEach(i=>{
+if(!i.naturalWidth) return; const r=i.getBoundingClientRect(); if(r.width<24) return;
+const nat=i.naturalWidth/i.naturalHeight, box=r.width/r.height;
+const fit=getComputedStyle(i).objectFit;
+if(fit==='cover' && Math.abs(nat-box)/nat > 0.12)
+  bad.push(i.src.split('/').pop().slice(0,24)+' nat='+nat.toFixed(2)+' box='+box.toFixed(2)+
+    ' losing '+Math.round(100*(1-Math.min(nat,box)/Math.max(nat,box)))+'%');});
+return bad.length?JSON.stringify(bad.slice(0,8)):'every image is in a box of its own ratio'})()"
+```
+
+A hit is not automatically a bug — a deliberate tight crop of a photograph that
+carries no edge detail can be right. It IS a bug whenever:
+
+- the source has **burnt-in text or graphics** (video stills almost always do),
+- the box is **circular**, which crops twice, or
+- the loss is **over ~20%** and nobody decided that on purpose.
+
+**The fix is not a different `object-fit`.** `contain` letterboxes, which
+usually looks worse. Give the picture a box of **its own ratio** and solve the
+layout around it.
+
+**Know which of your images are photographs and which are cut-outs**, because
+the honest treatments differ and the ratios tell you which is which. In this
+package the generated marks — roundel, medallion, struck coins, streak glyph —
+measure **0.99-1.00** and are transparent-edged and centre-weighted, so a circle
+costs them nothing. Every generated photograph measures **1.50 or 1.78**. If a
+design has a rule like "everything is a disc", that rule will eat the
+photographs; the rule has to be conditioned on what the art is, and that belongs
+in the fork's `layout_brief.yaml`, not in the CSS.
+
+This shipped once, in `apps/milemarker/`: the brief said "full-bleed or a disc,
+never an inset rectangle" as an absolute, and every 1280x720 shelf thumbnail
+went into a 1:1 disc. The guardrail existed and was read; the DIRECTION
+contradicted it, which is why the fix went to the brief first and the components
+second.
+
+---
+
 ## Pass 3 — every transition, in both directions
 
 Walk the app's transition table. For each row: perform the trigger, confirm you
@@ -300,7 +359,8 @@ State the scope you actually covered: **N screens of M, across K assets.**
 
 For each finding: the screen, what is wrong, the evidence (screenshot path,
 `BLOCKED by …`, console error), and whether it is a **dead end** (blocking), a
-**missing element**, an **added element** (both break the invariant), or
+**missing element**, an **added element** (both break the invariant), a
+**mangled image** (a photograph in a box of the wrong ratio — Pass 2c), or
 **cosmetic**.
 
 Then say plainly, in these words if they are true:

@@ -138,7 +138,7 @@
 
 .card {
   flex: none;
-  width: 120px;
+  width: 140px;
   display: flex;
   flex-direction: column;
   gap: var(--sc-spacing-small);

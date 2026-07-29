@@ -4,8 +4,8 @@
 // horizontally-scrolling carousel per genre, every card a rounded thumbnail
 // with text beneath. This rebuilds it as the horizon: the featured video is the
 // one thing in the air and its thumbnail is the first stretch of route below,
-// then one lane per genre with its entries struck into discs and travelling
-// sideways.
+// then one lane per genre whose entries are 16:9 frames in a filmstrip that
+// travels sideways.
 //
 // EVERY ELEMENT IS STILL HERE: the topbar (now the sky), the scope tabs, the
 // featured hero card, and one section per genre with its header and its
@@ -21,6 +21,7 @@
 import { cx } from '../cx';
 import type { ShowcaseVideo } from '../showcaseContent';
 import { Disc } from '../shell/Disc';
+import { Frame } from '../shell/Frame';
 import { Lane } from '../shell/Lane';
 import { LastLane } from '../shell/LastLane';
 import { RouteImage } from '../shell/RouteImage';
@@ -92,7 +93,7 @@ export function VideoShowcase({
           <RouteImage
             slot={featured.themeSlot}
             src={featured.thumbnailUrl}
-            height={186}
+            ratio={16 / 9}
           />
           <div className={styles.creator}>
             {featured.channelAvatarUrl !== '' && (
@@ -119,7 +120,7 @@ export function VideoShowcase({
           <div className={styles.shelf}>
             {section.videos.map((video) => (
               <span key={video.videoId} className={styles.card}>
-                <Disc size={92} slot={video.themeSlot} src={video.thumbnailUrl} />
+                <Frame width={150} ratio={16 / 9} slot={video.themeSlot} src={video.thumbnailUrl} />
                 <span className={styles.cardTitle}>{video.title}</span>
                 <span className={styles.cardMeta}>{videoMetaLabel(video)}</span>
               </span>

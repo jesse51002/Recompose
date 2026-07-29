@@ -362,6 +362,50 @@ that a *screenful* rarely repeats. Four covers a week of schedule rows and a
 genre carousel; it does not cover a fourteen-card feed without repeating, and
 that was known when it was chosen.
 
+## GUARDRAIL 10b — a photograph goes in a box of ITS OWN ratio
+
+**This is the easiest way in this package to make a screen look terrible, and it
+is invisible to every mechanical gate.** Typecheck, lint, the suite, the token
+sweep and the overflow check all pass. The layout is right. The pictures are
+ruined.
+
+A photograph arrives **already composed**. A 16:9 video still has its title
+burnt into the top third and its subject framed against the edges. Put it in a
+box of a different ratio and `object-fit: cover` does not shrink it, it
+**discards part of it** — no error, no warning, nothing on screen saying a third
+of the frame is gone. Crop 16:9 to 1:1 and you lose **44% of the width**; mask
+that to a circle and the corners go too, leaving about half the original,
+centre-weighted. It renders as fragments of burnt-in text: `ENDARY`, `KING`,
+`1-6 D` are real output from this package.
+
+**Be deliberate here.** Resizing and cropping are legitimate and often right —
+the rule is not "never crop", it is *decide the crop, do not inherit it from a
+container shape you picked for another reason*.
+
+The reliable tell is the ratio of the source art itself:
+
+| what it is | measures | honest treatment |
+| --- | --- | --- |
+| generated cut-out (roundel, medallion, coin, glyph) | **0.99-1.00**, transparent-edged, centre-weighted | a circle costs it nothing |
+| headshot / avatar | near square | a circle is fine |
+| generated photograph (class, reward) | **1.50** | give it a 3:2 box |
+| video still | **1.78** | give it a 16:9 box |
+
+**The fix is never a different `object-fit`.** `contain` letterboxes and usually
+looks worse. Give the picture a box of its own ratio and solve the layout around
+that.
+
+**A DIRECTION CAN CAUSE THIS, AND THAT IS HOW IT SHIPPED.** `apps/milemarker/`'s
+brief said *"full-bleed or a disc, never an inset rectangle"* as an absolute. It
+is a good rule for a design with no cards — and it silently mandated 1:1 boxes
+for 1.78 source art, so every shelf thumbnail was destroyed. The component was
+doing exactly what the brief said. So: **when a direction states a container
+shape, condition it on what the art IS**, and fix the `layout_brief.yaml` before
+the components — otherwise the next agent reads the brief and rebuilds the bug.
+
+`mockup-qa`'s Pass 2c is the check, and it reports the exact percentage each
+image is losing.
+
 ## GUARDRAIL 11 — primary nav lives at the bottom; never a side rail
 
 **Primary navigation sits at the FOOT of the screen.** Not the top, not a

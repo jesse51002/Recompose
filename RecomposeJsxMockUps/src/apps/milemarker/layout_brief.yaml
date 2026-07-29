@@ -86,15 +86,30 @@ layout_direction:
     a stretch of the route, and a stretch of route runs to both edges. Its
     caption sits in the lane beneath it.
 
-    A photograph acting as an ITEM MARKER — the thumbnail on a schedule row, a
-    reward, a video in a shelf — is the one exception, and it is struck into a
-    DISC. A list forty rows long cannot give each row a stretch of route without
-    becoming a gallery, and the alternative to a disc is a small rounded
-    rectangle, which is the card this design does not have. A coin is the form
-    this brand already mints: the points are struck discs and the rank is a
-    medallion, so a class stamped into the same circle belongs to the set. The
-    rule that follows is worth stating plainly — full-bleed or disc, never an
-    inset rectangle.
+    A photograph that is one of MANY — the thumbnail on a schedule row, a video
+    in a shelf — becomes a FRAME in a filmstrip: its own native proportion,
+    square corners, no radius, bounded by lane stripes, the strip running off
+    the right edge rather than stopping inside a gutter. A list forty rows long
+    cannot give each row a stretch of route without becoming a gallery, and a
+    filmstrip is what a route looks like when it is sampled instead of walked.
+
+    THE PROPORTION OF A PHOTOGRAPH IS NEVER THE LAYOUT'S TO CHOOSE. This is the
+    rule the rest of the imagery direction hangs off, and it outranks every
+    shape preference stated above. A photograph arrives already composed — a
+    16:9 video still has its title burnt into the top third and its subject
+    framed against the edges — so a box of a different ratio does not resize it,
+    it destroys it. Cropping a 1.78 frame to a 1.00 box discards 44% of the
+    width before anything is masked, which is not a smaller picture but a
+    different one. Give a photograph a box of its own ratio, always, and solve
+    the layout around that.
+
+    THE DISC IS FOR OBJECTS THIS BRAND MINTED, NOT FOR PHOTOGRAPHS. The
+    generated cut-outs — the roundel, the medallion, the struck coins, the
+    streak chevrons — are square, centre-weighted and transparent-edged, so a
+    circle costs them nothing and belongs to them: the points ARE discs and the
+    rank IS a medallion. A headshot or an avatar is close enough to square to
+    join them. A landscape photograph is not, and putting one in a circle
+    borrows the brand's own form to do damage with it.
 
     The generated cut-out objects do the opposite of both: they float in the sky
     at scale, with nothing containing them.

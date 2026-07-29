@@ -63,7 +63,7 @@
 
 .card {
   flex: none;
-  width: 132px;
+  width: 150px;
   display: flex;
   flex-direction: column;
   gap: var(--sc-spacing-small);
