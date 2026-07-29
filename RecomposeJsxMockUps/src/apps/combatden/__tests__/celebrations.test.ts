@@ -286,17 +286,19 @@ describe('parseNumeric', () => {
   });
 
   it('leaves anything else as static text — Dart returns null', () => {
-    expect(parseNumeric('3 week')).toBeNull();
+    expect(parseNumeric('3 weeks')).toBeNull();
     expect(parseNumeric('')).toBeNull();
     expect(parseNumeric('1.5')).toBeNull();
     expect(parseNumeric('3.4k')).toBeNull();
   });
 
   it('agrees with the wins tiles it was written for', () => {
-    const [streak, rank, points] = SHOWCASE_WINS_STATS.tiles;
-    expect(parseNumeric(streak?.value ?? '')).toBeNull();
-    expect(parseNumeric(rank?.value ?? '')).toEqual({ prefix: '', value: 28 });
+    // `buildWinsStats`'s order: classes, points, streak. The first two count
+    // up; the streak tile is static text, because "3 weeks" is not a number.
+    const [classes, points, streak] = SHOWCASE_WINS_STATS.tiles;
+    expect(parseNumeric(classes?.value ?? '')).toEqual({ prefix: '', value: 4 });
     expect(parseNumeric(points?.value ?? '')).toEqual({ prefix: '+', value: 160 });
+    expect(parseNumeric(streak?.value ?? '')).toBeNull();
   });
 });
 

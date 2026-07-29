@@ -1,4 +1,4 @@
-// The RANK celebration card — the 2nd of the five post-class cards.
+// The RANK celebration card — the 4th of the five post-class cards.
 //
 // Ports MobileApp/lib/features/stats/presentation/widgets/rank/rank_body.dart,
 // and it is the one card this island never had: the Flutter PREVIEW this

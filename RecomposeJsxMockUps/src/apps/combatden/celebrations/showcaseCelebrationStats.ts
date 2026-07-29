@@ -66,10 +66,18 @@ export const SHOWCASE_WINS_STATS: ShowcaseWinsStats = Object.freeze({
   title: 'Today’s wins',
   subtitle: 'The grind never stops',
   heroAsset: 'stat_wins_trophy.png',
+  // `buildWinsStats`, in its order. NOT `mock_stats.dart`'s `mockWinsStats`,
+  // which these were copied from and which no screen renders any more: its
+  // middle tile was "Rank Classes", and the builder deleted it because only a
+  // gym running a rank ladder has one. All three of these are universal.
+  //
+  // The streak value pluralises — "1 week", "3 weeks" — because the Dart does
+  // (`streakWeeks == 1 ? 'week' : 'weeks'`), and the old constant's "3 week"
+  // was simply ungrammatical.
   tiles: Object.freeze([
-    Object.freeze({ iconName: 'star', value: '3 week', label: 'Streak' }),
-    Object.freeze({ iconName: 'award', value: '28', label: 'Rank Classes' }),
+    Object.freeze({ iconName: 'award', value: '4', label: 'Classes this week' }),
     Object.freeze({ iconName: 'gift', value: '+160', label: 'Points' }),
+    Object.freeze({ iconName: 'star', value: '3 weeks', label: 'Streak' }),
   ]),
 });
 

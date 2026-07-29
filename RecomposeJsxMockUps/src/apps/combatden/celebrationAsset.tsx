@@ -6,13 +6,14 @@
 // justification for splitting an asset, and it is the whole justification —
 // anything reachable by tapping belongs in the app.
 //
-// THE ORDER IS THE MEMBER APP'S. Streak, Rank, Points, Rewards, Wins — the
-// sequence `apps/combatden/app.yaml` records in `rank_belt`'s own description
-// ("the 2nd of five post-class cards (Streak, Rank, Points, Rewards, Wins)")
-// and that `trophy_image` calls "the 5th and final card". The Dart's live
-// `celebration_flow.dart` currently lists only four because Wins was dropped
-// from it; that removal is being reverted, so the five-card order is what this
-// mirrors.
+// THE ORDER IS THE MEMBER APP'S: streak, points, rewards, RANK, wins — the
+// list `celebration_flow.dart`'s `celebrationCardRoutes` returns, and what its
+// own test asserts (wins last in every gym shape).
+//
+// `apps/combatden/app.yaml` disagrees: `rank_belt`'s description calls the rank
+// card "the 2nd of five". The Dart is the authority on what the app does, so
+// that slot description is the stale one — worth correcting there, but it does
+// not change the order here.
 //
 // THE INTERACTION IS `PostClassScaffold` + `PostClassController`
 // (MobileApp/lib/shared/widgets/post_class/). While a card's intro plays, the
@@ -32,6 +33,8 @@ import { useCallback, useState } from 'react';
 import { defineMockAsset } from '../../kit/asset';
 import { useMockNav } from '../../kit/MockNav';
 
+import { useThemeText } from 'recompose-react';
+
 import { AppContentProvider, useAppContent } from './appContent';
 import styles from './celebrationAsset.module.css';
 import { cx } from './cx';
@@ -39,6 +42,7 @@ import { PointsShowcase } from './PointsShowcase';
 import { RankShowcase } from './RankShowcase';
 import { RewardsCardShowcase } from './RewardsCardShowcase';
 import { StatsShowcase } from './StatsShowcase';
+import { SLOT_BOOK_NEXT_CLASS_CTA } from './showcaseSlots';
 import { ShowcasePrimaryButton } from './support/ShowcasePrimaryButton';
 import { WinsShowcase } from './WinsShowcase';
 
@@ -51,15 +55,28 @@ export const ROUTE_WINS = 'wins';
 /** The flow, in order. The last card's CTA says Done and returns to the first. */
 const FLOW: readonly string[] = Object.freeze([
   ROUTE_STREAK,
-  ROUTE_RANK,
   ROUTE_POINTS,
   ROUTE_REWARDS,
+  ROUTE_RANK,
   ROUTE_WINS,
 ]);
 
 /** `celebrationCtaLabel` — the last card says Done, every other one Continue. */
 function ctaLabel(route: string): string {
   return route === FLOW[FLOW.length - 1] ? 'Done' : 'Continue';
+}
+
+/**
+ * The wins card's CTA, which is the one exception to the rule above.
+ *
+ * `wins_screen.dart` does NOT call `celebrationCtaLabel` — it reads the
+ * `book_next_class_cta` copy slot instead, because a card whose whole reason to
+ * exist is the nudge cannot end on "Done". That also makes wins the only
+ * celebration card carrying a themed string, so leaving it on the generic label
+ * left a tenant-facing slot unexercised on the exact surface that owns it.
+ */
+function useWinsCtaLabel(): string {
+  return useThemeText(SLOT_BOOK_NEXT_CLASS_CTA, 'Book your next class');
 }
 
 /**
@@ -73,11 +90,14 @@ function CelebrationCard({
   children,
   onSettled,
   settled,
+  label,
 }: {
   route: string;
   children: ReactNode;
   onSettled: () => void;
   settled: boolean;
+  /** Overrides `celebrationCtaLabel` — only the wins card passes one. */
+  label?: string | undefined;
 }) {
   const nav = useMockNav();
 
@@ -116,7 +136,7 @@ function CelebrationCard({
           card twitching, not as the button arriving. */}
       <div className={cx(styles.cta, settled && styles.ctaVisible)} aria-hidden={!settled}>
         <ShowcasePrimaryButton
-          text={ctaLabel(route)}
+          text={label ?? ctaLabel(route)}
           fullWidth
           borderRadius="var(--sc-radius-big)"
           onPressed={settled ? advance : undefined}
@@ -183,8 +203,9 @@ function RewardsRoute() {
 
 function WinsRoute() {
   const [settled, settle] = useSettle();
+  const label = useWinsCtaLabel();
   return (
-    <CelebrationCard route={ROUTE_WINS} settled={settled} onSettled={settle}>
+    <CelebrationCard route={ROUTE_WINS} settled={settled} onSettled={settle} label={label}>
       <WinsShowcase loop={false} onCycleComplete={settle} />
     </CelebrationCard>
   );
@@ -194,7 +215,7 @@ export const CELEBRATION_ASSET = defineMockAsset({
   id: 'celebration',
   label: 'Celebration',
   description:
-    'The post-class flow: streak, rank, points, rewards and wins. Tap to skip ' +
+    'The post-class flow: streak, points, rewards, rank and wins. Tap to skip ' +
     'a card’s entrance, then continue through to the end.',
   width: 390,
   height: 844,
@@ -204,9 +225,9 @@ export const CELEBRATION_ASSET = defineMockAsset({
   provider: AppContentProvider,
   routes: {
     [ROUTE_STREAK]: StreakRoute,
-    [ROUTE_RANK]: RankRoute,
     [ROUTE_POINTS]: PointsRoute,
     [ROUTE_REWARDS]: RewardsRoute,
+    [ROUTE_RANK]: RankRoute,
     [ROUTE_WINS]: WinsRoute,
   },
 });

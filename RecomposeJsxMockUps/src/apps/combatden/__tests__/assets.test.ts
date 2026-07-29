@@ -21,14 +21,15 @@ describe('the combatden assets', () => {
   });
 
   it('runs the celebration in the member app\u2019s order, wins last', () => {
-    // app.yaml records this order in rank_belt's own description ("the 2nd of
-    // five post-class cards (Streak, Rank, Points, Rewards, Wins)") and in
-    // trophy_image's ("the 5th and final card").
+    // `celebration_flow.dart`'s `celebrationCardRoutes` list order, which its
+    // own test also asserts (wins last in every gym shape). app.yaml's
+    // `rank_belt` description still calls rank "the 2nd of five" — the Dart is
+    // the authority on what the app does, so that slot description is stale.
     expect(Object.keys(CELEBRATION_ASSET.routes)).toEqual([
       'streak',
-      'rank',
       'points',
       'rewards',
+      'rank',
       'wins',
     ]);
     expect(CELEBRATION_ASSET.initialRoute).toBe('streak');

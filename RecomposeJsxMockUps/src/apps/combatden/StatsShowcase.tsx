@@ -41,7 +41,9 @@ import { usePrefersReducedMotion } from './usePrefersReducedMotion';
 /** `_kWeekCount`. */
 const WEEK_COUNT = 3;
 /** `_kSubtitle`. */
-const SUBTITLE = 'Completed your 2nd class this week';
+// `buildStreakStats`: the subtitle is what the class was WORTH, not a sentence
+// about it. The old value came from `mock_stats.dart`'s dormant demo constant.
+const SUBTITLE = '+160 points';
 /** `_kWeekDays`. */
 const WEEK_DAYS: readonly ShowcaseStreakDay[] = Object.freeze([
   Object.freeze({ label: 'S', completed: false }),
