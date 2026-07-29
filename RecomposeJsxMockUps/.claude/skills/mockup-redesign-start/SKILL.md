@@ -152,10 +152,7 @@ reachable*, and says nothing about form. Read it as permission.
   affordance — all keep the same destinations reachable, which is all the
   invariant asks. Biggest lever, most often left alone.
 
-  **Not a vertical side rail** — `mockup-redesign-general` Guardrail 11 bans
-  it unless the origin app has one. At ~390pt, width is the scarce axis and a
-  rail spends a fifth of it on chrome the thumb cannot reach. Radical is not
-  the same as importing a pattern from a bigger screen.
+  **Not a vertical side rail** — `mockup-redesign-general` Guardrail 11.
 - **Change what a screen is made of.** Cards → bare canvas, list → grid, grid →
   full-bleed pager, vertical → horizontal. A list of things is not required to
   be rows.
