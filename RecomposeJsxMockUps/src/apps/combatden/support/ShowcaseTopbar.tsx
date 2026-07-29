@@ -91,13 +91,6 @@ export interface ShowcaseTopbarProps {
    * v2 landing page / standalone embeds).
    */
   themeTabPreview?: boolean | undefined;
-  /**
-   * Forces an arrangement instead of resolving it from the theme — `AppTopbar.
-   * formatOverride`, and it exists for the same two readers: the invariant test
-   * and a side-by-side preview. Null in normal use, where the tenant's
-   * `app_shell_format` decides and no screen passes anything.
-   */
-  formatOverride?: AppShellFormat | undefined;
 }
 
 /**

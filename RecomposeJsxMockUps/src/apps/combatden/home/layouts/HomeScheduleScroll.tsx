@@ -19,7 +19,6 @@
 import { DateRow } from '../DateRow';
 import type { DateTabStyle } from '../DateTab';
 import { DayClassGroup } from '../DayClassGroup';
-import type { ClassItemLayout } from '../classItem/classItemLayout';
 import { dayAt } from '../homeScheduleGenerator';
 
 import { DAY_OFFSETS } from './homeLayout';
@@ -27,10 +26,6 @@ import type { HomeLayoutProps } from './homeLayout';
 import styles from './HomeScheduleScroll.module.css';
 
 export interface HomeScheduleScrollProps extends HomeLayoutProps {
-  /** How each class row is drawn. `scheduleSliver`'s `itemLayout`. */
-  itemLayout?: ClassItemLayout;
-  /** Two-up cards per day instead of a stack. `scheduleSliver`'s `grid`. */
-  grid?: boolean;
   /** `SliverPersistentHeader(pinned:)`. */
   pinDateRow?: boolean;
   dateTabStyle?: DateTabStyle;
@@ -39,8 +34,6 @@ export interface HomeScheduleScrollProps extends HomeLayoutProps {
 export function HomeScheduleScroll({
   topbar,
   classes,
-  itemLayout = 'textLeftThumbRight',
-  grid = false,
   pinDateRow = true,
   dateTabStyle = 'underline',
 }: HomeScheduleScrollProps) {
@@ -58,8 +51,6 @@ export function HomeScheduleScroll({
           key={offset}
           day={dayAt(offset, classes)}
           showBookings={false}
-          itemLayout={itemLayout}
-          grid={grid}
         />
       ))}
     </div>

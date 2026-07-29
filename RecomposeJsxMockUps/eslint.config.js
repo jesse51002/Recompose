@@ -8,14 +8,16 @@ import tseslint from 'typescript-eslint';
 // has already drifted. Both mirror rules the Flutter side states in prose and
 // enforces with grep (see ../ThemeFlutter/CLAUDE.md, "Hard rules").
 //
-//  1. THE LIBRARY IS APP-AGNOSTIC. src/lib/ must never reach into src/app/.
-//     Flutter's version: `grep -rn 'package:crm' lib` must be empty.
+//  1. THE KIT IS APP-AGNOSTIC. src/kit/ must never reach into src/apps/.
+//     It describes, navigates and displays an asset; it may not know what any
+//     app's screens are. That is what makes a second app a new folder rather
+//     than a change to the kit.
 //
-//  2. THE TWO TOKEN SYSTEMS NEVER MEET. The app chrome (GW + the CRM's light
-//     DesignConstants) and the showcase island (ShowcaseTokens) share token
-//     NAMES with different VALUES — radiusBig is 12 in one and 32 in the
-//     other. They are separate modules, separate CSS-variable namespaces
-//     (--gw-*/--adm-* vs --sc-*), and neither may import the other.
+//  2. THE APP NEVER IMPORTS THE HOST'S CHROME. The studio's admin tokens and
+//     the mock screens' ShowcaseTokens share token NAMES with different VALUES
+//     — radiusBig is 12 in one and 32 in the other — so an accidental import
+//     silently re-skins the phone with admin values. The studio's half of this
+//     pair lives in that package; this gate is the island's own half.
 export default tseslint.config(
   { ignores: ['dist', 'node_modules', 'coverage'] },
 
@@ -39,18 +41,18 @@ export default tseslint.config(
     },
   },
 
-  // Gate 1 — the library stays app-agnostic.
+  // Gate 1 — the kit stays app-agnostic.
   {
-    files: ['src/lib/**/*.{ts,tsx}'],
+    files: ['src/kit/**/*.{ts,tsx}'],
     rules: {
       'no-restricted-imports': [
         'error',
         {
           patterns: [
             {
-              group: ['**/app/**', '../app/*', '../../app/*'],
+              group: ['**/apps/**', '../apps/*', '../../apps/*'],
               message:
-                'src/lib is app-agnostic. App-specific values arrive as arguments to initializeTheme / <ThemeProvider>, never as an import. See ../ThemeFlutter/CLAUDE.md "Hard rules".',
+                'src/kit is app-agnostic. An app reaches the kit by calling defineMockAsset / defineMockApp, never the other way round — see src/index.ts and CLAUDE.md.',
             },
           ],
         },
@@ -60,7 +62,7 @@ export default tseslint.config(
 
   // Gate 2a — the showcase island never sees the app-chrome tokens.
   {
-    files: ['src/app/showcase/**/*.{ts,tsx}'],
+    files: ['src/apps/**/*.{ts,tsx}'],
     rules: {
       'no-restricted-imports': [
         'error',
@@ -97,23 +99,4 @@ export default tseslint.config(
     },
   },
 
-  // Gate 2b — the app chrome never reaches into the showcase's tokens.
-  {
-    files: ['src/app/**/*.{ts,tsx}'],
-    ignores: ['src/app/showcase/**'],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              group: ['**/showcase/showcaseTokens', '**/showcase/showcase-tokens'],
-              message:
-                'ShowcaseTokens belong to the phone-frame island. Chrome uses GW / admin-tokens; the values behind the shared names differ.',
-            },
-          ],
-        },
-      ],
-    },
-  },
 );

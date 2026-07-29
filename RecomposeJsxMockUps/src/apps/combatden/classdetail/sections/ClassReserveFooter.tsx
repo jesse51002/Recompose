@@ -20,6 +20,8 @@ import { useThemeText } from 'recompose-react';
 
 import { cx } from '../../cx';
 import { SLOT_RESERVE_CTA } from '../../showcaseSlots';
+import { useMockNav } from '../../../../kit/MockNav';
+import { ROUTE_BOOKING } from '../../appAsset';
 import { ShowcasePrimaryButton } from '../../support/ShowcasePrimaryButton';
 import { CLASS_PART, classPart } from '../classParts';
 import { SectionDivider } from '../parts/SectionDivider';
@@ -50,11 +52,22 @@ export interface ClassReserveFooterProps {
 }
 
 export function ClassReserveFooter({ position = 'pinned' }: ClassReserveFooterProps) {
+  // Reserving is what pushes the booking celebration — `ClassScreen`'s reserve
+  // action routes to `AppRoutes.reservingLoading`, which is what
+  // ../../BookingShowcase.tsx clones.
+  const nav = useMockNav();
   const label = useThemeText(SLOT_RESERVE_CTA, 'Reserve your spot');
   const action = (
     <div className={cx(styles.action, POSITION_CLASS[position])}>
       <div {...classPart(CLASS_PART.reserveButton)}>
-        <ShowcasePrimaryButton text={label} fullWidth borderRadius="var(--sc-radius-big)" />
+        <ShowcasePrimaryButton
+          text={label}
+          fullWidth
+          borderRadius="var(--sc-radius-big)"
+          onPressed={() => {
+            nav.go(ROUTE_BOOKING);
+          }}
+        />
       </div>
     </div>
   );

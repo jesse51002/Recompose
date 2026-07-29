@@ -25,6 +25,8 @@
 import type { ReactElement } from 'react';
 import { ThemeIcon } from 'recompose-react';
 
+import { useMockNav } from '../../../kit/MockNav';
+import { TAB_ROUTES } from '../appAsset';
 import { cx } from '../cx';
 import {
   SLOT_NAV_HOME,
@@ -70,6 +72,10 @@ export function ShowcaseBottomNav({ selected }: ShowcaseBottomNavProps) {
   // Built ONCE, above the layout branch, so neither layout can drop, reorder or
   // duplicate a destination — the Dart file builds its `items` list the same way
   // and for the same reason.
+  // A tab RESETS rather than pushes, which is the Dart's own choice: each tab
+  // root is reached with `pushReplacementNamed`, so switching tabs cannot
+  // accumulate a back stack the member never built.
+  const nav = useMockNav();
   const items = TABS.map(({ tab, slot, label, Icon }) => (
     <NavItem
       key={tab}
@@ -78,6 +84,9 @@ export function ShowcaseBottomNav({ selected }: ShowcaseBottomNavProps) {
       icon={<Icon />}
       isActive={tab === selected}
       showLabel
+      onSelect={() => {
+        nav.reset(TAB_ROUTES[tab]);
+      }}
     />
   ));
 
@@ -101,15 +110,29 @@ interface NavItemProps {
    * still built and still announced — see `.visuallyHidden` in the stylesheet.
    */
   showLabel?: boolean;
+  /** Switch to this tab's root. */
+  onSelect: () => void;
 }
 
-function NavItem({ slot, label, icon, isActive, showLabel = true }: NavItemProps) {
+function NavItem({ slot, label, icon, isActive, showLabel = true, onSelect }: NavItemProps) {
   // `isActive ? accent : text2nd` — accent is the member app's selection /
   // active-state role, exactly as in `AppNavItem`. It is the ONLY active-state
   // affordance the Dart widget has, so there is no second class to toggle.
   const color = isActive ? 'var(--sc-accent)' : 'var(--sc-text-2nd)';
   return (
-    <div className={styles.item} style={{ color }}>
+    <div
+      className={styles.item}
+      style={{ color }}
+      onClick={onSelect}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onSelect();
+        }
+      }}
+      role="button"
+      tabIndex={0}
+    >
       <ThemeIcon slot={slot} fallback={icon} color={color} size={ICON_SIZE} />
       <span className={cx(styles.label, !showLabel && styles.visuallyHidden)}>{label}</span>
     </div>

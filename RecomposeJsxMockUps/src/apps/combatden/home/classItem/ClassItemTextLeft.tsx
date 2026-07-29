@@ -8,6 +8,9 @@
 // no `home_format` slot sees no change — ../__tests__/agendaListBaseline.html
 // is the fixture that keeps that true.
 
+import { useMockNav } from '../../../../kit/MockNav';
+import { useAppContent } from '../../appContent';
+import { ROUTE_CLASS } from '../../appAsset';
 import type { ShowcaseClass } from '../homeClass';
 
 import { ClassItemMeta } from './ClassItemMeta';
@@ -21,8 +24,30 @@ export interface ClassItemTreatmentProps {
 }
 
 export function ClassItemTextLeft({ classData, showBookings }: ClassItemTreatmentProps) {
+  // The schedule row is what opens a class — the app asset's first real
+  // navigation, and the Dart's own (`ClassScreen` is what a schedule row
+  // pushes). The name is carried across rather than the object, because the
+  // board repeats the resolved list across the week and a row's position in it
+  // is not a position in `classes`.
+  const nav = useMockNav();
+  const { openClassNamed } = useAppContent();
+  const open = () => {
+    openClassNamed(classData.name);
+    nav.go(ROUTE_CLASS);
+  };
   return (
-    <div className={styles.item}>
+    <div
+      className={styles.item}
+      onClick={open}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          open();
+        }
+      }}
+      role="button"
+      tabIndex={0}
+    >
       <div className={styles.row}>
         <ClassItemMeta
           classData={classData}
