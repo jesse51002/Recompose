@@ -7,7 +7,7 @@ smoke:
 	poetry run python -m ThemeTree --app-yaml apps/smoketest/app.yaml --customization-yaml apps/smoketest/customization.yaml
 
 api:
-	poetry run python -m uvicorn ThemeTree.api.main:app --host 0.0.0.0 --port 8001 --reload
+	poetry run python -m uvicorn RecomposeAPI.main:app --host 0.0.0.0 --port 8001 --reload
 
 # The local launch surface (start a run, watch it stream). NOT deployed and
 # NOT 0.0.0.0: it starts runs that spend real money, so it is bound to
@@ -20,7 +20,7 @@ test:
 
 # --- ThemeReact (the web theme runtime + standalone browser) ----------------
 # npm, not poetry. ThemeReact/ is invisible to pyproject.toml and excluded from
-# the API image (.dockerignore), exactly as ThemeFlutter/ is — the two sides
+# the API image (.dockerignore), exactly as RecomposeFlutter/ is — the two sides
 # share only the HTTP contract this Makefile's `api` target serves.
 # `react-dev` serves on :8080 (pinned — see ThemeReact/vite.config.ts) and needs
 # `make api` running alongside it.

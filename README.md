@@ -386,8 +386,8 @@ writes a brief, launches a run, and streams that run's progress to a
 browser. It is the launch surface; the read-only API (`make api`, :8001) is
 still the thing that serves finished themes.
 
-It is a **separate app from `ThemeTree/api/`, deliberately.** Both `Settings`
-classes instantiate at import time, and `ThemeTree/api/` never imports
+It is a **separate app from `RecomposeAPI/`, deliberately.** Both `Settings`
+classes instantiate at import time, and `RecomposeAPI/` never imports
 `src.core.config` — which is exactly what lets the deployed App Runner
 container boot with only `GOOGLE_FONTS_API_KEY` set. Pulling the pipeline
 into the read API would drag the four provider keys in with it and break

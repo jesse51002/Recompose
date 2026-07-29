@@ -1,0 +1,428 @@
+# ThemeTree — Coding Standards
+
+The Python pipeline: the dependency DAG that turns two YAMLs into a resolved `output.yaml`, plus `ThemeTree/studio/` (the local-only run-orchestration API). See `../README.md` for the monorepo map and `README.md` for what the pipeline does.
+
+---
+
+## No assumptions
+
+When a decision has more than one reasonable answer, ask and wait for the
+user's explicit response. Never assume, recommend-and-proceed, or defer the
+choice unilaterally. Presenting researched options is encouraged; making the
+choice for the user is not.
+
+---
+
+## Skills are living documents
+
+When you're working through a skill (or any reference doc / `SKILL.md` it loads)
+and realize its guidance is wrong, outdated, or actively holding the work back —
+a recommended source that returns bad results, a step that no longer fits, a
+better tool you've found — do **not** silently work around it:
+
+1. Use the better approach for the task in front of you.
+2. **Recommend the specific skill fix to the user and wait for approval** (per
+   *No assumptions* — present it, don't self-apply).
+3. On approval, **update the skill file** so the lesson is baked in next time.
+
+Skills are ever-evolving: every real-world correction should feed back into them.
+
+---
+
+## CLAUDE.md is a living document
+
+This file is a living document — exactly like a skill (above), it must track reality. Whenever the pipeline code genuinely diverges from what this CLAUDE.md says (a removed module, a renamed system, a changed schema, a rule the code has outgrown on purpose, an architecture change), **update this file in the same change** so the doc and the code never drift apart. Never leave it stale: a stale rule produces false "violation" findings in review and misleads the next contributor. If a documented rule is what diverged, fix the doc to match the new reality; if the divergence is a mistake, fix the code. Either way, doc and code must agree when you are done.
+
+---
+
+## Iron-clad rule: never hand-edit a produced run
+
+A run directory's **produced artifacts** — `output.yaml`, `expansion_cost.yaml`,
+and the files under `final_images/` / `images/` / `icons/` — are **never edited
+by hand**. To change anything in an existing run you use the scripts:
+`scripts/expand` (fill not-yet-done slots, including a missing `category`),
+`scripts/regen` (re-make colour/font/text/icon slots, or `category`),
+`scripts/regen_image` (images), `scripts/edit_customization` (a validated,
+targeted edit of the brief `customization.yaml`), or a full pipeline run
+(`ThemeTree/cli.py`). The brief is the one editable *input* — and even it goes
+through `edit_customization` (which re-validates), not raw text munging;
+`app.yaml` is architect-owned.
+
+If a change someone wants **cannot** be expressed through those scripts, do NOT
+work around it by editing an artifact — say so plainly and surface it as a
+feature to add to the pipeline. A missing capability is a feature request,
+never a manual edit.
+
+---
+
+## Core principle: app-agnostic
+
+Nothing app-specific lives in Python code. App-specific configuration
+(slot inventories, descriptions, ids, names) lives in `apps/<app_id>/`
+YAML files only. Adding a new app must be a YAML-only change.
+
+If you find yourself adding a constant, enum, or class branch that
+only makes sense for one app, push back — it belongs in YAML.
+
+---
+
+## Sibling repos
+
+- `../MobileApp/` — Flutter app that consumes the pipeline output.
+- `../FastApiBackend/` — its `CLAUDE.md` carries the broader Python
+  conventions for this monorepo (imports, enums, type hints, async,
+  error handling). Apply those here unless this file overrides.
+
+---
+
+## Python standards
+
+- **Pydantic v2.** Every model sets `ConfigDict(extra="forbid")` so
+  YAML typos fail loudly. The sole deliberate exception is the
+  output-read models — `Output` (`schema/output/output.py`),
+  `ImageOutput` (`schema/output/image_output.py`), and the two output
+  group wrappers `ColorPalette` (`schema/output/color_palette.py`) and
+  `ImageSet` (`schema/output/image_set.py`): those use `extra="ignore"`
+  so an externally- or previously-produced `output.yaml` carrying
+  since-removed keys still validates (the stale keys are dropped, not
+  rejected). Input contracts (`app.yaml`, `customization.yaml`, slots,
+  etc.) keep `forbid`.
+- **One concept per file.** Each Pydantic class lives in its own file
+  under `schema/` unless several classes form one tight unit.
+- **Helpers belong to their class.** A function used only by one class
+  is a `@staticmethod`/method on that class, not a module-level function
+  sitting above it. Module level is reserved for genuinely shared
+  helpers and the `UPPER_CASE` constants (including names other modules
+  or tests import).
+- **Native generics** (`list[X]`, `dict[str, Y]`), pipe unions
+  (`X | None`), type hints on every parameter and return.
+- **Absolute imports** from `schema.*`. No relative imports.
+- **Constants in `UPPER_CASE`** at the top of the file. No magic
+  strings or regexes mid-function.
+
+---
+
+## No inline prompts or SQL
+
+- **Never inline an LLM/agent prompt in Python.** Every prompt lives in
+  its own `.md` file (e.g. `modules/prompts/<name>.md`) and is read at
+  use. Python may hold the *path* constant, never the prompt text.
+- **Never inline SQL in code.** Every query lives in its own `.sql`
+  file and is read at use. (No SQL in this package today — the rule
+  stands for when there is.)
+- Rationale: prompts and queries are reviewed, diffed, and tuned on
+  their own; burying them in string literals hides them and invites
+  ad-hoc edits mid-function.
+
+---
+
+## Async everywhere
+
+Every service and module method is `async`. The pipeline core is provider- and
+transport-agnostic; the CLI (`ThemeTree/cli.py`) and the studio app
+(`ThemeTree/studio/`, see below) are two entrypoints over the same async core. Do
+not introduce blocking I/O — use async clients (`litellm.acompletion` /
+`litellm.aimage_generation`) and `await` everything. Keep modules
+independently awaitable so they can be gathered concurrently later without a
+refactor.
+
+### Watching a run: the progress sink
+
+`Pipeline.run()` takes an optional `progress: ProgressSink | None`. Given
+one, the run reports itself as it happens; given none (the CLI's default),
+nothing is emitted and the run behaves exactly as it always has.
+
+- `ThemeTree/executor/progress_event.py` — `ProgressEventKind` (run started /
+  level started / node started / node finished / node failed / run
+  finished) and the `ProgressEvent` model that carries them.
+- `ThemeTree/executor/progress_sink.py` — the `ProgressSink` ABC. It lives beside
+  the executor, **not** in `ThemeTree/shared/interfaces/` (that holds the
+  *provider* contracts — LLM, image generation, fonts, icons); a sink is an
+  observer, not a provider.
+
+Two rules hold the design together:
+
+- **The sink is an interface, never a transport.** The executor knows
+  nothing about HTTP, SSE, JSON or FastAPI; it hands a Pydantic model to
+  whatever it was given. Anything wire-shaped belongs in the caller
+  (`ThemeTree/studio/`), never here.
+- **A sink must not raise.** An emit failure would abort a paid run over a
+  display concern. Swallow and log inside the sink.
+
+Every node is timed with `perf_counter` from the moment it acquires the
+concurrency semaphore (its own work, not its queueing), and the run total is
+timed end to end. Both are **logged whether or not a sink is passed** — that
+is the package's only timing instrumentation, and it is how anyone knows what
+a run actually costs in wall-clock time.
+
+`ProgressEvent.image_slot` is set only on the per-slot image nodes (read off
+the built node set, so it stays app-agnostic). It is what lets a watcher know
+`final_images/<slot>.png` just landed and can be displayed.
+
+---
+
+## Atomic modules
+
+A module's public method is the smallest indivisible unit of work, not a
+batch. The colour module resolves the whole palette in one call; the image
+module resolves **one** image (`run(slot, palette) -> ImageOutput`).
+
+Modules never loop the app's slot inventory, build aggregate result
+models, or touch threading/concurrency — the **executor** owns iteration
+and is the only place parallelism may later be added (a bounded gather),
+with zero module changes. A module that loops slots or returns a
+"set of everything" is the smell; push that loop up into the executor.
+
+**Progress is the same rule.** Because the executor owns iteration, it is
+also the only place that can know a level started, a node started, a node
+took 4.2 s, or the whole run took six minutes — so *all* progress
+emission lives in `ThemeTree/executor/orchestrator.py` and **no module carries
+any progress code**. Do not add a callback, a listener, or a "notify"
+parameter to a node or a sub-service; if something isn't observable from
+the executor, that is a signal about where the loop lives, not a reason
+to reach into a module.
+
+### A module's `run()` returns its full output
+
+Each module returns its **complete, self-contained output exactly as it
+lands in `output.yaml`** — never a partial, a diff, a delta, or a handle
+to fetch the rest. The node-return-type ⇄ output-group mapping is 1:1:
+`ColorNode → ColorPalette` (= `color_set`), `FontNode → FontSet`
+(= `font_set`), `ImageNode → ImageOutput` (= `image_set.images[id]`),
+and so on.
+
+The one node whose output is a **run-wide scalar** rather than a group is
+`CategoryNode → CategoryOutput` (= the top-level `category` string). Its
+return model is a thin carrier that lives with the module
+(`ThemeTree/modules/categories/category_models.py`), **not** under `schema/output/`
+— the run gains no new output group, only a value for a field the artifact
+already has. `CategoryOutput.value` is exactly that field, so the seed
+round-trip below holds unchanged. Anything a carrier holds beyond it (the
+model's `reason`) is call-local and is not serialized.
+
+**Why this is a hard invariant, not a style note:** the `expand` flow
+(`scripts/expand/run.py`, `ThemeTree/executor/seed.py`) reconstructs the
+executor's start-state by validating each saved `output.yaml` group
+straight back into the model its node returns, then seeds the DAG with the
+done nodes and runs only what's missing. A module that returned less than
+its full output couldn't be seeded from a saved run — it would force a
+re-run (and re-spend) of work already done. Keep every new module
+round-trippable this way: whatever `run()` returns must be everything
+needed to reconstruct that node as done, with no side channel.
+
+---
+
+## Typed primitives
+
+`schema/primitives.py` is where shared string-shaped types live —
+`RootModel[str]` wrappers that validate on construction and serialize
+back to plain strings in YAML.
+
+When a new string-shaped concept needs validation, add it here as
+another `RootModel[str]` and reuse it across schemas. Don't repeat
+the same regex check across multiple field validators when one
+primitive captures it.
+
+`PathSegment` is the one to reach for whenever a **caller-supplied name
+becomes a path**: a run folder under `<out_root>/<app_id>/` (the CLI's
+`--run-name`, the studio's launch) or a saved brief's filename stem. One
+rule, one place — not a near-identical guard per caller.
+
+---
+
+## Output groups
+
+Each group on the produced `output.yaml` is its own Pydantic model under
+`schema/output/`, never a bare `dict`/collection on `Output`. The group
+is exposed on `Output` under a `*_set` field/YAML key (`color_set` →
+`ColorPalette`, `image_set` → `ImageSet`) with the inner collection
+keeping its plain plural name, so the artifact reads `color_set.colors`
+/ `image_set.images`, never the redundant `colors.colors`.
+
+These wrappers exist so a group can gain run-wide fields (e.g.
+`ColorPalette.mode`) without another breaking `output.yaml` reshape;
+that is why they are read back with `extra="ignore"` like `Output` /
+`ImageOutput`. A *required* field on a group stays required — adding one
+is a deliberate breaking change that requires migrating every existing
+`apps/<app>/*/output.yaml` (and the `tests/data/` fixtures).
+
+The rule is about **groups** — a collection of resolved items. A single
+run-wide value is a plain field on `Output`, not a one-field wrapper:
+`category` is a bare `str | None`, which is what every consumer (the styles
+API, `RecomposeFlutter`, `RecomposeReact`, `../FastApiBackend`) reads. Reshaping it
+into a group is exactly the breaking change described above, so a new
+run-wide scalar goes on `Output` directly.
+
+---
+
+## Two non-Python siblings live in here
+
+This directory is a Python package, but it also hosts the two **client runtimes**
+that consume the API it serves. Neither is Python; neither is part of the poetry
+project, the test suite, or the Docker image (both are in `.dockerignore`, and
+the `Dockerfile` only `COPY`s `ThemeTree/ schema/ resources/ apps/`).
+
+- **`RecomposeFlutter/`** — the `theme_flutter` Dart package. A path dep of
+  `../CRM` and `../MobileApp`.
+- **`RecomposeReact/`** — the `recompose-react` npm package: the same runtime for the
+  web, plus the standalone theme browser app. **npm, not poetry.** Driven by the
+  `react-*` Makefile targets (`react-install` / `react-dev` / `react-build` /
+  `react-check`); `react-dev` serves on `:8080` and needs `make api` alongside it.
+
+They share nothing with this package but the HTTP contract `make api` serves —
+no imports, no types, no toolchain. Each has its own `CLAUDE.md`; read it before
+working in there. When the API's wire shape changes, both clients are downstream.
+
+---
+
+## Dependencies
+
+Poetry, with an in-project `.venv` (`poetry.toml`: `in-project = true`).
+Add dependencies with `poetry add <pkg>` (dev: `poetry add --group dev
+<pkg>`) — **never hand-edit `pyproject.toml` or `poetry.lock`**; let
+Poetry resolve and write the lock. Run all code, scripts, and tests via
+**`poetry run`** (`poetry run python ...`, `poetry run pytest`), never a
+bare `python3` or the raw `.venv/bin/*` entrypoints. `poetry run` resolves
+the project venv itself, so it sidesteps the stale hardcoded-shebang
+breakage the `.venv/bin/*` scripts hit when this package was renamed.
+
+---
+
+## Two FastAPI apps, and why they are separate
+
+- **`RecomposeAPI/`** — the read-only output API. Deployed (App Runner, :8001
+  locally). Serves *finished* runs.
+- **`ThemeTree/studio/`** — the local launch surface. `make studio`, bound to
+  **127.0.0.1:8002**, never deployed. Writes a brief, starts a run, streams
+  its progress.
+
+**Never merge the studio into `RecomposeAPI/`.** Both `Settings` classes
+instantiate at import time, and `RecomposeAPI/config.py` deliberately needs only
+`APPS_ROOT` / `CORS_ORIGINS` / `ASSETS_CDN_BASE_URL` / `GOOGLE_FONTS_API_KEY`
+— `RecomposeAPI/` **never imports `src.core.config`**, which is exactly what lets
+the deployed container boot without the four provider keys. Importing the
+pipeline into the read API destroys that property. The studio imports the
+pipeline freely; it runs on a laptop that has the keys.
+
+Rules that hold inside `ThemeTree/studio/`:
+
+- **Nothing wire-shaped leaks down.** The studio owns SSE framing, JSONL,
+  HTTP status mapping; the executor owns `ProgressEvent`. Anything
+  transport-flavoured belongs here, never in `ThemeTree/executor/`.
+- **State lives in `.studio/`, never in a run directory.** One append-only
+  `.studio/runs/<run_id>.jsonl` per launch, and committed briefs under
+  `.studio/briefs/`. Writing anything into `apps/<app_id>/<run_id>/` would
+  break the iron-clad rule above. `.studio/` is gitignored.
+- **The launch path only ever CREATES a run directory.** A name collision is
+  refused, never re-run in place — that keeps
+  `Pipeline._overwrite_existing`'s delete path unreachable from a browser.
+- **One run at a time, globally**, refused with 409 rather than queued: the
+  providers rate-limit and concurrent runs get throttled
+  (`.claude/skills/brand-brief/SKILL.md`). This guards the studio only; a
+  `python -m ThemeTree` in a terminal is invisible to it.
+- **Briefs never overwrite `apps/<app_id>/customization.yaml`.** That is a
+  checked-in input and what `make run` generates from. The brief contract is
+  `schema/customization.py` — **five** fields, `extra="forbid"` — and
+  `BriefRequest.build` runs that model, so there is exactly one definition of
+  a valid brief. Never add a sixth field.
+- **One commit path, two callers.** The plain form (`POST /briefs`) and the
+  conversational agent (`POST /brief-agent`) both write through
+  `BriefService.commit`. The agent is a *caller* of that path, never a second
+  one — `BriefRequest.from_brief` is the only flattening it does, and it lives
+  beside `build()` so the two directions can't disagree.
+- **The agent authors; code commits.** `ThemeTree/studio/agent/` holds a Pydantic AI
+  agent with **ZERO tools**: it converses to propose a `Customization`, ask a
+  multiple-choice `AgentQuestion`, or reply in text, and it writes nothing.
+  The accept path (`accepted_brief` in the POST body) runs the deterministic
+  commit FIRST, then re-runs the agent on a short outcome note so it can
+  acknowledge — a brief is never reported saved because a model said so. If
+  that post-save call throws, the turn degrades to a fixed reply rather than
+  propagating: the save already succeeded. **Never give this agent a tool** —
+  a tool would be a second way to write a brief, around `BriefService`.
+- **The agent is stateless and optional.** The client holds the transcript and
+  posts it back each turn (serialized with Pydantic AI's
+  `ModelMessagesTypeAdapter`); there is no session store to expire. And when
+  `ANTHROPIC_API_KEY` is empty the agent is simply **not built** — the studio
+  boots, launches runs and commits form briefs exactly as before, and only
+  `POST /brief-agent` fails (503). Keep that property: an unconfigured
+  optional feature must never take the app down with it.
+- **Two LLM libraries, one boundary.** litellm drives every *pipeline* call
+  (`ThemeTree/modules/`, `ThemeTree/shared/services/`); Pydantic AI drives the studio's
+  conversational agent and nothing else. Its model id is a **bare** Anthropic
+  name from `ThemeTree/studio/config.py` (`brief_agent_model`) — never a litellm
+  `provider/model` string — because the agent names its provider explicitly.
+  The key is read from `src.core.config` rather than redeclared on the studio
+  settings: the studio already imports the pipeline, so one secret keeps one
+  definition and one env var.
+- **The system prompt is a file, never a literal.** It lives at
+  `ThemeTree/studio/agent/prompts/brief_agent_system.md` and is read at use, like
+  every other prompt in this package. It is the web-app port of the
+  `brand-brief` skill (`.claude/skills/brand-brief/`) — the same ≤10-question,
+  one-at-a-time, multiple-choice-by-default interview, and the same hard rules
+  (stylised never photoreal, brand-not-app prose, no colour values, only
+  contrast-satisfiable palettes). **When that skill's rules change, change
+  this prompt in the same edit**, and vice versa; they are one interview with
+  two front doors.
+
+---
+
+## Production deployment (read-only API)
+
+The read-only API (`RecomposeAPI/main.py`, `make api`, port 8001 locally) ships to **AWS App
+Runner** as a Docker image at `https://theme.combatden.net`. See
+`../DEPLOYMENT.md` for the full runbook (ARNs, DNS, redeploy, pause/resume).
+
+- **Images/icons are served from S3 + CloudFront (`cdn.combatden.net`), not the
+  container.** The image no longer bakes the ~2.6 GB of bytes — only the per-run
+  `output.yaml` metadata is copied (`.dockerignore` excludes
+  `apps/**/{images,final_images,icons}/`; `COPY apps/` then brings just the
+  yaml). `ASSETS_CDN_BASE_URL` **defaults to the prod CDN in code**
+  (`RecomposeAPI/config.py`), so the API always emits absolute CDN URLs and the byte
+  endpoints 307-redirect there — no App Runner env var required (a relative path
+  would 404 now that the bytes are de-baked). Set it empty to serve relative
+  paths + local files in the dev loop. See `ThemeTree/core/asset_urls.py` +
+  `RecomposeAPI/schema/output_response.py`.
+- Cache-busting stays `?v=<content-hash>` (already stamped by the Writer);
+  CloudFront is configured to include `v` in the cache key, so a regenerated
+  asset busts the CDN with no invalidation. **Never serve via the CDN without
+  that cache-policy setting** (see `../DEPLOYMENT.md`) or regenerated images go stale.
+- **CORS is mandatory on the CDN.** The clients are Flutter **web** apps; their
+  CanvasKit renderer fetches each image via XHR and decodes it, which the browser
+  blocks cross-origin unless the response carries `Access-Control-Allow-Origin`.
+  The bytes are on `cdn.combatden.net`, a different origin than the apps, so
+  without the CORS header every image is a broken placeholder *despite* a 200.
+  `deploy-assets/finalize.py` attaches a response-headers policy (`*`) at the
+  edge; re-running `make assets-finalize` patches a live distribution. This is
+  inherent to cross-origin images in Flutter web — not a CloudFront quirk.
+- **Bytes → S3:** `make sync-assets` (`scripts/sync_assets/`) mirrors every
+  `final_images/` + `icons/` file to the bucket (backfill + repair, skips
+  unchanged). New runs self-upload from the `Writer` when `ASSET_UPLOAD_ENABLED=1`
+  (opt-in; off locally) — see `ThemeTree/core/asset_uploader.py`. boto3 is an
+  upload-only dep, imported lazily so the read path/tests don't need it.
+- Runtime env (App Runner vars, never baked): `GOOGLE_FONTS_API_KEY` (required,
+  font delivery). `ASSETS_CDN_BASE_URL` is **optional** — it defaults to the prod
+  CDN in code, so prod works without it; only set it to target a different CDN
+  (or empty for local serving). `CORS_ORIGINS` optional.
+- `make docker-build` / `make ecr-push` build + push + trigger a redeploy;
+  `make pause` / `make resume` toggle the demo (App Runner Pause/Resume).
+- Only the **read path** is containerized. The pipeline (`ThemeTree/cli.py`, scripts,
+  `make sync-assets`) is not — it stays a local tool.
+
+---
+
+## Tests
+
+Run the suite with `make test`.
+
+Round-trip every example under `apps/<app_id>/` against its matching
+Pydantic model before committing (covered by `tests/test_pipeline.py`).
+
+---
+
+## What NOT to do
+
+- Do not hardcode app-specific names, ids, or descriptions in Python.
+  Anything specific to one app belongs in `apps/<app_id>/` YAML.
+- Do not add `dict[str, Any]` escape hatches to dodge strict typing.
+- Do not import from `../FastApiBackend/` or `../Database/`. This
+  package is shape-only; it doesn't share types with the delivery side.

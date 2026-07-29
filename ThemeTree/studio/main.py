@@ -2,7 +2,7 @@
 
 Local only. `make studio` binds it to 127.0.0.1:8002 — it is a laptop tool
 that spends real money on every launch, and nothing about it is deployed.
-The read-only API in `ThemeTree/api/` is the one that ships.
+The read-only API in `RecomposeAPI/` is the one that ships.
 """
 
 from __future__ import annotations

@@ -59,7 +59,7 @@ class Settings(BaseSettings):
     # bucket names), so they default — `make sync-assets` works with just AWS
     # creds. `asset_upload_enabled` gates the on-generation upload from the Writer
     # (opt-in: off locally; `make sync-assets` is the backstop). The CDN base for
-    # *emitting* URLs lives on the read-API config (`ThemeTree/api/config.py`), not here:
+    # *emitting* URLs lives on the read-API config (`RecomposeAPI/config.py`), not here:
     # this pipeline-side config only moves bytes, it never mints URLs.
     asset_upload_enabled: bool = False
     assets_bucket: str = "combatden-assets"

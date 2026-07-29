@@ -22,6 +22,7 @@ dependencies = [
 # Two top-level packages (neither matches the project name) -> list explicitly.
 packages = [
     { include = "ThemeTree" },
+    { include = "RecomposeAPI" },
     { include = "schema" },
 ]
 
