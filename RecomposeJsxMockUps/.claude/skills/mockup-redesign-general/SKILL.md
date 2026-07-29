@@ -10,6 +10,10 @@ you click through, not a gallery of stills. This skill is the half that holds
 for **any** app. For which screens exist and how each one exits, load that app's
 skill too.
 
+**Read the invariant below first.** It is not one rule among nine — it is the
+property the product is sold on, and the guardrails exist to keep a redesign
+from breaking it by accident.
+
 **The one thing to internalise:** every failure that has actually shipped here
 was invisible to `make check`. Typecheck, eslint and a full green suite passed
 over a screen rendering with no styling at all, over two dead-end screens, over
@@ -24,6 +28,42 @@ make -C RecomposeJsxMockUps dev     # :8081, no backend, no theme run needed
 ```
 
 ---
+
+## THE INVARIANT — arrangement only, in both directions
+
+**A redesign may move anything and may change nothing.** Every element that was
+on a screen is still on it; no element that was not is now. This outranks every
+guardrail below, and it is the one rule that is not a matter of judgement.
+
+**Never remove.** Not a screen, not a control, not a state, not a field, not a
+label. If a redesign has no good place for something, that is a hard layout
+problem to solve, not permission to drop it. An element quietly missing after a
+redesign is indistinguishable from a bug in the platform's own app.
+
+**Never add — this is the half that gets broken.** Removing feels like
+vandalism, so nobody does it by accident. *Adding* feels like doing the job
+well: a filter that would obviously help, a sort control, an empty-state action,
+a second tab, one more button. Every one of those is a new feature, and shipping
+it means the redesigned app is no longer the app the platform wrote.
+
+Also never reach for **new data**. Rendering a field the original screen did not
+show is adding a feature even when the value happens to be available in the mock
+data — the real screen would need a request that does not exist.
+
+**What you may do is unlimited within that:** move, resize, restack, regroup,
+re-emphasise, restyle, retime, change hierarchy, change density, change the
+motion. The *arrangement* is the free variable. The *element set* is fixed.
+
+**Why it is absolute.** The whole product is sellable because functional
+equivalence is checkable rather than argued: a tenant's redesigned app is
+provably the same app, with the same screens and the same API surface, wearing a
+different design. One added button makes that claim false everywhere.
+
+**Your checklist is the app's inventory** in its own skill — the list of every
+screen and everything it must contain. A redesign is correct when the render
+matches that list exactly: nothing missing, nothing extra. If a change you want
+to make would alter the inventory, the inventory is not the thing that should
+change.
 
 ## The structure, and the one-way rule
 

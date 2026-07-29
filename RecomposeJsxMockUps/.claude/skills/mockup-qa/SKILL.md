@@ -74,8 +74,12 @@ On each, check:
   mistake for bad layout: browser-default type (serif, wrong sizes), every gap
   collapsed, and images at natural resolution — a 1024px icon filling the phone.
   That is a missing token root, not a broken layout.
-- **Every element from the inventory is present.** Go item by item. A missing
-  region is the thing a redesign drops silently.
+- **The render matches the inventory exactly — nothing missing, nothing extra.**
+  Go item by item in both directions. A missing region is what a redesign drops
+  silently; an element on screen that is NOT in the inventory is a feature
+  someone added, which breaks the arrangement-only invariant just as badly and
+  is far easier to wave through because it usually looks like an improvement.
+  Flag both.
 - Nothing clipped at the phone edge, nothing overlapping, no text at a default
   font, no image at an obviously wrong size.
 
@@ -163,13 +167,14 @@ exactly that shape.
 State the scope you actually covered: **N screens of M, across K assets.**
 
 For each finding: the screen, what is wrong, the evidence (screenshot path,
-`BLOCKED by …`, console error), and whether it is a **dead end** (blocking),
-a **missing element** against the inventory, or **cosmetic**.
+`BLOCKED by …`, console error), and whether it is a **dead end** (blocking), a
+**missing element**, an **added element** (both break the invariant), or
+**cosmetic**.
 
 Then say plainly, in these words if they are true:
 
 > Every screen renders styled. Every screen exits. Every flow returns to its
-> root.
+> root. Every screen matches its inventory — nothing missing, nothing added.
 
 If any of the three is not true, do not write the sentence. **Do not report a
 partial sweep as a pass** — name the screens you did not reach.
