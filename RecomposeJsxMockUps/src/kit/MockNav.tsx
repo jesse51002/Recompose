@@ -39,7 +39,15 @@ export interface MockNav {
   readonly replace: (route: string) => void;
   /** Pop back one. A no-op at the root, which is what makes it safe to wire to any back affordance. */
   readonly back: () => void;
-  /** Back to the root, clearing history — what a tab switch and a finished flow both do. */
+  /**
+   * Back to the ASSET'S ROOT, clearing history — what a tab switch and a
+   * finished flow both do.
+   *
+   * "Root" means the route the asset DECLARES as its own (`rootRoute`), never
+   * the route the stage happened to open on. Those two are usually the same and
+   * were conflated for a while, which made this a no-op on exactly the screens
+   * that need it most — see `MockNavProviderProps.rootRoute`.
+   */
   readonly reset: (route?: string) => void;
   /** Whether there is anything to go back to; a back button can hide itself on the root. */
   readonly canGoBack: boolean;
@@ -48,12 +56,30 @@ export interface MockNav {
 const MockNavContext = createContext<MockNav | null>(null);
 
 export interface MockNavProviderProps {
+  /** The route to OPEN on. A host may deep-link this to anything the asset declares. */
   initialRoute: string;
+  /**
+   * The asset's OWN root — where `reset()` goes when given no argument.
+   *
+   * SEPARATE FROM `initialRoute`, and the separation is a bug fix rather than a
+   * refinement. A host that remembers where you were and hands it back as
+   * `initialRoute` (which ../../dev/DevHarness.tsx does, so a reload lands where
+   * you left off) used to move the reset target with it. The consequence was
+   * silent and severe: once you were on `booking`, `nav.reset()` resolved to
+   * `booking`, so the Continue button — that screen's ONLY exit, since it
+   * carries no bottom nav — did nothing at all. Every app in the package had a
+   * dead end there, and it typechecked, linted and passed the suite.
+   *
+   * Defaults to `initialRoute` so an embedder that only knows about one route
+   * keeps the old behaviour.
+   */
+  rootRoute?: string | undefined;
   children: ReactNode;
 }
 
-export function MockNavProvider({ initialRoute, children }: MockNavProviderProps) {
+export function MockNavProvider({ initialRoute, rootRoute, children }: MockNavProviderProps) {
   const [stack, setStack] = useState<readonly string[]>([initialRoute]);
+  const root = rootRoute ?? initialRoute;
 
   const go = useCallback((route: string) => {
     setStack((current) => [...current, route]);
@@ -71,9 +97,9 @@ export function MockNavProvider({ initialRoute, children }: MockNavProviderProps
 
   const reset = useCallback(
     (route?: string) => {
-      setStack([route ?? initialRoute]);
+      setStack([route ?? root]);
     },
-    [initialRoute],
+    [root],
   );
 
   // `stack` is the only state, so the value changes exactly when the route does.

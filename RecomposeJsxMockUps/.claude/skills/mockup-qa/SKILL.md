@@ -277,8 +277,30 @@ A screen fails this pass if any of these is true:
 
 - it has no exit affordance at all,
 - its only affordance has no handler (the click does nothing),
+- **its handler runs and is a NO-OP**, which looks identical to the line above
+  from the outside and is not identical at all — see below,
 - its only affordance is `BLOCKED` from Pass 2,
 - it is the last screen of a flow and does not return to that flow's root.
+
+**Confirm the move, never the click.** A handler that fires and changes nothing
+passes every check that stops at "did the button respond": the hit test says
+`hittable`, no console error appears, and the DOM under the cursor is the button
+you wanted. Always read the route (or the screen) BEFORE and AFTER and assert it
+changed.
+
+That is not hypothetical. `nav.reset()` took its fallback from the route the
+stage OPENED on rather than the asset's declared root, and `dev/DevHarness.tsx`
+hands the remembered route back so a reload lands where you were — so once you
+were on `booking`, `reset()` resolved to `booking`. Booking's Continue is that
+screen's only exit (it carries no bottom nav), and it did nothing, **on every app
+in the package at once**. It typechecked, linted, passed the whole suite, and
+only a before/after route comparison found it. `src/kit/__tests__/mockNav.test.tsx`
+now pins it.
+
+**When a finding reproduces on every app, suspect `src/kit/` or `dev/`, not the
+fork.** Check one other app before writing it up as a redesign's regression —
+that one comparison is what separates "this fork broke it" from "this was always
+broken", and the two have completely different owners.
 
 Pay special attention to screens with **no bottom nav** — their single
 affordance is load-bearing, and both dead ends found in this package so far were
