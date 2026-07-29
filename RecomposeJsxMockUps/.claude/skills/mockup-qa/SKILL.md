@@ -208,6 +208,30 @@ touching a component; every rung has actually been the cause.
 
 Only after all four does it make sense to suspect the resolver.
 
+## The check that catches what a slot-by-slot sweep cannot
+
+**Load a theme from a category the mock is NOT already showing, and read the
+whole screen.** Every rung above asks "did this slot resolve?", and a screen can
+answer yes for all of them and still be nonsense.
+
+That is not hypothetical. A yoga theme once rendered correct yoga class names
+over correct yoga photographs — and a boxing video feed, hero captioned "Nick
+Drossos Defensive Tactics ‧ 3.8M views". Nothing was un-themed. The demo content
+that is *not* generated — the per-category constants — was pinned to the default
+group because the host never passed the run's own `category` down, and no
+per-slot check can see it, because every slot was right.
+
+So, per app, with a theme loaded:
+
+- Switch to a theme whose `category` differs from the default group. Fighting is
+  CombatDen's default, so a Yoga or Pilates run is the useful one.
+- Read the screen as a person, not as a slot list. Do the names, the imagery,
+  the channel names, the genre tabs and the copy all describe **one business**?
+- Any single element still describing the old category is the finding. Report
+  what it was and what everything around it said, because "one card is wrong" and
+  "the content source never moved" look identical on one screen and are not the
+  same bug.
+
 ## Reporting
 
 State the scope you actually covered: **N screens of M, across K assets.**

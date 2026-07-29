@@ -162,6 +162,19 @@ Wire the mockups and seed the catalogue **together**. Wiring alone makes every
 existing theme fall through to whatever bundled asset the app ships, which is
 visibly worse than before the change.
 
+**Seed the copy in the same pass as the pictures.** An image slot may declare
+`depends_on_text`, which makes the picture and the name one claim about what the
+thing IS — so `prefill` reads both out of the same source row (`<slot>.jpg` and
+`texts.yaml` under the same category folder). Seed one without the other and you
+get a photograph of a boxing class labelled "Sunrise Flow", which is worse than
+seeding neither.
+
+**`--run-dir` and `--all-runs` used to disagree on a symlinked run.** Run
+directories are routinely symlinks into another checkout — that is what
+`setup_worktree_env.sh` creates — and `resolve()` silently relocates one into
+the checkout it points at, where a branch that just added seeds has none. Both
+modes use `absolute()` now; if you add a third target mode, do the same.
+
 ## Also update
 
 - `RecomposeJsxMockUps/CLAUDE.md` — structure and rules, in the same change.

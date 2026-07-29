@@ -258,6 +258,14 @@ the callers and confirm each one passes it:
 grep -rn "<ComponentName" src/apps/<app> --include=*.tsx | grep -v themeSlot
 ```
 
+**Better: make it impossible instead of grep-able.** Where a component already
+receives the whole data object, take THAT and read the slot off it, rather than
+adding an optional prop beside it. `VideoThumbnail` went from `src={video.thumbnailUrl}`
+to `video={video}` for this reason: a required prop turns every call site into a
+compile error until it is updated, which is the check the grep was standing in
+for. Reach for the grep when you cannot change the signature; prefer the
+signature when you can.
+
 **Stamp the slot at the source, not at each call site.** Put it on the data
 object where the list is resolved (`useShowcaseContent`), so every screen that
 renders that item inherits the same slot and cannot drift. A call site that
@@ -269,6 +277,16 @@ first time one of them is edited.
 Content comes from the app's bundled demo data, or is passed in through
 `useShowcaseContent`'s `real*` arguments. A `fetch` here is a bug: a screen that
 reaches the network can fail in ways a redesign cannot be judged against.
+
+**But bundled does not mean fixed.** The demo content is keyed by the run's
+`category`, and the surface reads that off the loaded theme (`useThemeCategory`)
+and passes it down. If you touch the provider, keep that wire: without it every
+generated slot still resolves perfectly and the screen turns to nonsense — a
+yoga theme rendering yoga names and yoga photographs over a boxing feed. Nothing
+in `make check` sees it, and it reads as a theming bug when it is a content one.
+
+The general form, worth carrying into any app: **a redesign moves the generated
+half of the screen. Check that the half you did not generate moved with it.**
 
 ## GUARDRAIL 9 — fixed size, uniform scale
 
