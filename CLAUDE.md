@@ -44,7 +44,7 @@ rather than a change to the machinery. Its own eslint Gate 1 enforces it.
 
 **A redesign of an app is a SIBLING FOLDER under `src/apps/`, never an edit to
 the base.** The base layout is what the pipeline generates against; a redesign
-forks it, keeps its own folder and its own `mockup.yaml`, and is registered in
+forks it, keeps its own folder and its own `layout_brief.yaml`, and is registered in
 `src/apps/index.ts`. That mirrors the engine's own two fork layers. An app
 folder also may not import a sibling app folder — nothing enforces that yet,
 but deleting one design must never break another.

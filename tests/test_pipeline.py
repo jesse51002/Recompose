@@ -19,7 +19,6 @@ from schema import (
     Complexity,
     Customization,
     ExpansionKind,
-    MockupSpec,
     OklchColor,
     Output,
     RunCost,
@@ -89,30 +88,6 @@ def test_every_live_app_manifest_validates(app_yaml: Path) -> None:
         assert len(seen) == len(set(seen)), (
             f"{app_yaml}: format slot {slot.id!r} repeats a value {seen}"
         )
-
-
-@pytest.mark.parametrize(
-    "mockup_yaml",
-    sorted(
-        (_REPO_ROOT / "RecomposeJsxMockUps" / "src" / "apps").glob("*/mockup.yaml")
-    ),
-    ids=lambda p: p.parent.name,
-)
-def test_every_mockup_spec_validates(mockup_yaml: Path) -> None:
-    """Every mock app's ``mockup.yaml`` is a valid ``MockupSpec``.
-
-    The LAYOUT half of a design's provenance, checked the same way the asset
-    half's ``app.yaml`` is checked one test up. It lives here rather than in
-    the TypeScript package because this is where a YAML parser and the schema
-    already are: the check over there can only look for the presence of a key,
-    while ``extra="forbid"`` here actually enforces "three fields and no more"
-    and catches a typo'd key instead of silently ignoring it.
-
-    The two are not redundant. Only the TypeScript knows which apps are
-    REGISTERED, so its test is "every app in `MOCK_APPS` has a file"; this one
-    is "every file that exists is valid".
-    """
-    MockupSpec.model_validate(yaml.safe_load(mockup_yaml.read_text()))
 
 
 def test_image_text_dependency_must_name_a_declared_text_slot() -> None:

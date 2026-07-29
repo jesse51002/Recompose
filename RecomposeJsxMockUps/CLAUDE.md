@@ -53,42 +53,52 @@ src/
     useElementSize.ts    duplicated from the studio (see the island rule)
   apps/
     combatden/         one product: its screens, its tokens, its two assets
-      mockup.yaml        what this layout is, and what produced it — REQUIRED
-    <design-id>/       a REDESIGN of the base — a sibling folder, see below
-      mockup.yaml
+      layout_brief.yaml  the brief this layout came from — REQUIRED
+    zenbjj/            a REDESIGN of the base — a sibling folder, see below
+      layout_brief.yaml
     index.ts           MOCK_APPS: every app, for a host that names none
   index.ts             the ONLY export surface
 ```
 
-### Every app ships a `mockup.yaml`, and a test enforces it
+### Every app ships a `layout_brief.yaml`, and two tests enforce it
 
-A design in this product is **two artifacts produced separately**:
+A design is **two artifacts produced separately, each written from its own
+brief**:
 
-| half | where it lives | what describes it |
-| --- | --- | --- |
-| the assets — palette, type, imagery, copy | a pipeline run, `apps/<app>/<run>/` | `customization.yaml` (the brief) + `output.yaml` |
-| the layout — the screens | an app folder here | `mockup.yaml` |
+| half | what it is | its brief | its contract |
+| --- | --- | --- | --- |
+| assets | palette, type, imagery, copy | `apps/<app>/<run>/customization.yaml` | `schema/customization.py` |
+| layout | the screens | `src/apps/<id>/layout_brief.yaml` | `ThemeTree/studio/schema/layout_brief.py` |
 
-The theme half has always been self-describing. The layout half was not: a
-mockup could only be understood by reading its source. `mockup.yaml` is that
-record, and it is deliberately **the same three fields as a brief's
-`design_direction`** — `name`, `short_desc`, `long_desc` — because it answers
-the same question about the other half.
+The two are the same SHAPE on purpose — a `name` plus one direction per thing
+being directed — because they are the same kind of document about opposite
+halves of one design. The asset brief directs `design_direction` and
+`colors_direction`; the layout brief directs `layout_direction` and
+`motion_direction`.
 
-**Three fields, and no more.** Nothing about routes, sizes or assets: the code
-already declares all of it, and a second copy in YAML would only be a thing to
-keep in sync. The code says what a layout CONTAINS; this says what it IS.
+**Layout and motion are separate because they fail differently.** An
+arrangement can be right while its animation is wrong, and a motion note buried
+in a paragraph about spacing is a note nobody acts on. It also matches this
+package's own rule that there is exactly one layout and one animation per asset
+— no presets and no vocabulary to switch between, so each gets a *direction*
+rather than an option set.
 
-Two tests guard it, and they are not redundant:
+**No inventory, ever.** `extra="forbid"` is what keeps this a brief: the code
+already declares routes, sizes and assets, so a copy in YAML could only drift.
+The code says what a layout CONTAINS; the brief says what it IS, and why.
 
-- **`schema/mockup.py` → `MockupSpec`**, checked by `test_every_mockup_spec_validates`
-  in the engine's suite. That is the real one: it parses the YAML and validates
-  it, and `extra="forbid"` is what actually enforces "three fields and no more"
-  — a typo'd key is rejected rather than ignored. It lives on the Python side
-  because that is where a YAML parser and the schema already are.
-- **`src/apps/__tests__/mockupYaml.test.ts`**, here. Only the TypeScript knows
-  which apps are REGISTERED, so this one asks "does every app in `MOCK_APPS`
-  have a file, with all three filled in?" — the question the engine cannot ask.
+Two tests, and they are not redundant:
+
+- **`test_every_layout_brief_validates`** (engine suite) is the real one — it
+  parses and validates, and `extra="forbid"` rejects a typo'd key rather than
+  ignoring it. It lives on the Python side because that is where a YAML parser
+  and the schema already are.
+- **`src/apps/__tests__/layoutBrief.test.ts`**, here, asks the one question the
+  engine cannot: the engine globs `src/apps/*/layout_brief.yaml`, so an app
+  registered in `MOCK_APPS` with **no** brief is invisible to it — nothing to
+  glob, nothing to fail. Only the TypeScript knows what is registered. Over
+  there: "every file that exists is valid." Here: "every app that exists has a
+  file." That gate has already caught a real gap.
 
 **A second app is a sibling folder under `apps/` plus one `defineMockApp`.**
 Not a change to the kit, and not a change to the host. That is the whole reason
@@ -111,9 +121,9 @@ That is why `MOCK_APPS` exists and why the harness switches apps: the point of
 having more than one folder is to put the base and a redesign side by side and
 flip between them.
 
-A redesign folder declares which design it belongs to in its `mockup.yaml`
-(`design.name` and the `run_id` it was redesigned against). The base leaves
-`run_id` empty — it belongs to no run, it is what they all start from.
+A redesign folder carries its own `layout_brief.yaml` naming the design it was
+made for. The base's names the base — it belongs to no run, and it is what
+every fork starts from.
 
 ## Assets, not screens
 
