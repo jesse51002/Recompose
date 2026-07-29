@@ -19,16 +19,16 @@ import yaml
 from fastapi.testclient import TestClient
 
 from ThemeTree.executor.progress_event import ProgressEvent, ProgressEventKind
-from ThemeTree.studio.config import settings
-from ThemeTree.studio.main import app
-from ThemeTree.studio.service import brief_service as brief_service_module
-from ThemeTree.studio.service import run_launcher as run_launcher_module
-from ThemeTree.studio.service import run_reader as run_reader_module
-from ThemeTree.studio.service import run_registry as run_registry_module
-from ThemeTree.studio.service.brief_service import BriefService
-from ThemeTree.studio.service.run_launcher import RunLauncher
-from ThemeTree.studio.service.run_reader import RunReader
-from ThemeTree.studio.service.run_registry import RunRegistry
+from RecomposeAPI.studio.config import settings
+from RecomposeAPI.main import app
+from RecomposeAPI.studio.service import brief_service as brief_service_module
+from RecomposeAPI.studio.service import run_launcher as run_launcher_module
+from RecomposeAPI.studio.service import run_reader as run_reader_module
+from RecomposeAPI.studio.service import run_registry as run_registry_module
+from RecomposeAPI.studio.service.brief_service import BriefService
+from RecomposeAPI.studio.service.run_launcher import RunLauncher
+from RecomposeAPI.studio.service.run_reader import RunReader
+from RecomposeAPI.studio.service.run_registry import RunRegistry
 
 FIXTURE_APP_YAML = (
     Path(__file__).resolve().parent / "data" / "apps" / "demo" / "app.yaml"

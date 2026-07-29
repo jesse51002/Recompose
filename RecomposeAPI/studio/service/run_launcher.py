@@ -23,12 +23,12 @@ from ThemeTree.core.run_context import APP_FILENAME, RunContext
 from ThemeTree.core.util import load_yaml
 from ThemeTree.executor.orchestrator import Pipeline, PipelineResult
 from ThemeTree.executor.writer import Writer
-from ThemeTree.studio.config import settings
-from ThemeTree.studio.errors import RunNameTakenError, UnknownAppError
-from ThemeTree.studio.schema.launch_request import LaunchAccepted, LaunchRequest
-from ThemeTree.studio.schema.run_status import RunStatus
-from ThemeTree.studio.service.brief_service import BriefService, brief_service
-from ThemeTree.studio.service.run_registry import RunRegistry, run_registry
+from RecomposeAPI.studio.config import settings
+from RecomposeAPI.studio.errors import RunNameTakenError, UnknownAppError
+from RecomposeAPI.studio.schema.launch_request import LaunchAccepted, LaunchRequest
+from RecomposeAPI.studio.schema.run_status import RunStatus
+from RecomposeAPI.studio.service.brief_service import BriefService, brief_service
+from RecomposeAPI.studio.service.run_registry import RunRegistry, run_registry
 
 logger = logging.getLogger(__name__)
 

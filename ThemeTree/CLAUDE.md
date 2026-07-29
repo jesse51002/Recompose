@@ -1,6 +1,6 @@
 # ThemeTree — Coding Standards
 
-The Python pipeline: the dependency DAG that turns two YAMLs into a resolved `output.yaml`, plus `ThemeTree/studio/` (the local-only run-orchestration API). See `../README.md` for the monorepo map and `README.md` for what the pipeline does.
+The Python pipeline: the dependency DAG that turns two YAMLs into a resolved `output.yaml`, the studio API that drives it lives in `../RecomposeAPI/studio/`. See `../README.md` for the monorepo map and `README.md` for what the pipeline does.
 
 ---
 
@@ -146,7 +146,7 @@ only makes sense for one app, push back — it belongs in YAML.
 
 Every service and module method is `async`. The pipeline core is provider- and
 transport-agnostic; the CLI (`ThemeTree/cli.py`) and the studio app
-(`ThemeTree/studio/`, see below) are two entrypoints over the same async core. Do
+(`../RecomposeAPI/studio/`) are two entrypoints over the same async core. Do
 not introduce blocking I/O — use async clients (`litellm.acompletion` /
 `litellm.aimage_generation`) and `await` everything. Keep modules
 independently awaitable so they can be gathered concurrently later without a
@@ -346,57 +346,35 @@ breakage the `.venv/bin/*` scripts hit when this package was renamed.
 
 ---
 
-## Two FastAPI apps, and why they are separate
+## One FastAPI app, and where it lives
 
-- **`RecomposeAPI/`** — the read-only output API. Deployed (App Runner, :8001
-  locally). Serves *finished* runs.
-- **`ThemeTree/studio/`** — the local launch surface. `make studio`, bound to
-  **127.0.0.1:8002**, never deployed. Writes a brief, starts a run, streams
-  its progress.
+`RecomposeAPI/` serves both halves: the read side over a produced `output.yaml`,
+and `RecomposeAPI/studio/` — author a brief, launch a run, watch it, hold a
+design session. **The studio used to live here in `ThemeTree/studio/` and does
+not any more** (moved 2026-07-29): starting a run is an API request like any
+other, so it belongs with the API rather than inside the library it drives.
 
-**Never merge the studio into `RecomposeAPI/`.** Both `Settings` classes
-instantiate at import time, and `RecomposeAPI/config.py` deliberately needs only
-`APPS_ROOT` / `CORS_ORIGINS` / `ASSETS_CDN_BASE_URL` / `GOOGLE_FONTS_API_KEY`
-— `RecomposeAPI/` **never imports `src.core.config`**, which is exactly what lets
-the deployed container boot without the four provider keys. Importing the
-pipeline into the read API destroys that property. The studio imports the
-pipeline freely; it runs on a laptop that has the keys.
+That move deleted a rule this file used to carry — *never merge the studio into
+`RecomposeAPI/`*, on the argument that a deployed read API must boot without
+provider keys. The merge was made deliberately, knowing the cost: the API now
+imports the pipeline, so all four provider keys are required at import time.
 
-Rules that hold inside `ThemeTree/studio/`:
+What still matters **here**, in the pipeline:
 
-- **Nothing wire-shaped leaks down.** The studio owns SSE framing, JSONL,
-  HTTP status mapping; the executor owns `ProgressEvent`. Anything
-  transport-flavoured belongs here, never in `ThemeTree/executor/`.
-- **State lives in `.studio/`, never in a run directory.** One append-only
-  `.studio/runs/<run_id>.jsonl` per launch, one `.studio/sessions/<id>.jsonl`
-  per design, and committed briefs under `.studio/briefs/`. Writing anything
-  into `apps/<app_id>/<run_id>/` would break the iron-clad rule above.
-  `.studio/` is gitignored.
+- **Nothing wire-shaped leaks down.** The studio owns SSE framing, JSONL and
+  HTTP status mapping; the executor owns `ProgressEvent` and `on_partial`.
+  Anything transport-flavoured belongs in `RecomposeAPI/`, never in
+  `ThemeTree/executor/`. This is the rule the move did NOT change, and the
+  reason the executor did not have to be touched to make it.
+- **The studio's state lives in `.studio/`, never in a run directory** — one
+  append-only `.studio/runs/<run_id>.jsonl` per launch, one
+  `.studio/sessions/<id>.jsonl` per design, briefs under `.studio/briefs/`.
+  Writing into `apps/<app_id>/<run_id>/` would break the iron-clad rule above.
 
-### Sessions and runs are different units
+Everything else about the studio — sessions, the single-run gate, the launch
+path's create-only rule — is documented in `../RecomposeAPI/CLAUDE.md`, beside
+the code.
 
-A **run** is one pipeline launch. A **session** is one design being made end to
-end — the interview, the asset run, the layout brief, the layout agent. A
-session starts runs; both are independently watchable, which is why
-`session_router.py` sits *beside* `run_router.py` rather than wrapping it.
-
-- **Per-node progress never crosses over.** A session's `task` record names its
-  `run_id` and the browser attaches `/runs/{id}/events` to it. Re-emitting
-  twenty-three nodes into a second stream would create two places that can
-  disagree about what one run is doing.
-- **A session is settled by a person, a run by the executor.** The work
-  stopping is not what makes a design done — approving it is. That difference
-  is why `SessionRegistry` is a sibling of `RunRegistry` rather than a
-  generalisation of it. They are near-copies on purpose; extract only if they
-  start converging, not because they look alike.
-- **The studio is no longer stateless.** `POST /brief-agent` still is — the
-  client holds that transcript and posts it back each turn — but a session is
-  held by the server, because two background tasks emit events for an hour with
-  nobody asking, and a page reloaded mid-run must come back to the same
-  conversation. Read `agent_turn.py`'s stateless claim as scoped to that one
-  endpoint.
-- **One session at a time**, for the reason runs are serialized *and* because a
-  session owns the single run slot for its whole length.
 - **The launch path only ever CREATES a run directory.** A name collision is
   refused, never re-run in place — that keeps
   `Pipeline._overwrite_existing`'s delete path unreachable from a browser.

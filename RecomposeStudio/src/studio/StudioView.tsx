@@ -25,10 +25,11 @@
 //   fixed by the sibling views and the content is fully enumerated.
 // ───────────────────────────────────────────────────────────────────────────
 //
-// It talks to a LOCAL-ONLY FastAPI app (`ThemeService/src/studio/`, 127.0.0.1
-// :8002), deliberately separate from the read API on :8001 — the read API is
-// deployed and boots without any provider keys, which is a property importing
-// the pipeline into it would destroy. Progress arrives over server-sent events
+// It talks to `RecomposeAPI/studio/` — the WRITE half of the API on :8001,
+// the same service that serves the read side. They were separate apps until
+// 2026-07-29, split so the deployed read API could boot without provider keys;
+// launching a run is an API request like any other, so they are one service now
+// and the whole thing needs the keys. Progress arrives over server-sent events
 // that REPLAY FROM THE FIRST EVENT on connect, so opening this view late still
 // shows the whole run.
 

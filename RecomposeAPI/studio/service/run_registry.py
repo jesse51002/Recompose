@@ -39,11 +39,11 @@ from pydantic import ValidationError
 
 from ThemeTree.executor.progress_event import ProgressEvent
 from ThemeTree.executor.progress_sink import ProgressSink
-from ThemeTree.studio.config import RUN_LOG_SUFFIX, settings
-from ThemeTree.studio.errors import RunInFlightError, UnknownRunError
-from ThemeTree.studio.schema.run_record import RunRecord, RunRecordKind
-from ThemeTree.studio.schema.run_snapshot import RunSnapshot
-from ThemeTree.studio.schema.run_status import RunStatus
+from RecomposeAPI.studio.config import RUN_LOG_SUFFIX, settings
+from RecomposeAPI.studio.errors import RunInFlightError, UnknownRunError
+from RecomposeAPI.studio.schema.run_record import RunRecord, RunRecordKind
+from RecomposeAPI.studio.schema.run_snapshot import RunSnapshot
+from RecomposeAPI.studio.schema.run_status import RunStatus
 
 logger = logging.getLogger(__name__)
 

@@ -1,28 +1,27 @@
-// Where the GENERATION STUDIO lives.
+// Where the STUDIO half of the API lives.
 //
-// The studio is a THIRD backend, and it is deliberately not in
-// `../../lib/config.ts` alongside the other two. That module belongs to the
-// published library — `src/lib/` is the app-agnostic runtime a consumer
-// installs, and the studio is a local-only laptop tool that starts paid
-// pipeline runs (`ThemeService/src/studio/`, bound to 127.0.0.1:8002 and never
-// deployed). Teaching the shipped runtime about it would put a base URL in the
-// bundle for a server no consumer can reach.
+// Since 2026-07-29 that is the SAME service as the read API: launching a run
+// is an API request like any other, so `RecomposeAPI` serves both halves on one
+// port. This module survives the merge rather than being deleted into
+// `src/lib/config.ts` because the two are still different AUDIENCES — the read
+// half is what a shipped client consumes, this half is a local authoring tool —
+// and a separate override lets you point the studio at a different host without
+// moving the whole runtime with it.
 //
-// So this file mirrors that module's LADDER rather than importing it: explicit
-// override → Vite env var → default. Same three steps, same empty-string rule,
-// same trailing-slash normalisation — see `src/lib/config.ts`, which is the
-// pattern of record.
+// It mirrors that module's LADDER rather than importing it: explicit override →
+// Vite env var → default. Same three steps, same empty-string rule, same
+// trailing-slash normalisation.
 
 /**
- * `ThemeService/Makefile`'s `studio` target:
- * `uvicorn src.studio.main:app --host 127.0.0.1 --port 8002`.
+ * `RecomposeAPI/Makefile`'s `dev` target:
+ * `uvicorn RecomposeAPI.main:app --host 0.0.0.0 --port 8001`.
  *
- * 127.0.0.1 rather than `localhost` on purpose. The studio binds the loopback
- * ADDRESS, and its own CORS allowlist (`src/studio/config.py`) names both
- * `http://localhost:8080` and `http://127.0.0.1:8080` because those are two
- * different browser origins — this file resolves the other half of that pair.
+ * 8001, not 8002 — the studio no longer has a port of its own. It bound
+ * loopback while it was a separate app; the merged service binds 0.0.0.0 so
+ * the Flutter emulator can reach it, which also means POST /runs is reachable
+ * from the local network until there is auth.
  */
-const DEFAULT_STUDIO_BASE_URL = 'http://127.0.0.1:8002';
+const DEFAULT_STUDIO_BASE_URL = 'http://127.0.0.1:8001';
 
 /** Trailing slashes make every joined path double-slashed. Strip them once. */
 function normalise(url: string): string {
@@ -48,7 +47,7 @@ function present(value: string | undefined): string | undefined {
   return value !== undefined && value !== '' ? value : undefined;
 }
 
-/** The studio's base URL. Local: `cd ThemeService && make studio`. */
+/** The studio's base URL. Local: `make -C RecomposeAPI dev`. */
 export function resolveStudioBaseUrl(override?: string): string {
   return normalise(
     present(override) ?? viteEnv('VITE_STUDIO_BASE_URL') ?? DEFAULT_STUDIO_BASE_URL,

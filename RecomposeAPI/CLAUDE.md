@@ -5,22 +5,78 @@
 > FastAPI, Python and project-structure standards carried; every CombatDen domain
 > section did not — payment sync, memberships, ranks, videos, uploads, the member
 > portal, computed-status views, and the database patterns. **RecomposeAPI has no
-> database.** It is a read-only API over the `output.yaml` a pipeline run produced,
-> with assets served from a CDN. If a rule below assumes a DB or a write path,
-> it is a porting error — fix it here rather than working around it.
+> database.** It serves the `output.yaml` a pipeline run produced, and since
+> 2026-07-29 it also LAUNCHES those runs (`studio/`). If a rule below assumes a
+> DB it is a porting error; rules that assume no write path are simply out of
+> date — fix them here rather than working around them.
 
 ## What this service is
 
-`RecomposeAPI/` is the **read-only** API: it serves the theme catalog and the
-per-run design detail (`output.yaml`) over a GET-only FastAPI. Image and icon
-bytes come from S3/CloudFront, not from here.
+`RecomposeAPI/` is the Recompose API, and it has **two halves in one app**:
 
-It is one of two Python surfaces in this repo and the only one that ships:
+- **read** (`output_router.py`, `service/`, `schema/`) — the theme catalog and
+  per-run design detail from a produced `output.yaml`. GET only. This is what
+  the Flutter and React runtimes consume.
+- **write** (`studio/`) — author a brief, launch a pipeline run, stream it, hold
+  a design session. POST and SSE. This is what the browser studio talks to.
 
-- **`RecomposeAPI/`** — read-only, deployed. This file governs it.
-- **`ThemeTree/studio/`** — the local-only run-orchestration API (`make studio`,
-  127.0.0.1:8002). It spends real money per launch and is deliberately not
-  deployed. It follows the same standards but has its own risk profile.
+**The write half moved here from `ThemeTree/studio/` on 2026-07-29.** It was a
+separate app on `127.0.0.1:8002`, split from this one so a deployed read API
+could boot without provider keys. That split is gone: starting a run is an API
+request like any other.
+
+**None of it is a long request.** `POST /runs` registers the run and returns 202
+in milliseconds; the pipeline runs as a background task and the client polls
+`GET /runs/{id}` or streams `/runs/{id}/events`. The eventual move is that
+background task out of the web process into a real worker — which changes where
+the work runs, not the shape of the request.
+
+**Two consequences, both deliberate:**
+
+1. **This process imports the pipeline**, so `ThemeTree.core.config` loads at
+   import time and all four provider keys (Anthropic, Gemini, OpenAI, Recraft)
+   are required. There is no longer a configuration that boots on
+   `GOOGLE_FONTS_API_KEY` alone. A rule in `../ThemeTree/CLAUDE.md` used to
+   forbid exactly this; it was removed with the merge rather than worked around.
+2. **`POST /runs` returns at once but sets ~20 minutes of work and about a
+   dollar of spend going**, and the app binds `0.0.0.0` so the emulator can
+   reach it. Until there is auth, the bind address is the only thing limiting
+   who can start a run. CORS binds browsers only and stops nothing else.
+
+### Rules that hold inside `studio/`
+
+- **Nothing wire-shaped leaks down.** This half owns SSE framing, JSONL and HTTP
+  status mapping; `ThemeTree/executor/` owns `ProgressEvent` and `on_partial`.
+  Anything transport-flavoured belongs here, never in the pipeline.
+- **State lives in `.studio/`, never in a run directory** — `.studio/runs/<id>.jsonl`
+  per launch, `.studio/sessions/<id>.jsonl` per design, briefs under
+  `.studio/briefs/`. Writing into `apps/<app_id>/<run_id>/` would break the
+  pipeline's iron-clad no-hand-edits rule. `.studio/` is gitignored.
+- **The launch path only ever CREATES a run directory.** A name collision is
+  refused, never re-run in place, so `Pipeline._overwrite_existing`'s delete
+  path is unreachable from a browser.
+- **One run at a time and one session at a time**, refused with 409 rather than
+  queued: the providers rate-limit, and a session owns the run slot for its
+  whole length.
+
+### Sessions and runs are different units
+
+A **run** is one pipeline launch. A **session** is one design end to end — the
+interview, the asset run, the layout brief, the layout agent. A session starts
+runs; both are independently watchable, which is why `session_router.py` sits
+*beside* `run_router.py` rather than wrapping it.
+
+- **Per-node progress never crosses over.** A session's `task` record names its
+  `run_id` and the browser attaches `/runs/{id}/events` to it. Re-emitting
+  twenty-three nodes into a second stream would be two places that can disagree
+  about one run.
+- **A session is settled by a person, a run by the executor.** The work stopping
+  is not what makes a design done — approving it is. That is why `SessionRegistry`
+  is a sibling of `RunRegistry` rather than a generalisation of it. They are
+  near-copies on purpose; extract only if they converge.
+- **`POST /brief-agent` is still stateless** — the client holds that transcript
+  and posts it back each turn. A session is not. Read `agent_turn.py`'s
+  stateless claim as scoped to that one endpoint.
 
 ## No assumptions
 
@@ -559,19 +615,27 @@ src/
 
 ## Security
 
-RecomposeAPI has **no database, no user accounts and no write path.** The entire
-CombatDen auth chapter (Supabase Auth, JWT role sets, RLS, `gym_employees`,
-GoTrue's auto-confirm guard) was dropped in the port because none of it applies.
-If you find yourself reaching for any of it, stop — you are probably adding a
-write path to a service whose whole safety story is that it has none.
+RecomposeAPI has **no database and no user accounts.** The entire CombatDen auth
+chapter (Supabase Auth, JWT role sets, RLS, `gym_employees`, GoTrue's
+auto-confirm guard) was dropped in the port because none of it applies.
+
+**It does have a write path**, and since 2026-07-29 that path is in this
+service: `studio/` starts pipeline runs. The old "GET only, adding a non-GET
+route is an architecture change" rule described a service that no longer exists.
 
 **The actual surface**
-- **GET only.** Adding a non-GET route to this service is an architecture change,
-  not a feature. It needs a decision recorded before the code.
+- **The read half stays GET-only.** Adding a non-GET route to `output_router`
+  is still an architecture change, not a feature.
+- **The write half spends money.** `POST /runs` answers immediately and leaves
+  ~20 minutes and ~$1 of work running behind it. There is
+  **no auth on it yet** — the bind address is the whole control. That is
+  acceptable for a laptop tool and is not acceptable once this is deployed;
+  auth is the prerequisite for deploying, not a follow-up.
 - **No secrets are served.** The service reads a run's `output.yaml` and emits
-  metadata plus CDN URLs. Asset bytes come from S3/CloudFront, never from here.
-- **`GOOGLE_FONTS_API_KEY`** is the one credential, injected at runtime by the
-  host and never baked into an image.
+  metadata plus asset URLs.
+- **Five credentials now**, not one: `GOOGLE_FONTS_API_KEY` plus the four
+  provider keys the pipeline needs. Injected at runtime, never baked into an
+  image.
 
 **Input validation**
 - Always validate with Pydantic; a route's schema is its contract.

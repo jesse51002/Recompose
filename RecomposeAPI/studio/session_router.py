@@ -28,14 +28,14 @@ from collections.abc import AsyncIterator
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import StreamingResponse
 
-from ThemeTree.studio.errors import SessionInFlightError, UnknownSessionError
-from ThemeTree.studio.schema.session_open import (
+from RecomposeAPI.studio.errors import SessionInFlightError, UnknownSessionError
+from RecomposeAPI.studio.schema.session_open import (
     SessionOpened,
     SessionTurn,
     StartSession,
 )
-from ThemeTree.studio.schema.session_snapshot import SessionSnapshot
-from ThemeTree.studio.service.session_registry import session_registry
+from RecomposeAPI.studio.schema.session_snapshot import SessionSnapshot
+from RecomposeAPI.studio.service.session_registry import session_registry
 
 logger = logging.getLogger(__name__)
 

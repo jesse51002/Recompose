@@ -27,18 +27,18 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import ValidationError
 
-from ThemeTree.studio.errors import (
+from RecomposeAPI.studio.errors import (
     RunInFlightError,
     RunNameTakenError,
     UnknownAppError,
     UnknownBriefError,
     UnknownRunError,
 )
-from ThemeTree.studio.schema.launch_request import LaunchAccepted, LaunchRequest
-from ThemeTree.studio.schema.run_snapshot import RunSnapshot
-from ThemeTree.studio.service.run_launcher import run_launcher
-from ThemeTree.studio.service.run_registry import run_registry
-from ThemeTree.studio.service.run_reader import run_reader
+from RecomposeAPI.studio.schema.launch_request import LaunchAccepted, LaunchRequest
+from RecomposeAPI.studio.schema.run_snapshot import RunSnapshot
+from RecomposeAPI.studio.service.run_launcher import run_launcher
+from RecomposeAPI.studio.service.run_registry import run_registry
+from RecomposeAPI.studio.service.run_reader import run_reader
 
 logger = logging.getLogger(__name__)
 

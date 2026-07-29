@@ -32,8 +32,8 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict
 
 from schema import Customization
-from ThemeTree.studio.schema.agent_output import AgentQuestion
-from ThemeTree.studio.schema.layout_brief import LayoutBrief
+from RecomposeAPI.studio.schema.agent_output import AgentQuestion
+from RecomposeAPI.studio.schema.layout_brief import LayoutBrief
 
 
 class SessionRecordKind(str, enum.Enum):

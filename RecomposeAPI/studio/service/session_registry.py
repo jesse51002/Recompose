@@ -36,15 +36,15 @@ from uuid import uuid4
 
 from pydantic import ValidationError
 
-from ThemeTree.studio.config import RUN_LOG_SUFFIX, settings
-from ThemeTree.studio.errors import SessionInFlightError, UnknownSessionError
-from ThemeTree.studio.schema.run_status import RunStatus
-from ThemeTree.studio.schema.session_record import (
+from RecomposeAPI.studio.config import RUN_LOG_SUFFIX, settings
+from RecomposeAPI.studio.errors import SessionInFlightError, UnknownSessionError
+from RecomposeAPI.studio.schema.run_status import RunStatus
+from RecomposeAPI.studio.schema.session_record import (
     SessionPhase,
     SessionRecord,
     SessionRecordKind,
 )
-from ThemeTree.studio.schema.session_snapshot import SessionSnapshot
+from RecomposeAPI.studio.schema.session_snapshot import SessionSnapshot
 
 logger = logging.getLogger(__name__)
 

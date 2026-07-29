@@ -28,7 +28,7 @@ import enum
 from pydantic import BaseModel, ConfigDict
 
 from ThemeTree.executor.progress_event import ProgressEvent
-from ThemeTree.studio.schema.run_status import RunStatus
+from RecomposeAPI.studio.schema.run_status import RunStatus
 
 
 class RunRecordKind(str, enum.Enum):

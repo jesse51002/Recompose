@@ -10,8 +10,8 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict
 
-from ThemeTree.studio.schema.run_status import RunStatus
-from ThemeTree.studio.schema.session_record import SessionPhase, SessionRecord
+from RecomposeAPI.studio.schema.run_status import RunStatus
+from RecomposeAPI.studio.schema.session_record import SessionPhase, SessionRecord
 
 
 class SessionSnapshot(BaseModel):

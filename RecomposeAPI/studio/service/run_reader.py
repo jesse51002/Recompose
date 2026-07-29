@@ -24,9 +24,9 @@ import re
 from pathlib import Path
 
 from ThemeTree.core.run_context import FINAL_IMAGES_DIRNAME
-from ThemeTree.studio.config import settings
-from ThemeTree.studio.errors import UnknownRunError
-from ThemeTree.studio.service.run_registry import RunRegistry, run_registry
+from RecomposeAPI.studio.config import settings
+from RecomposeAPI.studio.errors import UnknownRunError
+from RecomposeAPI.studio.service.run_registry import RunRegistry, run_registry
 
 logger = logging.getLogger(__name__)
 

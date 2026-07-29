@@ -15,15 +15,15 @@ from typing import Any
 import pytest
 from fastapi.testclient import TestClient
 
-from ThemeTree.studio.config import settings
-from ThemeTree.studio.main import app
-from ThemeTree.studio.schema.session_record import (
+from RecomposeAPI.studio.config import settings
+from RecomposeAPI.main import app
+from RecomposeAPI.studio.schema.session_record import (
     SessionPhase,
     SessionRecord,
     SessionRecordKind,
 )
-from ThemeTree.studio.service import session_registry as session_registry_module
-from ThemeTree.studio.service.session_registry import SessionRegistry
+from RecomposeAPI.studio.service import session_registry as session_registry_module
+from RecomposeAPI.studio.service.session_registry import SessionRegistry
 
 APP = "demo"
 DESIGN = "Stillwater Pilates"

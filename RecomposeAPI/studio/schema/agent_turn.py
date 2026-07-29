@@ -28,8 +28,8 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, model_validator
 
 from schema import Customization, PathSegment
-from ThemeTree.studio.schema.agent_output import AgentQuestion
-from ThemeTree.studio.schema.brief_request import BriefCommitted
+from RecomposeAPI.studio.schema.agent_output import AgentQuestion
+from RecomposeAPI.studio.schema.brief_request import BriefCommitted
 
 
 class AgentTurnRequest(BaseModel):

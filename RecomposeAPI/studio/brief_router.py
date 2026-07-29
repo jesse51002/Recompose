@@ -13,8 +13,8 @@ import logging
 from fastapi import APIRouter, HTTPException, status
 from pydantic import ValidationError
 
-from ThemeTree.studio.schema.brief_request import BriefCommitted, BriefRequest
-from ThemeTree.studio.service.brief_service import brief_service
+from RecomposeAPI.studio.schema.brief_request import BriefCommitted, BriefRequest
+from RecomposeAPI.studio.service.brief_service import brief_service
 
 logger = logging.getLogger(__name__)
 

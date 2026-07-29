@@ -27,9 +27,9 @@ import yaml
 
 from schema import Customization
 from ThemeTree.core.util import load_yaml
-from ThemeTree.studio.config import BRIEF_SUFFIX, settings
-from ThemeTree.studio.errors import UnknownBriefError
-from ThemeTree.studio.schema.brief_request import BriefCommitted, BriefRequest
+from RecomposeAPI.studio.config import BRIEF_SUFFIX, settings
+from RecomposeAPI.studio.errors import UnknownBriefError
+from RecomposeAPI.studio.schema.brief_request import BriefCommitted, BriefRequest
 
 logger = logging.getLogger(__name__)
 

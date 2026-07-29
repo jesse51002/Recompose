@@ -440,7 +440,7 @@ function Refusal({
     return (
       <p className={styles.refusal} role="alert">
         The studio is not running. Start it with <code>cd ThemeService &amp;&amp; make studio</code>
-        {' '}— it binds 127.0.0.1:8002 and is never deployed, because every launch spends real
+        {' '}— every launch spends real
         money.
       </p>
     );

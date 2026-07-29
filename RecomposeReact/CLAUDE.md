@@ -293,7 +293,8 @@ zero-backend-change frontend; don't "fix" the port.
   Deployed. Every view needs it.
 - **`:8000` — FastApiBackend.** One public call, `showcase-defaults`, for the
   phone preview's demo classes and rewards.
-- **`:8002` — the engine's STUDIO** (`cd .. && make studio`), bound to
+- **`:8001` — the engine's STUDIO half** (`make -C RecomposeAPI dev`), served by
+  the same app as the read API since 2026-07-29. Formerly `:8002`, bound to
   127.0.0.1 and never deployed. Only `?view=studio` talks to it: launch a run,
   stream its progress, read a finished image mid-run.
 

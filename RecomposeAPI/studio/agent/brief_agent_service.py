@@ -30,15 +30,15 @@ from pydantic_ai.providers.anthropic import AnthropicProvider
 
 from schema import Customization, PathSegment
 from ThemeTree.core.config import settings as pipeline_settings
-from ThemeTree.studio.config import settings
-from ThemeTree.studio.schema.agent_output import (
+from RecomposeAPI.studio.config import settings
+from RecomposeAPI.studio.schema.agent_output import (
     AgentQuestion,
     BriefAgentOutput,
     BriefProposal,
 )
-from ThemeTree.studio.schema.agent_turn import AgentTurnRequest, AgentTurnResponse
-from ThemeTree.studio.schema.brief_request import BriefCommitted, BriefRequest
-from ThemeTree.studio.service.brief_service import BriefService, brief_service
+from RecomposeAPI.studio.schema.agent_turn import AgentTurnRequest, AgentTurnResponse
+from RecomposeAPI.studio.schema.brief_request import BriefCommitted, BriefRequest
+from RecomposeAPI.studio.service.brief_service import BriefService, brief_service
 
 logger = logging.getLogger(__name__)
 

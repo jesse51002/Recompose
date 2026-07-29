@@ -1,6 +1,6 @@
 """studio — the local launch surface: start a run, watch it happen.
 
-A LOCAL-ONLY FastAPI app (127.0.0.1:8002, `make studio`), separate from the
+The WRITE half of `RecomposeAPI` (`make -C RecomposeAPI dev`), beside the
 read-only output API in `RecomposeAPI/`. It writes a brand brief, launches a
 pipeline run, and streams that run's progress to a browser.
 

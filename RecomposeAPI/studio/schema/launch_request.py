@@ -11,7 +11,7 @@ from __future__ import annotations
 from pydantic import BaseModel, ConfigDict, model_validator
 
 from schema import Customization, PathSegment
-from ThemeTree.studio.schema.run_status import RunStatus
+from RecomposeAPI.studio.schema.run_status import RunStatus
 
 
 class LaunchRequest(BaseModel):

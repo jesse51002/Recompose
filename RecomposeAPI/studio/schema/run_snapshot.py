@@ -10,8 +10,8 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict
 
-from ThemeTree.studio.schema.run_record import RunRecord
-from ThemeTree.studio.schema.run_status import RunStatus
+from RecomposeAPI.studio.schema.run_record import RunRecord
+from RecomposeAPI.studio.schema.run_status import RunStatus
 
 
 class RunSnapshot(BaseModel):

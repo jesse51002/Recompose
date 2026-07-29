@@ -19,8 +19,8 @@ import logging
 from fastapi import APIRouter, HTTPException, status
 from pydantic import ValidationError
 
-from ThemeTree.studio.agent.brief_agent_service import brief_agent_service
-from ThemeTree.studio.schema.agent_turn import AgentTurnRequest, AgentTurnResponse
+from RecomposeAPI.studio.agent.brief_agent_service import brief_agent_service
+from RecomposeAPI.studio.schema.agent_turn import AgentTurnRequest, AgentTurnResponse
 
 logger = logging.getLogger(__name__)
 
