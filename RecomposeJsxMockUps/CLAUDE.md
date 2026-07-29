@@ -117,7 +117,7 @@ a vocabulary, you are rebuilding what was deliberately removed.
 
 ## Looking at it: `npm run dev`
 
-`npm run dev` serves the harness in `dev/` on **:8081** — an asset switcher, a
+`make dev` (or `npm run dev`) serves the harness in `dev/` on **:8081** — an asset switcher, a
 phone-shaped box, and nothing else. `?asset=celebration` deep-links, so a reload
 lands back where you were instead of making you click through the flow again.
 
