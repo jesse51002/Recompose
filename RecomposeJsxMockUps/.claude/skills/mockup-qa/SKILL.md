@@ -118,6 +118,44 @@ and confirm tapping the card skips to settled.
 
 ---
 
+## Pass 2b — nothing overflows the screen, and centred things are centred
+
+An element wider than the phone does not clip or wrap — it runs off the right
+edge, and everything inside it stops being centred. It reads as "the layout is
+slightly off" rather than as a broken box, so it survives review easily.
+
+Run this on **every** screen. It compares each direct descendant of the asset
+root against the phone frame and reports anything hanging over an edge or
+sitting off-centre:
+
+```bash
+$B js "(()=>{const st=document.querySelector('[class*=phone]').getBoundingClientRect();
+const bad=[];
+document.querySelectorAll('[class*=topbar],[class*=nav],header,footer,[class*=screen]>*').forEach(e=>{
+  const r=e.getBoundingClientRect(); if(r.width<40) return;
+  const L=Math.round(r.left-st.left), R=Math.round(st.right-r.right);
+  if(L<-1||R<-1||Math.abs(L-R)>2) bad.push({cls:e.className.slice(0,32),L,R});});
+return JSON.stringify(bad.slice(0,10));})()"
+```
+
+A negative `L` or `R` is an overflow. `L` and `R` that differ on something meant
+to be full-width or centred is the same bug seen from the other side.
+
+**The cause is almost always `box-sizing`.** This package has **no global
+`border-box` reset**, so a rule like `width: 100%` (or a literal `390px`) plus
+horizontal padding computes *wider than its parent* — silently, and by exactly
+twice the padding. Widening a gutter is therefore enough to turn an invisible
+1px overhang into an obvious one.
+
+Two places this is live today: the topbar overflows on both the base and its
+forks (the base by 4px at 8px padding, a fork by 33px at 24px), and
+`celebrations/CelebrationFrame.module.css` has the same shape wherever a layout
+other than `centerHero` is selected. Fix it at the element with
+`box-sizing: border-box`, and check its siblings — one file with the bug usually
+means the whole surface was written the same way.
+
+---
+
 ## Pass 3 — every transition, in both directions
 
 Walk the app's transition table. For each row: perform the trigger, confirm you

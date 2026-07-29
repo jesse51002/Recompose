@@ -13,14 +13,20 @@ ever true of this subsystem:
 
 | skill | when |
 | --- | --- |
+| `mockup-redesign-start` | **first**, for any NEW design fork — commit to a direction before writing code |
 | `production-to-mockup` | porting a real app into a new mock |
 | `mockup-redesign-general` | editing any mock — the app-agnostic guardrails |
 | `mockup-redesign-combatden` | editing CombatDen's — its inventory and gotchas |
 | `mockup-qa` | the exhaustive live sweep, after any change |
 
 Load the general one plus the app's own whenever you touch a screen. They carry
-the failure modes `make check` cannot see, every one of which has shipped here
-at least once.
+the failure modes `make check` cannot see.
+
+**Creating a new design fork starts with `mockup-redesign-start`**, paired with
+the `impeccable` skill — the direction is decided and written to
+`layout_brief.yaml` before any file is opened. Guardrails alone produce a
+reskin, and a fork that reads as the base is the product failing to be the
+product.
 
 ## The island rule — the one that matters
 

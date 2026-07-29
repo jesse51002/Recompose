@@ -10,9 +10,20 @@ you click through, not a gallery of stills. This skill is the half that holds
 for **any** app. For which screens exist and how each one exits, load that app's
 skill too.
 
+> **Creating a NEW design fork?** Run **`mockup-redesign-start`** first, and
+> load **`impeccable`** with it. This skill is the safety rail: it tells you
+> what not to break. It does not tell you what to build, and guardrails alone
+> produce a reskin.
+
 **Read the invariant below first.** It is not one rule among nine — it is the
 property the product is sold on, and the guardrails exist to keep a redesign
 from breaking it by accident.
+
+**Read it as PERMISSION, not restriction.** It constrains what is *present and
+reachable* and says nothing about form. A bottom tab bar is the base's answer,
+not a requirement — a rail, a sheet, a pager or an overlay keeps the same
+destinations reachable. A schedule need not be rows. Cards are not mandatory.
+Obeying a constraint that was never there costs more here than breaking one.
 
 **The one thing to internalise:** every failure that has actually shipped here
 was invisible to `make check`. Typecheck, eslint and a full green suite passed
@@ -369,6 +380,28 @@ arrangement wanted more room rather than a smaller element.
 
 Screenshot it and decide. If you are unsure whether something reads correctly,
 that uncertainty is the finding — say so rather than shipping it quietly.
+
+## "Looks right" is the floor. "Is it a different app" is the bar
+
+Everything above keeps a redesign from looking broken. It does not make it a
+redesign. Recompose sells a **genuinely different app**, not a themed one, so
+the question that decides whether a fork was worth building is:
+
+> Shown a screenshot of the base and one of this fork, would someone say
+> *"same app, restyled"*?
+
+Answer it before reporting done, by running the four **anti-reskin tests** in
+`mockup-redesign-start` — side-by-side, skeleton, diff, origin — and report the
+result honestly.
+
+Two habits to avoid, both of which feel like diligence:
+
+- **Editing the base's files instead of deciding a world.** Open a
+  `.module.css` first and your ceiling is set before you start. Decide the
+  direction first; that is what `mockup-redesign-start` is for.
+- **Describing your work as a diff.** "The gutter opens to 1.5×, the heading
+  drops to an eyebrow" are adjustments to the incumbent, which means the
+  incumbent is still the frame. A redesign is describable as a different idea.
 
 ## Verification — run `mockup-qa`
 
