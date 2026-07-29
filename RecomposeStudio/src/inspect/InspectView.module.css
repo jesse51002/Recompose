@@ -7,12 +7,16 @@
  * shape on this sheet is a colour or an asset the pipeline produced.
  */
 
+/* The ground and ink are set INLINE from the theme's own `background` / `text`
+   roles (see ./InspectView.tsx) — this sheet is where the artifact is judged,
+   and a palette judged on the tool's ground is a palette judged wrong. */
 .view {
+  min-height: 100%;
+  padding: var(--adm-space-big) 28px 48px;
   display: grid;
   grid-template-columns: 190px minmax(0, 1fr);
   gap: var(--adm-space-big) 48px;
   align-items: start;
-  padding-top: var(--adm-space-big);
 }
 
 .railSlot {

@@ -40,7 +40,10 @@ import { useEffect } from 'react';
 import {
   fontStack,
   loadFontFamily,
+  rgba,
+  toCss,
   useActiveDesign,
+  useThemeColor,
   useThemeConfig,
   useThemeFontFamily,
 } from 'recompose-react';
@@ -106,6 +109,13 @@ const FORMAT_SURFACE: Readonly<Record<string, string>> = Object.freeze({
   celebration_format: 'The post-class cards',
 });
 
+/**
+ * The two colour roles `apps/<app>/app.yaml` declares for exactly this: the
+ * ground a design is judged on, and the ink it is judged in.
+ */
+const SLOT_BACKGROUND = 'background';
+const SLOT_TEXT = 'text';
+
 export function InspectView() {
   const config = useThemeConfig();
   const activeDesign = useActiveDesign();
@@ -114,6 +124,9 @@ export function InspectView() {
   // unproduced slot degrades to readable text instead of a named miss.
   const displayFont = useThemeFontFamily(SLOT_FONT_DISPLAY, '');
   const bodyFont = useThemeFontFamily(SLOT_FONT_BODY, '');
+  // The design's own ground and ink — see the note on the returned element.
+  const ground = toCss(useThemeColor(SLOT_BACKGROUND, { fallback: rgba(11, 14, 18) }));
+  const ink = toCss(useThemeColor(SLOT_TEXT, { fallback: rgba(232, 236, 242) }));
 
   useEffect(() => {
     loadFontFamily(MONO_FAMILY);
@@ -128,7 +141,21 @@ export function InspectView() {
   const rail = railEntries(artifact);
 
   return (
-    <div className={styles.view}>
+    // THE SHEET WEARS THE DESIGN'S OWN GROUND AND INK, not the tool's.
+    //
+    // Everywhere else in this app a generated colour is confined to the phone,
+    // because the chrome's hues mean states. The Inspect sheet is the one place
+    // the artifact is JUDGED, and judging a palette on someone else's ground is
+    // how a warm sand reads as grey and a dark theme reads as broken. So the
+    // two roles `app.yaml` declares for it — `background` and `text` — are
+    // applied here, and every plate below inherits them.
+    //
+    // Fallbacks are the shell's own dark, so an unresolved theme degrades to
+    // the surrounding chrome rather than to a white flash.
+    <div
+      className={styles.view}
+      style={{ background: ground, color: ink }}
+    >
       <div className={styles.railSlot}>
         <IndexRail entries={rail} reducedMotion={reducedMotion} />
       </div>
