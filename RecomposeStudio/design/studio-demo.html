@@ -5,7 +5,7 @@
 <title>Recompose Studio — clickable demo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,400;6..72,600&family=Petrona:wght@400;600&family=Archivo:wght@400;500;600&family=Karla:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@87..125,400..700&family=Sometype+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&family=Petrona:wght@400;600&family=Karla:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ===========================================================================
    RECOMPOSE STUDIO — clickable demo-ware. One file, no build, no server.
@@ -42,13 +42,23 @@
   --fail-wash: rgba(255,111,94,.11);
   --fail-line: rgba(255,111,94,.42);
 
-  --sans: 'Geist', ui-sans-serif, -apple-system, 'Segoe UI', system-ui, sans-serif;
-  --mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --sans: 'Archivo', ui-sans-serif, -apple-system, 'Segoe UI', system-ui, sans-serif;
+  --mono: 'Sometype Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
-  /* Six perceptible steps. Not a 1.25 modular scale on purpose: this is dense
-     tool UI and 10/12.5/15.6/19.5 would blow the density it exists for. */
-  --fs-micro: 9px; --fs-xs: 10.5px; --fs-sm: 12.5px;
-  --fs-md: 15px;   --fs-lg: 19px;   --fs-xl: 25px;
+  /* SEVEN STEPS, and the top one is a display size the old scale never had.
+     Still not a 1.25 modular ratio — this is dense tool UI and a strict ratio
+     would blow the density the DAG readout and the fleet table exist for. What
+     changed is that the ladder now reaches somewhere: 32px for page titles and
+     a real display size for the two moments that carry the argument. */
+  --fs-micro: 10px; --fs-xs: 11.5px; --fs-sm: 13.5px;
+  --fs-md: 16px;    --fs-lg: 22px;   --fs-xl: 32px;
+  --fs-display: clamp(38px, 4.4vw, 58px);
+
+  /* Tracking is a system now, not a per-rule guess. Display tightens as it
+     grows; mono labels open up because they are set in caps at 10px. */
+  --tr-display: -.035em;
+  --tr-title: -.025em;
+  --tr-label: .16em;
 }
 
 /* The generated theme — "Stillwater Pilates". Scoped: nothing outside .theme
@@ -63,6 +73,18 @@
   --t-line: rgba(42,35,32,.12);
   --t-display: 'Newsreader', Georgia, serif;
   --t-body: 'Karla', var(--sans);
+}
+
+/* One display treatment, used by the two moments that carry the argument:
+   the onboarding thesis and the tenant's approval. Expanded width plus tight
+   tracking is the whole idea — the face gets wider as it gets bigger. */
+.display {
+  font-family: var(--sans);
+  font-size: var(--fs-display);
+  font-variation-settings: 'wdth' 112;
+  font-weight: 700;
+  line-height: .98;
+  letter-spacing: var(--tr-display);
 }
 
 * { box-sizing: border-box; }
@@ -87,10 +109,10 @@ button { font-family: inherit; cursor: pointer; }
      customer sees; here the scaffolding has to stay reachable. */
   position: relative; z-index: 50;
 }
-.brand { display: flex; align-items: center; gap: 8px; font-weight: 600; letter-spacing: -.01em; }
+.brand { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: var(--fs-md); font-variation-settings: 'wdth' 104; letter-spacing: -.02em; }
 .brand i { width: 15px; height: 15px; border: 1.5px solid var(--ink); border-radius: 3px; transform: rotate(45deg); display: block; }
 .pov {
-  font: 500 var(--fs-micro)/1 var(--mono); letter-spacing: .11em; text-transform: uppercase;
+  font: 500 var(--fs-micro)/1 var(--mono); letter-spacing: var(--tr-label); text-transform: uppercase;
   border: 1px solid var(--sh-line-2); border-radius: 4px; padding: 5px 7px; color: var(--ink-3);
 }
 .pov.cust { border-color: var(--sh-line-3); color: var(--ink); }
@@ -107,10 +129,54 @@ button { font-family: inherit; cursor: pointer; }
 
 /* ═══ PAGE 1 — ONBOARD (admin) ═══════════════════════════════════════════ */
 
-#page-onboard { flex-direction: column; align-items: center; justify-content: center; gap: 0; padding: 40px; }
-.ob { width: 620px; max-width: 100%; }
+#page-onboard { flex-direction: column; align-items: center; justify-content: center; gap: 0; padding: 40px; position: relative; overflow: hidden; }
+
+/* A light drifting through the bay. Onboarding is the only page with no
+   generated theme on it, so colour here steals nothing from the product — and
+   a light finding colour in an otherwise achromatic shell is a picture of what
+   the engine is about to do.
+
+   It sits BEHIND the content on purpose. `screen` lightens what it touches,
+   which on a near-black ground would eat the contrast light body copy depends
+   on; behind the card it only ever glows through empty ground. */
+.beam {
+  position: absolute; top: 0; left: 0; z-index: 0; pointer-events: none;
+  width: 820px; height: 820px; margin: -410px 0 0 -410px;
+  mix-blend-mode: screen; filter: blur(78px) saturate(1.3); opacity: .34;
+  animation: drift 38s cubic-bezier(.42,0,.58,1) infinite;
+  will-change: transform;
+}
+.beam i {
+  display: block; width: 100%; height: 100%; border-radius: 50%;
+  background: conic-gradient(from 0deg,
+    #c2663b, #d9a441, #4f8f7a, #3e6ca8, #7b5ba8, #b8321f, #c2663b);
+  animation: spin 64s linear infinite;
+}
+@keyframes drift {
+  0%   { transform: translate(26vw, 34vh); }
+  22%  { transform: translate(70vw, 24vh); }
+  46%  { transform: translate(78vw, 70vh); }
+  70%  { transform: translate(30vw, 76vh); }
+  100% { transform: translate(26vw, 34vh); }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .beam { animation: none; transform: translate(62vw, 42vh); }
+  .beam i { animation: none; }
+}
+
+.ob { width: 620px; max-width: 100%; position: relative; z-index: 1; }
+/* The reading column keeps its own dark. The beam is allowed to own the field
+   around it, but body copy never has to compete with a moving light for the
+   4.5:1 it needs. */
+.ob::before {
+  content: ''; position: absolute; inset: -300px -520px; z-index: -1;
+  background: radial-gradient(ellipse 46% 42% at 50% 50%,
+    rgba(6,8,11,.93) 0%, rgba(6,8,11,.80) 40%, rgba(6,8,11,.42) 64%,
+    rgba(6,8,11,.14) 82%, transparent 100%);
+}
 .ob .kick { font: 500 var(--fs-micro)/1 var(--mono); letter-spacing: .13em; text-transform: uppercase; color: var(--ink-4); }
-.ob h1 { margin: 14px 0 10px; font: 600 32px/1.15 var(--sans); letter-spacing: -.03em; }
+.ob h1 { margin: 18px 0 12px; }
 .ob p { margin: 0 0 26px; font-size: var(--fs-md); line-height: 1.6; color: var(--ink-3); }
 .ob p b { color: var(--ink-2); font-weight: 500; }
 
@@ -132,7 +198,7 @@ button { font-family: inherit; cursor: pointer; }
 
 /* Step ribbon — three named steps, so nothing is glossed over. */
 .ribbon { display: flex; gap: 0; margin: 30px 0 20px; }
-.rstep { flex: 1; display: flex; align-items: center; gap: 10px; padding: 0 14px 14px 0; border-top: 2px solid var(--sh-line); padding-top: 12px; color: var(--ink-4); }
+.rstep { flex: 1; display: flex; align-items: center; gap: 10px; padding: 12px 14px 14px 0; border-top: 2px solid var(--sh-line-2); color: var(--ink-3); }
 .rstep.done { border-top-color: var(--ink-3); color: var(--ink-3); }
 .rstep.now { border-top-color: var(--ink); color: var(--ink); }
 .rstep .n { font: 500 var(--fs-micro)/1 var(--mono); letter-spacing: .1em; }
@@ -178,9 +244,9 @@ button { font-family: inherit; cursor: pointer; }
 
 .disclaim {
   margin-top: 34px; padding-top: 16px; border-top: 1px solid var(--sh-line);
-  font-size: var(--fs-xs); line-height: 1.7; color: var(--ink-4);
+  font-size: var(--fs-xs); line-height: 1.75; color: var(--ink-3);
 }
-.disclaim b { color: var(--ink-3); font-weight: 500; }
+.disclaim b { color: var(--ink); font-weight: 600; }
 
 /* ═══ PAGE 2 — GENERATE (customer) ═══════════════════════════════════════ */
 
@@ -385,7 +451,7 @@ button { font-family: inherit; cursor: pointer; }
 #approved.on { display: grid; animation: rise .6s ease both; }
 #approved .in { max-width: 560px; }
 #approved .mk { width: 54px; height: 54px; border-radius: 50%; background: var(--t-primary); color: var(--t-surface); display: grid; place-items: center; font-size: 24px; margin: 0 auto 26px; }
-#approved h1 { margin: 0 0 16px; font: 600 42px/1.1 var(--t-display); letter-spacing: -.03em; }
+#approved h1 { margin: 0 0 18px; font-family: var(--t-display); font-size: clamp(38px,4.6vw,58px); font-weight: 600; line-height: 1.02; letter-spacing: -.035em; }
 #approved p { margin: 0 auto; font-size: 17px; line-height: 1.6; color: var(--t-muted); max-width: 460px; }
 #approved .meta { margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--t-line); font: 400 var(--fs-xs)/1.8 var(--mono); color: var(--t-muted); }
 
@@ -416,7 +482,7 @@ button { font-family: inherit; cursor: pointer; }
 
 #page-fleet { flex-direction: column; overflow: hidden; }
 .fhead { padding: 22px 26px 18px; border-bottom: 1px solid var(--sh-line); }
-.fhead h1 { margin: 0; font: 600 var(--fs-lg)/1.2 var(--sans); letter-spacing: -.02em; }
+.fhead h1 { margin: 0; font: 700 var(--fs-xl)/1.08 var(--sans); font-variation-settings: 'wdth' 106; letter-spacing: var(--tr-title); }
 .fhead p { margin: 7px 0 0; font-size: var(--fs-sm); line-height: 1.6; color: var(--ink-3); max-width: 700px; }
 .fhead p b { color: var(--ink-2); font-weight: 500; }
 .kpis { display: flex; border-bottom: 1px solid var(--sh-line); }
@@ -473,9 +539,11 @@ button { font-family: inherit; cursor: pointer; }
 
   <!-- ═══ PAGE 1 — ONBOARD ═══════════════════════════════════════════════ -->
   <section class="page on" id="page-onboard">
+    <div class="beam" aria-hidden="true"><i></i></div>
+
     <div class="ob">
       <div class="kick">Admin · onboard a platform</div>
-      <h1>Point us at the app.</h1>
+      <h1 class="display">Point us at the app.</h1>
       <p>We never touch your code. You give us read access, we keep a
          <b>managed fork</b>.</p>
 
@@ -621,7 +689,7 @@ const $$ = (s) => [...document.querySelectorAll(s)];
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /* ── Theme catalogue. Only the first is used by the phone/sheet at rest.
-   NO THEME MAY USE GEIST. Geist is the shell's own typeface; a generated theme
+   NO THEME MAY USE ARCHIVO. Archivo is the shell's own typeface; a generated theme
    wearing it would make the engine's work indistinguishable from the tool's
    chrome, which is the one thing the Inspect sheet exists to show. The faces
    here also stay off the convergent Inter/Fraunces pair — a fixture meant to
@@ -629,11 +697,11 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 const THEMES = [
   { id:'stillwater', name:'Stillwater Pilates', cat:'Pilates · light', display:"'Newsreader', Georgia, serif", body:"'Karla'",
     v:{ '--t-primary':'#c2663b','--t-bg':'#f7f2ec','--t-surface':'#fffdfa','--t-text':'#2a2320','--t-accent':'#5c7a6b','--t-muted':'#8a7a6c','--t-line':'rgba(42,35,32,.12)' } },
-  { id:'apex', name:'Apex MMA', cat:'Fighting · dark', display:"'Archivo', sans-serif", body:"'Karla'",
+  { id:'apex', name:'Apex MMA', cat:'Fighting · dark', display:"'Petrona', Georgia, serif", body:"'Karla'",
     v:{ '--t-primary':'#c1272d','--t-bg':'#131316','--t-surface':'#1b1b20','--t-text':'#f2f2f4','--t-accent':'#e8b93b','--t-muted':'#8e8e96','--t-line':'rgba(255,255,255,.10)' } },
   { id:'zen', name:'Zen BJJ', cat:'Fighting · light', display:"'Newsreader', Georgia, serif", body:"'Karla'",
     v:{ '--t-primary':'#3e5c8c','--t-bg':'#f4f6fa','--t-surface':'#ffffff','--t-text':'#1b2430','--t-accent':'#7fa1c4','--t-muted':'#78849a','--t-line':'rgba(27,36,48,.12)' } },
-  { id:'ironline', name:'Ironline', cat:'HIIT · dark', display:"'Archivo', sans-serif", body:"'Karla'",
+  { id:'ironline', name:'Ironline', cat:'HIIT · dark', display:"'Newsreader', Georgia, serif", body:"'Karla'",
     v:{ '--t-primary':'#ff5a1f','--t-bg':'#101012','--t-surface':'#1a1a1d','--t-text':'#f5f5f5','--t-accent':'#ffc247','--t-muted':'#8b8b90','--t-line':'rgba(255,255,255,.10)' } },
   { id:'verdant', name:'Verdant Yoga', cat:'Yoga · light', display:"'Petrona', Georgia, serif", body:"'Karla'",
     v:{ '--t-primary':'#2f6b4f','--t-bg':'#f5f8f4','--t-surface':'#ffffff','--t-text':'#16241c','--t-accent':'#a8c4a0','--t-muted':'#72857a','--t-line':'rgba(22,36,28,.12)' } },
