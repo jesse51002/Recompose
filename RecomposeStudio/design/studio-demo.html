@@ -291,7 +291,12 @@ button { font-family: inherit; cursor: pointer; }
 
 #page-generate { flex-direction: row; }
 
-.chat { width: 360px; flex: none; border-right: 1px solid var(--sh-line); background: var(--sh-panel); display: flex; flex-direction: column; min-height: 0; }
+.chat {
+  width: 360px; flex: none; border-right: 1px solid var(--sh-line);
+  display: flex; flex-direction: column; min-height: 0;
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--sh-panel), #fff 3%) 0%, var(--sh-panel) 22%, var(--sh-ground) 100%);
+}
 .phead {
   height: 38px; flex: none; display: flex; align-items: center; gap: 8px; padding: 0 13px;
   border-bottom: 1px solid var(--sh-line);
@@ -304,7 +309,46 @@ button { font-family: inherit; cursor: pointer; }
 .tag.s-you { border-color: var(--st-you-l); background: var(--st-you-w); color: var(--st-you); }
 .tag.s-ok  { border-color: oklch(.80 .092 165 / .40); background: var(--st-ok-w); color: var(--st-ok); }
 
-.msgs { flex: 1; overflow-y: auto; padding: 15px 13px; display: flex; flex-direction: column; gap: 15px; }
+.msgs {
+  flex: 1; overflow-y: auto; padding: 15px 13px 15px 30px;
+  display: flex; flex-direction: column; gap: 15px; position: relative;
+}
+/* The run's spine. Every message hangs off it, and its node carries the phase
+   that message belongs to — so the whole transcript reads as a process with a
+   shape, not a stack of grey paragraphs. */
+.msgs::before {
+  content: ''; position: absolute; left: 16px; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(180deg, transparent 0, var(--sh-line-2) 22px, var(--sh-line-2) calc(100% - 22px), transparent 100%);
+}
+.msg { position: relative; }
+.msg::before {
+  content: ''; position: absolute; left: -18px; top: 4px;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--sh-ground); border: 1px solid var(--st-wait);
+}
+.msg[data-tone="s-run"]::before { background: var(--st-run); border-color: var(--st-run); }
+.msg[data-tone="s-you"]::before { background: var(--st-you); border-color: var(--st-you); }
+.msg[data-tone="s-ok"]::before  { background: var(--st-ok);  border-color: var(--st-ok); }
+.msg.you::before { background: var(--ink-3); border-color: var(--ink-3); }
+
+/* A phase marker. Chunks the transcript and puts the state's hue at intervals
+   down the column. */
+.phase {
+  position: relative; display: flex; align-items: center; gap: 10px;
+  margin: 4px 0 1px; font: 600 var(--fs-micro)/1 var(--mono);
+  letter-spacing: .18em; text-transform: uppercase; color: var(--ink-4);
+}
+.phase::after { content: ''; flex: 1; height: 1px; background: var(--sh-line); }
+.phase::before {
+  content: ''; position: absolute; left: -18px; width: 9px; height: 9px;
+  border-radius: 50%; background: var(--sh-ground); border: 2px solid var(--ink-4);
+}
+.phase.s-run { color: var(--st-run); }
+.phase.s-run::before { border-color: var(--st-run); box-shadow: 0 0 0 3px var(--st-run-w); }
+.phase.s-you { color: var(--st-you); }
+.phase.s-you::before { border-color: var(--st-you); box-shadow: 0 0 0 3px var(--st-you-w); }
+.phase.s-ok { color: var(--st-ok); }
+.phase.s-ok::before { border-color: var(--st-ok); box-shadow: 0 0 0 3px var(--st-ok-w); }
 .msg { display: flex; flex-direction: column; gap: 6px; animation: rise .4s ease both; }
 @keyframes rise { from { opacity: 0; transform: translateY(7px); } }
 .who { font: 500 var(--fs-micro)/1 var(--mono); letter-spacing: .11em; text-transform: uppercase; color: var(--ink-4); }
@@ -1055,11 +1099,24 @@ function stamp(state) {
   const el = $('#chattag');
   el.textContent = state;
   el.className = 'tag live ' + (STAMP[state] || '');
+  phaseTone = STAMP[state] || '';
+  // Same signal in two places, from one call, so the header and the transcript
+  // can never disagree about what the run is doing.
+  if (state !== 'brief') {
+    const m = document.createElement('div');
+    m.className = 'phase ' + phaseTone;
+    m.textContent = state;
+    $('#msgs').append(m);
+    $('#msgs').scrollTop = $('#msgs').scrollHeight;
+  }
 }
+
+let phaseTone = '';
 
 function say(who, html, cls = '') {
   const d = document.createElement('div');
   d.className = 'msg ' + cls;
+  if (phaseTone) d.dataset.tone = phaseTone;
   d.innerHTML = `<div class="who">${who}</div>${html}`;
   $('#msgs').append(d);
   $('#msgs').scrollTop = $('#msgs').scrollHeight;
@@ -1190,6 +1247,7 @@ async function runDesign() {
 /* ── Reset. A demo gets run more than once. ────────────────────────────── */
 function reset() {
   designed = generated = approved = false;
+  phaseTone = '';
   theme = THEMES[0];
   $('#themename').textContent = theme.name;
   $('.chipbtn .swatch').style.background = theme.v['--t-primary'];
