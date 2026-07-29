@@ -66,8 +66,23 @@ def _content_version(path: Path) -> str:
 
 # snake_case ids (mirrors schema.output.Output's app/slot rule).
 _ID_PATTERN = re.compile(r"^[a-z][a-z0-9_]*$")
-# Run ids are UTC stamps like `20260517T052107Z` — alphanumeric only.
-_RUN_ID_PATTERN = re.compile(r"^[0-9A-Za-z]+$")
+# A run id is a directory name under `apps/<app_id>/`, and three kinds
+# reach this service: the authored presets (`AcroYoga`), the CLI's UTC
+# stamps (`20260517T052107Z`), and — since the studio started launching
+# runs — a slugified business name (`bike-maniacs`).
+#
+# THE HYPHEN IS LOAD-BEARING. `RecomposeAPI.studio.service.slug.slugify`
+# turns every non-alphanumeric run into a single hyphen, so a two-word
+# business name ALWAYS produces one. An alphanumeric-only rule here made
+# every such run 404 on this endpoint and vanish from `list_styles`,
+# while the run itself sat complete on disk — a read-side rule narrower
+# than what the write side is guaranteed to produce.
+#
+# Still a conservative allowlist rather than `PathSegment`'s rule: no
+# separators and no dots, so `_safe_run_dir` cannot be walked out of
+# `apps_root`. The first character must be alphanumeric so a run dir can
+# never be read as an option-looking name.
+_RUN_ID_PATTERN = re.compile(r"^[0-9A-Za-z][0-9A-Za-z_-]*$")
 # Date-stamped pipeline runs (e.g. `20260518T131056Z`). A style picker
 # lists only the named presets, never these transient run dirs.
 _RUN_STAMP_PATTERN = re.compile(r"^\d{8}T\d{6}Z$")
@@ -391,8 +406,9 @@ class OutputService:
         """``apps_root/app_id/run_id`` for well-formed ids.
 
         Path traversal is impossible by construction: both id patterns
-        admit only alphanumerics/underscores — no separators, no dots —
-        so the joined path cannot escape ``apps_root``. The path is
+        admit only alphanumerics, underscores and (for a run) hyphens —
+        no separators, no dots — so the joined path cannot escape
+        ``apps_root``. The path is
         deliberately NOT resolve()-contained: a run dir may be a
         SYMLINK to another checkout's data (worktrees link the large
         untracked run dirs from the root checkout via

@@ -59,7 +59,9 @@ interface GenerateViewProps {
  */
 export function GenerateView({ sessionId, designName, onDone }: GenerateViewProps) {
   const { records } = useSessionStream(sessionId);
-  const [pane, setPane] = useState<Pane>('mockup');
+
+  // The pane a person picked, and which proposal they picked it against.
+  const [picked, setPicked] = useState<{ at: number; pane: Pane } | null>(null);
   const [library, setLibrary] = useState(false);
   const [mockups, setMockups] = useState(false);
   // The MOCKUP axis, independent of the theme. It follows a layout generation
@@ -105,6 +107,32 @@ export function GenerateView({ sessionId, designName, onDone }: GenerateViewProp
       if (timer !== undefined) window.clearTimeout(timer);
     };
   }, [themeId]);
+
+  // A PROPOSAL OPENS ITSELF. The agent writes a document — five fields of
+  // prose for the brand half — and the transcript card is only a notice that
+  // one exists. Leaving it to be clicked put the thing you are being asked to
+  // approve one interaction away from the button approving it. It is also why
+  // Accept is the card's primary action and "Open the brief" its secondary:
+  // by the time you read the card you are already looking at the document.
+  //
+  // DERIVED, not pushed from an effect. Setting state in an effect is an error
+  // in this package (`set-state-in-effect`), and the derivation is better
+  // anyway: what is stored is the pane a PERSON chose and the proposal it was
+  // chosen against, so a new proposal invalidates the pick and opens itself,
+  // while switching to the Mockup mid-proposal is not yanked back on the very
+  // next record.
+  const proposalCount = view.entries.filter(
+    (entry) => entry.kind === 'brief' || entry.kind === 'layout',
+  ).length;
+  const pane: Pane =
+    picked !== null && picked.at === proposalCount
+      ? picked.pane
+      : proposalCount > 0
+        ? 'brief'
+        : 'mockup';
+  const setPane = (next: Pane): void => {
+    setPicked({ at: proposalCount, pane: next });
+  };
 
   /** Every write shares one guard: one in flight, and failures are shown. */
   const act = (work: () => Promise<void>): void => {
