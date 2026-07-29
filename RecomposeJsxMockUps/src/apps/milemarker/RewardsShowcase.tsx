@@ -45,6 +45,7 @@ import { Frame } from './shell/Frame';
 import { Lane } from './shell/Lane';
 import { LastLane } from './shell/LastLane';
 import { Screen } from './shell/Screen';
+import { TabRow } from './shell/TabRow';
 import { Sky, SkyMark } from './shell/Sky';
 
 /** `ShowcaseScreen.build`'s `gymName` default. */
@@ -129,20 +130,9 @@ export function RewardsShowcase({
       }
       foot={<LastLane selected="reward" />}
     >
-      {/*
-        The two tabs. They are LABELS, not controls, exactly as in the base —
-        the member app re-selects them against real state this browser does not
-        have, and wiring them here would add an affordance the shipped screen
-        does not carry.
-      */}
+      {/* Labels, not controls — see <TabRow>. */}
       <Lane first flush>
-        <div className={styles.tabs}>
-          <span className={cx(styles.tab, styles.tabActive)}>
-            <span className={styles.tabTape} />
-            Points Store
-          </span>
-          <span className={styles.tab}>My Rewards</span>
-        </div>
+        <TabRow labels={['Points Store', 'My Rewards']} selected={0} />
       </Lane>
 
       <Lane label="Redeem" labelAside={`${String(items.length)} items`} bleed flush>

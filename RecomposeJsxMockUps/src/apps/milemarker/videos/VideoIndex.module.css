@@ -1,49 +1,9 @@
 /* The video library, in the horizon world. See ./VideoShowcase.tsx. */
 
-/* --- The scope tabs: one row, marked with the finish tape --- */
 
-.tabs {
-  display: flex;
-  align-items: stretch;
-  overflow-x: auto;
-  overflow-y: hidden;
-  width: 100%;
-  scrollbar-width: none;
-}
 
-.tabs::-webkit-scrollbar {
-  display: none;
-}
 
-.tab {
-  flex: none;
-  display: flex;
-  align-items: center;
-  padding-inline: var(--sc-spacing-large);
-  padding-top: var(--sc-spacing-medium);
-  padding-bottom: var(--sc-spacing-medium);
-  font: var(--sc-type-label);
-  letter-spacing: var(--sc-type-label-ls);
-  text-transform: uppercase;
-  color: var(--sc-text-3rd);
-  white-space: nowrap;
-  position: relative;
-}
 
-.tabActive {
-  color: var(--sc-text);
-  font: var(--sc-type-label-lg);
-  letter-spacing: var(--sc-type-label-lg-ls);
-}
-
-.tabTape {
-  position: absolute;
-  left: var(--sc-spacing-large);
-  right: var(--sc-spacing-large);
-  bottom: 0;
-  height: var(--sc-lane-weight);
-  background: var(--sc-tape);
-}
 
 /* --- A shelf: a horizontally travelling run of entries --- */
 

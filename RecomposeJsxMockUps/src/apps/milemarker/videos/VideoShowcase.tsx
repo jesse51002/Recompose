@@ -18,7 +18,6 @@
 // and is worse: card five then wears thumbnail one under a title belonging to
 // nothing. A card that repeats is fine; a card that contradicts itself is broken.
 
-import { cx } from '../cx';
 import type { ShowcaseVideo } from '../showcaseContent';
 import { Disc } from '../shell/Disc';
 import { Frame } from '../shell/Frame';
@@ -26,6 +25,7 @@ import { Lane } from '../shell/Lane';
 import { LastLane } from '../shell/LastLane';
 import { RouteImage } from '../shell/RouteImage';
 import { Screen } from '../shell/Screen';
+import { TabRow } from '../shell/TabRow';
 import { Sky } from '../shell/Sky';
 
 import styles from './VideoIndex.module.css';
@@ -69,23 +69,9 @@ export function VideoShowcase({
       }
       foot={<LastLane selected="videos" />}
     >
-      {/*
-        The scope tabs. LABELS, not controls — the same call the base makes, and
-        for the same reason: switching them would add an affordance the shipped
-        screen does not carry.
-      */}
+      {/* Labels, not controls — see <TabRow>. */}
       <Lane first flush>
-        <div className={styles.tabs}>
-          {data.tabLabels.map((label, i) => (
-            <span
-              key={label}
-              className={cx(styles.tab, i === data.selectedTabIndex && styles.tabActive)}
-            >
-              {i === data.selectedTabIndex && <span className={styles.tabTape} />}
-              {label}
-            </span>
-          ))}
-        </div>
+        <TabRow labels={data.tabLabels} selected={data.selectedTabIndex} mode="scroll" />
       </Lane>
 
       {featured !== null && (

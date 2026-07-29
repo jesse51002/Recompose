@@ -65,7 +65,15 @@ not exist, a prop no caller passes. Every one of those found here is one you are
 not chasing through a browser afterwards, and browser time is the expensive
 part.
 
-**Then run this sweep in ONE session, serially.** Do not fan it out.
+**Then run this sweep in ONE session, serially.** Do not fan it out — with one
+exception, below.
+
+**The one thing to run in parallel: Pass 2d, the spacing audit.** Start it as a
+subagent at the same moment you start the code review. It reads stylesheets and
+measures a static DOM without navigating, so it does not move the browser out
+from under you, and it is slow-ish work that would otherwise sit in the critical
+path. Everything else — every pass that clicks, navigates or advances a flow —
+stays in this session and stays serial.
 
 `browse` is a single shared headless Chromium. Two agents driving it at once
 navigate out from under each other: refs captured by one go stale the moment
@@ -295,6 +303,93 @@ second.
 
 ---
 
+## Pass 2d — spacing: is there any, is it consistent, does it group
+
+**Run this as a SUBAGENT, in parallel with the code review.** It is the one part
+of QA that parallelises: it reads stylesheets and measures a static DOM, it
+changes no route, and it therefore does not fight the shared browser the way a
+second navigating agent would. Start it when you start `/code-review low` and
+collect both before you begin the walk-through.
+
+Spacing is where a redesign quietly stops looking designed, and it fails in
+three distinct ways. Check all three — they have different causes and different
+fixes.
+
+**1. Is there any?** A region with no padding or gap at all reads as broken
+rather than as tight. The usual cause is a container that was given `flush` /
+`bleed` / `padding: 0` for one good reason (its child runs to the edge) and then
+gained a second child that needed the padding after all.
+
+```bash
+$B js "(()=>{const s=document.querySelector('[class*=_screen_]');const bad=[];
+s.querySelectorAll('*').forEach(e=>{const c=getComputedStyle(e);const r=e.getBoundingClientRect();
+if(r.height<12||r.width<40) return;
+const kids=[...e.children].filter(k=>k.getBoundingClientRect().height>4);
+if(kids.length<2) return;
+const pad=parseFloat(c.paddingTop)+parseFloat(c.paddingBottom);
+const gap=c.rowGap==='normal'?0:parseFloat(c.rowGap)||0;
+if(pad===0&&gap===0&&c.display.includes('flex'))
+  bad.push(String(e.className).slice(0,34)+' kids='+kids.length+' pad=0 gap=0');});
+return bad.length?JSON.stringify([...new Set(bad)].slice(0,8)):'no zero-spacing containers'})()"
+```
+
+**This one produces false positives by design — it is a prompt to look, not a
+verdict.** Two shapes are correct and will be flagged every time:
+
+- a container whose CHILDREN each bring their own padding (a bleed lane holding
+  rows, for instance) legitimately has none of its own;
+- a deliberately tight pair — a figure and the unit label directly under it — is
+  ONE object, and zero gap is what makes it read as one. That is rule 3 working,
+  not rule 1 failing.
+
+Confirm against the screenshot before changing anything.
+
+**2. Is it consistent across similar places?** The same control on two screens
+must carry the same spacing. This is the failure that actually shipped here: the
+store's tab cells had **no** inline padding and the video library's had **16px**
+— identical control, two stylesheets, nobody decided. Collect every value in use
+and look at the shape of the list:
+
+```bash
+$B js "(()=>{const s=document.querySelector('[class*=_screen_]');const v={};
+s.querySelectorAll('*').forEach(e=>{const c=getComputedStyle(e);
+[['padT',c.paddingTop],['padX',c.paddingLeft],['gap',c.rowGap==='normal'?'0px':c.rowGap]]
+ .forEach(([k,x])=>{if(x&&x!=='0px'){const key=k+':'+x;v[key]=(v[key]||0)+1;}});});
+return JSON.stringify(Object.entries(v).sort((a,b)=>b[1]-a[1]))})()"
+```
+
+**A healthy app shows a SHORT list with tall counts** — a handful of values, each
+used many times. A long tail of one-off values (`13px`, `18px`, `22px`) means
+numbers were typed at call sites instead of taken from the scale. Every value
+should be traceable to a `--sc-*` token.
+
+**When two places disagree, prefer extracting the shared component over syncing
+the numbers.** Syncing fixes today; the two copies drift again the next time
+either is touched. The tab rows above were fixed by giving the app ONE `TabRow`,
+not by copying `16px` across.
+
+**3. Does the spacing GROUP?** This is the half no script can check, and it is
+the half that decides whether a screen reads. **Related things sit closer
+together than unrelated things.** A label and the figure it names are one object
+and should be nearer to each other than either is to the next region. When every
+gap on a screen is the same value, nothing is grouped and the screen reads as a
+list of parts — which is a spacing failure even though every individual value is
+"consistent".
+
+Screenshot each screen and ask, per region:
+
+- Does the gap between a label and its value look SMALLER than the gap to the
+  next region? If they are equal, the hierarchy is not being carried.
+- Is anything closer to a thing it is not related to than to the thing it is?
+  That is the one that actively misleads.
+- Does a region have breathing room from the edge above it, or is it jammed
+  against a rule or a horizon?
+
+Report as **spacing** findings, and say which of the three it is — missing,
+inconsistent, or ungrouped — because the fix differs each time.
+
+---
+
 ## Pass 3 — every transition, in both directions
 
 Walk the app's transition table. For each row: perform the trigger, confirm you
@@ -439,7 +534,8 @@ For each finding: the screen, what is wrong, the evidence (screenshot path,
 `BLOCKED by …`, console error), and whether it is a **dead end** (blocking), a
 **missing element**, an **added element** (both break the invariant), a
 **misplaced element** (present but meaningless where it landed — Pass 1b), a
-**mangled image** (a photograph in a box of the wrong ratio — Pass 2c), or
+**mangled image** (a photograph in a box of the wrong ratio — Pass 2c), a
+**spacing** finding (missing, inconsistent, or ungrouped — Pass 2d), or
 **cosmetic**.
 
 Then say plainly, in these words if they are true:

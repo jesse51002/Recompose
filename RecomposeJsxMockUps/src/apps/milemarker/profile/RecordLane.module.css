@@ -9,7 +9,7 @@
 .rankCol {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--sc-spacing-tiny);
   min-width: 0;
 }
 
@@ -86,7 +86,7 @@
 .stat {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: var(--sc-spacing-tiny);
 }
 
 /* --- The timeframe pills, marked with the same tape --- */

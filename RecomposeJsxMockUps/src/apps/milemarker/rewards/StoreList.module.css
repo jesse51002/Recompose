@@ -1,42 +1,9 @@
 /* The points store, in the horizon world. See ../RewardsShowcase.tsx. */
 
-/* --- The two tabs, marked the way every selection in this design is --- */
 
-.tabs {
-  display: flex;
-  align-items: stretch;
-  width: 100%;
-}
 
-.tab {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-top: var(--sc-spacing-medium);
-  padding-bottom: var(--sc-spacing-medium);
-  font: var(--sc-type-label);
-  letter-spacing: var(--sc-type-label-ls);
-  text-transform: uppercase;
-  color: var(--sc-text-3rd);
-  position: relative;
-}
-
-.tabActive {
-  color: var(--sc-text);
-  font: var(--sc-type-label-lg);
-  letter-spacing: var(--sc-type-label-lg-ls);
-}
 
 /* The finish tape again — one device for "where you are", used everywhere. */
-.tabTape {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: var(--sc-lane-weight);
-  background: var(--sc-tape);
-}
 
 /* --- A reward: a price-list entry, not a card --- */
 
@@ -64,7 +31,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--sc-spacing-tiny);
 }
 
 .title {
