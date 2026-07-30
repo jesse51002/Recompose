@@ -165,6 +165,20 @@
   color: var(--ink-4);
 }
 
+/* NEEDS-HUMAN-HELP, and only while it is not zero. It sits first in the bar
+   because that is where attention should land, and it carries its hue rather
+   than only dotting it so position is not the only thing saying so.
+   Declared BEFORE `.on` on purpose: the two have equal specificity, so order
+   decides, and a selected tab must read as selected. The hue says what it is;
+   the ink says where you are. */
+.filter.urgent {
+  color: var(--st-you);
+  border-color: var(--st-you-l);
+  background: var(--st-you-w);
+}
+
+.filter.urgent em { color: var(--st-you); }
+
 /* Selected reads as INK, not as the status hue. A tab tinted its own colour
    and a tab selected would be the same signal twice, and the row of dots
    already says which hue is which. */

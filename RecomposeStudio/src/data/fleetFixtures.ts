@@ -511,8 +511,29 @@ export const KPIS: readonly Kpi[] = Object.freeze([
 ]);
 
 /**
- * The filter bar: All first and selected by default, then the five statuses in
- * lifecycle order.
+ * The order the FILTER BAR uses, which is not the lifecycle order.
+ *
+ * `STATUSES` is the pipeline a design travels down and stays that way — it is
+ * what `WORKING` is derived from and how the statuses are read as a sequence.
+ * The bar is a different job: it is where attention gets allocated, and the
+ * one status that needs a person belongs where the eye lands first rather than
+ * at the end of a queue it has to be scanned for. Everything else keeps its
+ * lifecycle order behind it.
+ *
+ * All still leads and is still the default: the fleet page's first duty is to
+ * say how many there are in total, and opening pre-filtered would hide it.
+ */
+const FILTER_ORDER: readonly FleetStatus[] = [
+  'help',
+  'synced',
+  'deploying',
+  'merging',
+  'productionalizing',
+];
+
+/**
+ * The filter bar: All first and selected by default, then the statuses in
+ * `FILTER_ORDER`.
  *
  * A count rides on every tab, so the bar is a summary as well as a control —
  * which is what lets it replace the four KPI tiles' job of saying how many are
@@ -527,12 +548,10 @@ export interface FilterTab {
 
 export const FILTERS: readonly FilterTab[] = Object.freeze([
   { id: 'all' as const, label: 'All', tone: null, n: FLEET.length },
-  ...STATUSES.map((s) => ({
-    id: s.id,
-    label: s.label,
-    tone: s.tone,
-    n: count(s.id),
-  })),
+  ...FILTER_ORDER.map((id) => {
+    const meta = statusMeta(id);
+    return { id, label: meta.label, tone: meta.tone, n: count(id) };
+  }),
 ]);
 
 /** What the onboarding agent claims to have found. Synthetic. */

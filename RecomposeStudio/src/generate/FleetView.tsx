@@ -89,6 +89,12 @@ export function FleetView() {
               styles.filter,
               filter === tab.id && styles.on,
               tab.tone !== null && styles[tab.tone],
+              // The one tab that is asking for something wears its hue rather
+              // than only dotting it — and ONLY while the count is not zero,
+              // the same rule the tiles follow. Colour APPEARING is the
+              // signal; a permanently amber tab that usually reads zero would
+              // be noise, and this status is supposed to usually read zero.
+              tab.id === 'help' && tab.n > 0 && styles.urgent,
             )}
           >
             {tab.tone !== null && <i />}
