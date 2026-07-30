@@ -200,7 +200,15 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
   animate a list is work the compositor does for free, and this package treats
   setting state from an effect as an error. The board is re-keyed on the cap so
   the marks replay their entrance instead of silently teleporting between
-  columns.
+  columns, and the per-cell delay is CEILINGED — ungoverned, the last of three
+  hundred marks would land half a minute after the first and the board would
+  read as broken rather than as filling. The cap runs to a hundred because the
+  bad end is half the argument, and the roster cycles the fleet's real logos up
+  to a platform-sized count: thirty-two marks across a hundred columns would
+  show empty columns rather than shared ones. The repetition is stated on the
+  page — a board of invented marks would be a bigger lie than a board of
+  repeated real ones. Cells carry no names for the same reason: cycled names
+  would repeat down every column and read as a bug.
 - **Fail visible.** A missing artifact, a failed run, an empty catalog: show the
   state. A blank pane that could mean "loading" or "broken" is the one failure
   mode that wastes the most time here.

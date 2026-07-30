@@ -137,19 +137,23 @@
 .claimAlt b { color: var(--st-bad); }
 
 /* ── The board ──────────────────────────────────────────────────────────── */
+/* At two columns it is a comparison; at a hundred it is a wall you scroll —
+   and the wall IS the argument at that end, so the board scrolls sideways
+   rather than shrinking columns into illegibility. */
 .board {
   flex: 1;
   min-height: 0;
   overflow: auto;
   display: flex;
-  gap: 14px;
+  gap: 12px;
   padding: 20px 26px 24px;
   align-items: flex-start;
 }
 
 .column {
-  flex: 1 1 0;
-  min-width: 128px;
+  flex: 1 0 auto;
+  min-width: 116px;
+  max-width: 260px;
   display: flex;
   flex-direction: column;
   border: 1px solid var(--sh-line-2);
@@ -180,45 +184,30 @@
   color: var(--ink-4);
 }
 
+/* A mosaic rather than a list. The roster runs to hundreds, so a column of
+   labelled rows would be a scroll nobody reads; wrapped marks read as a
+   quantity at a glance, which is the only thing this page needs them to do. */
 .cells {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  flex-wrap: wrap;
+  gap: 5px;
   padding: 10px;
 }
 
-/* One tenant on one layout. The mark carries it; the name is there so a demo
-   can be narrated without hovering. */
+/* One tenant on one layout, and nothing but its mark — the roster cycles the
+   fleet's logos, so names would repeat down every column and read as a bug. */
 .cell {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 6px 8px;
-  border-radius: 8px;
-  background: var(--sh-raised);
-  /* `both` so it holds the from-state during its delay — without it every
-     mark paints immediately and then animates, which is thirty-two things
-     appearing at once followed by a twitch. */
-  animation: var(--kf-rise) 0.45s ease both;
-}
-
-.cell img {
-  width: 26px;
-  height: 26px;
+  width: 30px;
+  height: 30px;
   flex: none;
   object-fit: contain;
-  border-radius: 6px;
+  border-radius: 7px;
   background: var(--sh-ground);
   padding: 3px;
-}
-
-.cell span {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font: 400 var(--fs-xs) / 1.3 var(--sans);
-  color: var(--ink-2);
+  /* `both` so it holds the from-state through its delay — without it every
+     mark paints immediately and then animates, which is the whole board
+     appearing at once followed by a twitch. */
+  animation: var(--kf-rise) 0.45s ease both;
 }
 
 .synthetic {

@@ -25,6 +25,7 @@ import {
   DEFAULT_LAYOUTS,
   MAX_LAYOUTS,
   MIN_LAYOUTS,
+  TENANT_COUNT,
   dealLayouts,
 } from '../data/layoutFixtures';
 
@@ -32,14 +33,20 @@ import { SHELL_CLASS } from './phaseClass';
 import styles from './LayoutsView.module.css';
 
 /**
- * How long each mark waits before it lands, in ms.
+ * How long each mark waits before it lands, in ms, and the ceiling on it.
  *
- * The reveal is a pure CSS stagger — `--i` per cell, multiplied here — rather
- * than a timer pushing state. Thirty-two setState calls to animate a list is
- * work the compositor already does for free, and this package treats setting
- * state from an effect as an error anyway.
+ * The reveal is a pure CSS stagger — one `animation-delay` per cell — rather
+ * than a timer pushing state. Three hundred setState calls to animate a list
+ * is work the compositor already does for free, and this package treats
+ * setting state from an effect as an error anyway.
+ *
+ * The CEILING is what makes it survive three hundred cells: ungoverned, the
+ * last mark would land half a minute after the first and the board would read
+ * as broken rather than as filling. Every cell past the cap lands together,
+ * which looks like a wave breaking rather than a queue draining.
  */
-const STEP_MS = 55;
+const STEP_MS = 6;
+const MAX_DELAY_MS = 1400;
 
 export function LayoutsView({ onBack }: { onBack: () => void }) {
   const [cap, setCap] = useState(DEFAULT_LAYOUTS);
@@ -80,7 +87,7 @@ export function LayoutsView({ onBack }: { onBack: () => void }) {
             />
           </div>
           <span className={styles.capNote}>
-            {FLEET.length} tenants · {busiest} on the busiest
+            {TENANT_COUNT} tenants · {busiest} on the busiest
           </span>
         </div>
       </header>
@@ -95,11 +102,11 @@ export function LayoutsView({ onBack }: { onBack: () => void }) {
         </span>
         <i />
         <span>
-          <b>{FLEET.length}</b> tenants dressed
+          <b>{TENANT_COUNT}</b> tenants dressed
         </span>
         <i />
         <span className={styles.claimAlt}>
-          uncapped this would be <b>{FLEET.length}</b> branches
+          uncapped this would be <b>{TENANT_COUNT}</b> branches
         </span>
       </div>
 
@@ -118,21 +125,31 @@ export function LayoutsView({ onBack }: { onBack: () => void }) {
               </u>
             </header>
 
+            {/* MARKS ONLY, no names. The roster is the fleet's own logos
+                cycled up to a platform-sized count, so names would repeat down
+                every column and read as a bug. The mark is what the page is
+                about — the name is on the tile's title for anyone who asks. */}
             <div className={styles.cells}>
               {layout.tenants.map((tenant, row) => (
-                <div
+                <img
                   className={styles.cell}
-                  key={tenant.branch}
+                  // Position, not identity: the roster cycles, so a tenant's
+                  // own branch appears many times and is not a key.
+                  key={`${String(row)}-${tenant.branch}`}
+                  src={logoUrl(tenant.run)}
+                  alt=""
                   title={`${tenant.name} · ${layout.name}`}
-                  // Down the column, then across, so the board fills as a
-                  // wave rather than thirty-two things arriving at once.
+                  // Down the column, then across, so the board fills as a wave
+                  // rather than three hundred things arriving at once.
                   style={{
-                    animationDelay: `${String((row * layouts.length + column) * STEP_MS)}ms`,
+                    animationDelay: `${String(
+                      Math.min(
+                        (row * layouts.length + column) * STEP_MS,
+                        MAX_DELAY_MS,
+                      ),
+                    )}ms`,
                   }}
-                >
-                  <img src={logoUrl(tenant.run)} alt="" />
-                  <span>{tenant.name}</span>
-                </div>
+                />
               ))}
             </div>
           </section>
@@ -140,8 +157,10 @@ export function LayoutsView({ onBack }: { onBack: () => void }) {
       </div>
 
       <p className={styles.synthetic}>
-        Every tenant and layout on this page is invented, and the assignment is
-        arbitrary. Only the marks are real — the pipeline made each one.
+        Every layout on this page is invented and the assignment is arbitrary.
+        The marks are real — the pipeline made each one — but there are only
+        {' '}
+        {FLEET.length} of them, cycled to stand in for {TENANT_COUNT} tenants.
       </p>
     </div>
   );
