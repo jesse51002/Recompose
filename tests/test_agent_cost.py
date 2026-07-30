@@ -13,7 +13,8 @@ import pytest
 
 from RecomposeAPI.studio.service.agent_cost import turn_cost_usd
 
-MODEL = "claude-opus-5"
+# The model the interview actually runs on, so these price what is real.
+MODEL = "claude-sonnet-5"
 
 
 def test_a_turn_is_priced_from_litellms_own_model_pricing() -> None:

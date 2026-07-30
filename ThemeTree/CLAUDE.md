@@ -470,8 +470,13 @@ the code.
 - **Two LLM libraries, one boundary.** litellm drives every *pipeline* call
   (`ThemeTree/modules/`, `ThemeTree/shared/services/`); Pydantic AI drives the studio's
   conversational agent and nothing else. Its model id is a **bare** Anthropic
-  name from `ThemeTree/studio/config.py` (`brief_agent_model`) — never a litellm
-  `provider/model` string — because the agent names its provider explicitly.
+  name from `RecomposeAPI/studio/config.py` (`brief_agent_model`) — never a
+  litellm `provider/model` string — because the agent names its provider
+  explicitly. It runs on **Sonnet**: a turn of that interview is a long prompt
+  in and a question out, which is a cheap shape of work Opus was being paid
+  2.5x for. The pipeline's own image-prompt call stays on Opus, because writing
+  a prompt an image model renders well is a harder job than asking a
+  multiple-choice question.
   The key is read from `src.core.config` rather than redeclared on the studio
   settings: the studio already imports the pipeline, so one secret keeps one
   definition and one env var.

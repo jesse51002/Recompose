@@ -81,7 +81,7 @@ def _service(briefs_dir: Path, key: str = "test-key") -> BriefAgentService:
     """A production-shaped service over a temp briefs dir and a fake key."""
     return BriefAgentService(
         briefs=BriefService(briefs_dir),
-        model_name="claude-opus-5",
+        model_name="claude-sonnet-5",
         retries=1,
         anthropic_api_key=key,
     )

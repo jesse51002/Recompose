@@ -109,6 +109,13 @@ the work runs, not the shape of the request.
   counts ride along so a wrong price can be recomputed from the log.
   `SessionSnapshot` sums them on read, so a live session and one rebuilt from
   its log cannot disagree.
+  - **The interview runs on Sonnet, and the meter is why.** A turn is a long
+    system prompt in and a question out (~4,500 tokens in, single digits out),
+    which is a cheap shape of work Opus was being paid 2.5x for — $0.0226 a
+    turn against $0.0090, measured. Question quality is set by the prompt, not
+    the model: side by side on the same interview, Sonnet's option banks were
+    as specific as Opus's. The layout agent is where a bigger model earns its
+    keep, and that is a separate process with its own choice.
   - Pricing comes from litellm's own model pricing (`service/agent_cost.py`),
     never a table in this repo — one here would be wrong the week a price
     changed, and wrong silently. **Cache reads are priced separately**: the

@@ -518,7 +518,8 @@ store and nothing to expire — the studio can restart mid-interview.
 **Optional by construction.** With no `ANTHROPIC_API_KEY` the agent is never
 built: everything else in the studio works exactly as before and only
 `POST /brief-agent` answers 503. The model is a bare Anthropic name in
-`ThemeTree/studio/config.py` (`brief_agent_model`, override with `BRIEF_AGENT_MODEL`);
+`RecomposeAPI/studio/config.py` (`brief_agent_model` — Sonnet, override with
+`BRIEF_AGENT_MODEL`);
 the key comes from the pipeline config the studio already imports, so that one
 secret keeps a single definition.
 

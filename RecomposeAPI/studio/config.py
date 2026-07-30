@@ -96,7 +96,20 @@ class Settings(BaseSettings):
     # already imports the pipeline, so `src.core.config.settings` is the one
     # definition of that secret and `brief_agent_service()` reads it there.
     # A second copy would be a second requiredness rule for one env var.
-    brief_agent_model: str = "claude-opus-5"
+    #
+    # SONNET, NOT OPUS, and the meter is why. A turn of this interview is a
+    # long system prompt in and a question out — measured at 4,478 tokens in
+    # and 8 out for the opening turn — which is a cheap shape of work that
+    # Opus was being paid 2.5x for ($0.0226 a turn against $0.0090). The
+    # thinking that actually needs a bigger model is the LAYOUT agent's, and
+    # that one is a separate process with its own model choice.
+    #
+    # The pipeline's image-prompt model is deliberately still Opus
+    # (`ThemeTree/modules/images/image_node.py`): writing a prompt that an
+    # image model will render well is a different and harder job than asking
+    # a multiple-choice question, and it runs once per slot rather than once
+    # per sentence.
+    brief_agent_model: str = "claude-sonnet-5"
     # Extra re-asks when the agent's structured output misses the schema.
     brief_agent_retries: int = 3
 
