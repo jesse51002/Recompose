@@ -14,8 +14,56 @@
 
 .head {
   flex: none;
+  display: flex;
+  align-items: center;
+  gap: 24px;
   padding: 22px 26px 18px;
   border-bottom: 1px solid var(--sh-line);
+}
+
+.headText {
+  flex: 1;
+  min-width: 0;
+}
+
+/* THE FORK, once, at the top. Every row below is a branch of this one
+   repository — so it is the only link on the page that is not per-design, and
+   it is sized to say so. Ink rather than a status hue: in this shell a hue
+   means a state, and a repository is not a state. */
+.fork {
+  flex: none;
+  display: block;
+  max-width: 300px;
+  padding: 11px 15px;
+  border: 1px solid var(--ink);
+  border-radius: 9px;
+  background: var(--ink);
+  color: var(--sh-ground);
+  text-decoration: none;
+}
+
+.fork:hover { opacity: 0.9; }
+
+.forkLead {
+  display: block;
+  font: 600 var(--fs-sm) / 1.2 var(--sans);
+  letter-spacing: var(--tr-title);
+}
+
+.fork b {
+  display: block;
+  margin-top: 5px;
+  font: 400 var(--fs-xs) / 1.3 var(--mono);
+  overflow-wrap: anywhere;
+  opacity: 0.85;
+}
+
+.fork u {
+  display: block;
+  margin-top: 4px;
+  text-decoration: none;
+  font: 400 var(--fs-micro) / 1.4 var(--sans);
+  opacity: 0.7;
 }
 
 .head h1 {

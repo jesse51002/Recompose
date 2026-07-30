@@ -18,6 +18,24 @@
 // hardcoded at loopback because this is a laptop demo and nothing here is
 // deployed; a row that cannot reach the API simply draws no mark.
 
+/**
+ * THE SHARED TOKENIZED FORK — the base every design branches off.
+ *
+ * Recompose never writes to the platform's trunk. There are two agent-
+ * maintained fork layers: this one, re-derived against their main as they
+ * ship, and one branch per DESIGN on top of it. So a row below is a branch,
+ * not a repository of its own, and the fleet page needs one link to the fork
+ * itself — otherwise the shared thing every row depends on is the only part
+ * of the arrangement with nowhere to look.
+ */
+export const FORK = Object.freeze({
+  name: 'recompose/combatden-tokenized',
+  /** Where it sits. Invented, like everything else on the page. */
+  url: 'https://example.invalid/recompose/combatden-tokenized',
+  /** What it is, in one line, for the button's second row. */
+  note: 'the tokenized fork every design branches from',
+});
+
 /** Where the read API answers. Loopback, hardcoded: see the note above. */
 const READ_API = 'http://127.0.0.1:8001';
 
@@ -86,7 +104,14 @@ export function statusMeta(id: FleetStatus): StatusMeta {
 /** One customer app on the fleet page. */
 export interface FleetApp {
   readonly name: string;
-  readonly repo: string;
+  /**
+   * The design's BRANCH in the shared fork — not a repository.
+   *
+   * One fork, re-derived against the platform's main; one branch per design on
+   * top of it. Naming a repo per customer described an arrangement that does
+   * not exist and quietly implied a repository per tenant.
+   */
+  readonly branch: string;
   /** A run that really exists in `apps/combatden/` — its logo is drawn. */
   readonly run: string;
   readonly since: string;
@@ -101,7 +126,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   // ── Deployed & Synced ────────────────────────────────────────────────────
   {
     name: 'Apex MMA',
-    repo: 'combatden-apex',
+    branch: 'design/apex',
     run: 'ApexMMA',
     since: 'approved 26 Jul',
     status: 'synced',
@@ -111,7 +136,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Zen BJJ',
-    repo: 'combatden-zenbjj',
+    branch: 'design/zenbjj',
     run: 'ZenBJJ',
     since: 'approved 24 Jul',
     status: 'synced',
@@ -121,7 +146,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Stillwater Pilates',
-    repo: 'combatden-stillwater',
+    branch: 'design/stillwater',
     run: 'MatPilates',
     since: 'approved 29 Jul',
     status: 'synced',
@@ -131,7 +156,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Iyengar House',
-    repo: 'combatden-iyengar',
+    branch: 'design/iyengar',
     run: 'IyengarStudio',
     since: 'approved 19 Jul',
     status: 'synced',
@@ -141,7 +166,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Sweet Science',
-    repo: 'combatden-sweetscience',
+    branch: 'design/sweetscience',
     run: 'SweetScienceBoxing',
     since: 'approved 17 Jul',
     status: 'synced',
@@ -151,7 +176,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Hyrox Prep Co.',
-    repo: 'combatden-hyrox',
+    branch: 'design/hyrox',
     run: 'HyroxPrep',
     since: 'approved 15 Jul',
     status: 'synced',
@@ -161,7 +186,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Vinyasa Rooms',
-    repo: 'combatden-vinyasa',
+    branch: 'design/vinyasa',
     run: 'VinyasaFlow',
     since: 'approved 12 Jul',
     status: 'synced',
@@ -171,7 +196,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Kettlebell Club',
-    repo: 'combatden-kettlebell',
+    branch: 'design/kettlebell',
     run: 'Kettlebell',
     since: 'approved 09 Jul',
     status: 'synced',
@@ -181,7 +206,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Ashtanga Shala',
-    repo: 'combatden-ashtanga',
+    branch: 'design/ashtanga',
     run: 'AshtangaShala',
     since: 'approved 06 Jul',
     status: 'synced',
@@ -191,7 +216,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Pole Studio 9',
-    repo: 'combatden-pole9',
+    branch: 'design/pole9',
     run: 'PoleDance',
     since: 'approved 03 Jul',
     status: 'synced',
@@ -201,7 +226,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Breathwork Room',
-    repo: 'combatden-breathwork',
+    branch: 'design/breathwork',
     run: 'Breathwork',
     since: 'approved 01 Jul',
     status: 'synced',
@@ -211,7 +236,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Aqua Cycling',
-    repo: 'combatden-aquacycling',
+    branch: 'design/aquacycling',
     run: 'AquaCycling',
     since: 'approved 28 Jun',
     status: 'synced',
@@ -223,7 +248,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   // ── Deploying ────────────────────────────────────────────────────────────
   {
     name: 'Ironline',
-    repo: 'combatden-ironline',
+    branch: 'design/ironline',
     run: 'Powerlifting',
     since: 'approved 21 Jul',
     status: 'deploying',
@@ -236,7 +261,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Sprint Cycle Lab',
-    repo: 'combatden-sprintcycle',
+    branch: 'design/sprintcycle',
     run: 'SprintCycling',
     since: 'approved 28 Jul',
     status: 'deploying',
@@ -246,7 +271,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Krav Maga School',
-    repo: 'combatden-kravmaga',
+    branch: 'design/kravmaga',
     run: 'KravMagaSchool',
     since: 'approved 30 Jul',
     status: 'deploying',
@@ -256,7 +281,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Trampoline Cardio',
-    repo: 'combatden-trampoline',
+    branch: 'design/trampoline',
     run: 'TrampolineCardio',
     since: 'approved 30 Jul',
     status: 'deploying',
@@ -266,7 +291,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Hatha Studio',
-    repo: 'combatden-hatha',
+    branch: 'design/hatha',
     run: 'HathaStudio',
     since: 'approved 29 Jul',
     status: 'deploying',
@@ -278,7 +303,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   // ── Merging ──────────────────────────────────────────────────────────────
   {
     name: 'Strike Kickboxing',
-    repo: 'combatden-strike',
+    branch: 'design/strike',
     run: 'StrikeKickboxing',
     since: 'approved 23 Jul',
     status: 'merging',
@@ -290,7 +315,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'CrossFit Box 44',
-    repo: 'combatden-box44',
+    branch: 'design/box44',
     run: 'CrossFitBox',
     since: 'approved 20 Jul',
     status: 'merging',
@@ -300,7 +325,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Reformer Classical',
-    repo: 'combatden-reformer',
+    branch: 'design/reformer',
     run: 'ReformerClassical',
     since: 'approved 18 Jul',
     status: 'merging',
@@ -312,7 +337,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Aerial Silks Co.',
-    repo: 'combatden-aerialsilks',
+    branch: 'design/aerialsilks',
     run: 'AerialSilks',
     since: 'approved 14 Jul',
     status: 'merging',
@@ -322,7 +347,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Barre Three Flow',
-    repo: 'combatden-barre3',
+    branch: 'design/barre3',
     run: 'Barre3Flow',
     since: 'approved 11 Jul',
     status: 'merging',
@@ -332,7 +357,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Indoor Cycling Co.',
-    repo: 'combatden-indoorcycling',
+    branch: 'design/indoorcycling',
     run: 'IndoorCycling',
     since: 'approved 08 Jul',
     status: 'merging',
@@ -344,7 +369,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   // ── Productionalizing ────────────────────────────────────────────────────
   {
     name: 'Burn Boot Camp',
-    repo: 'combatden-burn',
+    branch: 'design/burn',
     run: 'BurnBootCamp',
     since: 'approved 27 Jul',
     status: 'productionalizing',
@@ -357,7 +382,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Karate Dojo North',
-    repo: 'combatden-karatenorth',
+    branch: 'design/karatenorth',
     run: 'KarateDojo',
     since: 'approved 29 Jul',
     status: 'productionalizing',
@@ -367,7 +392,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Megaformer Lagree',
-    repo: 'combatden-megaformer',
+    branch: 'design/megaformer',
     run: 'MegaformerLagree',
     since: 'approved 30 Jul',
     status: 'productionalizing',
@@ -377,7 +402,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Rowing Studio',
-    repo: 'combatden-rowing',
+    branch: 'design/rowing',
     run: 'RowingStudio',
     since: 'approved 30 Jul',
     status: 'productionalizing',
@@ -387,7 +412,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Tactical Prep',
-    repo: 'combatden-tactical',
+    branch: 'design/tactical',
     run: 'TacticalPrep',
     since: 'approved 30 Jul',
     status: 'productionalizing',
@@ -397,7 +422,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Yin Restorative',
-    repo: 'combatden-yin',
+    branch: 'design/yin',
     run: 'YinRestorative',
     since: 'approved 30 Jul',
     status: 'productionalizing',
@@ -409,7 +434,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   // ── Needs Human Help ─────────────────────────────────────────────────────
   {
     name: 'Orange Theory Indie',
-    repo: 'combatden-otindie',
+    branch: 'design/otindie',
     run: 'OrangeTheoryStyle',
     since: 'approved 25 Jul',
     status: 'help',
@@ -422,7 +447,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Hot Pilates 24',
-    repo: 'combatden-hotpilates',
+    branch: 'design/hotpilates',
     run: 'HotPilates',
     since: 'approved 22 Jul',
     status: 'help',
@@ -435,7 +460,7 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
   {
     name: 'Duck Dancer',
-    repo: 'combatden-duckdancer',
+    branch: 'design/duckdancer',
     run: 'DuckDancer',
     since: 'approved 30 Jul',
     status: 'help',

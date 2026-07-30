@@ -19,6 +19,7 @@ import { cx } from '../widgets/cx';
 import {
   FILTERS,
   FLEET,
+  FORK,
   KPIS,
   logoUrl,
   statusMeta,
@@ -37,12 +38,25 @@ export function FleetView() {
   return (
     <div className={cx(styles.page, SHELL_CLASS)}>
       <header className={styles.head}>
-        <h1>CombatDen · customer apps</h1>
-        {/* One line. The argument lives in the footer; a header only has to
-            name the page, and nobody reads past the first few words. */}
-        <p>
-          <b>Agents automatically maintain</b> the customer design fork.
-        </p>
+        <div className={styles.headText}>
+          <h1>CombatDen · customer apps</h1>
+          {/* One line. The argument lives in the footer; a header only has to
+              name the page, and nobody reads past the first few words. */}
+          <p>
+            <b>Agents automatically maintain</b> the customer design fork.
+          </p>
+        </div>
+
+        {/* THE FORK ITSELF, at the top and only once. Every row below is a
+            BRANCH of this one repository — that is the whole arrangement —
+            so the shared thing they all depend on needs somewhere to look.
+            Without it the page showed thirty links into a repository it
+            never named. */}
+        <a className={styles.fork} href={FORK.url}>
+          <span className={styles.forkLead}>Open the forked repo</span>
+          <b>{FORK.name}</b>
+          <u>{FORK.note}</u>
+        </a>
       </header>
 
       <div className={styles.kpis}>
@@ -89,7 +103,7 @@ export function FleetView() {
           const meta = statusMeta(app.status);
           return (
             <article
-              key={app.repo}
+              key={app.branch}
               className={cx(styles.card, meta.live && styles.live)}
             >
               {/* Decorative: the name sits beside it, so a mark that fails to
@@ -98,7 +112,7 @@ export function FleetView() {
 
               <div className={styles.who}>
                 <b>{app.name}</b>
-                <u>{app.repo}</u>
+                <u>{app.branch}</u>
                 <span className={styles.since}>{app.since}</span>
               </div>
 
@@ -116,8 +130,11 @@ export function FleetView() {
                 <button type="button" className={cx(styles.btn, styles.pri)}>
                   Talk to the agent
                 </button>
+                {/* The BRANCH, not the repo. One fork, one branch per
+                    design — "View repo" sent thirty rows to the same place
+                    and described an arrangement that does not exist. */}
                 <button type="button" className={styles.btn}>
-                  View repo
+                  View branch
                 </button>
                 <button type="button" className={styles.btn}>
                   View design
@@ -141,8 +158,9 @@ export function FleetView() {
       </footer>
 
       <p className={styles.synthetic}>
-        Every customer, repository and figure on this page is invented. There
-        are no customers. Only the logos are real — the pipeline made each one.
+        Every customer, branch, repository and figure on this page is invented,
+        the fork at the top included. There are no customers. Only the logos are
+        real — the pipeline made each one.
       </p>
     </div>
   );
