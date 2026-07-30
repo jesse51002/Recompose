@@ -35,3 +35,19 @@ vendor/colormcp/dist/
 
 assets/**/*
 .gstack/
+
+# Generated design folders. The studio copies an authored mock app into one of
+# these per layout generation, and a layout agent edits it in place. Each is a
+# produced artifact, not source; the undo is `rm -rf`.
+#
+# A PREFIX rather than an ignore-everything-then-un-ignore-the-real-ones rule:
+# that shape needs a new negation for every authored app — combatden, zenbjj,
+# romanahouse and whatever comes next — and its failure mode is a real app
+# silently vanishing from git.
+RecomposeJsxMockUps/src/apps/gen-*/
+
+# npm lockfiles. Untracked deliberately, and consistently: two of three
+# packages carrying one reads as a decision nobody made. If lockfiles are
+# wanted, add all three in one change rather than letting an `npm install`
+# commit them one at a time.
+package-lock.json

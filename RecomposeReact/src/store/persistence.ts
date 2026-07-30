@@ -69,6 +69,24 @@ export function readSelectedDesignId(): string | null {
 }
 
 /** Makes a `selectDesign` stick across reloads. */
+/**
+ * Forget both the sticky selection and the last-good copy.
+ *
+ * BOTH, and that is the whole point: clearing only the selection would leave
+ * the last-good JSON to be adopted on the next boot, so "no theme" would last
+ * exactly until the page reloaded. They are written together and they have to
+ * be forgotten together.
+ */
+export function clearStoredDesign(): void {
+  try {
+    window.localStorage.removeItem(SELECTED_DESIGN_KEY);
+    window.localStorage.removeItem(LAST_GOOD_KEY);
+  } catch {
+    // Same contract as the readers and writers here: storage is a nicety, and
+    // a browser refusing it must never break the runtime.
+  }
+}
+
 export function writeSelectedDesignId(designId: string): void {
   write(SELECTED_DESIGN_KEY, designId);
 }

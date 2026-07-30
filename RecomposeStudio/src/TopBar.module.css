@@ -1,0 +1,81 @@
+/* The switcher. Ported from design/studio-demo.html (.top). */
+
+.top {
+  height: 48px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 14px;
+  background: var(--sh-panel);
+  border-bottom: 1px solid var(--sh-line);
+  /* Above the approved screen, which fills the viewport. In the real product
+     there is no switcher and that screen IS the last thing the customer sees;
+     here the scaffolding has to stay reachable. */
+  position: relative;
+  z-index: 50;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 700;
+  font-size: var(--fs-md);
+  font-variation-settings: 'wdth' 104;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+/* The mark, at cap height. `contain` so the source's own proportions survive
+   — it is a logo, and a logo squashed to fit a box is a logo damaged. */
+.mark {
+  width: 20px;
+  height: 20px;
+  display: block;
+  flex: none;
+  object-fit: contain;
+}
+
+/* Which point of view this page is. The three pages are not peers — two are
+   the platform's admin and one is their customer. */
+.pov {
+  font: 500 var(--fs-micro) / 1 var(--mono);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 4px;
+  padding: 5px 7px;
+  color: var(--ink-3);
+}
+
+.switch {
+  margin-left: auto;
+  display: flex;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.switch button {
+  padding: 7px 12px;
+  border: 0;
+  border-right: 1px solid var(--sh-line-2);
+  background: transparent;
+  color: var(--ink-3);
+  font: 500 var(--fs-xs) / 1 var(--sans);
+  cursor: pointer;
+}
+
+.switch button:last-child {
+  border-right: 0;
+}
+
+.switch button:hover {
+  color: var(--ink-2);
+}
+
+.on {
+  background: var(--sh-raised-2);
+  color: var(--ink) !important;
+}

@@ -1,5 +1,6 @@
 /*
  * Styles for ./PhoneFrame.tsx (ports CRM/lib/shared/widgets/phone_frame.dart).
+ * There is no dynamic island here on purpose — see the component's header.
  * All geometry numbers are inline in the component — they are device
  * measurements, not tokens, and the contain-fit needs them in JS anyway.
  */
@@ -32,13 +33,5 @@
 .screen {
   position: absolute;
   overflow: hidden;
-  background: var(--adm-device-body);
-}
-
-/* Dynamic island, centred over the top bezel. */
-.island {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
   background: var(--adm-device-body);
 }

@@ -1,0 +1,1640 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Recompose Studio — clickable demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@87..125,400..700&family=Sometype+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&family=Petrona:wght@400;600&family=Karla:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ===========================================================================
+   RECOMPOSE STUDIO — clickable demo-ware. One file, no build, no server.
+
+   THREE PAGES, TWO POINTS OF VIEW
+     1  Onboard   ADMIN     — a git URL goes in, the fork comes out
+     2  Generate  CUSTOMER  — brief, generation, design, approval
+     3  Fleet     ADMIN     — every customer app and its state
+
+   THE COLOUR RULE
+   Two kinds of colour, and the line between them is the whole system.
+
+   FUNCTIONAL colour means a state: waiting, working, settled, needs-you, out
+   of tolerance. It lives in the SHELL — the stamp, the ribbon, the agent
+   readouts, the fleet tags and counts — and it never crosses into the canvas.
+   Five semantic tokens, no more, and it never carries a state alone: every
+   one of them ships with a written label as well.
+
+   DECORATIVE colour belongs to the GENERATED THEME alone, and the canvas is
+   where it lives — the phone and the Inspect sheet, which keeps the theme's
+   own ground and sits inside the dark chrome like a document in an editor.
+
+   That is why the shell reads achromatic even now: nothing in it is coloured
+   for looks. A count with no colour means zero; a hue appearing means
+   something changed.
+
+   Everything here is fake. Nothing is fetched, nothing is generated.
+   =========================================================================== */
+
+:root {
+  --sh-void: #06080b;
+  --sh-ground: #0b0e12;
+  --sh-panel: #0f1319;
+  --sh-raised: #151a21;
+  --sh-raised-2: #1c232c;
+  --sh-line: rgba(255,255,255,.07);
+  --sh-line-2: rgba(255,255,255,.13);
+  --sh-line-3: rgba(255,255,255,.22);
+  --ink: #e8ecf2;
+  --ink-2: #98a3b3;
+  --ink-3: #626d7d;
+  --ink-4: #414a56;
+  /* ── STATUS ────────────────────────────────────────────────────────────
+     Functional colour. Each of these means one state and nothing else.
+
+     This refines the old rule rather than breaking it. The shell was
+     achromatic so the GENERATED THEME could be the only chroma — but that
+     rule was protecting the CANVAS, not the chrome. So status colour lives
+     in the shell and never crosses into the phone or the Inspect sheet,
+     where the artifact is actually judged.
+
+     OKLCH, and every hue sits at the same lightness (.80) except the alarm.
+     That is the point: none of them shouts louder than another by accident,
+     so relative loudness is a decision instead of a side effect of hue.
+
+     Colour never carries a state on its own — every one of these ships with
+     a written label and a pip too. */
+  --st-wait: #626d7d;               /* not started; absence is the signal  */
+  --st-run:  oklch(.80 .126 218);   /* an agent is on it right now         */
+  --st-ok:   oklch(.80 .092 165);   /* settled, in sync, nothing to do     */
+  --st-you:  oklch(.80 .118 79);    /* a person is required                */
+  --st-bad:  oklch(.72 .175 26);    /* out of tolerance                    */
+
+  --st-run-w: oklch(.80 .126 218 / .13);
+  --st-ok-w:  oklch(.80 .092 165 / .12);
+  --st-you-w: oklch(.80 .118 79 / .13);
+  --st-bad-w: oklch(.72 .175 26 / .13);
+  --st-run-l: oklch(.80 .126 218 / .40);
+  --st-you-l: oklch(.80 .118 79 / .40);
+  --st-bad-l: oklch(.72 .175 26 / .42);
+
+  /* Phase hues, grouped by WHO IS WORKING rather than walked round the wheel.
+     Violet = a person is authoring. Blue = a machine is working. Amber = a
+     person must decide. Green = settled. So the transcript is legible twice
+     over: which phase, and whose turn it is. */
+  --ph-layout: oklch(.80 .128 332);
+  --ph-brief:  oklch(.80 .130 305);
+  --ph-gen:    oklch(.80 .130 262);
+  --ph-design: oklch(.80 .126 218);
+  --ph-valid:  oklch(.80 .110 193);
+  --ph-review: var(--st-you);
+  --ph-done:   var(--st-ok);
+
+  --ph-layout-w: oklch(.80 .128 332 / .13);
+  --ph-layout-l: oklch(.80 .128 332 / .40);
+  --ph-brief-w:  oklch(.80 .130 305 / .13);
+  --ph-gen-w:    oklch(.80 .130 262 / .13);
+  --ph-design-w: oklch(.80 .126 218 / .13);
+  --ph-valid-w:  oklch(.80 .110 193 / .13);
+  --ph-brief-l:  oklch(.80 .130 305 / .40);
+  --ph-gen-l:    oklch(.80 .130 262 / .40);
+  --ph-design-l: oklch(.80 .126 218 / .40);
+  --ph-valid-l:  oklch(.80 .110 193 / .40);
+
+  --fail: var(--st-bad);
+  --fail-wash: var(--st-bad-w);
+  --fail-line: var(--st-bad-l);
+
+  --sans: 'Archivo', ui-sans-serif, -apple-system, 'Segoe UI', system-ui, sans-serif;
+  --mono: 'Sometype Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* SEVEN STEPS, and the top one is a display size the old scale never had.
+     Still not a 1.25 modular ratio — this is dense tool UI and a strict ratio
+     would blow the density the DAG readout and the fleet table exist for. What
+     changed is that the ladder now reaches somewhere: 32px for page titles and
+     a real display size for the two moments that carry the argument. */
+  --fs-micro: 10px; --fs-xs: 11.5px; --fs-sm: 13.5px;
+  --fs-md: 16px;    --fs-lg: 22px;   --fs-xl: 32px;
+  --fs-display: clamp(38px, 4.4vw, 58px);
+
+  /* Tracking is a system now, not a per-rule guess. Display tightens as it
+     grows; mono labels open up because they are set in caps at 10px. */
+  --tr-display: -.035em;
+  --tr-title: -.025em;
+  --tr-label: .16em;
+}
+
+/* The generated theme — "Stillwater Pilates". Scoped: nothing outside .theme
+   may read these. The Inspect sheet and the phone are the only consumers. */
+.theme {
+  --t-primary: #c2663b;
+  --t-bg: #f7f2ec;
+  --t-surface: #fffdfa;
+  --t-text: #2a2320;
+  --t-accent: #5c7a6b;
+  --t-muted: #8a7a6c;
+  --t-line: rgba(42,35,32,.12);
+  --t-display: 'Newsreader', Georgia, serif;
+  --t-body: 'Karla', var(--sans);
+}
+
+/* One display treatment, used by the two moments that carry the argument:
+   the onboarding thesis and the tenant's approval. Expanded width plus tight
+   tracking is the whole idea — the face gets wider as it gets bigger. */
+.display {
+  font-family: var(--sans);
+  font-size: var(--fs-display);
+  font-variation-settings: 'wdth' 112;
+  font-weight: 700;
+  line-height: .98;
+  letter-spacing: var(--tr-display);
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0; background: var(--sh-void); color: var(--ink);
+  font-family: var(--sans); font-size: var(--fs-sm);
+  -webkit-font-smoothing: antialiased; overflow: hidden;
+}
+button { font-family: inherit; cursor: pointer; }
+
+.app { height: 100vh; display: flex; flex-direction: column; }
+
+/* ── Top bar. The page switcher is DEMO SCAFFOLDING, not product chrome —
+      in the real thing an admin and a customer never share a window. ─────── */
+.top {
+  height: 48px; flex: none; display: flex; align-items: center; gap: 20px;
+  padding: 0 14px; background: var(--sh-panel);
+  border-bottom: 1px solid var(--sh-line);
+  /* Above the approved frame, which is fixed to the whole viewport. In the
+     real product there is no switcher and that frame IS the last thing the
+     customer sees; here the scaffolding has to stay reachable. */
+  position: relative; z-index: 50;
+}
+.brand { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: var(--fs-md); font-variation-settings: 'wdth' 104; letter-spacing: -.02em; }
+.brand i { width: 15px; height: 15px; border: 1.5px solid var(--ink); border-radius: 3px; transform: rotate(45deg); display: block; }
+.pov {
+  font: 500 var(--fs-micro)/1 var(--mono); letter-spacing: var(--tr-label); text-transform: uppercase;
+  border: 1px solid var(--sh-line-2); border-radius: 4px; padding: 5px 7px; color: var(--ink-3);
+}
+.pov.cust { border-color: var(--sh-line-3); color: var(--ink); }
+.switch { margin-left: auto; display: flex; gap: 2px; background: var(--sh-ground); border: 1px solid var(--sh-line); border-radius: 7px; padding: 2px; }
+.switch button {
+  border: 0; background: transparent; color: var(--ink-3); border-radius: 5px;
+  padding: 6px 12px; font-size: var(--fs-xs); font-weight: 500;
+}
+.switch button.on { background: var(--sh-raised-2); color: var(--ink); }
+.top .hint { font: 400 var(--fs-micro)/1 var(--mono); color: var(--ink-4); }
+
+.page { flex: 1; min-height: 0; display: none; }
+.page.on { display: flex; }
+
+/* ═══ PAGE 1 — ONBOARD (admin) ═══════════════════════════════════════════ */
+
+#page-onboard { flex-direction: column; align-items: center; justify-content: center; gap: 0; padding: 40px; position: relative; overflow: hidden; }
+
+/* A light drifting through the bay. Onboarding is the only page with no
+   generated theme on it, so colour here steals nothing from the product — and
+   a light finding colour in an otherwise achromatic shell is a picture of what
+   the engine is about to do.
+
+   It sits BEHIND the content on purpose. `screen` lightens what it touches,
+   which on a near-black ground would eat the contrast light body copy depends
+   on; behind the card it only ever glows through empty ground. */
+.beam {
+  position: absolute; top: 0; left: 0; z-index: 0; pointer-events: none;
+  width: 820px; height: 820px; margin: -410px 0 0 -410px;
+  mix-blend-mode: screen; filter: blur(78px) saturate(1.3); opacity: .34;
+  animation: drift 38s cubic-bezier(.42,0,.58,1) infinite;
+  will-change: transform;
+}
+.beam i {
+  display: block; width: 100%; height: 100%; border-radius: 50%;
+  background: conic-gradient(from 0deg,
+    #c2663b, #d9a441, #4f8f7a, #3e6ca8, #7b5ba8, #b8321f, #c2663b);
+  animation: spin 64s linear infinite;
+}
+@keyframes drift {
+  0%   { transform: translate(26vw, 34vh); }
+  22%  { transform: translate(70vw, 24vh); }
+  46%  { transform: translate(78vw, 70vh); }
+  70%  { transform: translate(30vw, 76vh); }
+  100% { transform: translate(26vw, 34vh); }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .beam { animation: none; transform: translate(62vw, 42vh); }
+  .beam i { animation: none; }
+}
+
+.ob { width: 620px; max-width: 100%; position: relative; z-index: 1; }
+/* The reading column keeps its own dark. The beam is allowed to own the field
+   around it, but body copy never has to compete with a moving light for the
+   4.5:1 it needs. */
+.ob::before {
+  content: ''; position: absolute; inset: -300px -520px; z-index: -1;
+  background: radial-gradient(ellipse 46% 42% at 50% 50%,
+    rgba(6,8,11,.93) 0%, rgba(6,8,11,.80) 40%, rgba(6,8,11,.42) 64%,
+    rgba(6,8,11,.14) 82%, transparent 100%);
+}
+.ob .kick { font: 500 var(--fs-micro)/1 var(--mono); letter-spacing: .13em; text-transform: uppercase; color: var(--ink-4); }
+.ob h1 { margin: 18px 0 12px; }
+.ob p { margin: 0 0 26px; font-size: var(--fs-md); line-height: 1.6; color: var(--ink-3); }
+.ob p b { color: var(--ink-2); font-weight: 500; }
+
+.urlbar { display: flex; gap: 9px; }
+.urlbar .field {
+  flex: 1; display: flex; align-items: center; gap: 10px;
+  border: 1px solid var(--sh-line-2); border-radius: 9px; background: var(--sh-panel);
+  padding: 0 14px; height: 50px; font: 400 var(--fs-sm)/1 var(--mono); color: var(--ink);
+}
+.urlbar .field .g { width: 14px; height: 14px; border: 1.5px solid var(--ink-4); border-radius: 50%; flex: none; }
+.urlbar .field.busy { border-color: var(--sh-line-3); }
+.btn {
+  border: 1px solid var(--sh-line-2); background: var(--sh-raised-2); color: var(--ink-2);
+  border-radius: 7px; padding: 0 18px; height: 50px; font-size: var(--fs-sm); font-weight: 500;
+}
+.btn.pri { background: var(--ink); border-color: var(--ink); color: var(--sh-ground); font-weight: 600; }
+.btn.sm { height: 32px; padding: 0 11px; font-size: var(--fs-xs); border-radius: 5px; }
+.btn:disabled { opacity: .4; cursor: default; }
+
+/* Step ribbon — three named steps, so nothing is glossed over. */
+.ribbon { display: flex; gap: 0; margin: 30px 0 20px; }
+.rstep { flex: 1; display: flex; align-items: center; gap: 10px; padding: 12px 14px 14px 0; border-top: 2px solid var(--sh-line-2); color: var(--ink-3); }
+.rstep.done { border-top-color: var(--st-ok); color: var(--ink-2); }
+.rstep.now { border-top-color: var(--st-run); color: var(--ink); }
+.rstep .n { font: 500 var(--fs-micro)/1 var(--mono); letter-spacing: .1em; }
+.rstep b { font-size: var(--fs-sm); font-weight: 500; }
+
+/* THE AGENT-WORKING TREATMENT. Used on both admin pages. It has to be
+   unmistakable at a glance that a machine is on this right now. */
+.agent {
+  display: flex; align-items: center; gap: 14px;
+  border: 1px solid var(--sh-line-2); border-radius: 9px;
+  background: var(--sh-panel); padding: 16px 18px;
+}
+.agent.live { border-color: var(--st-run-l); background: var(--st-run-w); }
+.agent .pulse { width: 11px; height: 11px; border-radius: 50%; background: var(--st-wait); flex: none; }
+.agent.live .pulse { background: var(--st-run); animation: pulse 1.5s ease-in-out infinite; }
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 oklch(.80 .126 218 / .55); }
+  60%      { box-shadow: 0 0 0 9px oklch(.80 .126 218 / 0); }
+}
+.agent .lb { flex: 1; min-width: 0; }
+.agent .lb b { display: block; font-size: var(--fs-md); font-weight: 500; color: var(--ink-3); letter-spacing: -.01em; }
+.agent.live .lb b, .agent.ok .lb b { color: var(--ink); }
+.agent .lb u { display: block; text-decoration: none; font: 400 var(--fs-xs)/1.6 var(--mono); color: var(--ink-4); margin-top: 5px; }
+.agent .el { font: 400 var(--fs-xs)/1 var(--mono); color: var(--ink-4); flex: none; }
+.agent.ok .pulse { background: var(--st-ok); }
+
+.longrun {
+  margin-top: 14px; padding: 12px 16px; border: 1px dashed var(--sh-line-2);
+  border-radius: 8px; font-size: var(--fs-xs); line-height: 1.65; color: var(--ink-3);
+}
+.longrun b { color: var(--ink); font-weight: 500; }
+
+.obpanel { display: none; }
+.obpanel.on { display: block; animation: rise .4s ease both; }
+.obacts { margin-top: 18px; display: flex; gap: 8px; align-items: center; }
+.obacts .sp { flex: 1; }
+
+.found { display: flex; gap: 0; margin-top: 16px; border: 1px solid var(--sh-line); border-radius: 9px; overflow: hidden; }
+.found div { flex: 1; padding: 14px 16px; border-right: 1px solid var(--sh-line); }
+.found div:last-child { border-right: 0; }
+.found b { display: block; font: 600 var(--fs-lg)/1 var(--sans); letter-spacing: -.02em; }
+.found u { display: block; text-decoration: none; font: 400 var(--fs-micro)/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-4); margin-top: 7px; }
+
+.disclaim {
+  margin-top: 34px; padding-top: 16px; border-top: 1px solid var(--sh-line);
+  font-size: var(--fs-xs); line-height: 1.75; color: var(--ink-3);
+}
+.disclaim b { color: var(--ink); font-weight: 600; }
+
+/* ═══ PAGE 2 — GENERATE (customer) ═══════════════════════════════════════ */
+
+#page-generate { flex-direction: row; }
+
+.chat {
+  width: 360px; flex: none; border-right: 1px solid var(--sh-line);
+  display: flex; flex-direction: column; min-height: 0;
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--sh-panel), #fff 3%) 0%, var(--sh-panel) 22%, var(--sh-ground) 100%);
+}
+.phead {
+  height: 38px; flex: none; display: flex; align-items: center; gap: 8px; padding: 0 13px;
+  border-bottom: 1px solid var(--sh-line);
+  font: 500 var(--fs-micro)/1 var(--mono); letter-spacing: .11em; text-transform: uppercase; color: var(--ink-3);
+}
+.phead .push { margin-left: auto; }
+.tag { font: 500 var(--fs-micro)/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; border: 1px solid var(--sh-line-2); border-radius: 4px; padding: 4px 6px; color: var(--ink-3); }
+.tag.live { border-color: var(--sh-line-3); color: var(--ink); }
+.tag.p-layout { border-color: var(--ph-layout-l); background: var(--ph-layout-w); color: var(--ph-layout); }
+.tag.p-brief  { border-color: var(--ph-brief-l);  background: var(--ph-brief-w);  color: var(--ph-brief); }
+.tag.p-gen    { border-color: var(--ph-gen-l);    background: var(--ph-gen-w);    color: var(--ph-gen); }
+.tag.p-design { border-color: var(--ph-design-l); background: var(--ph-design-w); color: var(--ph-design); }
+.tag.p-valid  { border-color: var(--ph-valid-l);  background: var(--ph-valid-w);  color: var(--ph-valid); }
+.tag.p-review { border-color: var(--st-you-l); background: var(--st-you-w); color: var(--ph-review); }
+.tag.p-done   { border-color: oklch(.80 .092 165 / .40); background: var(--st-ok-w); color: var(--ph-done); }
+
+.msgs {
+  flex: 1; overflow-y: auto; padding: 15px 13px 15px 30px;
+  display: flex; flex-direction: column; gap: 15px; position: relative;
+}
+/* The run's spine. Every message hangs off it, and its node carries the phase
+   that message belongs to — so the whole transcript reads as a process with a
+   shape, not a stack of grey paragraphs. */
+.msgs::before {
+  content: ''; position: absolute; left: 16px; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(180deg, transparent 0, var(--sh-line-2) 22px, var(--sh-line-2) calc(100% - 22px), transparent 100%);
+}
+.msg { position: relative; }
+.msg::before {
+  content: ''; position: absolute; left: -18px; top: 4px;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--sh-ground); border: 1px solid var(--st-wait);
+}
+.msg[data-tone="p-layout"]::before { background: var(--ph-layout); border-color: var(--ph-layout); }
+.msg[data-tone="p-brief"]::before  { background: var(--ph-brief);  border-color: var(--ph-brief); }
+.msg[data-tone="p-gen"]::before    { background: var(--ph-gen);    border-color: var(--ph-gen); }
+.msg[data-tone="p-design"]::before { background: var(--ph-design); border-color: var(--ph-design); }
+.msg[data-tone="p-valid"]::before  { background: var(--ph-valid);  border-color: var(--ph-valid); }
+.msg[data-tone="p-review"]::before { background: var(--ph-review); border-color: var(--ph-review); }
+.msg[data-tone="p-done"]::before   { background: var(--ph-done);   border-color: var(--ph-done); }
+/* The human's own lines stay neutral on the rail — they are not a machine
+   phase, and letting them borrow one would misreport who did the work. */
+.msg.you::before { background: var(--sh-ground); border-color: var(--ink-2); }
+
+/* A phase marker. Chunks the transcript and puts the state's hue at intervals
+   down the column. */
+.phase {
+  position: relative; display: flex; align-items: center; gap: 10px;
+  margin: 4px 0 1px; font: 600 var(--fs-micro)/1 var(--mono);
+  letter-spacing: .18em; text-transform: uppercase; color: var(--ink-4);
+}
+.phase::after { content: ''; flex: 1; height: 1px; background: var(--sh-line); }
+.phase::before {
+  content: ''; position: absolute; left: -18px; width: 9px; height: 9px;
+  border-radius: 50%; background: var(--sh-ground); border: 2px solid var(--ink-4);
+}
+.phase.p-layout { color: var(--ph-layout); }
+.phase.p-layout::before { border-color: var(--ph-layout); box-shadow: 0 0 0 3px var(--ph-layout-w); }
+.phase.p-brief  { color: var(--ph-brief); }
+.phase.p-brief::before  { border-color: var(--ph-brief);  box-shadow: 0 0 0 3px var(--ph-brief-w); }
+.phase.p-gen    { color: var(--ph-gen); }
+.phase.p-gen::before    { border-color: var(--ph-gen);    box-shadow: 0 0 0 3px var(--ph-gen-w); }
+.phase.p-design { color: var(--ph-design); }
+.phase.p-design::before { border-color: var(--ph-design); box-shadow: 0 0 0 3px var(--ph-design-w); }
+.phase.p-valid  { color: var(--ph-valid); }
+.phase.p-valid::before  { border-color: var(--ph-valid);  box-shadow: 0 0 0 3px var(--ph-valid-w); }
+.phase.p-review { color: var(--ph-review); }
+.phase.p-review::before { border-color: var(--ph-review); box-shadow: 0 0 0 3px var(--st-you-w); }
+.phase.p-done   { color: var(--ph-done); }
+.phase.p-done::before   { border-color: var(--ph-done);   box-shadow: 0 0 0 3px var(--st-ok-w); }
+.msg { display: flex; flex-direction: column; gap: 6px; animation: rise .4s ease both; }
+@keyframes rise { from { opacity: 0; transform: translateY(7px); } }
+.who { font: 500 var(--fs-micro)/1 var(--mono); letter-spacing: .11em; text-transform: uppercase; color: var(--ink-4); }
+.msg p { margin: 0; font-size: var(--fs-sm); line-height: 1.6; color: var(--ink-2); }
+.msg strong { color: var(--ink); font-weight: 500; }
+.msg.you p { color: var(--ink); background: var(--sh-raised); border: 1px solid var(--sh-line); border-radius: 7px; padding: 10px 12px; }
+.msg.sys p { color: var(--ink-4); font-family: var(--mono); font-size: var(--fs-xs); }
+
+.choices { display: flex; flex-direction: column; gap: 5px; margin-top: 3px; }
+.choice {
+  border: 1px solid var(--sh-line); border-radius: 7px; padding: 9px 11px; background: var(--sh-raised);
+  font-size: var(--fs-xs); color: var(--ink-2); display: flex; gap: 9px; align-items: baseline; text-align: left; width: 100%;
+}
+.choice b { font: 500 var(--fs-micro)/1.4 var(--mono); color: var(--ink-4); }
+.choice:hover { border-color: var(--sh-line-2); color: var(--ink); }
+/* The answer you picked carries the brief phase's own hue, so a choice reads
+   as part of the run rather than a generic selected row. */
+/* A chosen answer wears the hue of the phase it was chosen in, so the brand
+   interview and the layout interview stay visually distinct in one column. */
+.choice.on { border-color: var(--ph-brief-l); background: var(--ph-brief-w); color: var(--ink); }
+.choice.on b { color: var(--ph-brief); }
+.msg[data-tone="p-layout"] .choice.on { border-color: var(--ph-layout-l); background: var(--ph-layout-w); }
+.msg[data-tone="p-layout"] .choice.on b { color: var(--ph-layout); }
+
+.card { border: 1px solid var(--sh-line-2); border-radius: 7px; background: var(--sh-raised); overflow: hidden; }
+.card h4 { margin: 0; padding: 10px 12px; font: 500 var(--fs-micro)/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--sh-line); }
+.krow { display: flex; gap: 10px; padding: 6px 12px; font-size: var(--fs-xs); line-height: 1.55; }
+.krow span { width: 72px; flex: none; color: var(--ink-4); font: 400 var(--fs-micro)/1.7 var(--mono); }
+.krow div { color: var(--ink-2); min-width: 0; }
+.card .act { display: flex; gap: 6px; padding: 10px 12px; border-top: 1px solid var(--sh-line); }
+
+.composer { flex: none; border-top: 1px solid var(--sh-line); padding: 11px 13px; }
+.composer .box {
+  border: 1px solid var(--sh-line-2); border-radius: 7px; background: var(--sh-ground);
+  padding: 11px 12px; font-size: var(--fs-sm); color: var(--ink-4); min-height: 62px;
+  display: flex; flex-direction: column;
+}
+.composer .send { margin-top: auto; margin-left: auto; font: 400 var(--fs-micro)/1 var(--mono); color: var(--ink-4); }
+
+/* Canvas */
+.canvas { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.bar { height: 50px; flex: none; display: flex; align-items: center; gap: 9px; padding: 0 14px; border-bottom: 1px solid var(--sh-line); }
+.seg { display: flex; background: var(--sh-ground); border: 1px solid var(--sh-line); border-radius: 7px; padding: 2px; gap: 2px; }
+.seg button { border: 0; background: transparent; color: var(--ink-3); border-radius: 5px; padding: 6px 13px; font-size: var(--fs-xs); font-weight: 500; }
+.seg button.on { background: var(--sh-raised-2); color: var(--ink); }
+.chipbtn {
+  display: flex; align-items: center; gap: 8px; border: 1px solid var(--sh-line-2); border-radius: 6px;
+  background: var(--sh-raised); padding: 7px 11px; font-size: var(--fs-xs); color: var(--ink-2);
+}
+.chipbtn:hover { border-color: var(--sh-line-3); color: var(--ink); }
+.chipbtn em { font: 400 var(--fs-micro)/1 var(--mono); font-style: normal; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-4); }
+.chipbtn b { color: var(--ink); font-weight: 500; }
+.swatch { width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--sh-line-2); flex: none; }
+.bar .push { margin-left: auto; }
+.meter { font: 400 var(--fs-xs)/1 var(--mono); color: var(--ink-3); display: flex; gap: 15px; }
+.meter b { color: var(--ink); font-weight: 500; }
+.meter .m-run, .meter .m-run b { color: var(--st-run); }
+
+.stage { flex: 1; min-height: 0; position: relative; overflow: hidden; }
+.pane { position: absolute; inset: 0; display: none; }
+.pane.on { display: block; }
+
+/* — Mockup pane — */
+#pane-mock { display: none; place-items: center; padding: 22px; overflow: auto;
+  background: radial-gradient(880px 500px at 50% 36%, rgba(255,255,255,.028), transparent 70%), var(--sh-ground); }
+#pane-mock.on { display: grid; }
+
+.phone {
+  width: 340px; height: 720px; border-radius: 34px; border: 1px solid var(--sh-line-3);
+  background: var(--t-bg); overflow: hidden; position: relative; color: var(--t-text);
+  box-shadow: 0 0 0 7px #0d1116, 0 30px 70px -20px rgba(0,0,0,.85);
+  display: flex; flex-direction: column; font-family: var(--t-body); font-size: 12px;
+}
+.statusbar { height: 30px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; font-size: 10.5px; font-weight: 600; }
+.sig { display: flex; gap: 3px; align-items: flex-end; }
+.sig i { width: 3px; border-radius: 1px; background: currentColor; display: block; }
+.gymhead { flex: none; padding: 6px 16px 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; border-bottom: 1px solid var(--t-line); }
+.logo { width: 46px; height: 46px; border-radius: 12px; background: var(--t-primary); color: var(--t-surface); display: grid; place-items: center; font: 600 15px/1 var(--t-display); letter-spacing: .05em; }
+.logo.pending { background: transparent; border: 1px dashed var(--t-line); color: var(--t-muted); font: 400 7px/1.2 var(--mono); text-align: center; padding: 3px; }
+.gymname { font: 600 16px/1 var(--t-display); letter-spacing: -.01em; }
+.infobar { display: flex; gap: 13px; align-items: center; font-size: 10px; color: var(--t-muted); margin-top: 2px; }
+.infobar b { color: var(--t-text); font-weight: 600; }
+.belt { width: 20px; height: 12px; border-radius: 2px; background: var(--t-accent); display: block; }
+.daterow { flex: none; display: flex; gap: 6px; padding: 10px 14px; }
+.date { flex: none; width: 40px; border-radius: 9px; padding: 6px 0; text-align: center; border: 1px solid var(--t-line); color: var(--t-muted); }
+.date u { display: block; font-size: 8.5px; text-decoration: none; letter-spacing: .08em; text-transform: uppercase; }
+.date b { display: block; font-size: 14px; font-weight: 600; color: var(--t-text); }
+.date.on { background: var(--t-primary); border-color: var(--t-primary); }
+.date.on u, .date.on b { color: var(--t-surface); }
+.classlist { flex: 1; overflow: hidden; padding: 2px 14px; display: flex; flex-direction: column; gap: 8px; }
+.cls { display: flex; gap: 10px; align-items: center; padding: 8px; border-radius: 11px; background: var(--t-surface); border: 1px solid var(--t-line); }
+.thumb { width: 52px; height: 52px; border-radius: 9px; flex: none; background: var(--t-accent); }
+.thumb.pending { background: transparent; border: 1px dashed var(--t-line); color: var(--t-muted); font: 400 6.5px/1.25 var(--mono); display: grid; place-items: center; text-align: center; padding: 3px; word-break: break-all; }
+.cls .meta { min-width: 0; flex: 1; }
+.cls .meta b { display: block; font-size: 12.5px; font-weight: 600; }
+.cls .meta u { display: block; text-decoration: none; font-size: 10.5px; color: var(--t-muted); margin-top: 1px; }
+.cls .time { text-align: right; flex: none; }
+.cls .time b { display: block; font-size: 12px; font-weight: 600; }
+.cls .time u { display: block; text-decoration: none; font-size: 9.5px; color: var(--t-muted); }
+.bottomnav { flex: none; height: 58px; border-top: 1px solid var(--t-line); background: var(--t-surface); display: flex; align-items: center; padding-bottom: 8px; }
+.bottomnav a { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--t-muted); text-decoration: none; font-size: 9px; }
+.bottomnav a.on { color: var(--t-primary); }
+.bottomnav i { width: 17px; height: 17px; border: 1.5px solid currentColor; border-radius: 5px; display: block; }
+.bottomnav a.on i { background: var(--t-primary); border-color: var(--t-primary); }
+
+/* The redesigned home — hero + time spine. Same content, rearranged. */
+.gymhead.left { flex-direction: row; align-items: center; gap: 10px; padding: 8px 16px 12px; }
+.gymhead.left .logo { width: 34px; height: 34px; border-radius: 9px; font-size: 12px; }
+.gymhead.left .col { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.gymhead.left .gymname { font-size: 14px; }
+.gymhead.left .infobar { margin: 0; gap: 10px; }
+.hero { margin: 4px 14px 12px; border-radius: 14px; overflow: hidden; background: var(--t-primary); color: var(--t-surface); }
+.hero .img { height: 100px; background: #6f8a78; }
+.hero .pad { padding: 11px 13px 13px; }
+.hero .eyebrow { font-size: 8.5px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; opacity: .82; }
+.hero h3 { margin: 5px 0 2px; font: 600 18px/1.15 var(--t-display); letter-spacing: -.01em; }
+.hero .sub { font-size: 10.5px; opacity: .85; }
+.hero .cta { margin-top: 11px; background: var(--t-surface); color: var(--t-primary); border-radius: 7px; text-align: center; padding: 8px; font-size: 11.5px; font-weight: 600; }
+.spinehead { padding: 0 16px 6px; font-size: 8.5px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--t-muted); }
+.spine { flex: 1; overflow: hidden; padding: 0 14px; }
+.srow { display: flex; gap: 11px; padding: 9px 0; border-bottom: 1px solid var(--t-line); }
+.srow:last-child { border-bottom: 0; }
+.srow .t { width: 40px; flex: none; text-align: right; }
+.srow .t b { display: block; font-size: 12px; font-weight: 600; }
+.srow .t u { display: block; text-decoration: none; font-size: 9px; color: var(--t-muted); }
+.srow .bar2 { width: 2px; border-radius: 1px; background: var(--t-line); flex: none; }
+.srow.on .bar2 { background: var(--t-accent); }
+.srow .d { min-width: 0; flex: 1; }
+.srow .d b { display: block; font-size: 12.5px; font-weight: 600; }
+.srow .d u { display: block; text-decoration: none; font-size: 10.5px; color: var(--t-muted); }
+
+/* — Inspect pane. THE SHEET KEEPS THE THEME'S GROUND — it is the artifact,
+     not chrome, which is what lets the shell stay achromatic around it. — */
+#pane-inspect { overflow-y: auto; background: var(--sh-ground); }
+.sheet {
+  min-height: 100%; background: var(--t-bg); color: var(--t-text);
+  font-family: var(--t-body); padding: 40px 46px 60px;
+}
+.sheet .kick { font: 500 var(--fs-micro)/1 var(--mono); letter-spacing: .13em; text-transform: uppercase; color: var(--t-muted); }
+.sheet h1 { margin: 12px 0 8px; font: 600 clamp(40px, 5vw, 68px)/1 var(--t-display); letter-spacing: -.03em; }
+.identity { font: 400 var(--fs-xs)/1 var(--mono); color: var(--t-muted); letter-spacing: .04em; }
+.spectrum { display: flex; height: 40px; margin: 26px 0 14px; border-radius: 4px; overflow: hidden; border: 1px solid var(--t-line); }
+.spectrum i { flex: 1; display: block; transition: opacity .5s ease; }
+.counts { font-size: var(--fs-sm); line-height: 1.7; color: var(--t-muted); max-width: 640px; }
+.counts b { color: var(--t-text); font-weight: 600; }
+
+.sec { margin-top: 42px; opacity: .25; transition: opacity .6s ease; }
+.sec.in { opacity: 1; }
+.sechead { display: flex; align-items: baseline; gap: 12px; border-bottom: 1px solid var(--t-line); padding-bottom: 9px; margin-bottom: 20px; }
+.sechead h2 { margin: 0; font: 600 var(--fs-md)/1 var(--t-display); letter-spacing: -.01em; }
+.sechead .n { font: 400 var(--fs-xs)/1 var(--mono); color: var(--t-muted); margin-left: auto; }
+
+.roles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.role .plate { height: 96px; border-radius: 5px; border: 1px solid var(--t-line); }
+.role b { display: block; margin-top: 10px; font: 600 var(--fs-sm)/1.3 var(--t-display); }
+.role code { display: block; font: 400 var(--fs-micro)/1.6 var(--mono); color: var(--t-muted); margin-top: 3px; }
+.role p { margin: 7px 0 0; font-size: var(--fs-xs); line-height: 1.6; color: var(--t-muted); }
+
+.ramp { display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; }
+.ramp i { height: 34px; border-radius: 3px; display: block; border: 1px solid var(--t-line); }
+
+.typegrid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+.face .lbl { font: 400 var(--fs-micro)/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--t-muted); }
+.face .nm { margin: 9px 0 4px; font-size: 34px; line-height: 1.1; }
+.face .sp { font-size: var(--fs-sm); line-height: 1.5; color: var(--t-muted); }
+
+.strings { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.strings li { display: flex; gap: 20px; padding: 13px 0; border-bottom: 1px solid var(--t-line); }
+.strings .sl { width: 190px; flex: none; }
+.strings .sl code { font: 400 var(--fs-xs)/1.5 var(--mono); color: var(--t-text); display: block; }
+.strings .sl u { display: block; text-decoration: none; font-size: var(--fs-micro); color: var(--t-muted); margin-top: 3px; }
+.strings .sv { font-size: var(--fs-md); line-height: 1.45; }
+
+.plates { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+.plate2 { border: 1px solid var(--t-line); border-radius: 5px; overflow: hidden; }
+.plate2 .im { height: 74px; display: block; }
+.plate2 code { display: block; padding: 7px 8px; font: 400 var(--fs-micro)/1.3 var(--mono); color: var(--t-muted); word-break: break-all; }
+.icons { display: grid; grid-template-columns: repeat(8, 1fr); gap: 12px; }
+.icons .ic { border: 1px solid var(--t-line); border-radius: 5px; padding: 14px; display: grid; place-items: center; }
+.icons .ic span { width: 22px; height: 22px; border: 2px solid var(--t-primary); border-radius: 6px; display: block; }
+
+.colophon { margin-top: 46px; padding-top: 16px; border-top: 1px solid var(--t-line); font: 400 var(--fs-xs)/1.7 var(--mono); color: var(--t-muted); }
+
+/* Empty inspect state — fail visible: never a blank pane. */
+.sheet.empty-state { display: grid; place-items: center; text-align: center; }
+.sheet.empty-state .box { max-width: 340px; }
+.sheet.empty-state h1 { font-size: 30px; }
+.sheet.empty-state p { font-size: var(--fs-sm); line-height: 1.65; color: var(--t-muted); }
+
+/* — Approved: takes the WHOLE VIEWPORT, chat included. This is the customer's
+     last frame — there is nothing left for them to do, so leaving the
+     conversation on screen would imply there is. — */
+#approved { position: fixed; inset: 0; display: none; place-items: center; background: var(--t-bg); color: var(--t-text); text-align: center; padding: 40px; z-index: 40; }
+#approved.on { display: grid; animation: rise .6s ease both; }
+#approved .in { max-width: 560px; }
+#approved .mk { width: 54px; height: 54px; border-radius: 50%; background: var(--t-primary); color: var(--t-surface); display: grid; place-items: center; font-size: 24px; margin: 0 auto 26px; }
+#approved h1 { margin: 0 0 18px; font-family: var(--t-display); font-size: clamp(38px,4.6vw,58px); font-weight: 600; line-height: 1.02; letter-spacing: -.035em; }
+#approved p { margin: 0 auto; font-size: 17px; line-height: 1.6; color: var(--t-muted); max-width: 460px; }
+#approved .meta { margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--t-line); font: 400 var(--fs-xs)/1.8 var(--mono); color: var(--t-muted); }
+
+/* — Library popup — */
+.scrim { position: fixed; inset: 0; background: rgba(6,8,11,.6); display: none; z-index: 30; }
+.scrim.on { display: block; }
+.pop {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 620px; max-width: calc(100vw - 40px);
+  background: var(--sh-raised); border: 1px solid var(--sh-line-3); border-radius: 11px; z-index: 31;
+  display: none; overflow: hidden; box-shadow: 0 30px 70px -14px rgba(0,0,0,.8);
+}
+.pop.on { display: block; animation: rise .25s ease both; }
+.pop .ph { padding: 13px 15px; border-bottom: 1px solid var(--sh-line); display: flex; align-items: center; }
+.pop .ph b { font-size: var(--fs-sm); font-weight: 500; }
+.pop .ph .x { margin-left: auto; border: 0; background: transparent; color: var(--ink-4); font-size: var(--fs-md); }
+.libgrid { padding: 15px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 11px; }
+.lib { border: 1px solid var(--sh-line); border-radius: 7px; overflow: hidden; background: var(--sh-panel); text-align: left; padding: 0; }
+.lib:hover { border-color: var(--sh-line-3); }
+.lib.on { border-color: var(--sh-line-3); background: var(--sh-raised-2); }
+.lib .sw { height: 46px; display: flex; }
+.lib .sw i { flex: 1; display: block; }
+.lib .lb { padding: 8px 10px; }
+.lib .lb b { display: block; font-size: var(--fs-xs); font-weight: 500; color: var(--ink); }
+.lib .lb u { display: block; text-decoration: none; font: 400 var(--fs-micro)/1.5 var(--mono); color: var(--ink-4); margin-top: 2px; }
+.pop .pf { padding: 11px 15px; border-top: 1px solid var(--sh-line); background: var(--sh-panel); font-size: var(--fs-xs); color: var(--ink-3); line-height: 1.6; }
+
+/* ── The brief document ──────────────────────────────────────────────────
+   This lives in the canvas, not the chat. A real long_desc runs to a paragraph
+   or more and the five fields together are the whole contract the pipeline
+   validates against — putting that in a 360px rail underestimates what the
+   tenant is actually writing. */
+#pane-brief { overflow-y: auto; padding: 30px 34px 60px; }
+.briefdoc { max-width: 760px; margin: 0 auto; }
+.briefdoc .dh { display: flex; align-items: baseline; gap: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--sh-line-2); }
+.briefdoc .dh h2 { margin: 0; font: 700 var(--fs-lg)/1.1 var(--sans); font-variation-settings: 'wdth' 104; letter-spacing: var(--tr-title); }
+.briefdoc .dh code { font: 400 var(--fs-xs)/1 var(--mono); color: var(--ink-3); }
+.briefdoc .dh .sp { margin-left: auto; }
+/* Two briefs, deliberately not one schema. Assets are data and layout is code,
+   so they are steered by different documents and validated by different
+   things. Keeping them in one tab but on separate sheets says both at once. */
+.subtabs { display: flex; gap: 2px; background: var(--sh-ground); border: 1px solid var(--sh-line); border-radius: 7px; padding: 2px; margin-bottom: 22px; }
+.subtabs button { border: 0; background: transparent; color: var(--ink-3); border-radius: 5px; padding: 7px 13px; font-size: var(--fs-xs); font-weight: 500; }
+.subtabs button.on { background: var(--sh-raised-2); color: var(--ink); }
+.bsheet { display: none; }
+.bsheet.on { display: block; animation: rise .3s ease both; }
+.prov {
+  margin: 0 0 22px; padding: 11px 14px; border: 1px dashed var(--sh-line-2);
+  border-radius: var(--r); font-size: var(--fs-xs); line-height: 1.7; color: var(--ink-3);
+}
+.prov b { color: var(--ink-2); font-weight: 500; }
+.briefdoc .note { margin: 14px 0 26px; font-size: var(--fs-sm); line-height: 1.65; color: var(--ink-3); max-width: 62ch; }
+.briefdoc .note b { color: var(--ink-2); font-weight: 500; }
+
+.fld { margin-bottom: 20px; }
+.fld .k {
+  display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px;
+  font: 500 var(--fs-micro)/1 var(--mono); letter-spacing: var(--tr-label);
+  text-transform: uppercase; color: var(--ink-3);
+}
+.fld .k em { font-style: normal; color: var(--ink-4); letter-spacing: .04em; text-transform: none; }
+.fld .v {
+  border: 1px solid var(--sh-line-2); border-radius: var(--r);
+  background: var(--sh-panel); padding: 14px 16px;
+  font-size: var(--fs-md); line-height: 1.62; color: var(--ink);
+}
+.fld .v p { margin: 0 0 .8em; }
+.fld .v p:last-child { margin: 0; }
+.fld.short .v { font-size: var(--fs-sm); }
+.fld .v.pick { display: flex; gap: 8px; }
+.fld .v.pick span {
+  border: 1px solid var(--sh-line-2); border-radius: 4px; padding: 5px 10px;
+  font: 500 var(--fs-xs)/1 var(--mono); color: var(--ink-4); letter-spacing: .06em; text-transform: uppercase;
+}
+.fld .v.pick span.on { border-color: var(--ph-brief-l); background: var(--ph-brief-w); color: var(--ph-brief); }
+
+.briefdoc .foot {
+  margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--sh-line-2);
+  display: flex; gap: 9px; align-items: center;
+}
+.briefdoc .foot .sp { flex: 1; }
+.briefdoc .foot .hint { font: 400 var(--fs-xs)/1.6 var(--mono); color: var(--ink-4); }
+
+/* ═══ PAGE 3 — FLEET (admin) ═════════════════════════════════════════════ */
+
+#page-fleet { flex-direction: column; overflow: hidden; }
+.fhead { padding: 22px 26px 18px; border-bottom: 1px solid var(--sh-line); }
+.fhead h1 { margin: 0; font: 700 var(--fs-xl)/1.08 var(--sans); font-variation-settings: 'wdth' 106; letter-spacing: var(--tr-title); }
+.fhead p { margin: 7px 0 0; font-size: var(--fs-sm); line-height: 1.6; color: var(--ink-3); max-width: 700px; }
+.fhead p b { color: var(--ink-2); font-weight: 500; }
+.kpis { display: flex; border-bottom: 1px solid var(--sh-line); }
+.kpi { flex: 1; padding: 15px 26px; border-right: 1px solid var(--sh-line); }
+.kpi:last-child { border-right: 0; }
+.kpi b { display: block; font: 600 var(--fs-xl)/1 var(--sans); letter-spacing: -.03em; }
+.kpi u { display: block; text-decoration: none; font: 400 var(--fs-xs)/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-4); margin-top: 8px; }
+.kpi.s-run b { color: var(--st-run); }
+.kpi.s-ok b  { color: var(--st-ok); }
+/* "needing you" stays neutral at zero and turns amber the moment it is not.
+   Colour appearing IS the signal; a permanently amber zero would be noise. */
+.kpi.s-you b { color: var(--st-you); }
+.kpi.bad b { color: var(--st-bad); }
+/* Three big cards, not a table. The state has to land at a glance from across
+   a room, and a card working right now has to be obviously alive. */
+.cards { flex: 1; overflow-y: auto; padding: 22px 26px; display: flex; flex-direction: column; gap: 16px; }
+.fcard {
+  border: 1px solid var(--sh-line-2); border-radius: 12px; background: var(--sh-panel);
+  padding: 22px 24px; display: flex; gap: 26px; align-items: center;
+}
+.fcard.live { border-color: var(--st-run-l); background: var(--sh-raised); }
+.fcard .fwho { width: 260px; flex: none; }
+.fcard .fwho b { display: block; font: 600 var(--fs-lg)/1.2 var(--sans); letter-spacing: -.02em; }
+.fcard .fwho u { display: block; text-decoration: none; font: 400 var(--fs-xs)/1.5 var(--mono); color: var(--ink-4); margin-top: 6px; }
+.fcard .fwho .n { display: block; font-size: var(--fs-xs); color: var(--ink-3); margin-top: 9px; }
+
+.fstate { flex: 1; min-width: 0; display: flex; gap: 14px; align-items: flex-start; }
+.fstate .pulse { width: 12px; height: 12px; border-radius: 50%; background: var(--st-wait); flex: none; margin-top: 5px; }
+
+/* The status tag. Colour needed a region it could actually own — an 8px pip
+   cannot carry state across a room, which is the whole job here. Reads as a
+   word first and a hue second, so it survives being printed in grey. */
+.stag {
+  display: inline-flex; align-items: center; gap: 7px; margin-bottom: 10px;
+  border: 1px solid var(--sh-line-2); border-radius: 3px; padding: 5px 9px 5px 7px;
+  font: 600 var(--fs-micro)/1 var(--mono); letter-spacing: .15em; text-transform: uppercase;
+  color: var(--ink-3);
+}
+.stag i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex: none; }
+.stag.s-run { color: var(--st-run); border-color: var(--st-run-l); background: var(--st-run-w); }
+.stag.s-ok  { color: var(--st-ok);  border-color: oklch(.80 .092 165 / .40); background: var(--st-ok-w); }
+.stag.s-you { color: var(--st-you); border-color: var(--st-you-l); background: var(--st-you-w); }
+.stag.s-bad { color: var(--st-bad); border-color: var(--st-bad-l); background: var(--st-bad-w); }
+.stag.s-run i { animation: pulse 1.5s ease-in-out infinite; }
+.fcard.live .fstate .pulse { display: none; }
+.fstate > .pulse { display: none; }
+.fstate .t { min-width: 0; }
+.fstate .t b { display: block; font: 500 var(--fs-md)/1.3 var(--sans); color: var(--ink-2); letter-spacing: -.01em; }
+.fcard.live .fstate .t b { color: var(--ink); }
+.fstate .t u { display: block; text-decoration: none; font-size: var(--fs-sm); line-height: 1.6; color: var(--ink-3); margin-top: 7px; }
+.fstate .t .log { display: block; font: 400 var(--fs-xs)/1.6 var(--mono); color: var(--ink-4); margin-top: 8px; }
+
+.facts { flex: none; display: flex; flex-direction: column; gap: 7px; width: 176px; }
+.facts .btn { height: 36px; width: 100%; justify-content: center; }
+.ffoot { flex: none; padding: 15px 26px; border-top: 1px solid var(--sh-line); background: var(--sh-panel); font-size: var(--fs-xs); color: var(--ink-3); line-height: 1.65; }
+.ffoot b { color: var(--ink-2); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Demo scaffolding. In the real product an admin and a customer never
+       share a window; this switcher exists so one file can show both. -->
+  <div class="top">
+    <div class="brand"><i></i> Recompose</div>
+    <span class="pov" id="pov">Admin</span>
+    <span class="hint" id="tophint">demo · nothing here is real</span>
+    <div class="switch">
+      <button data-go="onboard" class="on">1 · Onboard</button>
+      <button data-go="generate">2 · Generate</button>
+      <button data-go="fleet">3 · Fleet</button>
+    </div>
+    <button class="btn sm" id="reset" style="height:30px">Reset</button>
+  </div>
+
+  <!-- ═══ PAGE 1 — ONBOARD ═══════════════════════════════════════════════ -->
+  <section class="page on" id="page-onboard">
+    <div class="beam" aria-hidden="true"><i></i></div>
+
+    <div class="ob">
+      <div class="kick">Admin · onboard a platform</div>
+      <h1 class="display">Point us at the app.</h1>
+      <p>We never touch your code. You give us read access, we keep a
+         <b>managed fork</b>.</p>
+
+      <div class="urlbar">
+        <div class="field" id="urlfield"><span class="g"></span><span>github.com/combatden/member-app</span></div>
+        <button class="btn pri" id="obgo">Connect</button>
+      </div>
+
+      <div class="ribbon" id="ribbon">
+        <div class="rstep" data-r="1"><span class="n">01</span><b>Connect</b></div>
+        <div class="rstep" data-r="2"><span class="n">02</span><b>Create Design Fork</b></div>
+      </div>
+
+      <!-- Connecting is a CREDENTIALS handshake, not a scan. Nothing has been
+           read yet, so nothing is counted here. -->
+      <div class="obpanel" id="ob-1">
+        <div class="agent ok"><span class="pulse"></span>
+          <div class="lb"><b>Connected</b><u>read access confirmed · nothing read, nothing written</u></div>
+          <span class="el">1.4s</span></div>
+        <div class="obacts"><span class="sp"></span><button class="btn pri" id="ob-next-1">Create design fork →</button></div>
+      </div>
+
+      <!-- One agent, one step. Tokenizing and mirroring are two halves of the
+           same job and splitting them taught a viewer nothing. -->
+      <div class="obpanel" id="ob-2">
+        <div class="agent live" id="ag2"><span class="pulse"></span>
+          <div class="lb"><b>An agent is creating your design fork</b><u id="ag2log">reading lib/theme/palette.dart…</u></div>
+          <span class="el" id="ag2el"></span></div>
+
+        <!-- This is a long job. Saying so up front, and saying you can leave,
+             is the difference between "working" and "hung". -->
+        <div class="longrun" id="oblong">
+          Usually <b>30–60 minutes</b>. You can close this — we'll email you
+          when the fork is ready.
+        </div>
+
+        <div class="found" id="obfound" style="display:none">
+          <div><b>6</b><u>screens</u></div>
+          <div><b>5</b><u>post-class cards</u></div>
+          <div><b>41</b><u>colour literals</u></div>
+          <div><b>18</b><u>asset references</u></div>
+        </div>
+
+        <div class="obacts" id="ob2acts" style="display:none">
+          <button class="btn sm">View repo</button>
+          <span class="sp"></span>
+          <button class="btn pri" data-go="generate">Open the customer view →</button>
+        </div>
+      </div>
+
+      <!-- Fine print, not a repeat of the headline. Carries the facts the
+           one-liner drops: no integration work, and the cost is amortized. -->
+      <div class="disclaim">
+        No pull request into your repository, no branch on your trunk, no
+        library to install, no integration work on your side.
+        <b>Once per platform</b>, not once per tenant.
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PAGE 2 — GENERATE ══════════════════════════════════════════════ -->
+  <section class="page" id="page-generate">
+
+    <aside class="chat">
+      <div class="phead">Conversation <span class="push"></span> <span class="tag live" id="chattag">brief</span></div>
+      <div class="msgs" id="msgs"></div>
+      <div class="composer"><div class="box">Message Recompose…<span class="send">↵ to send</span></div></div>
+    </aside>
+
+    <main class="canvas">
+      <div class="bar">
+        <div class="seg">
+          <button data-view="mock" class="on">Mockup</button>
+          <button data-view="inspect">Inspect</button>
+          <button data-view="brief">Brief</button>
+        </div>
+        <button class="chipbtn" id="libbtn"><em>Theme</em><span class="swatch" style="background:#c2663b"></span><b id="themename">Stillwater Pilates</b></button>
+        <div class="push"></div>
+        <div class="meter" id="meter"><span>brief not committed</span></div>
+      </div>
+
+      <div class="stage">
+        <div class="pane on" id="pane-mock"><div class="phone theme" id="phone"></div></div>
+        <div class="pane" id="pane-inspect"><div class="sheet theme" id="sheet"></div></div>
+        <div class="pane" id="pane-brief"><div class="briefdoc" id="briefdoc"></div></div>
+        <div id="approved" class="theme">
+          <!-- The tenant's voice, not ours. They do not have a "review
+               environment", they have never heard of a fork, and the company
+               they have a relationship with is the PLATFORM, not Recompose. -->
+          <div class="in">
+            <div class="mk">✓</div>
+            <h1>Design approved.</h1>
+            <p><b>CombatDen</b> will reach out to you when your new app is
+               ready.</p>
+            <div class="meta">Stillwater Pilates · approved 29 Jul</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </section>
+
+  <!-- ═══ PAGE 3 — FLEET ═════════════════════════════════════════════════ -->
+  <section class="page" id="page-fleet">
+    <div class="fhead">
+      <h1>CombatDen · customer apps</h1>
+      <!-- One line. The argument already lives in the footer; a header only
+           has to name the page, and nobody reads past the first few words. -->
+      <p><b>Agents automatically maintain</b> the customer design fork.</p>
+    </div>
+    <div class="kpis" id="kpis"></div>
+    <div class="cards" id="fleetcards"></div>
+    <div class="ffoot">
+      <b>Two agents working, nothing waiting on you.</b> That is the shape the
+      product is for — when an agent is wrong it surfaces in <b>UAT</b> as a
+      queue rather than in production as an incident. None of this is a pull
+      request into a customer's repository; there is never one.
+    </div>
+  </section>
+</div>
+
+<!-- Library popup -->
+<div class="scrim" id="scrim"></div>
+<div class="pop" id="pop">
+  <div class="ph"><b>Library</b><button class="x" id="popx">✕</button></div>
+  <div class="libgrid" id="libgrid"></div>
+  <div class="pf">Selecting a theme re-resolves colour, type, copy, icons and
+    imagery over whichever arrangement the canvas is showing. Theme and mockup
+    are independent — the library swaps <b>slots</b>, never layout.</div>
+</div>
+
+<script>
+/* ===========================================================================
+   Demo driver. Deliberately dumb: a linear step index, a few timers, and
+   innerHTML. Nothing is fetched and nothing is generated.
+   =========================================================================== */
+
+const $  = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/* ── Theme catalogue. Only the first is used by the phone/sheet at rest.
+   NO THEME MAY USE ARCHIVO. Archivo is the shell's own typeface; a generated theme
+   wearing it would make the engine's work indistinguishable from the tool's
+   chrome, which is the one thing the Inspect sheet exists to show. The faces
+   here also stay off the convergent Inter/Fraunces pair — a fixture meant to
+   argue the engine DESIGNS should not be set in the default AI-UI faces. ── */
+const THEMES = [
+  { id:'stillwater', name:'Stillwater Pilates', cat:'Pilates · light', display:"'Newsreader', Georgia, serif", body:"'Karla'",
+    v:{ '--t-primary':'#c2663b','--t-bg':'#f7f2ec','--t-surface':'#fffdfa','--t-text':'#2a2320','--t-accent':'#5c7a6b','--t-muted':'#8a7a6c','--t-line':'rgba(42,35,32,.12)' } },
+  { id:'apex', name:'Apex MMA', cat:'Fighting · dark', display:"'Petrona', Georgia, serif", body:"'Karla'",
+    v:{ '--t-primary':'#c1272d','--t-bg':'#131316','--t-surface':'#1b1b20','--t-text':'#f2f2f4','--t-accent':'#e8b93b','--t-muted':'#8e8e96','--t-line':'rgba(255,255,255,.10)' } },
+  { id:'zen', name:'Zen BJJ', cat:'Fighting · light', display:"'Newsreader', Georgia, serif", body:"'Karla'",
+    v:{ '--t-primary':'#3e5c8c','--t-bg':'#f4f6fa','--t-surface':'#ffffff','--t-text':'#1b2430','--t-accent':'#7fa1c4','--t-muted':'#78849a','--t-line':'rgba(27,36,48,.12)' } },
+  { id:'ironline', name:'Ironline', cat:'HIIT · dark', display:"'Newsreader', Georgia, serif", body:"'Karla'",
+    v:{ '--t-primary':'#ff5a1f','--t-bg':'#101012','--t-surface':'#1a1a1d','--t-text':'#f5f5f5','--t-accent':'#ffc247','--t-muted':'#8b8b90','--t-line':'rgba(255,255,255,.10)' } },
+  { id:'verdant', name:'Verdant Yoga', cat:'Yoga · light', display:"'Petrona', Georgia, serif", body:"'Karla'",
+    v:{ '--t-primary':'#2f6b4f','--t-bg':'#f5f8f4','--t-surface':'#ffffff','--t-text':'#16241c','--t-accent':'#a8c4a0','--t-muted':'#72857a','--t-line':'rgba(22,36,28,.12)' } },
+  { id:'marlow', name:'Marlow Barre', cat:'Barre · light', display:"'Petrona', Georgia, serif", body:"'Karla'",
+    v:{ '--t-primary':'#8c5a9e','--t-bg':'#faf7fb','--t-surface':'#ffffff','--t-text':'#241a29','--t-accent':'#d4a5c4','--t-muted':'#8a7d90','--t-line':'rgba(36,26,41,.12)' } },
+];
+let theme = THEMES[0];
+
+/* The six classes the mock renders, in both arrangements. */
+const CLASSES = [
+  ['Reformer Flow','Marguerite Oyelaran','6:00','50 min','#6f8a78'],
+  ['Mat Fundamentals','Devi Ramanathan','7:15','45 min','#c98f63'],
+  ['Power Reformer','Tobias Lindqvist','12:00','50 min','#8a6f5c'],
+  ['Prenatal Pilates','Amara Nwachukwu','5:30','60 min','#a8b3a0'],
+  ['Barre Sculpt','Priya Venkataraman','6:45','45 min','#b8794f'],
+  ['Restorative Flow','Joaquín Ferreira','8:00','60 min','#7d8f86'],
+];
+
+/* Real slot inventory, from apps/combatden/app.yaml. */
+const IMAGES = ['logo_primary','rank_belt','celebration_image','trophy_image','points_stars_image',
+  'next_rank_belt_image','giftbox','single_point','icon_qrcode','streak_icon','class_photo_1',
+  'class_photo_2','class_photo_3','class_photo_4','reward_guest_pass','reward_apparel','reward_gear','reward_session'];
+const TEXTS = [
+  ['class_booked_headline','Class detail · after reserving','You’re in. See you on the reformer.'],
+  ['reserve_cta','Class detail · primary action','Reserve my spot'],
+  ['book_next_class_cta','Post-class · final card','Book the next one'],
+  ['wins_title','Post-class · wins card','A good hour’s work.'],
+  ['wins_subtitle','Post-class · wins card','Six sessions this month, and it shows.'],
+];
+const ICONS = ['nav_home','nav_rank','nav_reward','nav_videos'];
+
+/* ── State ─────────────────────────────────────────────────────────────── */
+let page = 'onboard';
+let view = 'mock';
+let designed = false;   // has the agent rearranged the home screen yet
+let generated = false;  // have the slots resolved
+let approved = false;   // has the customer signed off
+
+/* ── Page switching ────────────────────────────────────────────────────── */
+function go(p) {
+  page = p;
+  $$('.page').forEach((el) => el.classList.toggle('on', el.id === 'page-' + p));
+  $$('.switch button').forEach((b) => b.classList.toggle('on', b.dataset.go === p));
+  const cust = p === 'generate';
+  $('#pov').textContent = cust ? 'Customer' : 'Admin';
+  $('#pov').classList.toggle('cust', cust);
+  $('#tophint').textContent = cust
+    ? 'the tenant never sees the fork, the repo, or the queue'
+    : 'demo · nothing here is real';
+  // The approved frame is fixed to the viewport, so it has to be gated on the
+  // page or it would cover Fleet too.
+  $('#approved').classList.toggle('on', cust && approved);
+}
+$$('[data-go]').forEach((b) => b.addEventListener('click', () => go(b.dataset.go)));
+
+/* ── PAGE 1: onboarding, one deliberate step at a time ─────────────────── */
+
+/* One log for one job. Tokenizing and mirroring are halves of the same pass. */
+const FORK_LOG = [
+  'reading lib/theme/palette.dart…',
+  'replacing 41 colour literals with slot references',
+  'rewriting features/home/class_list_item.dart',
+  'mirroring 6 screens into feature-free JSX',
+  'stripping API calls, state and fetching from the mock',
+  'mocking empty, loading, error and overflow states',
+  'created recompose/combatden · 0 written to your repository',
+];
+
+function ribbon(n, state) {
+  const el = document.querySelector(`.rstep[data-r="${n}"]`);
+  el.classList.remove('now', 'done');
+  if (state) el.classList.add(state);
+}
+function panel(id) {
+  $$('.obpanel').forEach((p) => p.classList.toggle('on', p.id === id));
+}
+
+/* Run one agent stage: stream its log, then settle it and reveal the actions.
+   The heading swaps on completion — leaving "an agent is …ing" up next to a
+   dead pulse reads as still working. */
+async function runAgent(agentId, logId, elId, actsId, lines, elapsed, doneLabel) {
+  const ag = $('#' + agentId);
+  const head = ag.querySelector('.lb b');
+  head.textContent = head.dataset.live || head.textContent;
+  head.dataset.live = head.textContent;
+  ag.classList.remove('ok');
+  ag.classList.add('live');
+  $('#' + actsId).style.display = 'none';
+  for (const line of lines) {
+    $('#' + logId).textContent = line;
+    await wait(700);
+  }
+  ag.classList.remove('live');
+  ag.classList.add('ok');
+  head.textContent = doneLabel;
+  $('#' + elId).textContent = elapsed;
+  $('#' + actsId).style.display = 'flex';
+}
+
+$('#obgo').addEventListener('click', () => {
+  const btn = $('#obgo');
+  if (btn.disabled) return;
+  btn.disabled = true;
+  btn.textContent = 'Connected';
+  $('#urlfield').classList.add('busy');
+  ribbon(1, 'done');
+  panel('ob-1');
+});
+
+$('#ob-next-1').addEventListener('click', async () => {
+  ribbon(2, 'now');
+  panel('ob-2');
+  $('#obfound').style.display = 'none';
+  $('#oblong').style.display = 'block';
+  await runAgent('ag2', 'ag2log', 'ag2el', 'ob2acts', FORK_LOG, '52m',
+                 'Your design fork is ready');
+  $('#oblong').style.display = 'none';
+  // The counts land HERE, because this is the pass that actually read the code.
+  $('#obfound').style.display = 'flex';
+  ribbon(2, 'done');
+});
+
+/* ── PAGE 2: the phone ─────────────────────────────────────────────────── */
+function applyTheme(el) {
+  Object.entries(theme.v).forEach(([k, v]) => el.style.setProperty(k, v));
+  el.style.setProperty('--t-display', theme.display);
+  el.style.setProperty('--t-body', theme.body);
+}
+const statusbar = `<div class="statusbar"><span>9:41</span><span class="sig">
+  <i style="height:5px"></i><i style="height:7px"></i><i style="height:9px"></i><i style="height:11px"></i></span></div>`;
+const nav = `<div class="bottomnav"><a class="on"><i></i>Home</a><a><i></i>Rank</a><a><i></i>Rewards</a><a><i></i>Videos</a></div>`;
+
+function renderPhone() {
+  const p = $('#phone');
+  applyTheme(p);
+  const logo = generated ? `<div class="logo">SP</div>` : `<div class="logo pending">logo_primary</div>`;
+  const th = (c, i) => generated
+    ? `<div class="thumb" style="background:${c[4]}"></div>`
+    : `<div class="thumb pending">class_photo_${(i % 4) + 1}</div>`;
+
+  if (!designed) {
+    p.innerHTML = statusbar + `
+      <div class="gymhead">${logo}<div class="gymname">${theme.name}</div>
+        <div class="infobar"><span><i class="belt"></i> Bronze</span><span><b>12</b> day streak</span><span><b>2,480</b> pts</span><span>QR</span></div>
+      </div>
+      <div class="daterow">${['Mon 14','Tue 15','Wed 16','Thu 17','Fri 18','Sat 19']
+        .map((d, i) => `<div class="date${i === 1 ? ' on' : ''}"><u>${d.split(' ')[0]}</u><b>${d.split(' ')[1]}</b></div>`).join('')}</div>
+      <div class="classlist">${CLASSES.map((c, i) => `
+        <div class="cls">${th(c, i)}<div class="meta"><b>${c[0]}</b><u>${c[1]}</u></div>
+        <div class="time"><b>${c[2]}</b><u>${c[3]}</u></div></div>`).join('')}</div>` + nav;
+  } else {
+    const [h, ...rest] = CLASSES;
+    p.innerHTML = statusbar + `
+      <div class="gymhead left">${logo}
+        <div class="col"><div class="gymname">${theme.name}</div>
+          <div class="infobar"><span><i class="belt"></i> Bronze</span><span><b>12</b></span><span><b>2,480</b> pts</span></div></div>
+        <span style="font-size:10px;color:var(--t-muted)">QR</span>
+      </div>
+      <div class="hero"><div class="img" style="background:${generated ? h[4] : 'var(--t-line)'}"></div>
+        <div class="pad"><div class="eyebrow">Next up · Tue 15</div><h3>${h[0]}</h3>
+          <div class="sub">${h[2]} · ${h[3]} · ${h[1]}</div><div class="cta">Reserve my spot</div></div></div>
+      <div class="spinehead">Later today</div>
+      <div class="spine">${rest.map((c, i) => `
+        <div class="srow${i === 0 ? ' on' : ''}"><div class="t"><b>${c[2]}</b><u>${c[3].replace(' min','m')}</u></div>
+        <div class="bar2"></div><div class="d"><b>${c[0]}</b><u>${c[1]}</u></div></div>`).join('')}</div>` + nav;
+  }
+}
+
+/* ── PAGE 2: the Inspect sheet ─────────────────────────────────────────── */
+function emptySheet() {
+  const s = $('#sheet');
+  applyTheme(s);
+  s.className = 'sheet theme empty-state';
+  s.innerHTML = `<div class="box">
+    <div class="kick">Generated artifact</div>
+    <h1>Nothing yet.</h1>
+    <p>Accept a brief and this fills in as the pipeline resolves it — four
+       colour roles and their derivations, both typefaces set in themselves,
+       the authored copy, the icons and every generated image.</p></div>`;
+}
+
+/* Derived ramp — stands in for the palette the pipeline computes in Python. */
+function ramp() {
+  const mix = (a, b, t) => {
+    const h = (x) => [1,3,5].map((i) => parseInt(x.slice(i, i+2), 16));
+    const [r1,g1,b1] = h(a), [r2,g2,b2] = h(b);
+    const c = (u,v) => Math.round(u + (v-u)*t).toString(16).padStart(2,'0');
+    return `#${c(r1,r2)}${c(g1,g2)}${c(b1,b2)}`;
+  };
+  // primary → background → accent, so the band reads as ONE instrument rather
+  // than two ramps with a seam where it snaps back to the ground.
+  const out = [];
+  for (let i = 13; i >= 0; i--) out.push(mix(theme.v['--t-bg'], theme.v['--t-primary'], i/13));
+  for (let i = 0; i < 14; i++) out.push(mix(theme.v['--t-bg'], theme.v['--t-accent'], i/13));
+  return out;
+}
+
+function renderSheet() {
+  const s = $('#sheet');
+  applyTheme(s);
+  s.className = 'sheet theme';
+  const R = ramp();
+  const roles = [
+    ['Primary','--t-primary','The reserve action, the selected day, the hero ground. The one thing on screen that asks to be pressed.'],
+    ['Background','--t-bg','The paper the whole app sits on. Warm rather than white, because the brief asked for anything but clinical.'],
+    ['Text','--t-text','Set against the background at 12.6:1. Not black — a warm near-black that belongs to the same family as the ground.'],
+    ['Accent','--t-accent','The rank token, the spine marker, the quiet second voice. Never competes with primary for the same job.'],
+  ];
+  s.innerHTML = `
+    <div class="kick">Generated artifact</div>
+    <h1>${theme.name}</h1>
+    <div class="identity">combatden · stillwater-pilates · ${theme.cat.split(' · ')[1]} · $1.34 · 4m 12s</div>
+    <div class="spectrum">${R.map((c) => `<i style="background:${c}"></i>`).join('')}</div>
+    <div class="counts">Four colour roles, each with the sentence the pipeline
+      wrote about why it exists, and <b>28 derivations</b> computed from them.
+      Two faces chosen live from the Google Fonts catalogue. <b>Five</b> authored
+      strings, <b>four</b> icons and <b>eighteen</b> generated images.</div>
+
+    <section class="sec" data-sec="0">
+      <div class="sechead"><h2>Colour</h2><span class="n">4 roles · 28 derived</span></div>
+      <div class="roles">${roles.map(([n,v,p]) => `
+        <div class="role"><div class="plate" style="background:var(${v})"></div>
+          <b>${n}</b><code>${theme.v[v]}</code><p>${p}</p></div>`).join('')}</div>
+      <div class="ramp" style="margin-top:26px">${R.map((c) => `<i style="background:${c}"></i>`).join('')}</div>
+    </section>
+
+    <section class="sec" data-sec="1">
+      <div class="sechead"><h2>Typography</h2><span class="n">2 faces</span></div>
+      <div class="typegrid">
+        <div class="face"><div class="lbl">display</div>
+          <div class="nm" style="font-family:var(--t-display)">${theme.display.split("'")[1]}</div>
+          <div class="sp" style="font-family:var(--t-display)">Set in itself, at the size the app actually uses it.</div></div>
+        <div class="face"><div class="lbl">body</div>
+          <div class="nm" style="font-family:var(--t-body)">${theme.body.replace(/'/g,'')}</div>
+          <div class="sp" style="font-family:var(--t-body)">Set in itself, at the size the app actually uses it.</div></div>
+      </div>
+    </section>
+
+    <section class="sec" data-sec="2">
+      <div class="sechead"><h2>Copy</h2><span class="n">5 strings</span></div>
+      <ol class="strings">${TEXTS.map(([slot, where, val]) => `
+        <li><div class="sl"><code>${slot}</code><u>${where}</u></div>
+        <div class="sv" style="font-family:var(--t-display)">${val}</div></li>`).join('')}</ol>
+    </section>
+
+    <section class="sec" data-sec="3">
+      <div class="sechead"><h2>Icons</h2><span class="n">4 slots</span></div>
+      <div class="icons">${ICONS.map(() => `<div class="ic"><span></span></div>`).join('')}</div>
+    </section>
+
+    <section class="sec" data-sec="4">
+      <div class="sechead"><h2>Imagery</h2><span class="n">18 slots</span></div>
+      <div class="plates">${IMAGES.map((n, i) => `
+        <div class="plate2"><span class="im" style="background:${R[(i * 3 + 5) % 28]}"></span><code>${n}</code></div>`).join('')}</div>
+    </section>
+
+    <div class="colophon">combatden / stillwater-pilates · 23 nodes over 3 levels ·
+      15 images on colour, 3 derived from another image · WCAG AA enforced as an
+      accept condition, not checked afterwards</div>`;
+}
+
+/* Fill the sheet section by section, which is what "watching it generate"
+   looks like once there is no tree. */
+async function fillSheet() {
+  renderSheet();
+  const secs = $$('#sheet .sec');
+  const labels = ['colour', 'typography', 'copy', 'icons', 'imagery'];
+  const costs = [0.18, 0.31, 0.44, 0.72, 1.34];
+  for (let i = 0; i < secs.length; i++) {
+    await wait(i === 4 ? 1100 : 700);
+    secs[i].classList.add('in');
+    secs[i].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    $('#meter').innerHTML = `<span class="m-run">resolving <b>${labels[i]}</b></span><span>cost <b>$${costs[i].toFixed(2)}</b></span>`;
+  }
+  await wait(500);
+  $('#pane-inspect').scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ── PAGE 2: the conversation ──────────────────────────────────────────── */
+/* One place that knows which state wears which hue. The label always changes
+   too — colour is the second signal here, never the only one. */
+const STAMP = {
+  brief:        'p-brief',
+  'layout brief': 'p-layout',
+  generating: 'p-gen',
+  designing:  'p-design',
+  validating: 'p-valid',
+  review:     'p-review',
+  approved:   'p-done',
+};
+function stamp(state) {
+  const el = $('#chattag');
+  el.textContent = state;
+  el.className = 'tag live ' + (STAMP[state] || '');
+  phaseTone = STAMP[state] || '';
+  // Same signal in two places, from one call, so the header and the transcript
+  // can never disagree about what the run is doing. The interview is a phase
+  // like any other and gets its marker too.
+  {
+    const m = document.createElement('div');
+    m.className = 'phase ' + phaseTone;
+    m.textContent = state;
+    $('#msgs').append(m);
+    $('#msgs').scrollTop = $('#msgs').scrollHeight;
+  }
+}
+
+let phaseTone = '';
+
+/* One question, asked the same way whoever is asking. Brand and layout are the
+   same ritual — interview, propose, accept — because they are the same kind of
+   decision: a stylistic one with no wrong answer. */
+function ask(promptHtml, opts, onPick) {
+  const q = say('Recompose', promptHtml);
+  const box = document.createElement('div');
+  box.className = 'choices';
+  box.innerHTML = opts.map(([k, t]) =>
+    `<button class="choice" data-c="${k}"><b>${k}</b><span>${t}</span></button>`).join('');
+  q.append(box);
+  $('#msgs').scrollTop = $('#msgs').scrollHeight;
+  box.querySelectorAll('.choice').forEach((b) => b.addEventListener('click', () => {
+    if (box.dataset.done) return;
+    box.dataset.done = '1';
+    box.querySelectorAll('.choice').forEach((x) => x.classList.toggle('on', x === b));
+    onPick(b.dataset.c);
+  }));
+}
+
+/* What the layout interview produced. Drives the layout brief document. */
+const LAYOUT = { lead: 'A', density: 'B', motion: 'B' };
+const LEAD_TEXT = {
+  A: `Lead with the next class — make it the thing you see — and let the rest of
+      the day sit quieter underneath it. The schedule is the reason people open
+      this, so it should not feel like a list to get through.`,
+  B: `Show the whole day at once. Nothing is promoted above anything else; the
+      value is seeing the shape of the day rather than being told what is next.`,
+  C: `Open on where the member is — rank, streak and points — and let the
+      schedule follow. Progress is what brings them back, so it should greet
+      them first.`,
+};
+const DENSITY = { A: 'generous', B: 'balanced', C: 'dense' };
+const MOTION  = { A: 'still', B: 'restrained', C: 'expressive' };
+
+function say(who, html, cls = '') {
+  const d = document.createElement('div');
+  d.className = 'msg ' + cls;
+  if (phaseTone) d.dataset.tone = phaseTone;
+  d.innerHTML = `<div class="who">${who}</div>${html}`;
+  $('#msgs').append(d);
+  $('#msgs').scrollTop = $('#msgs').scrollHeight;
+  return d;
+}
+
+function startConversation() {
+  $('#msgs').innerHTML = '';
+  stamp('brief');
+  say('Recompose', `<p>Tell me about the brand and I'll design the app around
+    it — palette, type, copy, imagery, then the layout itself.</p>`);
+  say('You', `<p>Stillwater Pilates. A boutique reformer studio — warm, not
+    clinical. Most studios in this space go cold white and I hate it.</p>`, 'you');
+  ask(`<p>Then let's fix the ground first. Which direction for the palette?</p>`, [
+    ['A', 'Warm sand and clay — low saturation, light mode, a single earthy accent'],
+    ['B', 'Sand ground with a deeper terracotta primary and a sage accent — more contrast, still warm'],
+    ['C', 'Muted olive and bone, light mode, no warm hues at all'],
+  ], proposeBrief);
+}
+
+function proposeBrief(choice) {
+  if ($('#briefcard')) return;
+  say('You', `<p>${choice}</p>`, 'you');
+  const d = say('Recompose', `<p>I've written the brief up and opened it — it's
+    longer than this column deserves. Read it, change anything, then accept.</p>`);
+  const c = document.createElement('div');
+  c.className = 'card'; c.id = 'briefcard';
+  c.innerHTML = `
+    <h4>Brand brief · ready</h4>
+    <div class="rows">
+      <div class="krow"><span>fields</span><div>5 · customization.yaml</div></div>
+    </div>
+    <div class="act">
+      <button class="btn sm pri" id="accept">Accept &amp; generate</button>
+      <button class="btn sm" id="openbrief">Open the brief</button>
+    </div>`;
+  d.append(c);
+  $('#msgs').scrollTop = $('#msgs').scrollHeight;
+  $('#openbrief').addEventListener('click', () => { setView('brief'); showSheet('brand'); });
+  $('#accept').addEventListener('click', runGeneration, { once: true });
+  setView('brief'); showSheet('brand');
+}
+
+/* ── The layout interview. Same ritual as the brand one, and deliberately so:
+      arrangement is a stylistic decision with no wrong answer, so it gets
+      asked rather than judged. ─────────────────────────────────────────── */
+function askLayout() {
+  stamp('layout brief');
+  say('Recompose', `<p>Assets are done. The layout is a separate brief — three
+    questions, and there is no wrong answer to any of them.</p>`);
+  ask(`<p>What should the home screen lead with?</p>`, [
+    ['A', 'The next class, large — one thing to do'],
+    ['B', 'The whole day at a glance'],
+    ['C', 'Where they are — rank, streak and points first'],
+  ], (a) => {
+    LAYOUT.lead = a; say('You', `<p>${a}</p>`, 'you');
+    ask(`<p>How much room should it take?</p>`, [
+      ['A', 'Generous — few things, a lot of air'],
+      ['B', 'Balanced'],
+      ['C', 'Dense — the whole day without scrolling'],
+    ], (b) => {
+      LAYOUT.density = b; say('You', `<p>${b}</p>`, 'you');
+      ask(`<p>And how should it move?</p>`, [
+        ['A', 'Still — nothing animates unless you touch it'],
+        ['B', 'Restrained — things settle in, nothing bounces'],
+        ['C', 'Expressive — motion is part of the personality'],
+      ], (c) => {
+        LAYOUT.motion = c; say('You', `<p>${c}</p>`, 'you');
+        proposeLayout();
+      });
+    });
+  });
+}
+
+function proposeLayout() {
+  renderBrief();
+  setView('brief'); showSheet('layout');
+  const d = say('Recompose', `<p>That's the layout brief, opened next to the
+    mockup. It steers the agent; it does not constrain it to a template.</p>`);
+  const c = document.createElement('div');
+  c.className = 'card';
+  c.innerHTML = `
+    <h4>Layout brief · ready</h4>
+    <div class="rows">
+      <div class="krow"><span>fields</span><div>4 · layout.yaml · provisional</div></div>
+    </div>
+    <div class="act">
+      <button class="btn sm pri" id="design">Accept &amp; redesign</button>
+      <button class="btn sm" id="openlayout">Open the brief</button>
+    </div>`;
+  d.append(c);
+  $('#msgs').scrollTop = $('#msgs').scrollHeight;
+  $('#openlayout').addEventListener('click', () => { setView('brief'); showSheet('layout'); });
+  $('#design').addEventListener('click', runDesign, { once: true });
+}
+
+async function runGeneration() {
+  $('#accept').disabled = true;
+  stamp('generating');
+  say('Recompose', `<p>Committed. Running <strong>23 nodes</strong> — colour,
+    type, copy, icons and classification from the brief, then 18 images.</p>`);
+  setView('inspect');
+  generated = true;
+  renderPhone();
+  await fillSheet();
+
+  say('Recompose', `<p>Palette passes <strong>WCAG AA</strong> on every pairing.
+    The four roles fed every image prompt, which is what makes the set read as
+    one designer's work rather than eighteen separate generations.</p>`);
+  $('#meter').innerHTML = `<span>23 / 23 slots</span><span>cost <b>$1.34</b></span><span>elapsed <b>4m 12s</b></span>`;
+
+  await wait(900);
+  askLayout();
+}
+
+async function runDesign() {
+  $('#design').disabled = true;
+  stamp('designing');
+  setView('mock');
+  say('Recompose', `<p>Working from the layout brief: promoting the next class
+    to a hero with its photo behind it, and collapsing the rest onto a time
+    spine. The date row goes — the day selection moves onto the spine
+    header.</p>`);
+  await wait(1500);
+  designed = true;
+  renderPhone();
+  say('Recompose', `<p>Rewrote <strong>HomeShowcase</strong>, added
+    <strong>HomeNextUpHero</strong> and <strong>HomeTimeSpine</strong>. Same six
+    classes, same fields, same taps, <strong>same API calls</strong> — a
+    redesign changes arrangement and nothing else.</p>`);
+  say('Recompose', `<p>That took <strong>1m 40s</strong>. Designing is the fast
+    part — checking it is not.</p>`);
+
+  /* Validation has NO UI. It is two lines in the chat. */
+  await wait(1200);
+  stamp('validating');
+  say('Recompose', `<p>Now it gets checked. <strong>Not whether the design is
+    good</strong> — no arrangement is wrong, that is your call and you already
+    made it. It checks the things that can actually be wrong: that every screen
+    still does what it did, that nothing was added, merged, split or removed,
+    and that all eleven render in every state.</p>`);
+  say('Recompose', `<p>It is thorough rather than quick — <strong>usually 20–40
+    minutes</strong>. You can close this; we'll email you when it's done.</p>`);
+  await wait(1000);
+  const v = say('Recompose', `<p>Validating 11 screens…</p>`, 'sys');
+  await wait(2600);
+  v.querySelector('p').innerHTML = 'Validating 11 screens… <strong>complete in 31m</strong>. 11 of 11 pass, including the empty, loading, error and long-string states.';
+
+  await wait(700);
+  stamp('review');
+  const d = say('Recompose', `<p>Ready for your sign-off.</p>`);
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `<div class="act"><button class="btn sm pri" id="approve">Approve this design</button>
+    <button class="btn sm">Ask for changes</button></div>`;
+  d.append(card);
+  $('#msgs').scrollTop = $('#msgs').scrollHeight;
+  $('#approve').addEventListener('click', () => {
+    stamp('approved');
+    say('You', `<p>Approved.</p>`, 'you');
+    approved = true;
+    applyTheme($('#approved'));
+    $('#approved').classList.add('on');
+  }, { once: true });
+}
+
+/* ── Reset. A demo gets run more than once. ────────────────────────────── */
+function reset() {
+  designed = generated = approved = false;
+  phaseTone = '';
+  LAYOUT.lead = 'A'; LAYOUT.density = 'B'; LAYOUT.motion = 'B';
+  renderBrief();
+  theme = THEMES[0];
+  $('#themename').textContent = theme.name;
+  $('.chipbtn .swatch').style.background = theme.v['--t-primary'];
+  $('#approved').classList.remove('on');
+  stamp('brief');
+  $('#meter').innerHTML = '<span>brief not committed</span>';
+  const btn = $('#obgo');
+  btn.disabled = false;
+  btn.textContent = 'Connect';
+  $('#urlfield').classList.remove('busy');
+  $$('.obpanel').forEach((p) => p.classList.remove('on'));
+  [1, 2].forEach((n) => ribbon(n, null));
+  ['ob2acts', 'obfound', 'oblong'].forEach((id) => { $('#' + id).style.display = 'none'; });
+  const ag = $('#ag2');
+  ag.classList.remove('ok', 'live');
+  const h = ag.querySelector('.lb b');
+  if (h.dataset.live) h.textContent = h.dataset.live;
+  $('#ag2el').textContent = '';
+  setView('mock');
+  renderPhone();
+  emptySheet();
+  startConversation();
+  go('onboard');
+}
+$('#reset').addEventListener('click', reset);
+
+
+/* ── The two briefs ──────────────────────────────────────────────────────
+   BRAND steers the asset pipeline and is a validated five-field contract.
+   LAYOUT steers the design agent and is deliberately a different shape — the
+   layout half is specified but not built, so pretending it has a settled
+   schema would be a lie the demo does not need to tell. */
+const BRIEF_BRAND = [
+  ['name', 'one line', 'short', 'Stillwater Pilates'],
+  ['short_desc', 'one sentence', 'short',
+   'A boutique reformer Pilates studio for people who want to move well, not hard.'],
+  ['long_desc', 'the brand, not the app', '',
+   `<p>Unhurried and crafted. The brand reads like a well-made object — warm,
+    tactile, quiet. It should never feel clinical or performance-obsessed, and
+    it should feel like somewhere you would linger rather than somewhere you
+    get through.</p>
+    <p>The people who come here are not chasing a number. They want to move
+    well and keep moving well for a long time, and the app should sound like it
+    knows that: no urgency, no leaderboards, nothing shouting. Where it needs to
+    encourage, it should sound like a good teacher noticing something rather
+    than a notification going off.</p>`],
+  ['colors_direction.description', 'mood, hue family, saturation — never a hex', '',
+   `<p>Warm sand ground with a deeper terracotta primary and a sage accent. Low
+    saturation, generous contrast, nothing cold. The ground should read as paper
+    that has been sitting in a warm room, not as white.</p>`],
+];
+
+function showSheet(which) {
+  $$('#subtabs button').forEach((x) => x.classList.toggle('on', x.dataset.b === which));
+  $$('.bsheet').forEach((sh) => sh.classList.toggle('on', sh.id === 'b-' + which));
+}
+
+function renderBrief() {
+  const fld = ([k, hint, cls, v]) =>
+    `<div class="fld ${cls}"><div class="k">${k} <em>${hint}</em></div>
+     <div class="v">${v.trim().startsWith('<p>') ? v : `<p>${v}</p>`}</div></div>`;
+
+  $('#briefdoc').innerHTML = `
+    <div class="dh">
+      <h2>Brief</h2>
+      <div class="subtabs" id="subtabs">
+        <button data-b="brand" class="on">Brand</button>
+        <button data-b="layout">Layout &amp; motion</button>
+      </div>
+    </div>
+
+    <section class="bsheet on" id="b-brand">
+      <p class="note">Steers the <b>asset pipeline</b> — colour, typography,
+        copy, icons and imagery. Exactly <b>five fields</b>, and there is never a
+        sixth: the model that validates this refuses anything it does not know,
+        so a typo fails loudly instead of being quietly ignored.</p>
+      ${BRIEF_BRAND.map(fld).join('')}
+      <div class="fld short"><div class="k">colors_direction.mode</div>
+        <div class="v pick"><span class="on">light</span><span>dark</span></div></div>
+      <div class="foot">
+        <span class="hint">apps/combatden/stillwater-pilates/customization.yaml</span>
+        <span class="sp"></span>
+        <button class="btn" id="accept2">Accept &amp; generate</button>
+      </div>
+    </section>
+
+    <section class="bsheet" id="b-layout">
+      <p class="prov"><b>A separate system, and deliberately a different shape.</b>
+        Assets are data, so the brand brief is a validated contract. Layout is
+        code, so this one steers an agent instead of a pipeline — it is
+        provisional and not yet schema-checked.</p>
+      <p class="note">Steers the <b>design agent</b>: arrangement, density and
+        motion. Whatever is written here, the agent stays bounded by the
+        arrangement-only invariant — no screen merged or split, nothing added,
+        nothing removed.</p>
+      <div class="fld"><div class="k">direction <em>what the arrangement should do</em></div>
+        <div class="v"><p>${LEAD_TEXT[LAYOUT.lead]}</p></div></div>
+      <div class="fld short"><div class="k">density</div>
+        <div class="v pick">${['A','B','C'].map((k) =>
+          `<span class="${LAYOUT.density === k ? 'on' : ''}">${DENSITY[k]}</span>`).join('')}</div></div>
+      <div class="fld short"><div class="k">motion</div>
+        <div class="v pick">${['A','B','C'].map((k) =>
+          `<span class="${LAYOUT.motion === k ? 'on' : ''}">${MOTION[k]}</span>`).join('')}</div></div>
+      <div class="fld"><div class="k">never <em>what the agent must not do</em></div>
+        <div class="v"><p>No progress rings, no streak confetti, no countdowns.
+          Nothing that implies urgency or competition.</p></div></div>
+      <div class="foot">
+        <span class="hint">apps/combatden/stillwater-pilates/layout.yaml · provisional</span>
+        <span class="sp"></span>
+        <span class="hint">accepted from the conversation</span>
+      </div>
+    </section>`;
+
+  $$('#subtabs button').forEach((b) =>
+    b.addEventListener('click', () => showSheet(b.dataset.b)));
+  const a = $('#accept2'); if (a) a.addEventListener('click', () => $('#accept')?.click());
+}
+
+/* ── Canvas view toggle ────────────────────────────────────────────────── */
+function setView(v) {
+  view = v;
+  $$('.seg button').forEach((b) => b.classList.toggle('on', b.dataset.view === v));
+  $$('.pane').forEach((p) => p.classList.toggle('on', p.id === 'pane-' + v));
+}
+$$('.seg button').forEach((b) => b.addEventListener('click', () => setView(b.dataset.view)));
+
+/* ── Library popup ─────────────────────────────────────────────────────── */
+function renderLib() {
+  $('#libgrid').innerHTML = THEMES.map((t) => `
+    <button class="lib${t.id === theme.id ? ' on' : ''}" data-t="${t.id}">
+      <div class="sw"><i style="background:${t.v['--t-primary']}"></i><i style="background:${t.v['--t-bg']}"></i>
+        <i style="background:${t.v['--t-text']}"></i><i style="background:${t.v['--t-accent']}"></i></div>
+      <div class="lb"><b>${t.name}</b><u>${t.cat}</u></div></button>`).join('');
+  $$('#libgrid .lib').forEach((b) => b.addEventListener('click', () => {
+    theme = THEMES.find((t) => t.id === b.dataset.t);
+    $('#themename').textContent = theme.name;
+    $('.chipbtn .swatch').style.background = theme.v['--t-primary'];
+    renderPhone();
+    if (generated) renderSheet(); else emptySheet();
+    if (generated) $$('#sheet .sec').forEach((s) => s.classList.add('in'));
+    closeLib();
+  }));
+}
+function openLib() { renderLib(); $('#scrim').classList.add('on'); $('#pop').classList.add('on'); }
+function closeLib() { $('#scrim').classList.remove('on'); $('#pop').classList.remove('on'); }
+$('#libbtn').addEventListener('click', openLib);
+$('#popx').addEventListener('click', closeLib);
+$('#scrim').addEventListener('click', closeLib);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLib(); });
+
+/* A count only earns a hue when it is non-zero. "0 needing you" rendered in
+   amber would be noise; the colour ARRIVING is the signal. */
+const KPIS = [
+  { n: 3, label: 'customer apps', tone: '' },
+  { n: 2, label: 'agents working', tone: 's-run' },
+  { n: 1, label: 'in sync', tone: 's-ok' },
+  { n: 0, label: 'needing you', tone: 's-you' },
+];
+$('#kpis').innerHTML = KPIS.map((k) =>
+  `<div class="kpi ${k.n > 0 ? k.tone : ''}"><b>${k.n}</b><u>${k.label}</u></div>`).join('');
+
+/* ── PAGE 3: three customer apps ───────────────────────────────────────── */
+const FLEET = [
+  { name: 'Stillwater Pilates', repo: 'combatden-stillwater', since: 'approved 29 Jul',
+    live: false, tag: 'In sync', tone: 's-ok', state: 'Nothing to do',
+    note: 'uat and main are level with our fork of CombatDen. Nothing to do.',
+    log: 'last re-derived 2h ago against combatden@8f3c1ad · clean' },
+
+  { name: 'Apex MMA', repo: 'combatden-apex', since: 'approved 26 Jul',
+    live: true, tag: 'Working', tone: 's-run', state: 'An agent is productionalizing this design',
+    note: 'Turning the approved mock into real Flutter, carrying the arrangement-only invariant. Slow by design — it is the pass whose output ships.',
+    log: 'rewriting class_screen.dart · 9 of 14 files · 34m elapsed, typically 1–2h' },
+
+  { name: 'Ironline', repo: 'combatden-ironline', since: 'approved 21 Jul',
+    live: true, tag: 'Working', tone: 's-run', state: 'An agent is pulling your latest UAT branch',
+    note: 'CombatDen shipped a waitlist. Re-applying this design on top of it so the fork never drifts.',
+    log: 'rebasing on combatden/uat@d41c907 · 3 of 11 screens · 12m elapsed' },
+];
+
+$('#fleetcards').innerHTML = FLEET.map((f) => `
+  <div class="fcard${f.live ? ' live' : ''}">
+    <div class="fwho">
+      <b>${f.name}</b>
+      <u>${f.repo}</u>
+      <span class="n">${f.since}</span>
+    </div>
+    <div class="fstate">
+      <div class="t">
+        <span class="stag ${f.tone}"><i></i>${f.tag}</span>
+        <b>${f.state}</b><u>${f.note}</u><span class="log">${f.log}</span>
+      </div>
+    </div>
+    <div class="facts">
+      <button class="btn sm pri">Talk to an agent</button>
+      <button class="btn sm">View repo</button>
+      <button class="btn sm">View design</button>
+    </div>
+  </div>`).join('');
+
+/* ── Boot ──────────────────────────────────────────────────────────────── */
+renderPhone();
+emptySheet();
+renderBrief();
+startConversation();
+go('onboard');
+</script>
+</body>
+</html>

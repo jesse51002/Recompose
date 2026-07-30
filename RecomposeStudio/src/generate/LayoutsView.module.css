@@ -1,0 +1,245 @@
+/* The Layouts board. One column per arrangement, the tenants' own marks under
+   each — and a cap you can drag, which re-packs every column at once.
+
+   This page is allowed more visual weight than the rest of the studio chrome
+   because the marks ARE the content: it is the one admin surface whose whole
+   job is to be looked at rather than read. */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--sh-ground);
+  color: var(--ink);
+  font-family: var(--sans);
+}
+
+.head {
+  flex: none;
+  display: flex;
+  align-items: flex-end;
+  gap: 26px;
+  padding: 18px 26px;
+  border-bottom: 1px solid var(--sh-line);
+}
+
+.headText {
+  flex: 1;
+  min-width: 0;
+}
+
+.back {
+  display: block;
+  margin-bottom: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink-3);
+  font: 500 var(--fs-xs) / 1 var(--sans);
+  cursor: pointer;
+}
+
+.back:hover { color: var(--ink); }
+
+.head h1 {
+  margin: 0;
+  font: 700 var(--fs-xl) / 1.08 var(--sans);
+  font-variation-settings: 'wdth' 106;
+  letter-spacing: var(--tr-title);
+}
+
+.head p {
+  margin: 6px 0 0;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+
+/* ── The cap ──────────────────────────────────────────────────────────────
+   A slider rather than a stepper, because the demo is the DRAG: the board
+   re-packing under a moving thumb is the argument, and a stepper turns that
+   into a series of separate clicks. */
+.cap {
+  flex: none;
+  width: 240px;
+}
+
+.capLabel {
+  display: block;
+  font: 500 var(--fs-micro) / 1 var(--mono);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.capRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.capRow b {
+  flex: none;
+  min-width: 1.2ch;
+  font: 600 var(--fs-xl) / 1 var(--sans);
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.capRow input {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--st-run);
+}
+
+.capNote {
+  display: block;
+  margin-top: 7px;
+  font: 400 var(--fs-micro) / 1 var(--mono);
+  color: var(--ink-4);
+}
+
+/* ── The claim strip ──────────────────────────────────────────────────────
+   The two numbers the cap actually trades between, and the counterfactual —
+   said rather than left to be worked out from the board. */
+.claim {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 26px;
+  border-bottom: 1px solid var(--sh-line);
+  font: 400 var(--fs-sm) / 1 var(--sans);
+  color: var(--ink-3);
+}
+
+.claim b {
+  color: var(--ink);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.claim i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--sh-line-3);
+}
+
+/* The counterfactual is the one that should feel wrong. */
+.claimAlt { color: var(--ink-4); }
+.claimAlt b { color: var(--st-bad); }
+
+/* ── The board ──────────────────────────────────────────────────────────── */
+/* A GRID THAT NEVER SCROLLS. Six cards are a comparison you read; a hundred
+   are a wall you take in whole — and a board you had to scroll would answer
+   "how many are there?" with "keep going and find out", which is the one
+   question this page exists to answer at a glance. The cards take the squeeze
+   instead. `minmax(0, 1fr)` on both axes is what lets them actually shrink;
+   `1fr` alone floors at content size and would overflow at a hundred. */
+.board {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+  gap: 8px;
+  padding: 16px 26px 20px;
+}
+
+.column {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 10px;
+  background: var(--sh-panel);
+  overflow: hidden;
+}
+
+.columnHead {
+  flex: none;
+  padding: 6px 9px;
+  border-bottom: 1px solid var(--sh-line);
+}
+
+/* The only text on a card. It truncates rather than wrapping, because a
+   two-line header at a hundred cards would eat the mosaic it labels. */
+.columnHead b {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 600 var(--fs-xs) / 1.25 var(--sans);
+  letter-spacing: var(--tr-title);
+}
+
+/* A mosaic rather than a list. The roster runs to hundreds, so a column of
+   labelled rows would be a scroll nobody reads; wrapped marks read as a
+   quantity at a glance, which is the only thing this page needs them to do.
+
+   A GRID THAT FILLS, not fixed tiles that wrap. Wrapping leaves dead space
+   under the last row, and a card two-thirds full reads as a card with
+   something missing; fixed tiles could only ever fill by accident, at
+   whichever viewport width the arithmetic happened to land on. The column
+   count comes from the card's measured aspect (`--icols`), and the rows
+   divide whatever height is left — so the mosaic is exactly the card.
+
+   `minmax(0, 1fr)` on both axes for the same reason the board needs it: plain
+   `1fr` floors at content size, which is how a grid that should shrink
+   overflows instead. */
+.cells {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: repeat(var(--icols), minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+  gap: 4px;
+  padding: 7px;
+}
+
+/* One tenant on one layout, and nothing but its mark — the roster cycles the
+   fleet's logos, so names would repeat down every column and read as a bug.
+
+   The mark fills its cell and the cell is whatever the grid gives it, so
+   density is a consequence of the arithmetic rather than a number tuned by
+   hand. `contain` keeps the logo's own proportions inside that: a mark
+   stretched to fill a cell is a mark damaged, and these are the artifacts the
+   page exists to show off. */
+.cell {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  object-fit: contain;
+  border-radius: 5px;
+  background: var(--sh-ground);
+  padding: 2px;
+  /* `both` so it holds the from-state through its delay — without it every
+     mark paints immediately and then animates, which is the whole board
+     appearing at once followed by a twitch. */
+  animation: var(--kf-rise) 0.45s ease both;
+}
+
+.synthetic {
+  flex: none;
+  margin: 0;
+  padding: 10px 26px 13px;
+  border-top: 1px solid var(--sh-line);
+  font: 400 var(--fs-micro) / 1.5 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+}
+
+/* The stagger is the point of the page, but it is decoration for anyone who
+   has asked for less motion — the board is fully legible without it. */
+@media (prefers-reduced-motion: reduce) {
+  .cell { animation: none; }
+}

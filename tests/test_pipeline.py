@@ -1753,3 +1753,80 @@ def test_output_back_compat_ignores_removed_fields():
         "dependency_usage",
     ):
         assert not hasattr(img, removed)
+
+
+def test_a_partial_is_handed_out_per_node_not_per_level(tmp_path, monkeypatch):
+    """ONE PARTIAL PER FINISHED NODE. This is what makes a run watchable.
+
+    Every image slot in the DAG is a sibling of every other, so they are all
+    one level. While `on_partial` fired when a LEVEL settled, the eighteen
+    pictures a run makes appeared in the browser simultaneously, at the end —
+    which is the same thing as not being live, and is exactly how it looked.
+
+    The assertion is deliberately about COUNT rather than shape: a level-
+    grained emitter passes any test that only checks a partial arrived.
+    """
+    ctx = _run_ctx(tmp_path)
+    _patch_services(
+        monkeypatch,
+        [c.id for c in ctx.app.colors],
+        [f.id for f in ctx.app.fonts],
+        [t.id for t in ctx.app.texts],
+        [i.id for i in ctx.app.icons],
+    )
+
+    seen: list[frozenset[str]] = []
+
+    async def watcher(partial):
+        seen.append(partial.generated)
+
+    sink = _RecordingSink()
+    result = asyncio.run(
+        Pipeline().run(ctx, progress=sink, on_partial=watcher)
+    )
+
+    # EXACTLY ONE PER FINISHED NODE, counted against the sink's own tally.
+    # `len(seen) > 1` would not do: the graph has several levels, so a
+    # level-grained emitter clears that bar while still batching every image
+    # into one write. The counts only agree if the grain is the node.
+    finished = [
+        e for e in sink.events if e.kind is ProgressEventKind.NODE_FINISHED
+    ]
+    assert len(finished) > len(set(e.level for e in finished)), (
+        "fixture has one node per level, so this test cannot tell the two "
+        "grains apart"
+    )
+    assert len(seen) == len(finished)
+    assert seen[-1] == result.generated
+    # Strictly growing: each partial carries everything the last one did.
+    for earlier, later in zip(seen, seen[1:]):
+        assert earlier <= later, "a partial lost work the previous one had"
+
+
+def test_a_failed_node_does_not_emit_a_partial(tmp_path, monkeypatch):
+    """A node that failed changed nothing anybody could look at."""
+    ctx = _run_ctx(tmp_path)
+    _patch_services(
+        monkeypatch,
+        [c.id for c in ctx.app.colors],
+        [f.id for f in ctx.app.fonts],
+        [t.id for t in ctx.app.texts],
+        [i.id for i in ctx.app.icons],
+    )
+
+    class _BrokenImageGen(_FakeImageGen):
+        async def generate(self, prompt, dest, *, model, quality):
+            raise ProviderError("provider said no")
+
+    monkeypatch.setattr(
+        orchestrator, "LiteLLMImageGenerator", lambda: _BrokenImageGen()
+    )
+
+    seen: list[frozenset[str]] = []
+
+    async def watcher(partial):
+        seen.append(partial.generated)
+
+    asyncio.run(Pipeline().run(ctx, on_partial=watcher))
+
+    assert all("hero" not in generated for generated in seen)

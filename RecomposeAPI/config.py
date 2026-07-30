@@ -11,6 +11,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 # hop was invisible in the main checkout, where <root>/.. happens to contain a
 # sibling that no request ever reached for, and fatal inside a git worktree,
 # where it lands on `.claude/worktrees/` and every styles request 404s.
+#
+# `RecomposeAPI/studio/config.py` keeps THREE hops and is correct: it sits one
+# directory deeper. The two are not copies of each other and must not be
+# "made consistent" by matching the numbers.
 _ROOT = Path(__file__).resolve().parent.parent
 _DEFAULT_APPS_ROOT = _ROOT / "apps"
 

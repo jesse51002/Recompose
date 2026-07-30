@@ -21,6 +21,7 @@ from RecomposeAPI.errors import NotFoundError
 from RecomposeAPI.main import app
 from RecomposeAPI.service import font_service, output_service
 from RecomposeAPI.service.output_service import OutputService
+from RecomposeAPI.studio.service.slug import slugify
 from ThemeTree.shared.interfaces.google_fonts_catalog import GoogleFontMetadata
 
 FIXTURE_APPS = Path(__file__).resolve().parent / "data" / "apps"
@@ -600,6 +601,29 @@ def test_traversal_ids_are_rejected_by_the_guard() -> None:
 
 def test_encoded_traversal_via_http_is_404() -> None:
     assert client.get("/apps/..%2f..%2fetc/run1").status_code == 404
+
+
+def test_slugified_run_names_are_served_and_listed(tmp_path: Path) -> None:
+    """A run named the way the studio names them resolves on BOTH read
+    seams.
+
+    The studio derives a run's folder from the owner's business name via
+    ``slugify``, which turns every non-alphanumeric run into a single
+    hyphen — so any multi-word name produces one. The run-id guard was
+    alphanumeric-only, which meant a completed run sat on disk while
+    ``GET /apps/<app>/<run>`` 404'd and ``list_styles`` silently dropped
+    it: a read rule narrower than what the write side is guaranteed to
+    emit. ``slugify`` is called here rather than hardcoding the string,
+    so the two rules cannot drift apart again.
+    """
+    run_id = slugify("Bike Maniacs")
+    assert "-" in run_id, "slugify no longer emits the character under test"
+
+    _seed_named_styles(tmp_path, [run_id])
+    svc = OutputService(apps_root=tmp_path)
+
+    assert asyncio.run(svc.load("demo", run_id)).app == APP
+    assert [s.id for s in asyncio.run(svc.list_styles("demo")).items] == [run_id]
 
 
 # --- Font endpoint ---------------------------------------------------------

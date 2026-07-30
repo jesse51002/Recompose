@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import hashlib
 import logging
+import os
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -172,6 +174,63 @@ class Writer:
             pass_cost.total,
             len(log.expansions),
             "y" if len(log.expansions) == 1 else "ies",
+        )
+
+    def write_partial(self, result: PipelineResult, run_ctx: RunContext) -> None:
+        """Write ``output.yaml`` for a run that is still going.
+
+        Called once per settled NODE by a watcher passed to
+        ``Pipeline.run(on_partial=...)`` — per node rather than per level
+        because every image slot is a sibling of every other, so a
+        level-grained write landed the whole gallery in one go at the end. It exists so a live preview can
+        REPAINT while the run is in flight: images have their own files and
+        can be shown the moment a node reports them, but colour, typography
+        and copy exist nowhere except this file, so without it a watcher shows
+        generated imagery over an unthemed shell for the whole run.
+
+        **Provenance is written too, and that is not an oversight.** The
+        first version of this wrote only ``output.yaml``, reasoning that
+        ``app.yaml`` / ``customization.yaml`` are static and the final write
+        lays them down. The final write may never happen. A run killed
+        mid-flight then left a directory carrying an ``output.yaml`` — so the
+        read API lists it as a design — with no frozen manifest, which is
+        exactly what ``expand`` / ``regen`` reopen against: the run was
+        listed, looked finished, and could not be repaired. Writing them here
+        is idempotent and costs two small dumps per level.
+
+        **Never anything append-only**: no asset upload (a partial is not a
+        publish), and above all no ledger entry —
+        ``expansion_cost.yaml`` appends, so writing one per level would record
+        a dozen phantom passes for a single run.
+
+        The cost stamped here is the RUNNING total, which is the honest
+        figure: it is what has been spent at this instant, and the final
+        ``write`` overwrites it with the same arithmetic over the same
+        services.
+
+        Slots that have not been produced yet stamp an empty ``version`` —
+        ``_content_version`` already returns "" for a file that is not there,
+        which is the truthful answer for an asset that does not exist rather
+        than a fingerprint of nothing.
+        """
+        output = result.output.model_copy(
+            update={"cost": self._run_cost(result)}
+        )
+        self._stamp_versions(output, run_ctx)
+        self._dump_model_atomic(output, run_ctx.output_path())
+        # The inputs this run was launched from, so a run that dies mid-flight
+        # is still a REOPENABLE directory rather than an un-repairable one.
+        self._dump_model_atomic(
+            run_ctx.app, run_ctx.run_dir / APP_PROVENANCE_NAME
+        )
+        self._dump_model_atomic(
+            run_ctx.cust, run_ctx.run_dir / CUSTOMIZATION_PROVENANCE_NAME
+        )
+
+        logger.debug(
+            "wrote partial output for %s (%d image slot(s) so far)",
+            run_ctx.run_dir,
+            len(output.image_set.images),
         )
 
     def write_prefill(
@@ -422,11 +481,46 @@ class Writer:
     def _dump_model(model: BaseModel, path: Path) -> None:
         """Serialize one validated model to readable YAML at ``path``."""
         path.write_text(
-            yaml.safe_dump(
-                model.model_dump(mode="json"),
-                sort_keys=False,
-                allow_unicode=True,
-                default_flow_style=False,
-            ),
+            Writer._to_yaml(model),
             encoding="utf-8",
+        )
+
+    @staticmethod
+    def _dump_model_atomic(model: BaseModel, path: Path) -> None:
+        """The same dump, but the file is never observed half-written.
+
+        ``_dump_model``'s plain ``write_text`` truncates and then fills, so a
+        reader that opens the file in between gets a fragment. That is
+        harmless when the only write happens after the run, with nobody
+        watching — but a partial write happens WHILE the read API and a
+        browser are polling this exact path, and a truncated ``output.yaml``
+        served to the theme runtime is indistinguishable from a broken
+        pipeline.
+
+        Write-then-``os.replace`` makes the swap atomic on POSIX: a reader
+        sees either the previous complete file or the new complete one. The
+        temp file is created in the SAME directory because ``os.replace``
+        is only atomic within a filesystem.
+        """
+        fd, tmp_name = tempfile.mkstemp(
+            dir=path.parent, prefix=f".{path.name}.", suffix=".tmp"
+        )
+        tmp = Path(tmp_name)
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as handle:
+                handle.write(Writer._to_yaml(model))
+            os.replace(tmp, path)
+        except BaseException:
+            tmp.unlink(missing_ok=True)
+            raise
+
+    @staticmethod
+    def _to_yaml(model: BaseModel) -> str:
+        """One validated model as readable YAML — the single serialization
+        shape, so the atomic and plain dumps cannot produce different files."""
+        return yaml.safe_dump(
+            model.model_dump(mode="json"),
+            sort_keys=False,
+            allow_unicode=True,
+            default_flow_style=False,
         )

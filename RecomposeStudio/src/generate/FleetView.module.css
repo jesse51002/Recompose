@@ -1,0 +1,423 @@
+/* The Fleet page. Ported from design/studio-demo.html.
+   Cards, not a table: the state has to land at a glance from across a room. */
+
+/* The page and its conversation panel, side by side. A ROW at the top level so
+   the panel spans the whole height: it is a conversation about one design, not
+   a detail of the list, and one that began under the tiles read as part of the
+   table it was floating over. */
+.shell {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--sh-ground);
+  color: var(--ink);
+  font-family: var(--sans);
+}
+
+.page {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 22px 26px 18px;
+  border-bottom: 1px solid var(--sh-line);
+}
+
+.headText {
+  flex: 1;
+  min-width: 0;
+}
+
+/* The two things the header offers, side by side and the same height. */
+.headActs {
+  flex: none;
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+/* The way through to the layout board. Quieter than the fork — outlined rather
+   than filled — because two solid blocks side by side would compete, and the
+   fork is the one a visitor is more likely to want. */
+.layoutsBtn {
+  flex: none;
+  max-width: 190px;
+  padding: 11px 15px;
+  border: 1px solid var(--sh-line-3);
+  border-radius: 9px;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.layoutsBtn:hover { border-color: var(--ink-2); background: var(--sh-panel); }
+
+.layoutsBtn u {
+  display: block;
+  margin-top: 4px;
+  text-decoration: none;
+  font: 400 var(--fs-micro) / 1.4 var(--sans);
+  color: var(--ink-3);
+}
+
+/* THE FORK, once, at the top. Every row below is a branch of this one
+   repository — so it is the only link on the page that is not per-design, and
+   it is sized to say so. Ink rather than a status hue: in this shell a hue
+   means a state, and a repository is not a state. */
+.fork {
+  flex: none;
+  display: block;
+  max-width: 300px;
+  padding: 11px 15px;
+  border: 1px solid var(--ink);
+  border-radius: 9px;
+  background: var(--ink);
+  color: var(--sh-ground);
+  text-decoration: none;
+}
+
+.fork:hover { opacity: 0.9; }
+
+.forkLead {
+  display: block;
+  font: 600 var(--fs-sm) / 1.2 var(--sans);
+  letter-spacing: var(--tr-title);
+}
+
+.fork b {
+  display: block;
+  margin-top: 5px;
+  font: 400 var(--fs-xs) / 1.3 var(--mono);
+  overflow-wrap: anywhere;
+  opacity: 0.85;
+}
+
+.fork u {
+  display: block;
+  margin-top: 4px;
+  text-decoration: none;
+  font: 400 var(--fs-micro) / 1.4 var(--sans);
+  opacity: 0.7;
+}
+
+.head h1 {
+  margin: 0;
+  font: 700 var(--fs-xl) / 1.08 var(--sans);
+  font-variation-settings: 'wdth' 106;
+  letter-spacing: var(--tr-title);
+}
+
+.head p {
+  margin: 7px 0 0;
+  max-width: 700px;
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+  color: var(--ink-3);
+}
+
+.head p b {
+  color: var(--ink-2);
+  font-weight: 500;
+}
+
+.kpis {
+  flex: none;
+  display: flex;
+  border-bottom: 1px solid var(--sh-line);
+}
+
+.kpi {
+  flex: 1;
+  padding: 15px 26px;
+  border-right: 1px solid var(--sh-line);
+}
+
+.kpi:last-child {
+  border-right: 0;
+}
+
+.kpi b {
+  display: block;
+  font: 600 var(--fs-xl) / 1 var(--sans);
+  letter-spacing: -0.03em;
+}
+
+.kpi u {
+  display: block;
+  margin-top: 8px;
+  text-decoration: none;
+  font: 400 var(--fs-xs) / 1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+}
+
+.run b { color: var(--st-run); }
+.ok b { color: var(--st-ok); }
+.you b { color: var(--st-you); }
+
+/* ── The status filter ─────────────────────────────────────────────────────
+   Lifecycle order, All first and selected by default. Each tab carries its
+   own count so the bar summarises as well as filters — which is what stops
+   it from being a second row of chrome under the four tiles. */
+
+.filters {
+  flex: none;
+  display: flex;
+  gap: 7px;
+  padding: 13px 26px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--sh-line);
+}
+
+.filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex: none;
+  padding: 6px 11px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-3);
+  font: 500 var(--fs-xs) / 1.5 var(--sans);
+  cursor: pointer;
+}
+
+.filter:hover { border-color: var(--sh-line-3); color: var(--ink-2); }
+
+.filter i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentcolor;
+}
+
+.filter em {
+  font: 400 var(--fs-micro) / 1 var(--mono);
+  font-style: normal;
+  color: var(--ink-4);
+}
+
+/* NEEDS-HUMAN-HELP, and only while it is not zero. It sits first in the bar
+   because that is where attention should land, and it carries its hue rather
+   than only dotting it so position is not the only thing saying so.
+   Declared BEFORE `.on` on purpose: the two have equal specificity, so order
+   decides, and a selected tab must read as selected. The hue says what it is;
+   the ink says where you are. */
+.filter.urgent {
+  color: var(--st-you);
+  border-color: var(--st-you-l);
+  background: var(--st-you-w);
+}
+
+.filter.urgent em { color: var(--st-you); }
+
+/* Selected reads as INK, not as the status hue. A tab tinted its own colour
+   and a tab selected would be the same signal twice, and the row of dots
+   already says which hue is which. */
+.filter.on {
+  border-color: var(--ink-2);
+  color: var(--ink);
+  background: var(--sh-panel);
+}
+
+.filter.on em { color: var(--ink-3); }
+
+/* The dot alone carries the hue, on every tab, selected or not. */
+.filter.run i { color: var(--st-run); }
+.filter.ok i { color: var(--st-ok); }
+.filter.you i { color: var(--st-you); }
+.filter.merge i { color: var(--st-merge); }
+.filter.ship i { color: var(--st-ship); }
+
+.cards {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 22px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: 56px 200px minmax(0, 1fr) auto;
+  gap: 20px;
+  align-items: start;
+  padding: 18px 20px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 12px;
+  background: var(--sh-panel);
+}
+
+/* The generated mark, and the only real thing on the page.
+   `contain` rather than `cover`: a logo cropped to fill a square is a logo
+   damaged, and these are the artifacts being shown off. A checked-transparent
+   mark needs a ground to sit on, so it gets a faint plate of its own — the
+   same reason inspect/AssetPlates.tsx exists. */
+.logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  object-fit: contain;
+  padding: 6px;
+  background: var(--sh-ground);
+  border: 1px solid var(--sh-line);
+}
+
+/* A card an agent is working on right now has to be obviously alive.
+   The LIFT is shared across all three busy statuses and the hue is left to
+   the tag, because three washes would put three near-identical tints on one
+   scroll and cost the page the scannability the lift is buying. */
+.live {
+  border-color: var(--sh-line-3);
+  box-shadow: 0 0 0 1px var(--sh-line-2), 0 6px 18px oklch(0 0 0 / 0.22);
+}
+
+.who b {
+  display: block;
+  font: 600 var(--fs-md) / 1.2 var(--sans);
+  letter-spacing: var(--tr-title);
+}
+
+.who u {
+  display: block;
+  margin-top: 5px;
+  text-decoration: none;
+  font: 400 var(--fs-xs) / 1 var(--mono);
+  color: var(--ink-3);
+}
+
+.since {
+  display: block;
+  margin-top: 7px;
+  font: 400 var(--fs-micro) / 1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+}
+
+.state {
+  min-width: 0;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--sh-line-2);
+  font: 500 var(--fs-micro) / 1.6 var(--mono);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+}
+
+.tag i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentcolor;
+}
+
+.tag.run { color: var(--st-run); border-color: var(--st-run-l); background: var(--st-run-w); }
+.tag.merge { color: var(--st-merge); border-color: var(--st-merge-l); background: var(--st-merge-w); }
+.tag.ship { color: var(--st-ship); border-color: var(--st-ship-l); background: var(--st-ship-w); }
+.tag.ok { color: var(--st-ok); border-color: var(--st-ok-l); background: var(--st-ok-w); }
+.tag.you { color: var(--st-you); border-color: var(--st-you-l); background: var(--st-you-w); }
+
+/* The same ring as the onboarding agent, meaning the same thing: this one is
+   working right now. The three busy statuses pulse; in sync and needs-you do
+   not, because neither is moving — one is finished and the other is stuck. */
+.tag.run i,
+.tag.merge i,
+.tag.ship i { animation: var(--kf-pulse) 1.5s ease-in-out infinite; }
+
+.state > b {
+  display: block;
+  margin: 9px 0 5px;
+  font: 500 var(--fs-sm) / 1.4 var(--sans);
+}
+
+.state > u {
+  display: block;
+  text-decoration: none;
+  max-width: 62ch;
+  font: 400 var(--fs-xs) / 1.6 var(--sans);
+  color: var(--ink-3);
+}
+
+.log {
+  display: block;
+  margin-top: 9px;
+  font: 400 var(--fs-micro) / 1.5 var(--mono);
+  color: var(--ink-4);
+}
+
+.acts {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.btn {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  padding: 7px 12px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  font: 500 var(--fs-xs) / 1 var(--sans);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn:hover { border-color: var(--sh-line-3); }
+
+/* The one action on the row that is not a read. Ink rather than a status hue:
+   in this shell a hue means a STATE, and a button is not a state. Ported from
+   `.btn.pri` in design/studio-demo.html, which the first port dropped. */
+.pri {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--sh-ground);
+  font-weight: 600;
+}
+
+.pri:hover { border-color: var(--ink); opacity: 0.88; }
+
+.foot {
+  flex: none;
+  padding: 15px 26px;
+  border-top: 1px solid var(--sh-line);
+  font: 400 var(--fs-xs) / 1.65 var(--sans);
+  color: var(--ink-3);
+}
+
+.foot b { color: var(--ink-2); font-weight: 500; }
+
+.synthetic {
+  flex: none;
+  margin: 0;
+  padding: 9px 26px 13px;
+  font: 400 var(--fs-micro) / 1.5 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+}

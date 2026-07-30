@@ -1,6 +1,6 @@
 # ThemeTree — Coding Standards
 
-The Python pipeline: the dependency DAG that turns two YAMLs into a resolved `output.yaml`, plus `ThemeTree/studio/` (the local-only run-orchestration API). See `../README.md` for the monorepo map and `README.md` for what the pipeline does.
+The Python pipeline: the dependency DAG that turns two YAMLs into a resolved `output.yaml`, the studio API that drives it lives in `../RecomposeAPI/studio/`. See `../README.md` for the monorepo map and `README.md` for what the pipeline does.
 
 ---
 
@@ -176,11 +176,40 @@ only makes sense for one app, push back — it belongs in YAML.
 
 Every service and module method is `async`. The pipeline core is provider- and
 transport-agnostic; the CLI (`ThemeTree/cli.py`) and the studio app
-(`ThemeTree/studio/`, see below) are two entrypoints over the same async core. Do
+(`../RecomposeAPI/studio/`) are two entrypoints over the same async core. Do
 not introduce blocking I/O — use async clients (`litellm.acompletion` /
 `litellm.aimage_generation`) and `await` everything. Keep modules
 independently awaitable so they can be gathered concurrently later without a
 refactor.
+
+### Transient provider failures are retried, permanent ones are not
+
+Both litellm-backed services retry a **transient** failure on an increasing
+backoff (`RETRY_BACKOFF_SECONDS = (5, 15, 30)` — three retries on top of the
+first attempt) before wrapping it as `ProviderError`:
+
+- `LiteLLMImageGenerator._call_with_retry` — the image call and its write, and
+- `LiteLLMClient._acompletion` — every chat turn, structured or not.
+
+**The retryable set is listed type by type, never by a shared base.** In
+litellm's taxonomy `BadRequestError`, `AuthenticationError` and
+`ContentPolicyViolationError` inherit from the same `APIError` as
+`ServiceUnavailableError` and `RateLimitError`, so a retry set written as
+`APIError` would spend the whole 50-second ladder on a fault no wait can fix —
+once per node. `RETRYABLE_COMPLETION_ERRORS` in `llm_client.py` is that list,
+and a test asserts a bad request costs exactly one attempt.
+
+The chat guard was **added on 2026-07-29 after its absence cost slots.** An
+image node authors its prompt (Opus) and classifies it (`gemini-2.5-flash-lite`)
+before generating anything, and neither call was retried while the generation
+between them sat behind two nested retry layers — so a single `503 high demand`
+on the cheapest call in the node discarded the paid prompt, dropped the slot
+from `output.yaml`, and skipped every slot depending on it. One Gemini outage
+took 6 of 22 slots in a run, `celebration_image` among them, which then hid the
+finished theme from the styles list (it is that list's card art).
+
+The lesson generalises: **a node is only as reliable as its least-guarded
+call**, and that is rarely the expensive one.
 
 ### Watching a run: the progress sink
 
@@ -204,6 +233,59 @@ Two rules hold the design together:
   (`ThemeTree/studio/`), never here.
 - **A sink must not raise.** An emit failure would abort a paid run over a
   display concern. Swallow and log inside the sink.
+
+### Watching a run: the partial output
+
+`Pipeline.run()` also takes an optional
+`on_partial: Callable[[PipelineResult], Awaitable[None]] | None`, called once
+after **each NODE settles** with the run assembled so far.
+
+**Per node, not per level, and the distinction is the whole feature.** Every
+image slot is a sibling of every other, so they are all one level — a
+level-grained partial therefore wrote nothing at all for the entire image
+phase and then landed the whole gallery in a single write at the end, which is
+indistinguishable from not being live and is exactly how it looked. The
+executor uses `as_completed` rather than `gather` to get that grain. A node
+enters `resolved` only once it has RETURNED, so what is handed out is always a
+coherent set of finished nodes, never a half-written one; a node that FAILED
+emits nothing, because it changed nothing anybody could look at.
+
+The cost of the finer grain is real and accepted: `Writer.write_partial`
+re-stamps every produced asset's `sha256` on each call, so a 23-node run hashes
+its images O(n²) times over a few minutes. It is off-loop and small against the
+run's own spend, but it is the first thing to look at if a partial write ever
+shows up as a bottleneck.
+
+The two seams answer different questions and neither replaces the other. The
+sink says what is *happening* — a level started, a node took 4.2 s, this one
+failed. `on_partial` says what has been *made*. It exists because images have
+their own files and are servable the moment a node reports them, while colour,
+typography and copy exist nowhere except `output.yaml` — so a watcher given
+events alone shows generated imagery over an unthemed shell for the whole run.
+
+- `Writer.write_partial()` is what a caller passes it to. **`output.yaml` plus
+  the two provenance files**, and nothing else — no asset upload (a partial is
+  not a publish), and above all no ledger entry, because
+  `expansion_cost.yaml` appends and one entry per node would record two dozen
+  phantom passes for a single run. The provenance is deliberate rather than an
+  oversight: the final write may never happen, and a run killed mid-flight then
+  left a directory the read API lists as a design with no frozen manifest —
+  listed, apparently finished, and impossible for `expand` / `regen` to
+  reopen.
+- That write is **atomic** (`Writer._dump_model_atomic`: temp file in the same
+  directory plus `os.replace`). The plain dump truncates and then fills, which
+  is harmless when nobody is watching and a fragment when the read API and a
+  browser are polling the path mid-run.
+- **The guard lives in the executor, not the callback.** Unlike a `ProgressSink`
+  — an interface whose contract says implementations must not raise — this is a
+  bare callable with no contract, so `Pipeline._emit_partial` swallows and logs.
+  A watcher must never abort a run that has already spent money.
+- The cost stamped on a partial is the **running** total, read off the same live
+  service instances the final write reads, so a preview and its artifact cannot
+  disagree about what was counted.
+
+`ThemeTree/studio/service/run_launcher.py` passes one; the CLI passes none and
+nothing is assembled between levels.
 
 Every node is timed with `perf_counter` from the moment it acquires the
 concurrency semaphore (its own work, not its queueing), and the run total is
@@ -344,31 +426,35 @@ breakage the `.venv/bin/*` scripts hit when this package was renamed.
 
 ---
 
-## Two FastAPI apps, and why they are separate
+## One FastAPI app, and where it lives
 
-- **`RecomposeAPI/`** — the read-only output API. Deployed (App Runner, :8001
-  locally). Serves *finished* runs.
-- **`ThemeTree/studio/`** — the local launch surface. `make studio`, bound to
-  **127.0.0.1:8002**, never deployed. Writes a brief, starts a run, streams
-  its progress.
+`RecomposeAPI/` serves both halves: the read side over a produced `output.yaml`,
+and `RecomposeAPI/studio/` — author a brief, launch a run, watch it, hold a
+design session. **The studio used to live here in `ThemeTree/studio/` and does
+not any more** (moved 2026-07-29): starting a run is an API request like any
+other, so it belongs with the API rather than inside the library it drives.
 
-**Never merge the studio into `RecomposeAPI/`.** Both `Settings` classes
-instantiate at import time, and `RecomposeAPI/config.py` deliberately needs only
-`APPS_ROOT` / `CORS_ORIGINS` / `ASSETS_CDN_BASE_URL` / `GOOGLE_FONTS_API_KEY`
-— `RecomposeAPI/` **never imports `src.core.config`**, which is exactly what lets
-the deployed container boot without the four provider keys. Importing the
-pipeline into the read API destroys that property. The studio imports the
-pipeline freely; it runs on a laptop that has the keys.
+That move deleted a rule this file used to carry — *never merge the studio into
+`RecomposeAPI/`*, on the argument that a deployed read API must boot without
+provider keys. The merge was made deliberately, knowing the cost: the API now
+imports the pipeline, so all four provider keys are required at import time.
 
-Rules that hold inside `ThemeTree/studio/`:
+What still matters **here**, in the pipeline:
 
-- **Nothing wire-shaped leaks down.** The studio owns SSE framing, JSONL,
-  HTTP status mapping; the executor owns `ProgressEvent`. Anything
-  transport-flavoured belongs here, never in `ThemeTree/executor/`.
-- **State lives in `.studio/`, never in a run directory.** One append-only
-  `.studio/runs/<run_id>.jsonl` per launch, and committed briefs under
-  `.studio/briefs/`. Writing anything into `apps/<app_id>/<run_id>/` would
-  break the iron-clad rule above. `.studio/` is gitignored.
+- **Nothing wire-shaped leaks down.** The studio owns SSE framing, JSONL and
+  HTTP status mapping; the executor owns `ProgressEvent` and `on_partial`.
+  Anything transport-flavoured belongs in `RecomposeAPI/`, never in
+  `ThemeTree/executor/`. This is the rule the move did NOT change, and the
+  reason the executor did not have to be touched to make it.
+- **The studio's state lives in `.studio/`, never in a run directory** — one
+  append-only `.studio/runs/<run_id>.jsonl` per launch, one
+  `.studio/sessions/<id>.jsonl` per design, briefs under `.studio/briefs/`.
+  Writing into `apps/<app_id>/<run_id>/` would break the iron-clad rule above.
+
+Everything else about the studio — sessions, the single-run gate, the launch
+path's create-only rule — is documented in `../RecomposeAPI/CLAUDE.md`, beside
+the code.
+
 - **The launch path only ever CREATES a run directory.** A name collision is
   refused, never re-run in place — that keeps
   `Pipeline._overwrite_existing`'s delete path unreachable from a browser.
@@ -405,8 +491,13 @@ Rules that hold inside `ThemeTree/studio/`:
 - **Two LLM libraries, one boundary.** litellm drives every *pipeline* call
   (`ThemeTree/modules/`, `ThemeTree/shared/services/`); Pydantic AI drives the studio's
   conversational agent and nothing else. Its model id is a **bare** Anthropic
-  name from `ThemeTree/studio/config.py` (`brief_agent_model`) — never a litellm
-  `provider/model` string — because the agent names its provider explicitly.
+  name from `RecomposeAPI/studio/config.py` (`brief_agent_model`) — never a
+  litellm `provider/model` string — because the agent names its provider
+  explicitly. It runs on **Sonnet**: a turn of that interview is a long prompt
+  in and a question out, which is a cheap shape of work Opus was being paid
+  2.5x for. The pipeline's own image-prompt call stays on Opus, because writing
+  a prompt an image model renders well is a harder job than asking a
+  multiple-choice question.
   The key is read from `src.core.config` rather than redeclared on the studio
   settings: the studio already imports the pipeline, so one secret keeps one
   definition and one env var.

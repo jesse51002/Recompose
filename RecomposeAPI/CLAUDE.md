@@ -5,22 +5,170 @@
 > FastAPI, Python and project-structure standards carried; every CombatDen domain
 > section did not — payment sync, memberships, ranks, videos, uploads, the member
 > portal, computed-status views, and the database patterns. **RecomposeAPI has no
-> database.** It is a read-only API over the `output.yaml` a pipeline run produced,
-> with assets served from a CDN. If a rule below assumes a DB or a write path,
-> it is a porting error — fix it here rather than working around it.
+> database.** It serves the `output.yaml` a pipeline run produced, and since
+> 2026-07-29 it also LAUNCHES those runs (`studio/`). If a rule below assumes a
+> DB it is a porting error; rules that assume no write path are simply out of
+> date — fix them here rather than working around them.
 
 ## What this service is
 
-`RecomposeAPI/` is the **read-only** API: it serves the theme catalog and the
-per-run design detail (`output.yaml`) over a GET-only FastAPI. Image and icon
-bytes come from S3/CloudFront, not from here.
+`RecomposeAPI/` is the Recompose API, and it has **two halves in one app**:
 
-It is one of two Python surfaces in this repo and the only one that ships:
+- **read** (`output_router.py`, `service/`, `schema/`) — the theme catalog and
+  per-run design detail from a produced `output.yaml`. GET only. This is what
+  the Flutter and React runtimes consume.
+- **write** (`studio/`) — author a brief, launch a pipeline run, stream it, hold
+  a design session. POST and SSE. This is what the browser studio talks to.
 
-- **`RecomposeAPI/`** — read-only, deployed. This file governs it.
-- **`ThemeTree/studio/`** — the local-only run-orchestration API (`make studio`,
-  127.0.0.1:8002). It spends real money per launch and is deliberately not
-  deployed. It follows the same standards but has its own risk profile.
+**The write half moved here from `ThemeTree/studio/` on 2026-07-29.** It was a
+separate app on `127.0.0.1:8002`, split from this one so a deployed read API
+could boot without provider keys. That split is gone: starting a run is an API
+request like any other.
+
+**None of it is a long request.** `POST /runs` registers the run and returns 202
+in milliseconds; the pipeline runs as a background task and the client polls
+`GET /runs/{id}` or streams `/runs/{id}/events`. The eventual move is that
+background task out of the web process into a real worker — which changes where
+the work runs, not the shape of the request.
+
+**Two consequences, both deliberate:**
+
+1. **This process imports the pipeline**, so `ThemeTree.core.config` loads at
+   import time and all four provider keys (Anthropic, Gemini, OpenAI, Recraft)
+   are required. There is no longer a configuration that boots on
+   `GOOGLE_FONTS_API_KEY` alone. A rule in `../ThemeTree/CLAUDE.md` used to
+   forbid exactly this; it was removed with the merge rather than worked around.
+2. **`POST /runs` returns at once but sets ~5 minutes of work and about $1.50
+   of spend going**, and the app binds `0.0.0.0` so the emulator can
+   reach it. Until there is auth, the bind address is the only thing limiting
+   who can start a run. CORS binds browsers only and stops nothing else.
+
+### Rules that hold inside `studio/`
+
+- **Nothing wire-shaped leaks down.** This half owns SSE framing, JSONL and HTTP
+  status mapping; `ThemeTree/executor/` owns `ProgressEvent` and `on_partial`.
+  Anything transport-flavoured belongs here, never in the pipeline.
+- **State lives in `.studio/`, never in a run directory** — `.studio/runs/<id>.jsonl`
+  per launch, `.studio/sessions/<id>.jsonl` per design, briefs under
+  `.studio/briefs/`. Writing into `apps/<app_id>/<run_id>/` would break the
+  pipeline's iron-clad no-hand-edits rule. `.studio/` is gitignored.
+- **The launch path only ever CREATES a run directory.** A name collision is
+  refused, never re-run in place, so `Pipeline._overwrite_existing`'s delete
+  path is unreachable from a browser.
+- **One run at a time and one session at a time**, refused with 409 rather than
+  queued: the providers rate-limit, and a session owns the run slot for its
+  whole length.
+- **Nothing is typed before the conversation starts.** `POST /sessions` takes an
+  app id and nothing else; the design's name arrives from the brand brief the
+  interview produces, and `/sessions/active` reports `null` until it does. The
+  form that used to ask for a name up front asked a person to name a thing that
+  did not exist yet, for a fact the agent's first question collects anyway.
+- **The brand brief is the one thing a person accepts.** The layout is not
+  interviewed for and not proposed: the layout agent authors its own
+  `layout_brief.yaml` before it writes any code, having actually opened the
+  generated images, and a direction authored out here could only be a thinner
+  guess. Most owners have no layout direction to give, and asking produced a
+  shrug or an invention.
+- **`run_settled` starts nothing.** It used to make `src/apps/gen-<run>/` and
+  launch the layout agent the instant the assets settled. A finished run is
+  genuinely the layout's only precondition, and it was still the wrong default —
+  a precondition being met is not the same as a person being ready, and this is
+  the most expensive thing the product launches. `start_layout` is the only
+  door, behind `POST /sessions/{id}/layout/start` and a button in the
+  transcript.
+- **THE LAYOUT AGENT IS THE MOST EXPENSIVE THING THIS SERVICE STARTS**, and two
+  rules keep it controllable. It is spawned into its OWN process group
+  (`start_new_session=True`) because a coding agent spawns children of its own,
+  so only a group kill takes the whole tree. And the app's `lifespan` stops
+  every live one on shutdown — a process group outlives its parent, so without
+  that a Ctrl-C would leave the expensive half of the system running,
+  reparented to init and invisible. `POST /sessions/{id}/layout/stop` is the
+  same kill on demand.
+- **Stop and start are a PAIR.** `POST /sessions/{id}/layout/start` is the
+  manual door, and it exists because a Stop with no way back would mean
+  regenerating a whole theme to get another layout attempt — so stopping a bad
+  run would cost more than letting it finish. It also recovers an automatic
+  start that failed, and runs another pass on a finished design. **Starting on
+  an existing folder CONTINUES it**, never re-copies the base: the folder is
+  named after the run, so an existing one can only mean this run has been laid
+  out before, and re-copying would delete the last agent's work. What is
+  exclusive is the AGENT, not the folder — a second one on the same design is a
+  409, because two agents editing one tree lose each other's writes.
+- **Effort is a FLAG, not an `/effort` line in the prompt.**
+  `layout_agent_effort` (default `medium`) is appended as `--effort <level>`.
+  The prompt already opens with `/goal`; whether a second slash command on a
+  later line parses as a command or reads as prose is not worth betting a
+  two-hour run on, and the CLI validates the flag and warns on a bad value.
+  Set it empty for a command that does not accept it.
+- **The agent's stdin is `DEVNULL`.** A coding-agent CLI reads stdin for piped
+  input and waits when it is a terminal that will never send any — and a child
+  inherits this server's stdin, whichever terminal `make api` was started from.
+  Without this an agent stalls before it starts, and two of them would compete
+  for the operator's keystrokes.
+- **WHAT A DESIGN COSTS IS RECORDED AS IT IS SPENT**, as `spent` records on
+  the session log, split into `agent` (the interview) and `assets` (the
+  pipeline run). A record and not a running field, because money is the one
+  thing here that cannot be re-derived: a node's state is readable off the
+  artifact and a transcript off the records, but nothing on disk remembers what
+  a conversation cost once the process holding the token counts is gone. Token
+  counts ride along so a wrong price can be recomputed from the log.
+  `SessionSnapshot` sums them on read, so a live session and one rebuilt from
+  its log cannot disagree.
+  - **The interview runs on Sonnet, and the meter is why.** A turn is a long
+    system prompt in and a question out (~4,500 tokens in, single digits out),
+    which is a cheap shape of work Opus was being paid 2.5x for — $0.0226 a
+    turn against $0.0090, measured. Question quality is set by the prompt, not
+    the model: side by side on the same interview, Sonnet's option banks were
+    as specific as Opus's. The layout agent is where a bigger model earns its
+    keep, and that is a separate process with its own choice.
+  - Pricing comes from litellm's own model pricing (`service/agent_cost.py`),
+    never a table in this repo — one here would be wrong the week a price
+    changed, and wrong silently. **Cache reads are priced separately**: the
+    orchestrator replays the whole conversation each turn, so counting cached
+    input at the fresh rate would overstate a long interview several times.
+  - **The layout agent is deliberately not counted.** It runs on the operator's
+    own CLI credentials and reports nothing back, so a figure for it would be
+    invented. The meter says so on its own surface — a total that quietly
+    omitted the longest-running agent would be worse than none, because it
+    would be believed.
+  - `_record_spend` never raises, and that guard once hid a real bug: Pydantic
+    AI's `usage` is a PROPERTY, `result.usage()` raised a TypeError the guard
+    swallowed, and the meter read $0 for every turn. `tests/test_agent_cost.py`
+    now has a contract test that fails if that attribute becomes callable.
+- **Which account pays for it is a decision, not an accident.** A coding-agent
+  CLI bills to `ANTHROPIC_API_KEY` when it finds one in its environment and to
+  its own logged-in subscription when it does not. `layout_agent_inherit_api_key`
+  defaults false and the key is stripped from the child's environment, so the
+  answer does not depend on whether someone exported it before `make api`.
+
+### Sessions and runs are different units
+
+A **run** is one pipeline launch. A **session** is one design end to end — the
+brand interview, the asset run, and the layout agent — which a person starts by
+hand, from a button in the conversation. It used to start itself when the run
+settled; a finished run is its only precondition, but a precondition being met
+is not the same as a person being ready, and it is the most expensive thing the
+product launches. A session starts
+runs; both are independently watchable, which is why `session_router.py` sits
+*beside* `run_router.py` rather than wrapping it.
+
+- **Per-node progress never crosses over.** A session's `task` record names its
+  `run_id` and the browser attaches `/runs/{id}/events` to it. Re-emitting
+  twenty-three nodes into a second stream would be two places that can disagree
+  about one run.
+- **A session is settled by a person, a run by the executor.** The work stopping
+  is not what makes a design done — the tenant signing it off is. That is the
+  ONE human gate in the product and it is per design, by the person whose brand
+  it is; nothing downstream waits on a reviewer, because an approval queue does
+  not survive a hundred branches. It is also why `SessionRegistry` is a sibling
+  of `RunRegistry` rather than a generalisation of it. They are near-copies on
+  purpose; extract only if they converge.
+  A settled session is not necessarily an approved one: the stream synthesises a
+  terminal record, carrying an error, when a session is not in memory because
+  the process restarted mid-design.
+- **`POST /brief-agent` is still stateless** — the client holds that transcript
+  and posts it back each turn. A session is not. Read `agent_turn.py`'s
+  stateless claim as scoped to that one endpoint.
 
 ## No assumptions
 
@@ -559,19 +707,27 @@ src/
 
 ## Security
 
-RecomposeAPI has **no database, no user accounts and no write path.** The entire
-CombatDen auth chapter (Supabase Auth, JWT role sets, RLS, `gym_employees`,
-GoTrue's auto-confirm guard) was dropped in the port because none of it applies.
-If you find yourself reaching for any of it, stop — you are probably adding a
-write path to a service whose whole safety story is that it has none.
+RecomposeAPI has **no database and no user accounts.** The entire CombatDen auth
+chapter (Supabase Auth, JWT role sets, RLS, `gym_employees`, GoTrue's
+auto-confirm guard) was dropped in the port because none of it applies.
+
+**It does have a write path**, and since 2026-07-29 that path is in this
+service: `studio/` starts pipeline runs. The old "GET only, adding a non-GET
+route is an architecture change" rule described a service that no longer exists.
 
 **The actual surface**
-- **GET only.** Adding a non-GET route to this service is an architecture change,
-  not a feature. It needs a decision recorded before the code.
+- **The read half stays GET-only.** Adding a non-GET route to `output_router`
+  is still an architecture change, not a feature.
+- **The write half spends money.** `POST /runs` answers immediately and leaves
+  ~5 minutes and ~$1.50 of work running behind it. There is
+  **no auth on it yet** — the bind address is the whole control. That is
+  acceptable for a laptop tool and is not acceptable once this is deployed;
+  auth is the prerequisite for deploying, not a follow-up.
 - **No secrets are served.** The service reads a run's `output.yaml` and emits
-  metadata plus CDN URLs. Asset bytes come from S3/CloudFront, never from here.
-- **`GOOGLE_FONTS_API_KEY`** is the one credential, injected at runtime by the
-  host and never baked into an image.
+  metadata plus asset URLs.
+- **Five credentials now**, not one: `GOOGLE_FONTS_API_KEY` plus the four
+  provider keys the pipeline needs. Injected at runtime, never baked into an
+  image.
 
 **Input validation**
 - Always validate with Pydantic; a route's schema is its contract.

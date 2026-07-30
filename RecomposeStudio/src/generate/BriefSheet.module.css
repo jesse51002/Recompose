@@ -1,0 +1,76 @@
+/* The brief as a document — its own tab, because a 380px column is not where
+   anyone reads one. */
+
+.sheet {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 24px 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.doc {
+  max-width: 68ch;
+  width: 100%;
+  animation: var(--kf-rise) 0.3s ease both;
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--sh-line-2);
+  font: 500 var(--fs-micro) / 1 var(--mono);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.ok {
+  color: var(--st-ok);
+}
+
+.you {
+  color: var(--st-you);
+}
+
+.name {
+  margin: 14px 0 18px;
+  font: 500 var(--fs-xl) / 1.1 var(--sans);
+  letter-spacing: var(--tr-title);
+  color: var(--ink);
+}
+
+.field {
+  display: grid;
+  grid-template-columns: 12ch minmax(0, 1fr);
+  gap: 16px;
+  padding: 11px 0;
+  border-top: 1px solid var(--sh-line);
+}
+
+.label {
+  font: 500 var(--fs-micro) / 1.7 var(--mono);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--ink-4);
+}
+
+.value {
+  margin: 0;
+  font: 400 var(--fs-sm) / 1.65 var(--sans);
+  color: var(--ink);
+}
+
+.empty {
+  margin: auto;
+  max-width: 34ch;
+  padding: 24px;
+  text-align: center;
+  font: 400 var(--fs-sm) / 1.6 var(--sans);
+  color: var(--ink-3);
+}

@@ -8,11 +8,13 @@
 //   the wall. It refuses the design-tokens grid this category always ships: a
 //   swatch board with hex captions evidences a colour LIST, and has nowhere to
 //   put the sentence the pipeline wrote about why each colour exists.
-// OWN-WORLD: the CRM's daylit control desk unchanged (cool #F3F5F8 ground,
-//   cool near-black ink, Geist, hairline rules, no boxed sections), with two
-//   rules of its own — zero white cards and zero shadows, every specimen a
-//   flat plate painted in the THEME's background under a chrome hairline; and
-//   sapphire reserved for the two "you are here" marks, nothing else.
+// OWN-WORLD: the control desk's STRUCTURE (Geist, hairline rules, no boxed
+//   sections, zero white cards, zero shadows, every specimen a flat plate) over
+//   the THEME's own ground and ink rather than the tool's. The desk's fixed
+//   #F3F5F8 ground and near-black ink were the original world and are gone from
+//   this sheet on purpose: judging a palette on someone else's ground is how a
+//   warm sand reads as grey and a dark theme reads as broken. Sapphire is still
+//   reserved for the two "you are here" marks, nothing else.
 // STORY: a white-label platform buyer scrolls once and sees 28 computed
 //   derivations as one instrument, four colours each with a written purpose,
 //   35 tokens, two faces set live, five authored strings and fourteen
@@ -36,13 +38,17 @@
 // No Dart counterpart — the Flutter side has no inspector. It reads only what
 // ../showcase/ already reads, through the same hooks.
 
-import { useEffect } from 'react';
+import { useEffect, type CSSProperties } from 'react';
 import {
   fontStack,
   loadFontFamily,
+  rgba,
+  toCss,
   useActiveDesign,
+  useThemeColor,
   useThemeConfig,
   useThemeFontFamily,
+  withAlpha,
 } from 'recompose-react';
 
 import {
@@ -106,6 +112,27 @@ const FORMAT_SURFACE: Readonly<Record<string, string>> = Object.freeze({
   celebration_format: 'The post-class cards',
 });
 
+/**
+ * The two colour roles `apps/<app>/app.yaml` declares for exactly this: the
+ * ground a design is judged on, and the ink it is judged in.
+ */
+const SLOT_BACKGROUND = 'background';
+const SLOT_TEXT = 'text';
+
+/**
+ * How far the sheet's quieter inks sit back from its primary one.
+ *
+ * `app.yaml` declares ONE text role, not a ramp — so secondary copy, captions
+ * and hairlines are derived from it by alpha rather than read from a role that
+ * does not exist. Alpha rather than a mixed colour on purpose: it composites
+ * over whatever ground the theme brought, so one set of ratios works on sand
+ * and on near-black without either being special-cased.
+ */
+const INK_SECONDARY_ALPHA = 0.68;
+const INK_TERTIARY_ALPHA = 0.45;
+const RULE_ALPHA = 0.14;
+const RULE_SOFT_ALPHA = 0.08;
+
 export function InspectView() {
   const config = useThemeConfig();
   const activeDesign = useActiveDesign();
@@ -114,6 +141,14 @@ export function InspectView() {
   // unproduced slot degrades to readable text instead of a named miss.
   const displayFont = useThemeFontFamily(SLOT_FONT_DISPLAY, '');
   const bodyFont = useThemeFontFamily(SLOT_FONT_BODY, '');
+  // The design's own ground and ink — see the note on the returned element.
+  const ground = toCss(useThemeColor(SLOT_BACKGROUND, { fallback: rgba(11, 14, 18) }));
+  const inkColor = useThemeColor(SLOT_TEXT, { fallback: rgba(232, 236, 242) });
+  const ink = toCss(inkColor);
+  // Quieter inks, derived from the theme's own. Scaled by the role's alpha
+  // rather than replacing it, so a translucent text role stays translucent.
+  const fadedInk = (ratio: number): string =>
+    toCss(withAlpha(inkColor, inkColor.a * ratio));
 
   useEffect(() => {
     loadFontFamily(MONO_FAMILY);
@@ -128,13 +163,96 @@ export function InspectView() {
   const rail = railEntries(artifact);
 
   return (
-    <div className={styles.view}>
+    // THE SHEET WEARS THE DESIGN'S OWN GROUND AND INK, not the tool's.
+    //
+    // Everywhere else in this app a generated colour is confined to the phone,
+    // because the chrome's hues mean states. The Inspect sheet is the one place
+    // the artifact is JUDGED, and judging a palette on someone else's ground is
+    // how a warm sand reads as grey and a dark theme reads as broken. So the
+    // two roles `app.yaml` declares for it — `background` and `text` — are
+    // applied here, and every plate below inherits them.
+    //
+    // Fallbacks are the shell's own dark, so an unresolved theme degrades to
+    // the surrounding chrome rather than to a white flash.
+    //
+    // SETTING `color` ALONE WAS NOT ENOUGH, and the reason is worth keeping:
+    // almost every plate below states its own `color: var(--adm-ink)` or
+    // `var(--adm-text-2nd)`, which beats an inherited value — so the sheet's
+    // ground came from the design while its copy stayed the tool's near-black
+    // ink, tuned for a daylit desk. On a dark theme that is body text you
+    // cannot read on a background you can.
+    //
+    // Rebinding the tokens here fixes all of it in one place, because CSS
+    // Modules rewrites class names but NOT custom property names — so
+    // `--adm-ink` set on this element is the same `--adm-ink` those modules
+    // read. The alternative was editing the twelve stylesheets that name them,
+    // and then every future one.
+    <div
+      className={styles.view}
+      style={
+        {
+          background: ground,
+          color: ink,
+          '--adm-ink': ink,
+          '--adm-text-2nd': fadedInk(INK_SECONDARY_ALPHA),
+          '--adm-text-3rd': fadedInk(INK_TERTIARY_ALPHA),
+          // The hairlines are ink too. Left on their dark-on-light defaults
+          // they simply vanish on a dark theme, and a sheet whose rules have
+          // disappeared reads as broken rather than as clean.
+          '--adm-line': fadedInk(RULE_ALPHA),
+          '--adm-line-soft': fadedInk(RULE_SOFT_ALPHA),
+        } as CSSProperties
+      }
+    >
       <div className={styles.railSlot}>
         <IndexRail entries={rail} reducedMotion={reducedMotion} />
       </div>
 
       <div className={styles.sheet}>
         <Masthead artifact={artifact} designId={activeDesign.id} displayFont={displayFont} />
+
+        {/* IMAGERY FIRST. It is the only section whose subject is a PICTURE,
+            and the thing a person opens this sheet to judge — the plates are
+            what a redesign is most visibly made of, and they were sitting
+            under five sections of swatches, specimens and strings. Everything
+            below reads better once you have seen what the run actually drew. */}
+        <section className={styles.section}>
+          <SectionHead
+            id="imagery"
+            title="Imagery"
+            count={`${String(artifact.counts.images)} slots`}
+          >
+            Transparent artwork generated for this theme and authored against
+            its ground. Every plate below is painted in that ground, so what
+            renders here is what renders on the phone. Each caption carries the
+            complexity tier the run gave that prompt — the tier that chose how
+            much compute the generator spent on it.
+          </SectionHead>
+          <div className={styles.featureGrid}>
+            {featureImages(artifact.images).map((image) => (
+              <ImagePlate
+                key={image.slot}
+                slot={image.slot}
+                url={image.value?.url ?? null}
+                complexity={image.value?.complexity ?? ''}
+                background={artifact.background}
+                wide
+              />
+            ))}
+          </div>
+          <div className={styles.imageGrid}>
+            {restImages(artifact.images).map((image) => (
+              <ImagePlate
+                key={image.slot}
+                slot={image.slot}
+                url={image.value?.url ?? null}
+                complexity={image.value?.complexity ?? ''}
+                background={artifact.background}
+              />
+            ))}
+          </div>
+        </section>
+
 
         <section className={styles.section}>
           <SectionHead
@@ -246,43 +364,6 @@ export function InspectView() {
                 key={icon.slot}
                 slot={icon.slot}
                 present={icon.value !== null}
-                background={artifact.background}
-              />
-            ))}
-          </div>
-        </section>
-
-        <section className={styles.section}>
-          <SectionHead
-            id="imagery"
-            title="Imagery"
-            count={`${String(artifact.counts.images)} slots`}
-          >
-            Transparent artwork generated for this theme and authored against
-            its ground. Every plate below is painted in that ground, so what
-            renders here is what renders on the phone. Each caption carries the
-            complexity tier the run gave that prompt — the tier that chose how
-            much compute the generator spent on it.
-          </SectionHead>
-          <div className={styles.featureGrid}>
-            {featureImages(artifact.images).map((image) => (
-              <ImagePlate
-                key={image.slot}
-                slot={image.slot}
-                url={image.value?.url ?? null}
-                complexity={image.value?.complexity ?? ''}
-                background={artifact.background}
-                wide
-              />
-            ))}
-          </div>
-          <div className={styles.imageGrid}>
-            {restImages(artifact.images).map((image) => (
-              <ImagePlate
-                key={image.slot}
-                slot={image.slot}
-                url={image.value?.url ?? null}
-                complexity={image.value?.complexity ?? ''}
                 background={artifact.background}
               />
             ))}
@@ -404,6 +485,9 @@ function NothingLoaded() {
 /** The rail's contents, built from the same counts the section heads print. */
 function railEntries(artifact: Inspection): readonly RailEntry[] {
   return [
+    // Same order as the sheet: the rail is an index of it, and an index that
+    // disagreed with what it indexes is worse than none.
+    { id: 'imagery', label: 'Imagery', count: `${String(artifact.counts.images)} slots` },
     { id: 'colours', label: 'Colour roles', count: `${String(artifact.counts.roles)} roles` },
     {
       id: 'palette',
@@ -413,7 +497,6 @@ function railEntries(artifact: Inspection): readonly RailEntry[] {
     { id: 'type', label: 'Typefaces', count: `${String(artifact.counts.fonts)} slots` },
     { id: 'voice', label: 'Written copy', count: `${String(artifact.counts.texts)} strings` },
     { id: 'icons', label: 'Navigation icons', count: `${String(artifact.counts.icons)} slots` },
-    { id: 'imagery', label: 'Imagery', count: `${String(artifact.counts.images)} slots` },
     // Omitted, not zeroed, when the run predates the format node — the rail
     // indexes what the sheet actually renders.
     ...(artifact.formats.length > 0

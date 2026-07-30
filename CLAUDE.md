@@ -13,8 +13,8 @@ overrides anything general said here.
 
 | Directory | What it is | Language |
 |---|---|---|
-| `ThemeTree/` | The pipeline. The dependency DAG that resolves colour, typography, copy, icons and images into an `output.yaml`. Also `ThemeTree/studio/`, the local-only run-orchestration API. | Python |
-| `RecomposeAPI/` | The **read-only** API over a produced `output.yaml`. GET-only. The only Python surface that ships. | Python |
+| `ThemeTree/` | The pipeline. The dependency DAG that resolves colour, typography, copy, icons and images into an `output.yaml`. A library plus a CLI — it serves nothing. | Python |
+| `RecomposeAPI/` | The API. Two halves in one app: **read** over a produced `output.yaml`, and `studio/` — author a brief, launch a run, watch it, hold a design session. The only Python surface that ships. | Python |
 | `RecomposeFlutter/` | The Flutter theme runtime. Fetches a tenant's resolved branding at startup and exposes resolvers that never throw. | Dart |
 | `RecomposeReact/` | The **web** theme runtime — the React mirror of `RecomposeFlutter`. Ships no screens and no assets. | TypeScript |
 | `RecomposeJsxMockUps/` | The feature-free mock **assets** — interactive mocks you click through, on an app-agnostic kit. No logic, no API calls, no fetching. What the design agent edits and the studio nests. | TypeScript |
@@ -79,16 +79,25 @@ the root can fan out to all of them uniformly. Run `make help` anywhere to see w
 that subsystem offers; the root's `help` lists the subsystems and the common loops.
 Add a target to the subsystem that owns the work, never to the root.
 
-## Python: two surfaces, one of which ships
+## Python: a library and the API over it
 
 `ThemeTree/` and `RecomposeAPI/` are separate top-level packages. Whether they
 share one project or split into separate distributions is an arrangement rather
 than a principle — read `pyproject.toml` for how it stands today, not this file.
 
-**`RecomposeAPI` ships. `ThemeTree/studio` does not.** Studio binds to localhost
-and spends real money on every launch. Nothing about it is deployed, and nothing
-in it should assume it ever will be. That distinction is load-bearing and is not
-expected to change.
+`ThemeTree/` is a **library plus a CLI** and serves nothing. `RecomposeAPI/` is
+the only thing that listens on a port, and it has both halves: reading a produced
+`output.yaml`, and `studio/` — briefs, run launches, sessions.
+
+**The studio half moved there from `ThemeTree/studio/` on 2026-07-29.** It was a
+separate app on its own port, split so a deployed read API could boot without
+provider keys; starting a run is an API request like any other, so they are one
+service now and the whole thing needs the keys.
+
+`POST /runs` answers immediately — the run is a background task the client polls
+or streams — but it leaves ~5 minutes of work and about $1.50 of spend going,
+and **there is no auth on it yet.** The bind address is the only control today.
+Auth is the prerequisite for deploying this, not a follow-up.
 
 ## Conventions that apply everywhere
 

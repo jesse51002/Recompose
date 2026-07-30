@@ -399,7 +399,8 @@ pass's spend.
 
 ## The studio — press a button, watch a theme generate
 
-`make studio` serves a **local-only** FastAPI app on **127.0.0.1:8002**. It
+`make -C RecomposeAPI dev` serves the API on **:8001** — read and write in one
+app. Its write half (`RecomposeAPI/studio/`) is what the browser studio talks to. It
 writes a brief, launches a run, and streams that run's progress to a
 browser. It is the launch surface; the read-only API (`make api`, :8001) is
 still the thing that serves finished themes.
@@ -517,7 +518,8 @@ store and nothing to expire — the studio can restart mid-interview.
 **Optional by construction.** With no `ANTHROPIC_API_KEY` the agent is never
 built: everything else in the studio works exactly as before and only
 `POST /brief-agent` answers 503. The model is a bare Anthropic name in
-`ThemeTree/studio/config.py` (`brief_agent_model`, override with `BRIEF_AGENT_MODEL`);
+`RecomposeAPI/studio/config.py` (`brief_agent_model` — Sonnet, override with
+`BRIEF_AGENT_MODEL`);
 the key comes from the pipeline config the studio already imports, so that one
 secret keeps a single definition.
 

@@ -12,15 +12,8 @@
 // testable without a browser (see ./__tests__/artifactModel.test.ts).
 
 import type { Rgba, ThemeConfig } from 'recompose-react';
-import { alphaBlend, rgba, ThemeDerivation } from 'recompose-react';
+import { alphaBlend, rgba, ThemeDerivation, themeImageSrc } from 'recompose-react';
 
-import {
-  EXPECTED_COLORS,
-  EXPECTED_FONTS,
-  EXPECTED_ICONS,
-  EXPECTED_IMAGES,
-  EXPECTED_TEXT,
-} from 'recompose-jsx-mockups';
 
 /**
  * The prose fields are why the font list is a record and not a family string.
@@ -235,13 +228,26 @@ function tokenOf(config: ThemeConfig, key: string, fallback: Rgba): Rgba {
 /** Builds the whole reading. Never throws; every absence becomes a `null`. */
 export function buildInspection(config: ThemeConfig): Inspection {
   const background = tokenOf(config, 'background', FALLBACK_BACKGROUND);
-  const roles = EXPECTED_COLORS.map((slot) => roleView(config, slot));
-  const images = EXPECTED_IMAGES.map((slot) => imageView(config, slot));
-  const fonts = EXPECTED_FONTS.map((slot) => fontView(config, slot));
-  const texts = slotViews(EXPECTED_TEXT, config.texts);
-  const icons = slotViews(EXPECTED_ICONS, config.icons);
-  // Slots off the PAYLOAD, not a manifest — see `Inspection.formats`. Sorted so
-  // two runs of the same app list their arrangements in the same order.
+
+  // EVERY SLOT LIST COMES OFF THE PAYLOAD, not off a manifest.
+  //
+  // These used to read `EXPECTED_*` from the mockups package, which exists for
+  // a different job: the runtime's missing-slot warning, where the studio
+  // declares what the PHONE renders so an absent one is noisy. Inspecting an
+  // artifact is the opposite question — it should show what the run PRODUCED,
+  // whatever that turned out to be. With a manifest driving it, a slot the
+  // pipeline generated but the mock does not paint was invisible here, which
+  // is exactly backwards for the one view whose job is to show the work.
+  //
+  // Key order is the payload's, which is `output.yaml`'s, which is the order
+  // `app.yaml` declares — so roles still read primary, background, text,
+  // accent rather than being alphabetised into nonsense. `formats` keeps its
+  // own sort (see `Inspection.formats`).
+  const roles = Object.keys(config.colors).map((slot) => roleView(config, slot));
+  const images = Object.keys(config.images).map((slot) => imageView(config, slot));
+  const fonts = Object.keys(config.fonts).map((slot) => fontView(config, slot));
+  const texts = slotViews(Object.keys(config.texts), config.texts);
+  const icons = slotViews(Object.keys(config.icons), config.icons);
   const formats = slotViews(Object.keys(config.formats).sort(), config.formats);
 
   return {
@@ -252,7 +258,7 @@ export function buildInspection(config: ThemeConfig): Inspection {
     colorMode: config.colorMode,
     background,
     roles,
-    paletteGroups: groupPalette(config.palette),
+    paletteGroups: groupPalette(config.palette, Object.keys(config.colors)),
     images,
     fonts,
     texts,
@@ -312,8 +318,15 @@ function slotViews(
  * stays the authority here too.
  */
 function imageView(config: ThemeConfig, slot: string): SlotView<ImageView> {
-  const url = config.images[slot] ?? '';
-  if (url === '') return { slot, value: null };
+  // PRESENCE is read off the raw config, but the URL handed to an <img> is the
+  // RESOLVED one. Since the API stopped defaulting to a CDN it emits relative
+  // paths, and a relative src on this page resolves against the studio's own
+  // origin (:8080) rather than the API's (:8001) — so every plate 404'd and
+  // reported "failed to load" while the phone beside it, which goes through
+  // the runtime's resolver, was fine.
+  const raw = config.images[slot] ?? '';
+  if (raw === '') return { slot, value: null };
+  const url = themeImageSrc(slot, raw);
   return { slot, value: { url, complexity: config.imageComplexity[slot] ?? '' } };
 }
 
@@ -351,11 +364,21 @@ function fontView(config: ThemeConfig, slot: string): SlotView<FontView> {
  * new token, instead of being silently dropped by a client that was built
  * before it existed.
  */
-export function groupPalette(palette: Readonly<Record<string, Rgba>>): readonly PaletteGroup[] {
+export function groupPalette(
+  palette: Readonly<Record<string, Rgba>>,
+  /**
+   * The run's own colour roles, in payload order. Passed in rather than read
+   * from a manifest for the same reason the slot lists are: a role the
+   * pipeline produced should group its derivations here even if no mock paints
+   * it. Anything unclaimed still falls through to `rest`, so a caller that
+   * passes none simply gets one ungrouped list.
+   */
+  roles: readonly string[],
+): readonly PaletteGroup[] {
   const groups: PaletteGroup[] = [];
   const claimed = new Set<string>();
 
-  for (const slot of EXPECTED_COLORS) {
+  for (const slot of roles) {
     const keys = [slot, ...DERIVATION_ORDER.map((derivation) => `${slot}_${derivation}`)];
     const entries = collect(palette, keys, claimed);
     if (entries.length > 0) groups.push({ label: slot, entries });

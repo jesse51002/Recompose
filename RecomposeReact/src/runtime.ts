@@ -96,6 +96,17 @@ export function selectDesign(designId: string): Promise<boolean> {
 }
 
 /**
+ * Drops the active theme, so every resolver returns its caller's fallback.
+ *
+ * The way BACK from `selectDesign`. A selection is sticky by design — it is
+ * persisted and preferred on boot — so without this there was no way to see
+ * what a screen looks like unthemed once one had been picked.
+ */
+export function clearDesign(): void {
+  themeStoreOrNull()?.clearDesign();
+}
+
+/**
  * One page of the app's selectable styles. Ports
  * `ThemeRuntime.fetchStylesPage`. Rejects when nothing is bootstrapped.
  */

@@ -21,17 +21,17 @@ from fastapi.testclient import TestClient
 from pydantic import ValidationError
 
 from ThemeTree.executor.progress_event import ProgressEvent, ProgressEventKind
-from ThemeTree.studio.config import settings
-from ThemeTree.studio.main import app
-from ThemeTree.studio.schema.layout_brief import LayoutBrief
-from ThemeTree.studio.service import brief_service as brief_service_module
-from ThemeTree.studio.service import run_launcher as run_launcher_module
-from ThemeTree.studio.service import run_reader as run_reader_module
-from ThemeTree.studio.service import run_registry as run_registry_module
-from ThemeTree.studio.service.brief_service import BriefService
-from ThemeTree.studio.service.run_launcher import RunLauncher
-from ThemeTree.studio.service.run_reader import RunReader
-from ThemeTree.studio.service.run_registry import RunRegistry
+from RecomposeAPI.studio.config import settings
+from RecomposeAPI.main import app
+from RecomposeAPI.studio.schema.layout_brief import LayoutBrief
+from RecomposeAPI.studio.service import brief_service as brief_service_module
+from RecomposeAPI.studio.service import run_launcher as run_launcher_module
+from RecomposeAPI.studio.service import run_reader as run_reader_module
+from RecomposeAPI.studio.service import run_registry as run_registry_module
+from RecomposeAPI.studio.service.brief_service import BriefService
+from RecomposeAPI.studio.service.run_launcher import RunLauncher
+from RecomposeAPI.studio.service.run_reader import RunReader
+from RecomposeAPI.studio.service.run_registry import RunRegistry
 
 FIXTURE_APP_YAML = (
     Path(__file__).resolve().parent / "data" / "apps" / "demo" / "app.yaml"
@@ -77,7 +77,7 @@ class _StubPipeline:
 
     gate: Path | None = None
 
-    async def run(self, run_ctx, *, seed=None, progress=None):
+    async def run(self, run_ctx, *, seed=None, progress=None, on_partial=None):
         await self._emit(
             progress,
             ProgressEvent(
@@ -113,6 +113,12 @@ class _StubPipeline:
                 elapsed_seconds=0.01,
             ),
         )
+        # Level 0 has settled. The real pipeline hands out the run so far
+        # here, and the studio writes it — which is what lets a watching
+        # browser repaint before the run is over. Emitted BEFORE the gate so
+        # a gated test can observe a mid-run output.yaml.
+        if on_partial is not None:
+            await on_partial(_StubResult(run_ctx))
         if self.gate is not None:
             await self._wait_for_gate()
         # The real ImageNode writes final_images/<slot>.png before its
@@ -166,14 +172,26 @@ class _StubResult:
 
 
 class _StubWriter:
-    """Writes the one artifact the studio cares about: output.yaml."""
+    """Writes the one artifact the studio cares about: output.yaml.
+
+    Both write paths land the same file, and they are distinguishable so a
+    test can tell a mid-run write from the final one.
+    """
 
     def write(self, result: _StubResult, run_ctx, **_kwargs) -> None:
         run_ctx.output_path().write_text("app: demo\n", encoding="utf-8")
 
+    def write_partial(self, result: _StubResult, run_ctx) -> None:
+        run_ctx.output_path().write_text(
+            "app: demo\npartial: true\n", encoding="utf-8"
+        )
+        # The real writer lays provenance down here too, so a run that dies
+        # mid-flight is still reopenable. The stub mirrors that.
+        (run_ctx.run_dir / "app.yaml").write_text("id: demo\n", encoding="utf-8")
+
 
 class _FailingPipeline:
-    async def run(self, run_ctx, *, seed=None, progress=None):
+    async def run(self, run_ctx, *, seed=None, progress=None, on_partial=None):
         raise RuntimeError("provider melted")
 
 
@@ -226,6 +244,20 @@ def _records(client: TestClient, run_id: str) -> list[dict[str, Any]]:
             if line.startswith("data: "):
                 out.append(json.loads(line.removeprefix("data: ")))
     return out
+
+
+def _await_file(path: Path) -> None:
+    """Poll until a file the background run writes appears.
+
+    ``POST /runs`` returns as soon as the run is REGISTERED, so anything the
+    run's own task does — including the first partial write — lands after the
+    response. Same 5s ceiling as the gate; the run reaches it far sooner.
+    """
+    for _ in range(500):
+        if path.is_file():
+            return
+        time.sleep(0.01)
+    raise AssertionError(f"{path} was never written")
 
 
 def _await_terminal(client: TestClient, run_id: str) -> dict[str, Any]:
@@ -431,6 +463,37 @@ def test_only_one_run_at_a_time(studio, tmp_path: Path) -> None:
     _await_terminal(client, first["run_id"])
     # With the slot free, the next launch is accepted.
     assert client.post("/runs", json=_launch_body("second")).status_code == 202
+
+
+def test_output_is_written_while_the_run_is_still_going(
+    studio, tmp_path: Path
+) -> None:
+    """A watching browser must be able to see the theme BEFORE the run ends.
+
+    Images have their own files and are servable the moment a node reports
+    them, but colour, typography and copy exist nowhere except output.yaml —
+    so without a partial write a live preview shows generated imagery over an
+    unthemed shell for the whole run. The gate holds the run mid-flight, which
+    is the only way to observe the difference.
+    """
+    client, apps_root, _ = studio
+    gate = tmp_path / "release"
+    _StubPipeline.gate = gate
+
+    run = client.post("/runs", json=_launch_body("live")).json()
+    output = apps_root / APP / "live" / "output.yaml"
+
+    # Still running, and already readable. The gate is what makes this
+    # observable: without it the run would finish before the assertion.
+    _await_file(output)
+    assert client.get("/runs/active").json()["run_id"] == run["run_id"]
+    assert "partial: true" in output.read_text(encoding="utf-8")
+
+    gate.touch()
+    _await_terminal(client, run["run_id"])
+
+    # The final write replaces it in place — same path, no partial marker.
+    assert "partial: true" not in output.read_text(encoding="utf-8")
 
 
 def test_launch_refuses_an_existing_run_name(studio) -> None:

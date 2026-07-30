@@ -1,0 +1,269 @@
+/* The fleet's conversation panel. Right side, and the FULL height of the page
+   rather than starting under the tiles — it is a conversation about one design
+   sitting beside the fleet, not a detail of the list, and one that began
+   halfway down read as part of the table it was floating over. */
+
+.panel {
+  flex: none;
+  width: 360px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-left: 1px solid var(--sh-line);
+  background: var(--sh-panel);
+}
+
+.head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--sh-line);
+}
+
+.who {
+  flex: 1;
+  min-width: 0;
+}
+
+.who b {
+  display: block;
+  font: 600 var(--fs-sm) / 1.2 var(--sans);
+  letter-spacing: var(--tr-title);
+}
+
+.who u {
+  display: block;
+  margin-top: 3px;
+  text-decoration: none;
+  font: 400 var(--fs-micro) / 1 var(--mono);
+  color: var(--ink-3);
+}
+
+.tag {
+  flex: none;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--sh-line-2);
+  font: 500 var(--fs-micro) / 1.6 var(--mono);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* The same five hues the list uses, meaning the same five things. */
+.run { color: var(--st-run); border-color: var(--st-run-l); background: var(--st-run-w); }
+.merge { color: var(--st-merge); border-color: var(--st-merge-l); background: var(--st-merge-w); }
+.ship { color: var(--st-ship); border-color: var(--st-ship-l); background: var(--st-ship-w); }
+.ok { color: var(--st-ok); border-color: var(--st-ok-l); background: var(--st-ok-w); }
+.you { color: var(--st-you); border-color: var(--st-you-l); background: var(--st-you-w); }
+
+.close {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--ink-3);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.close:hover { background: var(--sh-raised); color: var(--ink); }
+
+.scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.msg {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: var(--kf-rise) 0.4s ease both;
+}
+
+.msg p {
+  margin: 0;
+  font: 400 var(--fs-sm) / 1.55 var(--sans);
+  color: var(--ink);
+}
+
+.role {
+  font: 500 var(--fs-micro) / 1 var(--mono);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ── What you can do to a running agent ────────────────────────────────────
+   Two different acts: stop it, or go and look at it properly. */
+.dispatchActs {
+  display: flex;
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.act {
+  flex: 1;
+  padding: 7px 10px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 6px;
+  background: var(--sh-panel);
+  color: var(--ink);
+  font: 500 var(--fs-xs) / 1.2 var(--sans);
+  cursor: pointer;
+}
+
+.act:hover { border-color: var(--sh-line-3); }
+
+/* Expand is primary and Cancel is not, because cancelling is the destructive
+   one and a destructive button should not be the easiest thing to hit. */
+.actPri {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--sh-ground);
+  font-weight: 600;
+}
+
+.actPri:hover { border-color: var(--ink); opacity: 0.9; }
+
+/* The person's own turns sit inset and dimmer — same treatment as the Generate
+   transcript, because it is the same kind of thing. */
+.you {
+  padding-left: 11px;
+  border-left: 2px solid var(--sh-line-2);
+}
+
+.you p { color: var(--ink-2); }
+
+/* ── The dispatch module ───────────────────────────────────────────────────
+   A card rather than a sentence: what a person wants here are the two facts
+   prose is worst at — whether it is running, and roughly how long.
+
+   ASKING and RUNNING are the same card in two states, and they are coloured
+   differently on purpose. Asking is neutral chrome: in this shell a hue means
+   a state, and a request is not a state — nothing is happening yet. Running
+   takes the machine-working hue the fleet's live rows already wear. */
+.dispatch {
+  margin-top: 3px;
+  padding: 13px 14px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 10px;
+  background: var(--sh-raised);
+}
+
+.dispatchOn {
+  border-color: var(--st-run-l);
+  background: var(--st-run-w);
+}
+
+/* What approving it costs, said before it is approved rather than after. */
+.cost {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.cost span {
+  font: 400 var(--fs-micro) / 1 var(--mono);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.cost b {
+  font: 500 var(--fs-xs) / 1 var(--sans);
+  color: var(--ink);
+}
+
+.dispatchHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dispatchHead b {
+  font: 600 var(--fs-sm) / 1.2 var(--sans);
+  color: var(--ink);
+}
+
+/* The same ring the fleet's live rows wear, meaning the same thing. */
+.spark {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--st-run);
+  animation: var(--kf-pulse) 1.5s ease-in-out infinite;
+}
+
+.dispatch p {
+  margin: 8px 0 0;
+  font: 400 var(--fs-xs) / 1.55 var(--sans);
+  color: var(--ink-2);
+}
+
+/* INDETERMINATE. It travels rather than fills, because filling states a
+   percentage and a dispatched agent reports nothing back until it lands. */
+.bar {
+  margin-top: 12px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--sh-raised-2);
+  overflow: hidden;
+}
+
+.bar i {
+  display: block;
+  width: 30%;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--st-run);
+  animation: var(--kf-crawl) 1.9s ease-in-out infinite;
+}
+
+.eta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 9px;
+}
+
+.eta span {
+  font: 400 var(--fs-micro) / 1 var(--mono);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.eta b {
+  font: 500 var(--fs-xs) / 1 var(--sans);
+  color: var(--ink);
+}
+
+.synthetic {
+  flex: none;
+  margin: 0;
+  padding: 10px 16px 12px;
+  border-top: 1px solid var(--sh-line);
+  font: 400 var(--fs-micro) / 1.5 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar i { animation: none; width: 100%; opacity: 0.5; }
+}

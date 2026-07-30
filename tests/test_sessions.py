@@ -1,0 +1,438 @@
+"""Session tests — open, say, watch, close, and survive a crash.
+
+No agent and no pipeline here on purpose. A session's whole job is to be a
+durable, replayable transcript, and that is worth proving before a model is
+involved in producing one: every failure below would otherwise surface as
+"the agent did something odd" rather than as a transport bug.
+"""
+
+from __future__ import annotations
+
+import asyncio
+
+import json
+from pathlib import Path
+from typing import Any
+
+import pytest
+from fastapi.testclient import TestClient
+
+from RecomposeAPI.studio.config import settings
+from RecomposeAPI.main import app
+from RecomposeAPI.studio.schema.session_record import (
+    SessionPhase,
+    SessionRecord,
+    SessionRecordKind,
+)
+from RecomposeAPI.studio.agent import orchestrator_service as orchestrator_module
+from RecomposeAPI.studio.service import session_registry as session_registry_module
+from RecomposeAPI.studio.service import layout_task as layout_task_module
+from RecomposeAPI.studio.service.session_registry import SessionRegistry
+
+APP = "demo"
+DESIGN = "Stillwater Pilates"
+
+
+@pytest.fixture
+def studio(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    """A studio with a temp `.studio` and a fresh session registry.
+
+    The registry is process-wide (it holds live transcripts), so it is
+    replaced per test — otherwise the single-session gate would leak an open
+    session from one test into the next.
+    """
+    monkeypatch.setattr(settings, "studio_root", tmp_path / ".studio")
+    monkeypatch.setattr(
+        session_registry_module, "_registry", SessionRegistry(settings.sessions_dir)
+    )
+    # The orchestrator captures the registry when it is built, so swapping the
+    # registry without clearing this would leave the agent writing into the
+    # PREVIOUS test's transcript.
+    monkeypatch.setattr(orchestrator_module, "_service", None)
+    with TestClient(app) as client:
+        yield client, settings.sessions_dir
+
+
+def _open(client: TestClient) -> dict[str, Any]:
+    """Opening takes an app and nothing else.
+
+    A design name used to be required, typed into a form in front of the page.
+    The agent's own first question is what the business is called, so the form
+    asked for the same fact twice — and asked a person to name a thing that did
+    not exist yet before anything had explained what was about to happen.
+    """
+    resp = client.post("/sessions", json={"app_id": APP})
+    assert resp.status_code == 202, resp.text
+    return resp.json()
+
+
+def _frames(client: TestClient, session_id: str) -> list[dict[str, Any]]:
+    """Drain the SSE stream into the records it carried."""
+    out: list[dict[str, Any]] = []
+    with client.stream("GET", f"/sessions/{session_id}/events") as resp:
+        assert resp.status_code == 200
+        assert resp.headers["content-type"].startswith("text/event-stream")
+        for line in resp.iter_lines():
+            if line.startswith("data: "):
+                out.append(json.loads(line.removeprefix("data: ")))
+    return out
+
+
+def test_opening_writes_a_header_and_reports_itself_active(studio) -> None:
+    """The header is written BEFORE anything else can happen, so a session
+    that dies immediately is still identifiable."""
+    client, _ = studio
+    opened = _open(client)
+
+    active = client.get("/sessions/active").json()
+    assert active["session_id"] == opened["session_id"]
+    # No name yet: it arrives with the brand brief the interview produces.
+    assert active["design_name"] is None
+    assert active["status"] == "running"
+    # Opening puts the session in the brief phase and takes the agent's first
+    # turn, so the header is never alone.
+    assert active["phase"] == "brief"
+    assert [r["kind"] for r in active["records"]][:2] == ["opened", "phase"]
+
+
+def test_only_one_session_at_a_time(studio) -> None:
+    """A session owns the single run slot for its whole length, so a second
+    could do nothing but be refused — and the refusal names the first."""
+    client, _ = studio
+    first = _open(client)
+
+    resp = client.post("/sessions", json={"app_id": APP})
+
+    assert resp.status_code == 409
+    detail = resp.json()["detail"]
+    assert detail["active_session_id"] == first["session_id"]
+    assert "one design at a time" in detail["message"]
+
+    client.post(f"/sessions/{first['session_id']}/close")
+    # With the slot free, the next open is accepted.
+    assert (
+        client.post("/sessions", json={"app_id": APP}).status_code
+        == 202
+    )
+
+
+def test_a_turn_lands_in_the_transcript(studio) -> None:
+    """A chip pick and a typed message are one shape, so both read the same."""
+    client, _ = studio
+    session_id = _open(client)["session_id"]
+
+    resp = client.post(
+        f"/sessions/{session_id}/turn", json={"message": "Warm, not clinical."}
+    )
+
+    assert resp.status_code == 202
+    records = client.get(f"/sessions/{session_id}").json()["records"]
+    # Asserted as a MEMBER of the transcript rather than as its last record:
+    # the agent replies to it, so what follows is not this test's business.
+    assert {
+        "kind": "said",
+        "who": "you",
+        "text": "Warm, not clinical.",
+    }.items() <= next(
+        r for r in records if r.get("text") == "Warm, not clinical."
+    ).items()
+
+
+def test_a_blank_turn_is_refused(studio) -> None:
+    """Refused where the cause is legible, rather than as an empty line in
+    the transcript that nothing can explain later."""
+    client, _ = studio
+    session_id = _open(client)["session_id"]
+
+    assert (
+        client.post(
+            f"/sessions/{session_id}/turn", json={"message": "   "}
+        ).status_code
+        == 422
+    )
+
+
+def test_the_stream_replays_from_zero_and_ends_on_the_terminal_record(
+    studio,
+) -> None:
+    """The property the whole design exists for: a tab that connects LATE
+    still receives the entire transcript, then stops."""
+    client, _ = studio
+    session_id = _open(client)["session_id"]
+    client.post(f"/sessions/{session_id}/turn", json={"message": "one"})
+    client.post(f"/sessions/{session_id}/turn", json={"message": "two"})
+    client.post(f"/sessions/{session_id}/close")
+
+    frames = _frames(client, session_id)
+
+    # Both turns are in the replay, in order, and the stream ends terminally.
+    said = [f["text"] for f in frames if f["who"] == "you"]
+    assert said == ["one", "two"]
+    assert frames[0]["kind"] == "opened"
+    assert frames[-1]["kind"] == "settled"
+    # Indices are dense and 0-based; they are also the SSE `id:`.
+    assert [f["index"] for f in frames] == list(range(len(frames)))
+
+
+def test_the_snapshot_carries_the_same_records_as_the_stream(studio) -> None:
+    """One builds the other's list, so a client that polls and a client that
+    streams can never disagree about what happened."""
+    client, _ = studio
+    session_id = _open(client)["session_id"]
+    client.post(f"/sessions/{session_id}/turn", json={"message": "hello"})
+    client.post(f"/sessions/{session_id}/close")
+
+    assert client.get(f"/sessions/{session_id}").json()["records"] == _frames(
+        client, session_id
+    )
+
+
+def test_a_log_with_no_terminal_line_reads_as_crashed(studio) -> None:
+    """The reason the log exists at all.
+
+    Nothing on disk can distinguish "still going" from "the process died half
+    way" — only a durable record list whose last line is not terminal can. The
+    fresh registry stands in for a restarted studio: the session is gone from
+    memory, and only the log is left.
+    """
+    client, sessions_dir = studio
+    session_id = _open(client)["session_id"]
+    client.post(f"/sessions/{session_id}/turn", json={"message": "mid-flight"})
+
+    # Restart: same log on disk, nothing in memory.
+    session_registry_module._registry = SessionRegistry(sessions_dir)
+
+    snapshot = client.get(f"/sessions/{session_id}").json()
+    assert snapshot["status"] == "crashed"
+    assert snapshot["design_name"] is None
+    assert snapshot["records"][0]["kind"] == "opened"
+    assert "mid-flight" in [r.get("text") for r in snapshot["records"]]
+
+    # And the stream still TERMINATES, with a synthetic terminal record that
+    # was never written — otherwise an EventSource would reconnect forever
+    # against a session that cannot produce another line.
+    frames = _frames(client, session_id)
+    assert frames[-1]["kind"] == "settled"
+    assert "died" in frames[-1]["error"]
+    # Derived, never written: the log on disk still ends mid-flight.
+    log = (sessions_dir / f"{session_id}.jsonl").read_text(encoding="utf-8")
+    assert "settled" not in log
+
+
+def test_the_phase_is_derived_from_the_records(studio) -> None:
+    """Phase is read off the transcript rather than tracked alongside it, so
+    the header and the transcript are one fact read twice and cannot drift.
+
+    Tested against the derivation directly: it is a pure function of a record
+    list, which is exactly the property that makes the guarantee hold.
+    """
+    records = [
+        SessionRecord(kind=SessionRecordKind.OPENED, index=0, at="t0"),
+        SessionRecord(
+            kind=SessionRecordKind.PHASE,
+            index=1,
+            at="t1",
+            phase=SessionPhase.BRIEF,
+        ),
+        SessionRecord(
+            kind=SessionRecordKind.SAID, index=2, at="t2", who="you", text="hi"
+        ),
+        SessionRecord(
+            kind=SessionRecordKind.PHASE,
+            index=3,
+            at="t3",
+            phase=SessionPhase.GENERATING,
+        ),
+        SessionRecord(
+            kind=SessionRecordKind.SAID, index=4, at="t4", who="agent", text="ok"
+        ),
+    ]
+
+    # The LAST phase declared wins, not the last record.
+    assert SessionRegistry._phase_of(records) is SessionPhase.GENERATING
+    # Before any phase record, there is no phase — which is not the same as
+    # defaulting to the first one.
+    assert SessionRegistry._phase_of(records[:1]) is None
+
+
+def test_a_malformed_session_id_is_refused_before_it_becomes_a_path(
+    studio,
+) -> None:
+    """Defence in depth: the id is checked against `uuid4().hex` before it is
+    ever joined onto `.studio/sessions/`."""
+    client, _ = studio
+
+    assert client.get("/sessions/..%2F..%2Fetc%2Fpasswd").status_code == 404
+    assert client.get("/sessions/not-a-uuid/events").status_code == 404
+
+
+def test_shutting_the_server_down_stops_the_layout_agents(monkeypatch) -> None:
+    """KILLING THE SERVER KILLS THE AGENTS IT STARTED.
+
+    A layout agent is a detached process in its own group, and a process group
+    outlives its parent — so without the app's `lifespan` hook a Ctrl-C in the
+    terminal would leave the expensive half of the system running, reparented
+    to init and invisible to the tool that started it. It bills the whole time.
+    """
+    stopped: list[bool] = []
+
+    class _Spy:
+        async def start(self, *, app: str, theme_run: str) -> str:
+            raise AssertionError("not used here")
+
+        async def stop(self) -> int:
+            stopped.append(True)
+            return 1
+
+    monkeypatch.setattr(layout_task_module, "_task", _Spy())
+
+    with TestClient(app):
+        pass  # opening and closing the app is the whole scenario
+
+    assert stopped == [True], "shutdown did not stop the layout agents"
+
+
+def test_starting_the_layout_before_a_run_is_a_422(studio) -> None:
+    """The manual door refuses politely when there is nothing to design for.
+
+    A 422 rather than a 404: the session is real, the request is premature.
+    The layout is built FOR a specific set of produced images, so before a
+    run has settled there is nothing for an agent to look at.
+    """
+    client, _ = studio
+    opened = _open(client)
+
+    resp = client.post(f"/sessions/{opened['session_id']}/layout/start")
+
+    assert resp.status_code == 422
+    assert "asset run" in resp.json()["detail"]
+
+
+def test_stopping_the_layout_when_none_runs_reports_zero(studio) -> None:
+    """Not an error — asking twice is the normal way to be sure, and the
+    count is how the page says 'nothing was running' rather than implying it
+    stopped something."""
+    client, _ = studio
+    opened = _open(client)
+
+    resp = client.post(f"/sessions/{opened['session_id']}/layout/stop")
+
+    assert resp.status_code == 200
+    assert resp.json() == {"stopped": 0}
+
+
+def test_a_sessions_cost_survives_a_restart(studio) -> None:
+    """MONEY IS THE ONE THING THAT CANNOT BE RE-DERIVED.
+
+    A node's state can be read back off the artifact and a transcript off the
+    records, but nothing on disk remembers what a conversation cost once the
+    process holding the token counts is gone. So spend is a RECORD, and a
+    session rebuilt from its log reports the same total as one watched live.
+    """
+    client, sessions_dir = studio
+    opened = _open(client)
+    session_id = opened["session_id"]
+    # Opening takes the agent's first turn, which records its OWN spend — so
+    # these assert the DELTA. An absolute would make the test a hostage to
+    # what one Opus turn happens to cost today.
+    baseline = client.get(f"/sessions/{session_id}").json()["agent_cost_usd"]
+
+    asyncio.run(
+        session_registry_module.session_registry().spent(
+            session_id, cost_usd=0.25, spent_on="agent", input_tokens=10
+        )
+    )
+    asyncio.run(
+        session_registry_module.session_registry().spent(
+            session_id, cost_usd=1.50, spent_on="assets"
+        )
+    )
+
+    live = client.get(f"/sessions/{session_id}").json()
+    assert live["agent_cost_usd"] == pytest.approx(baseline + 0.25)
+    assert live["assets_cost_usd"] == pytest.approx(1.50)
+
+    # Now forget everything in memory and read the same session off its log.
+    monkeyed = SessionRegistry(sessions_dir)
+    rebuilt = asyncio.run(monkeyed.snapshot(session_id))
+    assert rebuilt.agent_cost_usd == pytest.approx(live["agent_cost_usd"])
+    assert rebuilt.assets_cost_usd == pytest.approx(1.50)
+
+
+def test_the_two_halves_are_totalled_apart(studio) -> None:
+    """The interview and the pipeline bill at wildly different rates, so one
+    undifferentiated total would hide which half to worry about."""
+    client, _ = studio
+    opened = _open(client)
+    registry = session_registry_module.session_registry()
+    baseline = client.get(f"/sessions/{opened['session_id']}").json()
+
+    asyncio.run(registry.spent(opened["session_id"], cost_usd=0.01, spent_on="agent"))
+    asyncio.run(registry.spent(opened["session_id"], cost_usd=0.02, spent_on="agent"))
+
+    snapshot = client.get(f"/sessions/{opened['session_id']}").json()
+    assert snapshot["agent_cost_usd"] == pytest.approx(
+        baseline["agent_cost_usd"] + 0.03
+    )
+    # The interview's spend never leaks into the pipeline's column, which is
+    # the whole point of totalling them apart.
+    assert snapshot["assets_cost_usd"] == 0.0
+
+
+def test_a_settled_run_does_not_start_the_layout_agent(
+    studio, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A FINISHED ASSET RUN STARTS NOTHING. It only narrates.
+
+    This used to be the opposite: the run settling launched the layout agent
+    in code, on the reasoning that a finished run is its only precondition.
+    That reasoning is sound and the default was still wrong — the layout agent
+    is the most expensive thing this product launches, and a precondition
+    being met is not the same as a person being ready. Spending someone's
+    money on a step they never asked for, in the same second the step they DID
+    ask for finished, is what this test exists to stop coming back.
+
+    The conversation here is registered by hand and its turn is stubbed, so
+    the ONLY thing under test is whether settling reaches a launcher. The
+    manual door (`POST /sessions/{id}/layout/start`) is unaffected and has its
+    own tests.
+    """
+    client, _ = studio
+    started: list[str] = []
+
+    class _Spy:
+        async def start(self, *, app: str, theme_run: str) -> str:
+            started.append(theme_run)
+            return "gen-x"
+
+        async def stop(self) -> int:
+            return 0
+
+    monkeypatch.setattr(layout_task_module, "_task", _Spy())
+
+    service = orchestrator_module.orchestrator_service()
+    opened = _open(client)
+    session_id = opened["session_id"]
+
+    # A conversation that has everything the old automatic path needed: a
+    # committed brief and a settled run to design against.
+    convo = orchestrator_module._Conversation(app_id=APP)
+    convo.run_name = "stillwater-01"
+    convo.run_id = "r1"
+    service._live[session_id] = convo
+
+    turns: list[str] = []
+
+    async def _no_model(sid: str, message: str) -> None:
+        turns.append(message)
+
+    monkeypatch.setattr(service, "_run_turn", _no_model)
+
+    asyncio.run(
+        service.run_settled(session_id, ok=True, summary="22 of 23 slots.")
+    )
+
+    assert started == [], "a settled run started a layout agent by itself"
+    # It still says the look is done — narrating is the whole job now.
+    assert len(turns) == 1
+    assert "22 of 23 slots." in turns[0]

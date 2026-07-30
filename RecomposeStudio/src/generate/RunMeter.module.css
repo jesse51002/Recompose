@@ -1,0 +1,25 @@
+/* The run meter. Ported from design/studio-demo.html (.meter). */
+
+.meter {
+  display: flex;
+  gap: 15px;
+  flex: none;
+  font: 400 var(--fs-xs) / 1 var(--mono);
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.meter b {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.running,
+.running b {
+  color: var(--st-run);
+}
+
+.failed,
+.failed b {
+  color: var(--st-bad);
+}
