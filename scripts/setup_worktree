@@ -46,6 +46,24 @@ else
   echo "  .env            NOT FOUND in main — the API will not start" >&2
 fi
 
+# --- 1b. Generated themes go to MAIN, not into the worktree ----------------
+# `apps_root` defaults to a path derived from the config file's own location,
+# so an API served out of a worktree writes new runs INTO the worktree — where
+# `apps/*/*/` is gitignored, so removing the worktree destroys them. Old themes
+# survive (they are symlinked below) and new ones vanish, which is the worst
+# shape a surprise can have: a run costs about $1.50 and a few minutes.
+#
+# Pointing it at main means a theme generated from a worktree is kept. The
+# trade is deliberate and worth stating: a worktree now writes into the main
+# checkout's apps/, which is the one place its isolation is given up.
+if [ -f "$here/.env" ] && ! grep -q '^APPS_ROOT=' "$here/.env"; then
+  printf '\n# Added by scripts/setup_worktree: keep generated themes when this\n# worktree is removed. See the root CLAUDE.md.\nAPPS_ROOT=%s/apps\n' \
+    "$main" >> "$here/.env"
+  echo "  APPS_ROOT       -> $main/apps (so new themes survive)"
+elif [ -f "$here/.env" ]; then
+  echo "  APPS_ROOT       already set"
+fi
+
 # --- 2. The generated runs --------------------------------------------------
 # SYMLINKED rather than copied: 3.3 GB, read-only to everything that serves
 # them, and a copy would go stale the moment main generates another.

@@ -70,6 +70,7 @@ code fault:
 |---|---|
 | `.env` | The API dies **on import** with `google_fonts_api_key Field required`. Looks like a broken settings model. |
 | `apps/*/*/` | 3.3 GB of generated runs. The API starts fine and **404s every design**, so the studio comes up with an empty catalogue and no error anywhere. |
+| `APPS_ROOT` | Not a file — a setting. Unset, a worktree **writes new themes into itself**, where they are gitignored, so removing the worktree destroys them. Old themes survive and new ones vanish. |
 | `node_modules` | Six subsystems, each installing its own. |
 
 The script copies the keys, symlinks the runs from the main checkout (per RUN,
@@ -86,6 +87,21 @@ Two of those are shared with the main checkout by design: the runs are large,
 read-only to everything that serves them, and a copy would go stale the moment
 main generated another. `.env` is COPIED rather than linked, because an editor
 writing through a symlink would edit the main checkout's keys.
+
+**`APPS_ROOT` is the one place a worktree gives up its isolation, deliberately.**
+`apps_root` otherwise resolves from the config file's own location, so an API
+served out of a worktree both reads and writes that worktree's `apps/` — and a
+run costs about $1.50 and a few minutes to make, is gitignored, and dies with
+the worktree. The script points it at main so a theme generated from a worktree
+is kept. The cost is that a worktree writes into the main checkout's `apps/`;
+that is the trade, and it is the right way round, because losing a paid artifact
+is worse than sharing a directory that everything else treats as read-only.
+
+The ThemeTree **CLI** is unaffected and still resolves its own `--out-root` from
+the package location, which is why the run symlinks are still made: `make -C
+ThemeTree smoke` and the expand/regen scripts read the worktree's own `apps/`.
+Re-run the script after generating through the UI if you want the new run
+visible to those too.
 
 ## Each subsystem owns its own dependencies
 
