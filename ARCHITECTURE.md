@@ -25,8 +25,7 @@ were raised.
    session). This also opens the door to a user-in-the-loop step: the
    generated layout/animation direction can be shown to the user for
    acceptance/modification in the UI *before* committing a coding agent to
-   it. Not a questionnaire — still automatic — but editable, and the user
-   could attach wireframes at this stage to further cut cost.
+   it. Not a questionnaire — still automatic — but editable.
 
 3. **Deterministic, reusable screenshot tool.** Screenshotting all screens
    should not require re-implementing headless browser setup per run. It
@@ -41,20 +40,3 @@ were raised.
    iteration stays fast. Full/heavy QA runs once the user has accepted the
    plan and iteration is expected to taper off — perfection isn't needed
    until productionalization.
-
-### Additional ideas (not yet discussed with user — proposed, unconfirmed)
-
-- **Cache/reuse the tokenized fork diff instead of recomputing per run** —
-  if the shared fork hasn't moved, redundant re-derivation work per design
-  run could be skipped.
-- **Batch multiple screen screenshots into one grading call** instead of
-  one LLM call per screen, if grading quality holds up — cuts per-run LLM
-  calls further.
-- **Cost/latency budget dashboard per run** — now that steps 2–4 move cost
-  out of the coding agent, it'd be useful to see where the run's money and
-  time actually went, to know which of these deferred optimizations is
-  paying off.
-
-These additional ideas are speculative and need confirmation before being
-treated as committed backlog items — see "No assumptions" in the root
-`CLAUDE.md`.
