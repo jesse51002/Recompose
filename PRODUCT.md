@@ -52,14 +52,15 @@ code by a productionalize agent.
 
 **Recompose never writes to the platform's trunk.** Two agent-maintained fork
 layers, re-derived as the platform ships. They grant read access; that is the
-integration.
+integration. Changes land on **`uat`** — the platform's own branch, the one
+ahead of `main` — never straight to production. UAT is a *branch*, not a review
+environment; the vault said otherwise until 2026-07-30 and was wrong.
 
 **Nothing waits to be approved.** A design ships when its own checks pass and
 stops when they do not — because at a hundred branches an approval queue is the
-bottleneck, and a reviewer who must clear every one of them is the thing that
-stops this scaling. Human attention goes to the exceptions instead: a design
-that halted is a design that needs a decision, and the fleet page exists to show
-which ones those are.
+bottleneck. Human attention goes to the exceptions instead: a design that halted
+is a design that needs a decision, and the fleet page exists to show which ones
+those are.
 
 The promise is still leverage rather than magic — one person managing a hundred
 designs — but the leverage comes from only being asked about the ones that
@@ -79,11 +80,13 @@ stopped, not from reviewing every one.
   (~2 minutes). Validation is 20–40 minutes because it walks every screen in
   every state and then a functional-equivalence gate. Productionalize is 1–2
   hours because its output ships.
-- Stated error budget ~95% clean / 4% minor / 1% significant. What makes it
-  survivable is that the 5% **stops itself** rather than shipping: the checks
-  are the architecture, and the exception queue is what a person actually
-  works. A reviewer clearing every design was the earlier answer and does not
-  survive contact with a hundred branches.
+- Stated error budget ~95% clean / 4% minor / 1% significant. **What makes it
+  survivable is not settled.** The vault used to answer "a human reviewing UAT",
+  which turned out to be a misreading of a branch name rather than a decision.
+  The candidate answer is that the 5% **stops itself** rather than shipping —
+  checks as the architecture, a person spent only on what halted — which is what
+  the fleet surface implements, but it has not been decided and should not be
+  asserted in a room until it is.
 
 ## Capabilities and Constraints
 
