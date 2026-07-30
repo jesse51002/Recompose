@@ -1,0 +1,23 @@
+/*
+ * Styles for ./PointsHeadline.tsx — the member's balance.
+ *
+ * Reads ONLY `--sc-*`. Never `--gw-*` / `--adm-*` (eslint Gates 2a/2b).
+ */
+
+/*
+ * The unit under the figure. `margin: 0` carries no `var()`, so the shorthand
+ * is safe here; the one value that IS a token is set on its own longhand
+ * afterwards (Guardrail 3 — a shorthand containing an unresolvable var drops
+ * whole).
+ *
+ * `--sc-spacing-small` is deliberately the tightest gap on the screen: the
+ * number and its unit are ONE object, and everything around them is at least
+ * `--sc-spacing-medium` away.
+ */
+.unit {
+  margin: 0;
+  margin-top: var(--sc-spacing-small);
+  font: var(--sc-type-read);
+  letter-spacing: var(--sc-type-read-ls);
+  color: var(--sc-text-2nd);
+}

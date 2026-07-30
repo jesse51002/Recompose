@@ -60,14 +60,16 @@ src/
   apps/
     combatden/         one product: its screens, its tokens, its two assets
       layout_brief.yaml  the brief this layout came from — REQUIRED
-    zenbjj/            a REDESIGN of the base — a sibling folder, see below
-      layout_brief.yaml
     romanahouse/       a second redesign, for the ReformerClassical run
       layout_brief.yaml
       shell/             its OWN chrome: sheet, head, index, action band, plate
     milemarker/        a third redesign, for the RunClub run
       layout_brief.yaml
       shell/             its OWN chrome: screen, sky, lane, last lane, band, disc
+    vinyasaflow/       a fourth redesign, for the VinyasaFlow run
+      layout_brief.yaml
+      shell/             its OWN chrome: screen, head, thread, nav, photo,
+                         figure, action — plus breath.ts, its motion clock
     index.ts           MOCK_APPS: every app, for a host that names none
   index.ts             the ONLY export surface
 ```
@@ -139,21 +141,21 @@ every fork starts from.
 
 **There are three forks, and they are worked examples of different things.**
 
-**`apps/zenbjj/`** was the first: same two assets, same eleven screens, same
-element set as `apps/combatden/`, rearranged for a design whose direction is
-"calm on the surface, deep power underneath". What it shows is how LITTLE a fork
-has to touch — every difference is a value in one of its own stylesheets, a
-different arrangement prop passed to a shared component, or one new treatment
-file beside the one it sits next to. Nothing in `src/kit/` and nothing in
-`apps/combatden/` moved. It also renames its own surface component
-(`ZenBjjSurface`, where the base has `CombatDenSurface`) and nothing else: a
-fork's token root is still its own `provider`, and the file name is the only
-part of it that belongs to the design.
+**A FOURTH FORK, `apps/zenbjj/`, WAS DELETED** — worth knowing because its
+lesson is still live. It was the first one built: same assets, same screens,
+same element set, rearranged for a direction of "calm on the surface, deep power
+underneath". It passed every mechanical gate and still read as the base with the
+spacing tuned, because it adjusted gutters, weights and radii rather than
+committing to a different world. That is the failure mode `mockup-redesign-start`
+exists to prevent, and it is why guardrails alone are not enough to produce a
+redesign. It was removed once three better-worked examples existed; keeping a
+fork whose only value was as a warning is a fork every later agent has to read
+before learning it should not be copied.
 
-It is also the cautionary half. It passes every mechanical gate and still reads
-as the base with the spacing tuned, because it adjusted gutters, weights and
-radii rather than committing to a different world. That is the failure mode
-`mockup-redesign-start` exists to prevent.
+A fork renames its own surface component (`RomanaHouseSurface`,
+`MileMarkerSurface`, `VinyasaFlowSurface`, where the base has
+`CombatDenSurface`) and nothing else: a fork's token root is still its own
+`provider`, and the file name is the only part of it that belongs to the design.
 
 **`apps/romanahouse/`** is the second, built for the theme produced at
 `apps/combatden/ReformerClassical/`, and it shows how far a fork MAY go under
@@ -177,8 +179,8 @@ things it establishes that a later fork should know:
   is a segmented header index, which costs one row of the axis there is more of.
   If a direction seems to need a pattern from a bigger screen, it needs a
   different pattern.
-- **A fork MAY replace its bundled fallbacks**, and this one does where zenbjj
-  does not. Its `showcaseTokens.ts` fallback colours, its two font families and
+- **A fork MAY replace its bundled fallbacks**, and this one does where a
+  palette-agnostic direction would not need to. Its `showcaseTokens.ts` fallback colours, its two font families and
   its bundled cut-out art are the produced run's, not CombatDen's. The reason is
   in the file: the direction is committed to a light canvas, and the harness
   opens UNTHEMED — against CombatDen's near-black canvas the whole arrangement
@@ -240,6 +242,53 @@ never settle and their action stays hidden until the card is tapped — Guardrai
 `apps/combatden/` and has not been made there**, because this change was scoped
 to the fork.
 
+**`apps/vinyasaflow/`** is the fourth, built for the theme produced at
+`apps/combatden/VinyasaFlow/`. Its direction (read `layout_brief.yaml`) is one
+unbroken thread: a single terracotta line enters at the brand mark, runs the
+whole screen without a break, and every fact the app holds hangs on it. Its
+`shell/` replaces the base chrome outright, as `romanahouse` and `milemarker`
+do. What it establishes that the other three do not is **how a fork holds one
+motion together across eleven screens**, and that is worth reading before
+touching any of it:
+
+- **A fork owns a MOTION CLOCK, and one file is it.** `shell/breath.ts` holds
+  the single easing curve and every duration; `VinyasaFlowSurface` writes them
+  onto the asset root as `--vf-*` beside the `--sc-*` token surface, so a
+  stylesheet reads the same clock a driver samples. It is separate from
+  `showcaseTokens.ts` on purpose: that file is the ported token surface, and
+  keeping motion out of it keeps Guardrail 2's `--sc-*` sweep honest. Both have
+  a sweep of their own — grep for `var(--vf-…)` against `breath.ts`.
+  **Why it exists:** the eleven screens were built in parallel and arrived with
+  three different "breath" curves, four ideas of how long a line takes to
+  travel, and a count-up on `easeOutExpo`. Each was defensible alone; together
+  they read as eleven designers. **Motion is judged across an asset, so it is
+  one pass and one file, not eleven.**
+- **A screen entrance can be ONE element.** `shell/Screen.tsx`'s `.veil` is a
+  sheet of canvas covering everything below the brand mark whose top edge
+  descends over one breath. The rail sits under it, so the line draws itself by
+  the same edge that uncovers each region: the stagger is a consequence of one
+  stroke passing each node, with no per-element delay curve to keep in sync.
+  It is a VEIL and not a `clip-path` because a clip removes what it hides from
+  HIT TESTING — every tap target has to be live from the first frame, and that
+  rule outranks the motion. `booking` opts out with `draws={false}`, because its
+  loop closing already IS the line arriving.
+- **A celebration card settles when its LOOP CLOSES, never when its hold
+  expires.** All five shipped conflating the two, so the flow's action appeared
+  at 0.76s / 4.3s / 8.9s / 2.6s / 3.2s across five cards that look alike. The
+  hold is a REPLAY concern, armed only when a card runs standalone
+  (`loop={true}`). This is Guardrail 5's cousin and just as invisible to
+  `make check`: nothing errors, the action simply is not there yet.
+- **A tap must finish the card, not just reveal its action.**
+  `shell/useTapToSettle.ts` — the scaffold's tap already calls `markDone`, but
+  the callback runs the wrong way for the card to hear it, so the line kept
+  drawing under a card that had announced itself settled. Each card listens for
+  the same `pointerdown` and adds a `.finished` class whose whole body is
+  `animation-delay: -30s !important` on itself and its subtree: every CSS
+  animation runs past its end and holds its own final frame, so no file has to
+  restate what "settled" looks like. Per-frame drivers (the point sphere, the
+  rewards bloom) have no keyframe to fast-forward and are handed over by their
+  component's own branch instead.
+
 ## Assets, not screens
 
 The package ships **assets**: self-contained, interactive mocks you click
@@ -249,12 +298,12 @@ through. Not a gallery of stills behind a picker.
 | --- | --- | --- | --- |
 | combatden | `app` | the member app | home, class, booking, store, video, profile |
 | combatden | `celebration` | the post-class flow | streak, rank, points, rewards, wins |
-| zenbjj | `app` | the same member app, redesigned | the same six |
-| zenbjj | `celebration` | the same post-class flow, redesigned | the same five |
-| romanahouse | `app` | the same member app, redesigned again | the same six |
-| romanahouse | `celebration` | the same post-class flow, redesigned again | the same five |
-| milemarker | `app` | the same member app, redesigned a third time | the same six |
+| romanahouse | `app` | the same member app, redesigned | the same six |
+| romanahouse | `celebration` | the same post-class flow, redesigned | the same five |
+| milemarker | `app` | the same member app, redesigned again | the same six |
 | milemarker | `celebration` | the same post-class flow, reframed | the same five |
+| vinyasaflow | `app` | the same member app, redesigned a third time | the same six |
+| vinyasaflow | `celebration` | the same post-class flow, redesigned again | the same five |
 
 A redesign's rows are the base's rows, and that is the point: **the asset and
 route sets are the thing a fork may not change.** If a fork ever needs a row of

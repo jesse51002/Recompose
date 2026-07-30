@@ -1,0 +1,113 @@
+/*
+ * Styles for ./Screen.tsx — the editorial scaffold.
+ *
+ * Reads ONLY `--sc-*`, written onto the phone screen root by
+ * ../ShowcaseThemeVars.tsx. Never `--gw-*` / `--adm-*` (eslint Gates 2a/2b).
+ *
+ * THERE IS NO VERTICAL LINE AND NO VEIL. An earlier direction for this run drew
+ * a continuous stroke down the left edge of every screen and revealed content by
+ * uncovering it; both are gone. The realism gate in `mockup-redesign-start` is
+ * why — no shipping app is built on a rail, and a full-screen reveal is a
+ * flourish this brand does not make.
+ */
+
+.screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: var(--sc-background);
+  color: var(--sc-text);
+  font: var(--sc-type-read);
+  letter-spacing: var(--sc-type-read-ls);
+  overflow: hidden;
+}
+
+/* The room the dynamic island needs. `SafeArea(top: true)`. */
+.safeTop {
+  flex: 0 0 auto;
+  height: var(--phone-status-inset, 0px);
+}
+
+.head {
+  flex: 0 0 auto;
+}
+
+/*
+ * `min-height: 0` is what lets a flex child shrink below its content height;
+ * without it the body pushes the tab bar off the screen instead of scrolling.
+ */
+.body {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/*
+ * `overflow-x` is spelled out rather than left at `visible`: a `visible` sibling
+ * of a scrolling axis COMPUTES to `auto`, so omitting it hands the body a
+ * horizontal scrollbar it never uses and lets a 1px rounding error scroll the
+ * whole screen sideways.
+ *
+ * The scrollbar is hidden because a desktop track drawn down the inside of a
+ * phone mock is the one detail that gives away that this is not a device.
+ */
+.bodyScroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.bodyScroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Screens that paint outside their box (the celebration surfaces) keep it. */
+.bodyClip {
+  overflow: hidden;
+}
+
+.foot {
+  flex: 0 0 auto;
+}
+
+/*
+ * THE ENTRANCE, AND IT IS DELIBERATELY ORDINARY: a short rise and a fade, one
+ * soft curve, done inside a third of a second. Sixteen pixels, not a hundred.
+ *
+ * Motion is the fastest way to make a calm design feel cheap, so this is the
+ * whole vocabulary — see ../layout_brief.yaml. The base state is the SETTLED
+ * one and the fill mode is `backwards`, so a renderer that cannot run the
+ * keyframes shows a finished screen rather than a blank one.
+ */
+.rise {
+  animation-name: riseIn;
+  animation-duration: var(--vf-arrive);
+  animation-timing-function: var(--vf-breath);
+  animation-fill-mode: backwards;
+}
+
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/*
+ * "Under a reduced-motion preference everything is simply already in place."
+ * Not merely un-animated — removed, so nothing can be caught mid-fade.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .rise {
+    animation: none;
+  }
+}

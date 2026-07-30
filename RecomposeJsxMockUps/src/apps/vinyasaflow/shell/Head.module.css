@@ -1,0 +1,131 @@
+/*
+ * Styles for ./Head.tsx — the editorial topbar.
+ *
+ * Reads ONLY `--sc-*` (eslint Gates 2a/2b).
+ */
+
+.head {
+  padding-inline: var(--sc-thread-inset);
+  padding-top: var(--sc-spacing-large);
+  padding-bottom: var(--sc-spacing-large);
+}
+
+/*
+ * THE MASTHEAD IS CENTRED, and it is the one thing on this screen that is.
+ *
+ * The mark and the studio's name are one object — same row, small gap — and
+ * that object is the app's identity rather than content to be scanned. Centring
+ * a title block at the head of a screen is what most apps do, and it is what
+ * makes the full-width row beneath it read as deliberate rather than as two
+ * blocks that disagree about where the screen ends.
+ *
+ * This is not licence to centre anything else here. Everything below is scanned
+ * — days, classes, names, times — and stays on the left margin.
+ */
+.mast {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sc-spacing-medium);
+}
+
+.mark {
+  display: block;
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.name {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-small);
+  margin: 0;
+  /*
+   * THE MASTHEAD MAY NOT COMPETE WITH THE SCREEN'S RANK 1. Set at the display
+   * size it briefly carried, the studio's name tied with the class name for
+   * the largest type on the schedule — so the eye had two places to land and
+   * the emphasis ranking was not being carried, even though every element was
+   * correct on its own. The name of the studio is chrome: a member knows which
+   * studio they opened.
+   */
+  font: var(--sc-type-name);
+  letter-spacing: var(--sc-type-name-ls);
+  color: var(--sc-text);
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.chevron {
+  flex: 0 0 auto;
+  color: var(--sc-text-3rd);
+}
+
+/*
+ * THE FOUR THINGS THE MEMBER CARRIES, as one quiet line rather than four
+ * decorated circles.
+ *
+ * They are status, not the subject of the screen: the photograph below them is
+ * the subject. A row of ornamented badges above an editorial hero competes with
+ * it and makes the top of every screen the busiest part, which is the opposite
+ * of what this design is for.
+ *
+ * `--sc-spacing-large` above it because it is a separate object from the
+ * masthead — Guardrail 13's grouping rule.
+ */
+/*
+ * FOUR SEMANTICALLY DISTINCT FACTS, SO THEY ARE DISTRIBUTED, NOT PACKED.
+ * Guardrail 15. Rank, streak, points and the pass have nothing to do with each
+ * other beyond sharing a row, and behind a single small gap they bunched into
+ * the left third of the screen with the right third empty — every gap correctly
+ * off the scale, and the row still wrong, because consistency is not
+ * distribution.
+ *
+ * `space-between` ACROSS THE FULL MEASURE. Behind a single small gap these four
+ * bunched into the left third with the right third empty — every gap correctly
+ * off the scale and the row still wrong, because consistency is not
+ * distribution (Guardrail 15).
+ *
+ * The head reads as deliberate because the CENTRED masthead above it is the
+ * balance for a full-width row, not because the row was pulled back in. Sizing
+ * this row to its content instead was tried and is worse: it re-introduces a
+ * ragged middle for no gain.
+ *
+ * Each item keeps its OWN gap tight (see `.carryItem`), which is what still
+ * says "this mark and this number are one fact".
+ */
+.carry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--sc-spacing-large);
+}
+
+.carryItem {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-small);
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+}
+
+/* A minted cut-out at status size. Square art, so a circle costs it nothing. */
+.carryImg {
+  display: block;
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.carryText {
+  font: var(--sc-type-quiet);
+  letter-spacing: var(--sc-type-quiet-ls);
+  color: var(--sc-text-2nd);
+}

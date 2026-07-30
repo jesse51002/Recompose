@@ -1,0 +1,93 @@
+/*
+ * Styles for ./LevelUpVideos.tsx — the shelf the line bows sideways to gather.
+ * `--sc-*` only — see ../../ShowcaseThemeVars.tsx.
+ */
+
+/*
+ * One frame. NOTHING DRAWS A CARD AROUND IT: no surface, no border, no radius,
+ * no shadow. The still is the only rectangle, and the words hang under it.
+ *
+ * Its width is the picture's own — ../../shell/Photo.module.css `.strip` fixes
+ * the HEIGHT and leaves width to the art, so a 16:9 still and a 4:3 one sit in
+ * the same row at the same height without either being cropped.
+ */
+.frame {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-medium);
+}
+
+/*
+ * `width: 0` + `min-width: 100%` is what keeps the WORDS out of the frame's
+ * width measurement: a child with an explicit width contributes nothing to its
+ * parent's max-content size, then resolves to the full width the picture set.
+ * Without it a long title would stretch the frame wider than its own still and
+ * the row would stop reading as frames on a strip.
+ */
+.info {
+  width: 0;
+  min-width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-medium);
+}
+
+/*
+ * The creator's circle. An asset dimension rather than a spacing token — the
+ * Dart spells its own as `_kPfpSizeCompact`. `background` shows through while
+ * the picture is still in flight so a row never flashes a transparent hole.
+ */
+.avatar {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--sc-radius-circle);
+  object-fit: cover;
+  display: block;
+  background: var(--sc-card);
+}
+
+.text {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-tiny);
+}
+
+/*
+ * `Text(title, maxLines: 1, overflow: ellipsis)`. One line, so every frame on
+ * the strip is the same height and the row aligns on its tops and bottoms.
+ */
+.title {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: var(--sc-type-quiet);
+  letter-spacing: var(--sc-type-quiet-ls);
+  color: var(--sc-text);
+}
+
+.meta {
+  font: var(--sc-type-fine);
+  letter-spacing: var(--sc-type-fine-ls);
+  color: var(--sc-text-2nd);
+}
+
+/*
+ * The section's own affordance, closing the shelf rather than riding its
+ * heading. Back on the column the rest of the screen aligns to, and underlined
+ * — which is a line, in a design drawn from lines.
+ */
+.viewAll {
+  margin-top: var(--sc-spacing-large);
+  margin-bottom: 0;
+  padding-left: var(--sc-thread-inset);
+  font: var(--sc-type-quiet);
+  letter-spacing: var(--sc-type-quiet-ls);
+  color: var(--sc-text);
+  text-decoration: underline;
+  text-underline-offset: var(--sc-spacing-small);
+}

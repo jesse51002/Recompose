@@ -1,0 +1,51 @@
+/*
+ * Styles for ./RankHeader.tsx — the member's current rank.
+ * `--sc-*` only — see ../ShowcaseThemeVars.tsx.
+ *
+ * A PLAIN ROW: the belt, a gap, the rank's name. It used to be a two-column
+ * grid that placed the disc on the old thread's centre and started the text in
+ * the second column — and when the thread was removed, the column collapsed to
+ * the page margin while the disc stayed centred on it, so the belt sat ON TOP
+ * of the rank name. A flex row cannot express that bug: the gap is a gap.
+ *
+ * THE BELT AND THE RANK NAME ARE ONE OBJECT AT RANK 1 on this screen
+ * (`mockup-redesign-combatden`'s emphasis ranking), which is why they share a
+ * row and why the belt is sized to hold its own beside the name rather than
+ * sitting under it as a bullet.
+ */
+
+/*
+ * The page margin is applied HERE because this block is not wrapped in a
+ * `<Region>` — every other section on the screen gets the margin from that
+ * component, and without it the belt sat hard against the screen's left edge
+ * while every heading around it began 24px in. One element out of the column is
+ * more visible than a whole screen in the wrong place.
+ */
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-large);
+  padding-inline: var(--sc-thread-inset);
+}
+
+.medallion {
+  display: block;
+  flex: 0 0 auto;
+}
+
+.names {
+  min-width: 0;
+}
+
+/*
+ * The sub-rank. `--sc-spacing-tiny` from the name above it: they are one name in
+ * two parts, and the gap to anything else on the screen is four to sixteen
+ * times this.
+ */
+.subtitle {
+  margin-top: var(--sc-spacing-tiny);
+  margin-bottom: 0;
+  font: var(--sc-type-quiet);
+  letter-spacing: var(--sc-type-quiet-ls);
+  color: var(--sc-text-2nd);
+}

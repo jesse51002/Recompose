@@ -1,0 +1,54 @@
+/*
+ * Styles for ./DateTab.tsx — one day in the week selector.
+ *
+ * Reads ONLY `--sc-*`. Never `--gw-*` / `--adm-*` (eslint Gates 2a/2b).
+ *
+ * A PILL, which is what a day selector is in every app that has one. It used to
+ * be a ring threaded by a line running across the screen; that line is gone (see
+ * ../shell/Screen.tsx) and a bare ring with a caption under it says nothing on
+ * its own. The selected day is a solid terracotta pill with its label knocked
+ * out — the same treatment the primary action gets, because it is the same idea:
+ * this is the one you are on.
+ */
+
+.day {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding-block: var(--sc-spacing-medium);
+  padding-inline: var(--sc-spacing-medium);
+  border: none;
+  border-radius: var(--sc-radius-circle);
+  background: none;
+  font: inherit;
+  color: inherit;
+  /*
+   * `pointer`, matching the base's pill, even though this preview threads no
+   * handler in. The member app's date row IS a control; the no-op is the
+   * preview's limitation (see ./DateRow.tsx).
+   */
+  cursor: pointer;
+}
+
+.label {
+  font: var(--sc-type-quiet);
+  letter-spacing: var(--sc-type-quiet-ls);
+  color: var(--sc-text-2nd);
+  white-space: nowrap;
+  /* Sentence case. This app never sets a label in capitals. */
+  text-transform: none;
+}
+
+/*
+ * The day the member is standing in. `--sc-knockout` rather than the canvas:
+ * terracotta carries the canvas linen at only 4.35:1 and its own light
+ * derivation at 5.54:1, and a day label is normal-size text.
+ */
+.dayHere {
+  background: var(--sc-primary);
+}
+
+.labelHere {
+  color: var(--sc-knockout);
+}

@@ -1,0 +1,101 @@
+/*
+ * Styles for ./StreakWeekStrip.tsx — the week gathered on the line.
+ *
+ * `--sc-*` for the design tokens (see ../ShowcaseThemeVars.tsx); `--sw-*` for
+ * the excursion's own travel, written inline by the component from
+ * ../streakOrbit.ts so no timing is a literal here.
+ *
+ * THE ROW ITSELF IS `shell/Thread.module.css`'s `.bow` and is not restyled from
+ * here — the stroke, its ink and its weight belong to the thread. What this
+ * file owns is the seven things the line carries and the sweep that reveals
+ * them.
+ */
+
+/*
+ * THE LINE RUNNING OUT ACROSS THE SCREEN. A travelling clip rather than seven
+ * delays: the stroke and the circles are uncovered together, left to right, so
+ * each day genuinely arrives at the moment the line reaches it instead of at a
+ * moment chosen to look as though it had.
+ *
+ * The settled value is on the element and the animation only walks up to it, so
+ * a card that never animates still renders a whole week.
+ */
+.sweep {
+  width: 100%;
+  clip-path: inset(0 0 0 0);
+  animation-name: weekSweep;
+  animation-duration: var(--sw-sweep-ms);
+  animation-delay: var(--sw-delay-ms);
+  animation-timing-function: var(--sw-breath);
+  animation-fill-mode: both;
+}
+
+@keyframes weekSweep {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/*
+ * One day's share of the excursion. `flex: 1 1 0` rather than an intrinsic
+ * width so all seven divide whatever the bow's row leaves after its own
+ * padding — the circles then sit evenly across the screen at any device width,
+ * and the row can never grow long enough to make the bow scroll.
+ */
+.day {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+
+/*
+ * A DAY SITS IN A CIRCLE. Drawn in the thread's own stroke at the thread's own
+ * ring weight, and filled with the canvas so the line passes BEHIND the letter
+ * rather than through it — the same reason `carry` is the one node variant that
+ * masks the line.
+ */
+.disc {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: var(--sc-node-lg);
+  height: var(--sc-node-lg);
+  box-sizing: border-box;
+  border: var(--sc-node-ring) solid var(--sc-primary);
+  border-radius: var(--sc-radius-circle);
+  background: var(--sc-background);
+  color: var(--sc-text);
+}
+
+/*
+ * A day the member attended. Sage, and this is what the design spends sage on:
+ * a thing already earned, already attended, already held. Its letter is knocked
+ * out in sage's own light derivation (5.03:1) — the canvas linen manages only
+ * 3.31:1 on it.
+ */
+.discCalm {
+  border-color: var(--sc-accent);
+  background: var(--sc-accent);
+  color: var(--sc-accent-knockout);
+}
+
+/* The smallest thing on the card, in the body face at the disc's own colour. */
+.label {
+  font: var(--sc-type-fine);
+  letter-spacing: var(--sc-type-fine-ls);
+  color: inherit;
+}
+
+/* The week renders already gathered. */
+@media (prefers-reduced-motion: reduce) {
+  .sweep {
+    animation-name: none;
+    clip-path: none;
+  }
+}

@@ -1,0 +1,71 @@
+/*
+ * Styles for ./VideoCarouselSection.tsx — one genre, as a place on the thread.
+ *
+ * `--sc-*` for the design tokens (see ../ShowcaseThemeVars.tsx). `--vc-trail`
+ * is the one geometry value the caller writes inline, because the two screens
+ * that render a shelf hold their trailing edge at different insets; the
+ * fallback is what makes an unset value mean "the screen gutter" rather than an
+ * invalid declaration.
+ */
+
+/*
+ * The same two-column grid ../shell/Thread.module.css's `.region` uses, so a
+ * shelf sits on the line at exactly the measure every other region does. The
+ * node's own class places it in column 1 and centres it on the thread; nothing
+ * here has to know where the line is.
+ */
+.shelf {
+  display: grid;
+  grid-template-columns: var(--sc-thread-inset) 1fr;
+  align-items: center;
+}
+
+/*
+ * The genre's name and its "view all", sharing the node's row.
+ *
+ * They are on ONE row rather than stacked because the label names the shelf and
+ * the action opens it — putting the action anywhere else (a row under the
+ * cards, the far end of the bow) would mean reaching it required a scroll,
+ * which buries an affordance the base showed immediately.
+ */
+.head {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sc-spacing-medium);
+  padding-right: var(--vc-trail, var(--sc-screen-padding-x));
+}
+
+/*
+ * The genre says its own name, in the SAME rung the shell gives every other
+ * region's spoken label (`.say`). Sentence case, body sans, reading size — this
+ * app never sets a label in capitals and never tracks one out.
+ *
+ * `margin: 0` because this is an <h2> and the UA sheet would otherwise add a
+ * gap the row does not have.
+ */
+.title {
+  flex: 0 1 auto;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: var(--sc-type-say);
+  letter-spacing: var(--sc-type-say-ls);
+  color: var(--sc-text);
+}
+
+/*
+ * The excursion. Full width — the bow holds its own left inset off the thread
+ * and its own right gutter — and `--sc-spacing-medium` under the label, one
+ * rung TIGHTER than the `--sc-spacing-big` between shelves, so the label reads
+ * as heading the frames below it rather than closing the shelf above.
+ */
+.strip {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  margin-top: var(--sc-spacing-medium);
+}

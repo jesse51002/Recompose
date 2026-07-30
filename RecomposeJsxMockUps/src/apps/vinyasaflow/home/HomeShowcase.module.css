@@ -1,0 +1,32 @@
+/*
+ * Styles for ./HomeShowcase.tsx — the schedule.
+ *
+ * Reads ONLY `--sc-*`. Never `--gw-*` / `--adm-*` (eslint Gates 2a/2b).
+ *
+ * NO HORIZONTAL PADDING, ON PURPOSE. The lead class of every day runs a
+ * photograph edge to edge, and a gutter here would quietly inset it. Everything
+ * that must sit inside the margin applies it itself — a section from
+ * ../shell/Thread.module.css, a compact row from
+ * ./classItem/ClassItemRow.module.css, the lead class's type from
+ * ./classItem/ClassItemHero.module.css.
+ */
+
+/*
+ * THE GAP HERE IS ALSO THE GAP UNDER THE DATE ROW, which is what made it wrong
+ * at its previous value. `.board`'s children are the week selector AND every
+ * day, so a gap tuned for "one day to the next" was also being spent between
+ * the pills and the first heading — 68px of dead space at the top of the
+ * screen, which read as the screen having failed to load rather than as calm.
+ *
+ * Generous is the brief; empty is not. `--sc-spacing-big` separates days
+ * clearly at the scale this app sets type, and the day's own heading does the
+ * rest of the work.
+ */
+.board {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--sc-spacing-big);
+  /* The last class clears the tab bar rather than ending on it. */
+  padding-bottom: var(--sc-spacing-big);
+}

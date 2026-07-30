@@ -1,0 +1,268 @@
+/*
+ * Styles for ./ClassDetailShowcase.tsx — the class detail, on the thread.
+ *
+ * Reads ONLY `--sc-*` (../showcaseTokens.ts). Never `--gw-*` / `--adm-*`
+ * (eslint Gates 2a/2b). Longhands only where a `var()` is involved: one
+ * unresolvable name inside a shorthand takes the WHOLE declaration with it
+ * (Guardrail 3).
+ *
+ * THE SPACING SCALE IS THE ONLY SOURCE OF GAPS —
+ * `--sc-spacing-tiny/small/medium/large/big` and `--sc-screen-padding-x`. (The
+ * fork has no `--sc-gutter`; `--sc-screen-padding-x` is its name for the same
+ * thing here.) The two px values below are a tap-target minimum and a disc
+ * diameter, which are neither of them spacing — ../shell/Action.module.css and
+ * ../shell/Head.module.css set theirs the same way.
+ *
+ * AND THE GROUPING RULE (Guardrail 13): the gap between a label and what it
+ * names is smaller than the gap to the next region. Inside a region that gap is
+ * the shell's `--sc-spacing-medium`; between regions it is `--sc-spacing-big`,
+ * set on `.stack` here.
+ */
+
+/* ------------------------------------------------------------------------ */
+/* THE HEAD — the back node, on the line                                     */
+/* ------------------------------------------------------------------------ */
+
+/*
+ * Matches ../shell/Head.module.css's own vertical inset, so this screen's head
+ * sits at the same height as every other screen's. No `--phone-status-inset`
+ * for the same reason: the shell's head does not take one either, and a head
+ * that alone sat lower would read as a bug.
+ */
+.head {
+  padding-top: var(--sc-spacing-large);
+  padding-bottom: var(--sc-spacing-medium);
+}
+
+/*
+ * `inline-grid` rather than a full-width row: the target is the node and its
+ * word, not the whole top of the screen. Column 1 is `--sc-thread-inset` so the
+ * node lands on the line exactly as it does inside a region — the node places
+ * itself by the line's centre and the column only has to be wide enough to
+ * clear it.
+ */
+.back {
+  display: inline-grid;
+  grid-template-columns: var(--sc-thread-inset) auto;
+  align-items: center;
+  /* The platform's minimum tap height, not a spacing value. */
+  min-height: 44px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.backGlyph {
+  display: block;
+  width: var(--sc-icon-xs);
+  height: var(--sc-icon-xs);
+  color: var(--sc-primary);
+}
+
+.backSay {
+  grid-column: 2;
+  font: var(--sc-type-say);
+  letter-spacing: var(--sc-type-say-ls);
+  color: var(--sc-text);
+}
+
+/* ------------------------------------------------------------------------ */
+/* THE BODY                                                                  */
+/* ------------------------------------------------------------------------ */
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-big);
+  padding-top: var(--sc-spacing-large);
+  /* Room under the last region so the thread leaves the edge clear of type. */
+  padding-bottom: var(--sc-spacing-big);
+}
+
+/*
+ * Every region below the photograph, and the RIGHT INSET LIVES HERE rather than
+ * on `.body` — the photograph above runs to both edges, and a padded ancestor
+ * would quietly inset it by the same amount. Guardrail 13's warning about
+ * modifiers that remove padding, read the other way round.
+ */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-big);
+  padding-right: var(--sc-screen-padding-x);
+}
+
+/* ------------------------------------------------------------------------ */
+/* THE CLASS, AND THE ONE COMMIT                                             */
+/* ------------------------------------------------------------------------ */
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* The studio and the city belong to the name above them: the smallest gap. */
+.studio {
+  margin: 0;
+  margin-top: var(--sc-spacing-small);
+  font: var(--sc-type-quiet);
+  letter-spacing: var(--sc-type-quiet-ls);
+  color: var(--sc-text-2nd);
+}
+
+/*
+ * THE FIGURE THE EYE LANDS ON. `../layout_brief.yaml` names a class time as one
+ * of the things this app counts, and a counted thing is the display face set
+ * large and light. A new object, so it takes a larger gap than the line above.
+ */
+.time {
+  margin-top: var(--sc-spacing-large);
+}
+
+/* The two smaller counts belong to the time, not to the action below them. */
+.counts {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sc-spacing-big);
+  margin-top: var(--sc-spacing-medium);
+}
+
+.count {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sc-spacing-tiny);
+}
+
+/*
+ * `--sc-text-2nd`, NOT `--sc-text-3rd`, and the difference is measured rather
+ * than felt. The third derivation is the ink at half alpha, which lands on the
+ * warm linen at about 2.97:1 — under the 4.5:1 bar, and these are 11px labels.
+ * The second reads 5.95:1. Contrast is a design input here, not a review
+ * finding (../../../CLAUDE.md, milemarker).
+ */
+.unit {
+  font: var(--sc-type-fine);
+  letter-spacing: var(--sc-type-fine-ls);
+  color: var(--sc-text-2nd);
+}
+
+/*
+ * The screen's ONE terracotta fill. A full region's worth of air above it, so
+ * it reads as the commit rather than as one more line of meta — and it sits in
+ * the content column, hanging off the same node as the facts it acts on.
+ */
+.commit {
+  align-self: stretch;
+  margin-top: var(--sc-spacing-big);
+}
+
+/* ------------------------------------------------------------------------ */
+/* RUNNING COPY                                                              */
+/* ------------------------------------------------------------------------ */
+
+/*
+ * A real reading measure. The ported type shorthand carries `/normal` (Flutter
+ * leaves `height:` unset across the whole ramp), which is roughly 1.2 and too
+ * tight for a four-line paragraph, so the leading is opened here. Safe on this
+ * screen and only here: a numeric line-height is banned near a `CountUpText`
+ * because a short line box makes the reel's digit cells overlap, and this
+ * screen renders no reel at all (../../../CLAUDE.md).
+ */
+.prose {
+  margin: 0;
+  font: var(--sc-type-read);
+  letter-spacing: var(--sc-type-read-ls);
+  line-height: 1.55;
+  color: var(--sc-text-2nd);
+}
+
+/* ------------------------------------------------------------------------ */
+/* THE TEACHER                                                               */
+/* ------------------------------------------------------------------------ */
+
+.teacher {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sc-spacing-large);
+}
+
+/*
+ * A face is an avatar, and an avatar is a circle — ../layout_brief.yaml's own
+ * rule, and the ONE picture on this screen allowed a square box. It is allowed
+ * because a headshot IS square-ish and centre-weighted, which is exactly the
+ * condition Guardrail 10b puts on a circle. The class photograph (3:2) and the
+ * map (2:1) are both given one axis and keep their own shape.
+ *
+ * Drawn as a RING with no fill, so a headshot that never loads degrades to an
+ * open circle — a form this app already contains — rather than to a tinted box,
+ * which would be a fourth form.
+ */
+.face {
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  /* A diameter, not a spacing value — ../shell/Head.module.css sizes its own
+     discs the same way. Large enough to read a face at, small enough that the
+     bio beside it still holds a reading measure. */
+  width: 72px;
+  height: 72px;
+  border: var(--sc-node-ring) solid var(--sc-primary);
+  border-radius: var(--sc-radius-circle);
+  overflow: hidden;
+}
+
+/*
+ * THE ONE PLACE IN THIS APP A PHOTOGRAPH IS CROPPED ON PURPOSE, and the crop is
+ * DECIDED rather than inherited from the container's shape — which is the
+ * distinction Guardrail 10b actually draws. A headshot is the one photograph a
+ * circle suits.
+ *
+ * `object-position` is the load-bearing half. The bundled instructor portrait
+ * is 1281x1920 (0.67), not the near-square Guardrail 10b assumes when it says a
+ * circle is fine, so a centred cover crop discards 33% and lands the frame on
+ * the subject's chest — a headshot showing a shirt. Pulling the crop toward the
+ * top puts the face in the circle, which is what an avatar is for. Caught in
+ * the browser; the ratio sweep reported the 33% but only the screenshot said it
+ * was framing the wrong thing.
+ */
+.faceImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 22%;
+}
+
+.teacherText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-small);
+  min-width: 0;
+}
+
+.teacherName {
+  margin: 0;
+  font: var(--sc-type-name);
+  letter-spacing: var(--sc-type-name-ls);
+  color: var(--sc-text);
+}
+
+/* ------------------------------------------------------------------------ */
+/* WHERE                                                                     */
+/* ------------------------------------------------------------------------ */
+
+/*
+ * ONE AXIS ONLY, so the bundled 2:1 tile has no box to be cropped to
+ * (Guardrail 10b). Deliberately NOT full bleed: the class photograph is the
+ * subject of this screen, and a second edge-to-edge rectangle would tie with
+ * it. Hierarchy here is unequal on purpose.
+ */
+.map {
+  display: block;
+  width: 100%;
+  height: auto;
+}

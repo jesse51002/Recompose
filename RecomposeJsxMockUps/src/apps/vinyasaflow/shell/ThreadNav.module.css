@@ -1,0 +1,58 @@
+/*
+ * Styles for ./ThreadNav.tsx — a standard bottom tab bar.
+ *
+ * Reads ONLY `--sc-*` (eslint Gates 2a/2b).
+ *
+ * DELIBERATELY UNREMARKABLE. This is the one control every phone owner already
+ * knows, and a redesign that reinvents it spends the member's goodwill to say
+ * nothing. What differentiates this app is its canvas, its type, its imagery and
+ * its space — not its navigation.
+ */
+
+.nav {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-around;
+  height: var(--sc-nav-height);
+  background: var(--sc-background);
+  /*
+   * The one hairline in the app, and it earns its place: without it a tab bar
+   * on the same colour as the canvas has no edge, so content scrolls up and
+   * touches the labels.
+   */
+  border-top: var(--sc-divider-thickness) solid var(--sc-divider);
+}
+
+.item {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sc-spacing-small);
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  /* Quiet by default; the selected one is the only coloured thing here. */
+  color: var(--sc-text-3rd);
+}
+
+.itemHere {
+  color: var(--sc-primary);
+}
+
+.glyph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--sc-nav-disc);
+}
+
+.label {
+  font: var(--sc-type-fine);
+  letter-spacing: var(--sc-type-fine-ls);
+  /* Sentence case. This app never sets a label in capitals. */
+  text-transform: none;
+}

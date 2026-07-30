@@ -1,0 +1,85 @@
+/*
+ * Styles for ./RewardsCarousel.tsx — the shelf of reward frames the thread bows
+ * sideways to gather.
+ *
+ * `--sc-*` for the design tokens (see ../ShowcaseThemeVars.tsx); `--rc-*` for
+ * the shelf's own geometry, which the component writes inline from
+ * ./rewardsCoverFlow.ts. No transform is declared here — the driver owns every
+ * one of them, because each is a live function of the fractional page.
+ *
+ * THE RULE THIS STYLESHEET ENFORCES STRUCTURALLY: nothing here ever sets both a
+ * width and a height on a photograph. HEIGHT is the given axis and width is
+ * `auto`, so the box is always the picture's own shape and there is nothing for
+ * a crop to discard. The base set a diameter on both axes and `object-fit:
+ * cover`ed 3:2 stock frames into it, losing a third of every one — Guardrail
+ * 10b, invisible to typecheck, lint, the suite and the token sweep.
+ */
+
+/*
+ * The shelf. Its height is the featured frame's; a neighbour is the same frame
+ * scaled, so it can never be taller.
+ *
+ * NOTHING HERE MAY CLIP. A frame is wider than one page slot on purpose and
+ * that overlap IS the cover flow, so `overflow: visible` is spelled out rather
+ * than left to the default — `overflow-x: hidden` on any ancestor would compute
+ * this one's other axis to `auto` and crop both.
+ */
+.carousel {
+  position: relative;
+  height: var(--rc-height);
+  overflow: visible;
+}
+
+/*
+ * One page slot: `viewportFraction` of the shelf's width, centred, with the
+ * frame centred inside it. Flex centring (not a block) is what lets an
+ * oversized frame overflow EQUALLY on both sides rather than only to the right.
+ */
+.page {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: var(--rc-viewport-fraction);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+}
+
+/*
+ * ONE FRAME. Height given, width derived — the only arrangement in which stills
+ * of two proportions (this run ships 3:2 and 1.85:1) sit in one row with none
+ * of them cropped to match a neighbour. They align on their tops and bottoms
+ * and differ in width, like frames on a strip.
+ *
+ * No border, no radius, no shadow, no tint: a photograph is one of this app's
+ * three forms and it is the only rectangle it contains. Anything drawn around
+ * one would be a fourth.
+ */
+.frame {
+  flex: 0 0 auto;
+  height: 100%;
+  will-change: transform;
+}
+
+/* What a DEAD photo leaves behind. Not a picture, so it may take both axes. */
+.frameEmpty {
+  flex: 0 0 auto;
+  height: 100%;
+  width: var(--rc-empty-width);
+  background-color: var(--sc-card);
+  will-change: transform;
+}
+
+/*
+ * The photograph itself. `max-width: none` is load-bearing: a reset that caps
+ * images at their container's width would silently narrow a frame wider than
+ * its page slot, which is every featured frame on this shelf.
+ */
+.photo {
+  display: block;
+  height: 100%;
+  width: auto;
+  max-width: none;
+}

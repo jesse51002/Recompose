@@ -1,0 +1,34 @@
+/*
+ * Styles for ./VideoCarouselCard.tsx — one film on a shelf.
+ * `--sc-*` only — see ../ShowcaseThemeVars.tsx.
+ */
+
+/*
+ * A COLUMN, NOT A CARD: no background, no border, no radius, no clip. The frame
+ * inside it is the only rectangle, and the two lines hang under it.
+ *
+ * WHY 192 IS A REAL NUMBER AND NOT A TASTE CALL. `StripPhoto`
+ * (../shell/Photo.module.css) gives every frame the same 108px HEIGHT and
+ * derives its width, so a 16:9 still lands at exactly 108 x 16 / 9 = 192 and a
+ * 4:3 one at 144. Fixing the column at the 16:9 width means the text measure is
+ * identical down the shelf — a squarer frame simply sits narrower inside its
+ * own column rather than dragging its caption in with it — and no frame is ever
+ * resized to match a neighbour. That is the whole reason this design fixes one
+ * axis: the four generated slots are NOT one ratio, and cropping to make them
+ * agree would eat the titles burnt into them.
+ *
+ * `flex: 0 0 auto` keeps the width fixed inside the bow's flex row; without it
+ * the columns would share the row and shrink as a genre grows. `align-self:
+ * stretch` overrides the bow's own `align-items: center` so every card in the
+ * row starts at the same top edge — otherwise a one-line title and a two-line
+ * one would sit at different heights and the strip would go ragged.
+ */
+.card {
+  flex: 0 0 auto;
+  align-self: stretch;
+  width: 192px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sc-spacing-medium);
+}

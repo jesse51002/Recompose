@@ -1,0 +1,61 @@
+/*
+ * Styles for ./ClassItemMeta.tsx — the text of a class row.
+ *
+ * Reads ONLY `--sc-*`. Never `--gw-*` / `--adm-*` (eslint Gates 2a/2b).
+ *
+ * The COLUMN BOX is not here: it is the treatment's (see the component header).
+ * These are the lines inside it, identical in both.
+ */
+
+/*
+ * THE NAME IS RANK 1 ON THIS SCREEN, together with its photograph.
+ *
+ * `.nameLead` is the display face at editorial size, for the day's first class
+ * — the one given the full-width picture. The two are one object and are sized
+ * together: the failure this replaces was not "the photograph is too big", it
+ * was "the name is too small for the photograph it belongs to".
+ */
+.nameLead {
+  display: block;
+  font: var(--sc-type-title);
+  letter-spacing: var(--sc-type-title-ls);
+  color: var(--sc-text);
+}
+
+/* The name on a compact row. The body face, at the register a list item gets. */
+.name {
+  display: block;
+  font: var(--sc-type-name);
+  letter-spacing: var(--sc-type-name-ls);
+  color: var(--sc-text);
+}
+
+/*
+ * Who is teaching it, and how many are going. One line each.
+ *
+ * THEY ARE NOT SET SIDE BY SIDE, and that was measured rather than preferred: a
+ * compact row leaves ~206px beside its photograph, and "Coach Marcus Reyes" plus
+ * a separator plus "24 attending" lands within a couple of pixels of that — so
+ * some rows would wrap and some would not, on the same screen, depending on how
+ * long a tenant's instructor happens to be named. Stacking them is the version
+ * that looks the same for every tenant, and this design has the vertical room
+ * to spend.
+ */
+.quiet {
+  display: block;
+  font: var(--sc-type-quiet);
+  letter-spacing: var(--sc-type-quiet-ls);
+  color: var(--sc-text-2nd);
+}
+
+/*
+ * The booked mark. Full ink rather than a second colour: this design spends
+ * sage on things already earned as a FILL, and a line of running copy is not
+ * a fill (both brand colours fail AA as ink on the linen canvas).
+ */
+.booked {
+  display: block;
+  font: var(--sc-type-quiet);
+  letter-spacing: var(--sc-type-quiet-ls);
+  color: var(--sc-text);
+}

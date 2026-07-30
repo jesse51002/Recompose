@@ -1,0 +1,49 @@
+/*
+ * Styles for ./DateRow.tsx — the week, as the thread bowing sideways.
+ *
+ * Reads ONLY `--sc-*`. Never `--gw-*` / `--adm-*` (eslint Gates 2a/2b).
+ *
+ * There is almost nothing here on purpose: <Bow> owns the stroke, the scroller
+ * and the gap between circles, so this file owns only where the excursion sits
+ * in the descent. Re-declaring any of that would be a second source of truth
+ * for a measurement the shell already holds.
+ */
+
+/*
+ * The week stands off the head's own carry bow so the two excursions read as
+ * two regions rather than as one double row. The gap DOWN to the first day is
+ * the board's and is larger again — Guardrail 13's grouping rule, where the gap
+ * between two things is what says whether they belong together.
+ */
+.week {
+  padding-bottom: var(--sc-spacing-small);
+}
+
+/*
+ * THE WEEK, AND ALL OF IT HAS TO BE VISIBLE.
+ *
+ * Five days at the shared shelf's gap overflowed the phone by 89px, which put
+ * Sunday off-screen with nothing to say it was there. A selector that hides one
+ * of its own options has removed it as far as a member is concerned.
+ *
+ * So this row owns its gap rather than borrowing the one tuned for video
+ * covers, and it runs to the RIGHT EDGE — the margin is spent on the left only.
+ * It still scrolls, because a tenant's locale can make these labels longer than
+ * English does, and when it scrolls the last pill peeks rather than vanishing.
+ */
+.days {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-medium);
+  padding-left: var(--sc-thread-inset);
+  padding-right: var(--sc-spacing-medium);
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.days::-webkit-scrollbar {
+  display: none;
+}

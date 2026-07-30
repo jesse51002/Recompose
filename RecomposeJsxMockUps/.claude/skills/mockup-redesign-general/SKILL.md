@@ -460,6 +460,133 @@ the NEXT thing added to it. Both spacing bugs here came from exactly that: a
 label placed into a lane whose padding had been deliberately removed for a
 photograph.
 
+## GUARDRAIL 14 — the most important thing must LOOK the most important
+
+**Hierarchy is yours, but its ORDER is not.** Every app's skill carries an
+EMPHASIS RANKING — one row per screen naming what leads, what follows, and what
+merely supports. You choose how to express it (scale, weight, colour, position,
+space, contrast); you may not reorder it.
+
+**A screen can render every element on its inventory, correctly themed and
+correctly spaced, and still be wrong**, because the inventory only asks whether
+things are PRESENT. Nothing in `make check`, nothing in the token sweep and
+nothing in the inventory check can see that the biggest thing on the screen is
+the least important thing on it.
+
+That shipped here. `apps/vinyasaflow/`'s schedule set the start time at 40px
+above a class name at 17px — so the loudest element on a screen a member opens
+to choose a class was the clock. Every gate passed.
+
+**A NAME AND ITS PICTURE ARE ONE OBJECT AT RANK 1.** Where the pipeline
+generates an image from a piece of copy — `class_photo_2` declares
+`depends_on_text: [class_name_2]` — the two are one claim about one thing, and
+they are sized and emphasised together. The photograph may be large; the name
+has to hold its own beside it. The failure is rarely "the photo is too big" and
+almost always **"the name is too small for the photo it belongs to."**
+
+**Two habits that produce this, both of which feel like good typography:**
+
+- **A display face makes a FIGURE look wonderful at size.** Times, counts,
+  totals and costs drift upward in scale because they photograph well, while
+  the name of the thing stays at body size. Be suspicious of any screen whose
+  largest element is a number.
+- **Reaching for the biggest rung you have** because a screen looks empty. If a
+  region needs filling, it needs more space or a larger PICTURE — not a
+  rank-3 element promoted to 40px.
+
+The check: squint at the screenshot, or look at it for one second and look away.
+**What did you see first?** If it is not that screen's rank 1, the hierarchy is
+inverted no matter how good each individual choice was.
+
+## GUARDRAIL 15 — group first, then DISTRIBUTE. Packing is the defect, not alignment
+
+Two questions get conflated here, and only the second one is usually wrong:
+
+1. **What is this row made OF?** — semantic grouping.
+2. **How is it spread across the width it has?** — distribution.
+
+### Grouping: what counts as one entity
+
+**A thing and what belongs to IT are ONE entity** — an icon and its value, a
+photograph and its name, a figure and its unit, an avatar and the name beside
+it. The gap INSIDE an entity is small, because a small gap is what says "these
+are one object". That is not a violation of anything below; it is the point.
+
+**Semantically DISTINCT entities** are things a member could act on, read, or
+care about independently: rank, streak, points and a QR pass are four separate
+facts that happen to share a row. So are four filter chips, or a price and a
+button.
+
+### Distribution: the actual rule
+
+**When a row holds several DISTINCT entities and has width to spare, spread them
+across that width.** Equal columns, `space-between`, or a deliberately generous
+uniform gap — any of those. What fails is a row of distinct things packed
+against one edge behind one small gap, leaving a void at the other end that no
+entity claims. It reads as unfinished, or as a layout that ran out of content.
+
+Shipped here: `apps/vinyasaflow/`'s head put the rank belt, the streak, the
+points total and the pass in a row with a single `--sc-spacing-large` between
+them. Four unrelated facts bunched into the left third of the screen with the
+right third empty. Every gap was "from the scale" and the row was still wrong,
+because consistency is not distribution.
+
+### LEFT ALIGNMENT IS NOT THE PROBLEM, AND IS USUALLY RIGHT
+
+**Read this part carefully, because the rule above is easy to over-apply.**
+
+- **Text that wraps must be left aligned.** Always. Centred paragraphs are a
+  legibility defect, not a style.
+- **Anything scanned is left aligned**: lists, schedules, headings, body copy,
+  form labels, rows of items. A member's eye returns to one left edge; taking
+  that away costs them real time.
+- **A design that is entirely left aligned is a good design.** Most of the best
+  mobile apps are. Do not read this guardrail as pressure toward centred
+  layouts — it is about the GAPS BETWEEN distinct entities, not about which
+  edge things start from. A left-aligned row can and should still be evenly
+  distributed.
+
+**Centre alignment is right for a single focal object with nothing to scan** —
+a celebration hero and its one line, an empty state, a confirmation, a splash.
+One thing, centred, with its caption. Never a list, never running copy.
+
+**It is also right for an IDENTITY at the head of a screen** — a masthead, a
+logo and the studio's name, a screen title. That is what most apps do, and it is
+what lets a full-width row beneath it read as deliberate instead of as two
+blocks disagreeing about where the screen ends. The distinction is identity
+versus content: centring the masthead is not licence to centre the days, the
+list rows or the names under it.
+
+**Right alignment is right for numerals that should line up on their digits** in
+a column, and for a trailing action or value at the end of a row.
+
+### The check
+
+Cover the content with your hand and look only at the gaps. Are the gaps between
+distinct entities roughly equal? Is there a void at one end that nothing claims?
+If a row's entities occupy two thirds of the width and the last third is empty,
+either distribute them or give the row a reason to stop where it stops.
+
+## GUARDRAIL 16 — a celebration has to be slow enough to take in
+
+**Celebration moments only** — the post-class cards, a reward opening, a rank
+promotion. Ordinary content animation is not this; brisk is right there.
+
+A celebration exists to be ENJOYED. Play it faster than a member can register
+what they earned and it has delivered nothing while still costing them the time.
+When in doubt, slower.
+
+**But an IMPACT stays quick.** A burst, a pop, a box flying open — that is not
+read, it is felt, and a slow explosion is not a generous explosion, it is a weak
+one: coins wafting outward instead of being thrown. Slow the ARRIVAL and the
+REVEAL, never the hit. Pin an impact to its own short duration rather than
+deriving it from the celebration clock, or the next person to slow the flow will
+stretch it by accident — which is exactly how this was found.
+
+It stays skippable, and that is what makes slow acceptable: a tap on a
+still-playing card resolves it immediately (Guardrails 4 and 5). A celebration
+nobody can get past is not slow, it is a block.
+
 ## GUARDRAIL 12 — invent the look, not the interaction
 
 **Be creative within industry standards.** A member must be able to use the app

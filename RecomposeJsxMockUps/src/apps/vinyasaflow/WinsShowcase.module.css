@@ -1,0 +1,276 @@
+/*
+ * Styles for ./WinsShowcase.tsx — the celebration card where the thread finishes.
+ *
+ * Reads ONLY `--sc-*` (plus the `--wn-*` motion and geometry values the
+ * component writes inline). A hard-coded colour here would silently survive
+ * every generated theme, and a px value typed at a call site would fall off the
+ * spacing scale.
+ *
+ * NO NUMERIC `line-height` ANYWHERE IN THIS FILE, and none in its children's.
+ * Two of the three wins contain a CountUpText, and a line box shorter than the
+ * font's own makes adjacent digit cells overlap through the reel's clip — a bug
+ * ../romanahouse shipped once.
+ */
+
+/*
+ * THE HELD SHAPE. Three objects on one vertical axis: what the card is called,
+ * the wreath inside the line closing round it, and what was won.
+ *
+ * The gap BETWEEN them is the scale's largest rung and the gap INSIDE each of
+ * them is smaller, which is the only thing telling a reader that "Breath by
+ * breath, you deepen" belongs to "Your practice" and not to the wreath beneath
+ * it (Guardrail 13). The same `--sc-spacing-big` is what
+ * ./celebrations/WinsTileRow.module.css's stem is measured against, so the
+ * stroke leaving the loop lands exactly on the strand.
+ */
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  row-gap: var(--sc-spacing-big);
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}
+
+/*
+ * NOTHING ON THIS CARD MAY BE SQUASHED TO FIT. A flex item shrinks by default,
+ * and a shrunk <Loop> is not a smaller circle — it is an ELLIPSE, because its
+ * width is pinned inline and only its height would give. The card measures well
+ * inside its box, so this never fires; it is here because the failure it
+ * prevents would read as the design being wrong rather than as a layout being
+ * tight.
+ */
+.content > * {
+  flex-shrink: 0;
+}
+
+/* The headline and its line — one object, the card's tightest gap. */
+.headings {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: var(--sc-spacing-small);
+}
+
+/*
+ * The one headline that names a screen. Its face, size and weight come from
+ * ./shell/Figure.module.css's `.title`; all this adds is when it arrives.
+ *
+ * Longhands, and here the reason is not hygiene: a shorthand carrying one
+ * unresolvable var() is dropped whole, which would leave `animation-name: none`
+ * and — with `both` gone too — is the difference between a heading that did not
+ * animate and a heading that never appears.
+ */
+.title {
+  animation-name: wins-arrive;
+  animation-duration: var(--wn-settle-ms);
+  /* Soft at both ends — a breath begins gently and finishes gently. */
+  animation-timing-function: var(--vf-breath);
+  animation-fill-mode: both;
+  animation-delay: var(--wn-header-delay-ms);
+}
+
+/* Running copy at a real reading measure, at reduced strength. Sentence case. */
+.subtitle {
+  margin: 0;
+  font: var(--sc-type-read);
+  letter-spacing: var(--sc-type-read-ls);
+  color: var(--sc-text-2nd);
+  animation-name: wins-arrive;
+  animation-duration: var(--wn-settle-ms);
+  animation-timing-function: var(--vf-breath);
+  animation-fill-mode: both;
+  animation-delay: var(--wn-subtitle-delay-ms);
+}
+
+/*
+ * The hero: the loop, the wreath inside it, and the bloom around it.
+ *
+ * It takes the <Loop>'s own box, because the bloom is `inset: 0` and every petal
+ * is placed from the CENTRE — a box a few px off-centre tilts the whole ring.
+ * It deliberately does NOT clip: the petals sit outside the loop by design, and
+ * nothing in this surface's ancestry may hide them
+ * (./celebrations/CelebrationFrame.module.css says the same).
+ */
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/*
+ * THE CLOSING OF THE LOOP IS THE ANIMATION, and it is drawn by SUBTRACTION.
+ *
+ * ./shell/Thread.tsx draws the ring as a border, which CSS gives no way to
+ * stroke on progressively. So the ring is there from the first frame and two
+ * canvas-coloured wedges sit on top of it, each clipped to one half of the
+ * circle and each pivoting about the circle's own centre. Rotating a wedge
+ * clockwise sweeps it out of its half, uncovering the stroke behind it — the
+ * right half from twelve o'clock round to six, then the left half from six back
+ * to twelve, so the line travels once round and meets itself.
+ *
+ * The box is inset NEGATIVELY by one `--sc-spacing-small` on every side: an
+ * absolutely positioned child is laid out in the PADDING box, which stops
+ * inside the ring's own border, and a wedge that stopped there would leave a
+ * hairline of undrawn stroke at the extremes of its sweep. Four px of overhang
+ * costs nothing — everything outside the ring is canvas over canvas.
+ *
+ * The same device ../vinyasaflow/RankShowcase.module.css uses. It is stated
+ * twice rather than shared because a fork's screens own their own stylesheets
+ * and neither may reach into the other's; if a third card ever needs it, it
+ * belongs in ./shell/.
+ */
+.draw {
+  position: absolute;
+  top: calc(-1 * var(--sc-spacing-small));
+  right: calc(-1 * var(--sc-spacing-small));
+  bottom: calc(-1 * var(--sc-spacing-small));
+  left: calc(-1 * var(--sc-spacing-small));
+  pointer-events: none;
+}
+
+/*
+ * One half of the circle. `overflow: hidden` is what turns a rotating rectangle
+ * into a wedge: the part of it that has swung out of this half is simply
+ * clipped away, so the boundary between "covered" and "uncovered" is always a
+ * clean radius. This is the ONE box on this surface that clips, and it clips
+ * only its own wedge.
+ */
+.drawHalfRight {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 50%;
+  overflow: hidden;
+}
+
+.drawHalfLeft {
+  position: absolute;
+  top: 0;
+  right: 50%;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+/*
+ * The right wedge pivots on its LEFT edge, which is the circle's centre, and
+ * runs first — on an ease-IN sine, because a breath begins gently.
+ */
+.wedgeRight {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: var(--sc-background);
+  transform-origin: left center;
+  animation-name: wins-sweep;
+  animation-duration: var(--wn-draw-half-ms);
+  animation-timing-function: var(--vf-breath-in);
+  animation-fill-mode: both;
+  animation-delay: var(--wn-loop-delay-ms);
+}
+
+/*
+ * The left wedge pivots on its RIGHT edge — the same centre — and runs second,
+ * on the ease-OUT sine that is the other half of the same curve. Composed, the
+ * two are one ease-in-out across the whole circle, so the line does not stall
+ * at six o'clock where they hand over. `both` is what holds this wedge in its
+ * covering position through the first half's delay.
+ */
+.wedgeLeft {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: var(--sc-background);
+  transform-origin: right center;
+  animation-name: wins-sweep;
+  animation-duration: var(--wn-draw-half-ms);
+  animation-timing-function: var(--vf-breath-out);
+  animation-fill-mode: both;
+  animation-delay: var(--wn-draw-second-half-delay-ms);
+}
+
+/*
+ * The hero the line travels around. A layer ABOVE the wedges, which is what
+ * lets them pass behind it: they are opaque, and everything they cover inside
+ * this box is covered again by the wreath itself.
+ */
+.wreath {
+  position: relative;
+  z-index: 1;
+  display: flex;
+}
+
+/*
+ * WIDTH ONLY, HEIGHT DERIVED. `trophy_image` is a transparent-edged cut-out that
+ * measures 1.29, not the 1.00 a circle costs nothing — so it is given its one
+ * axis and the browser derives the other from the art's own proportion. There is
+ * no box here for a crop to happen in, which is the rule ./shell/Photo.tsx makes
+ * structural for every other picture in this app (Guardrail 10b).
+ */
+.wreathImg {
+  display: block;
+  flex: 0 0 auto;
+  width: var(--wn-wreath-width);
+  height: auto;
+}
+
+@keyframes wins-sweep {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(180deg);
+  }
+}
+
+/* Opacity only. Nothing here slides, and nothing here bounces. */
+@keyframes wins-arrive {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/*
+ * Reduced motion: the line is simply ALREADY DRAWN and the card is already
+ * settled. The wedges must GO rather than merely stop animating — with no
+ * animation they would sit in their covering position and hide the ring
+ * outright, which is the failure mode of drawing by subtraction.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .draw {
+    display: none;
+  }
+
+  .title,
+  .subtitle {
+    animation: none;
+  }
+}
+
+/*
+ * A TAP FINISHES THE DRAW — the rule that outranks the motion
+ * (./shell/useTapToSettle.ts). A negative delay past the longest animation on
+ * the card runs every one of them to its own end and holds it there: the two
+ * wedges rotated fully off the ring, the bloom open, the stem and strand drawn,
+ * every win arrived. Nothing here restates what finished looks like, and the
+ * universal selector is what reaches ./celebrations/'s own stylesheets inside
+ * this card's subtree.
+ */
+.finished,
+.finished * {
+  animation-delay: -30s !important;
+}

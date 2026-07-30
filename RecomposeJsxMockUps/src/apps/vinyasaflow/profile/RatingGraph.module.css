@@ -1,0 +1,107 @@
+/*
+ * Styles for ./RatingGraph.tsx — the thread continuing as a data line.
+ * `--sc-*` only — see ../ShowcaseThemeVars.tsx.
+ *
+ * NOTHING HERE DRAWS A CONTAINER. No background, no border, no radius, no
+ * gridline, no axis rule. That is not minimalism for its own sake: a plot in a
+ * box would be a fourth form in a design built from three, and the two numbers
+ * bracketing the axis already say what the curve counts.
+ */
+
+/*
+ * `AspectRatio(aspectRatio: _kNominalWidth / _height) > Stack(...)`. The ratio
+ * is written inline by the component; the two threshold labels are positioned
+ * against this box.
+ */
+.plot {
+  position: relative;
+}
+
+.svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  /* A value pinned at 1.0 sits exactly on the top edge and its round cap would
+     otherwise be clipped — the Dart clips it to the plot box too. */
+  overflow: visible;
+}
+
+/*
+ * THE LINE. The thread's own ink, and the thread's own weight: the same stroke
+ * that descends the screen, turned and running out to the right.
+ *
+ * IT DRAWS ITSELF, because everything in this app arrives by being drawn rather
+ * than by fading in. `pathLength: 1` on the element makes the whole path one
+ * unit long, so a dash of 1 with an offset of 1 paints nothing and an offset of
+ * 0 paints all of it. The ease is soft at BOTH ends — a breath begins gently and
+ * finishes gently — which is the one thing separating this from a brisk product
+ * animation, and it never overshoots.
+ */
+.line {
+  fill: none;
+  stroke: var(--sc-primary);
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  /*
+   * IT DRAWS AFTER THE SCREEN'S OWN DESCENT, not alongside it. The shell's line
+   * travels the length of the screen over `--vf-draw` (../shell/Screen.module.css);
+   * started at zero, this plot was already four fifths drawn by the time the
+   * line reached it and was still drawing after it had passed — a region
+   * arriving before and after its own moment rather than at it. Delayed by the
+   * descent, the sequence reads the way the brief states it: the line comes
+   * down the screen, and the plot is that line continuing sideways.
+   */
+  animation: draw var(--vf-bow) var(--vf-breath) var(--vf-draw) both;
+}
+
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+/* Reduced motion: the line is simply already drawn. */
+@media (prefers-reduced-motion: reduce) {
+  .line {
+    animation: none;
+  }
+}
+
+/*
+ * `ThresholdLabel`, at each end of the axis on the right edge. The quieter ink
+ * rather than the quietest: it is small type and has to clear AA, which
+ * `--sc-text-3rd` does not at this size.
+ */
+.thresholdTop,
+.thresholdBottom {
+  position: absolute;
+  right: 0;
+  font: var(--sc-type-fine);
+  letter-spacing: var(--sc-type-fine-ls);
+  color: var(--sc-text-2nd);
+}
+
+.thresholdTop {
+  top: 0;
+}
+
+.thresholdBottom {
+  bottom: 0;
+}
+
+/* `_GraphEmpty` — centred running copy inside the same footprint. */
+.empty {
+  position: absolute;
+  inset: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font: var(--sc-type-read);
+  letter-spacing: var(--sc-type-read-ls);
+  color: var(--sc-text-2nd);
+}

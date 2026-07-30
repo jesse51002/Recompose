@@ -1,0 +1,78 @@
+/*
+ * Styles for ./NextRankSection.tsx — the thread winding around a ring.
+ * `--sc-*` only (plus the locally-declared `--nr-*`, which this pair of files
+ * both writes and reads) — see ../ShowcaseThemeVars.tsx.
+ */
+
+/* The ring, then the count. One row: they are one statement about one distance. */
+.section {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-large);
+}
+
+.ring {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--nr-ring);
+  height: var(--nr-ring);
+}
+
+.belt {
+  display: block;
+}
+
+.arc {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+/*
+ * THE ARC FILLS BY DRAWING, at an even rate, and stops exactly on its mark. The
+ * dash is the full circumference and the offset is what reveals the sweep, so
+ * winding it on is one number travelling from "all of it hidden" to its resting
+ * value. Soft at both ends, no overshoot, no settle — a breath, not a spring.
+ */
+.sweep {
+  fill: none;
+  stroke: var(--sc-primary);
+  /* After the screen's own descent, for the reason ./RatingGraph.module.css gives. */
+  animation: wind var(--vf-bow) var(--vf-breath) var(--vf-draw) both;
+}
+
+@keyframes wind {
+  from {
+    stroke-dashoffset: var(--nr-arc-length);
+  }
+}
+
+/* Reduced motion: the ring is simply already wound. */
+@media (prefers-reduced-motion: reduce) {
+  .sweep {
+    animation: none;
+  }
+}
+
+.words {
+  min-width: 0;
+}
+
+/*
+ * The denominator, running on from the figure in the body face. `--sc-spacing-tiny`
+ * under it: the two are one count, and the gap to the next region is sixteen
+ * times this.
+ */
+.of {
+  margin-top: var(--sc-spacing-tiny);
+  margin-bottom: 0;
+  font: var(--sc-type-read);
+  letter-spacing: var(--sc-type-read-ls);
+  color: var(--sc-text-2nd);
+}

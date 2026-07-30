@@ -1,0 +1,106 @@
+/*
+ * Styles for ./Thread.tsx — the editorial section, the shelf, and the hero well.
+ *
+ * Reads ONLY `--sc-*` (eslint Gates 2a/2b).
+ *
+ * THE FILE KEEPS ITS NAME AND ITS EXPORTS, AND NOTHING ELSE FROM WHAT IT WAS.
+ * It used to draw nodes on a continuous line down the left of the screen. The
+ * line is gone (see ./Screen.tsx); a `Region` is now simply a section with a
+ * heading, which is what a magazine page and every premium wellness app already
+ * use. The exports survive so ~30 stylesheets and 13 screens keep resolving
+ * while they are worked back one at a time.
+ */
+
+/*
+ * A section. Full content width, separated from its neighbours by SPACE rather
+ * than by a rule or a box — the brief's "sections are separated by space, not by
+ * rules or boxes", and the reason there is no divider anywhere in this app.
+ */
+.region {
+  display: block;
+  padding-inline: var(--sc-thread-inset);
+}
+
+/*
+ * A section that runs to both edges — a full-bleed photograph. It cancels the
+ * margin its siblings carry rather than being positioned differently.
+ */
+.regionBleed {
+  display: block;
+  padding-inline: 0;
+}
+
+/*
+ * The heading. Sentence case at a modest size: this app never sets a heading in
+ * capitals and never tracks one out, because the voice is a teacher speaking
+ * rather than an instrument panel (../layout_brief.yaml).
+ */
+.say {
+  margin: 0;
+  font: var(--sc-type-say);
+  letter-spacing: var(--sc-type-say-ls);
+  color: var(--sc-text);
+}
+
+/*
+ * `--sc-spacing-medium` under a heading against `--sc-spacing-big` BETWEEN
+ * sections: the gap inside a group must be smaller than the gap to the next
+ * one, or the heading reads as the previous section's footer. That difference
+ * is the whole of Guardrail 13 and it is the one spacing rule that carries
+ * hierarchy rather than merely being consistent.
+ */
+.content {
+  margin-top: var(--sc-spacing-medium);
+}
+
+/* A node was a swell on a line that no longer exists. It renders nothing. */
+.node {
+  display: none;
+}
+
+/*
+ * A HORIZONTAL SHELF — a row that scrolls sideways, which is the standard
+ * pattern every content app uses for a set of covers. It bleeds past the right
+ * edge on purpose: a shelf that stops inside the margin looks finished, and a
+ * member does not know to scroll it.
+ */
+.bow {
+  display: block;
+}
+
+/* Retired: the shelf's stroke. Kept so any leftover reference resolves. */
+.bowStroke {
+  display: none;
+}
+
+.bowItems {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sc-spacing-large);
+  padding-inline: var(--sc-thread-inset);
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.bowItems::-webkit-scrollbar {
+  display: none;
+}
+
+/*
+ * THE HERO WELL — the celebration's centred stage.
+ *
+ * It used to be a ring in the thread's stroke that closed around the hero. With
+ * no thread there is no ring: a generated cut-out is square, centre-weighted and
+ * transparent-edged, and it looks best given room and left alone. So this is a
+ * centring box and nothing more — no border, no fill, no shadow.
+ */
+.loop {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-inline: auto;
+}

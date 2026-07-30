@@ -1,0 +1,31 @@
+/*
+ * Styles for ./VideoShowcase.tsx.
+ * `--sc-*` only — see ../ShowcaseThemeVars.tsx.
+ */
+
+/*
+ * The feed column — the `CustomScrollView`'s sliver list, as one column inside
+ * the shell's opted-in vertical scroller.
+ *
+ * THE TWO GAPS THAT DO THE GROUPING ON THIS SCREEN ARE HERE AND INSIDE A
+ * REGION, and they must not be the same value. `--sc-spacing-big` between
+ * regions against `--sc-spacing-medium` from a region's label to what it names
+ * (../shell/Thread.module.css) is what tells a reader that "Educational" heads
+ * the shelf beneath it rather than closing the one above — Guardrail 13's exact
+ * failure, and the reason the between-value is the largest rung rather than a
+ * middling one.
+ *
+ * The top pad is that same rung: the head ends on the four things the member
+ * carries, which is itself a bow, and two bows a hair apart would read as one
+ * strand of nine things rather than as the member's chrome and then the
+ * screen's own filter.
+ */
+.feed {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--sc-spacing-big);
+  padding-top: var(--sc-spacing-big);
+  /* So the last shelf never ends flush against the four destinations. */
+  padding-bottom: var(--sc-spacing-big);
+}

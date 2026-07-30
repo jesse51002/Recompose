@@ -1,0 +1,27 @@
+/*
+ * Styles for ./VideoViewAllAction.tsx.
+ * `--sc-*` only — see ../ShowcaseThemeVars.tsx.
+ */
+
+/*
+ * The underline is kept from the base and is doing real work: it is the one
+ * signal that this is a way onward rather than a second caption, and this
+ * design has no other way to say so. Terracotta as INK is not available — it
+ * reads 4.35:1 on the linen canvas and the brief reserves it for fills — so the
+ * affordance is carried by the rule under the word, in the ink the word is set
+ * in.
+ *
+ * `flex: 0 0 auto` so the genre's own name takes the slack and this never
+ * shrinks out of the row.
+ */
+.viewAll {
+  flex: 0 0 auto;
+  font: var(--sc-type-quiet);
+  letter-spacing: var(--sc-type-quiet-ls);
+  color: var(--sc-text-2nd);
+  text-decoration: underline;
+  text-decoration-color: var(--sc-text-3rd);
+  /* From the scale, not typed in: the smallest rung is exactly the room a
+     13px line needs to keep its descenders clear of the rule. */
+  text-underline-offset: var(--sc-spacing-tiny);
+}

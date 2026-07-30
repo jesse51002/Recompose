@@ -1,0 +1,44 @@
+/*
+ * Styles for ./ClassItemHero.tsx — the first class of a day, given the width.
+ *
+ * Reads ONLY `--sc-*`. Never `--gw-*` / `--adm-*` (eslint Gates 2a/2b).
+ *
+ * NOTHING HERE SIZES THE PHOTOGRAPH. ../../shell/Photo.tsx gives it one axis
+ * and leaves the other `auto`, so the box is the picture's own 3:2 shape and
+ * there is no crop to inherit (Guardrail 10b). A `height`, an `aspect-ratio` or
+ * an `object-fit: cover` added to this file would destroy the art while every
+ * mechanical gate still passed.
+ */
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  /* The photograph to its own type. Half the gap on to the next class. */
+  gap: var(--sc-spacing-large);
+  cursor: pointer;
+}
+
+/*
+ * The words are inset to the content column even though the picture is not, so
+ * the hero's type lines up with every other word on the screen. Read from the
+ * thread's own measurement rather than typed, because moving `--sc-thread-x`
+ * has to move this with it.
+ */
+.text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  /* The time to the class it belongs to — bigger than the 4 inside each. */
+  gap: var(--sc-spacing-medium);
+  padding-left: var(--sc-thread-inset);
+  padding-right: var(--sc-screen-padding-x);
+}
+
+/* The name, the instructor and the attending count. One object. */
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sc-spacing-small);
+}
