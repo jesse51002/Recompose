@@ -1,6 +1,7 @@
-/* The fleet's conversation panel. Left side, over the list — the same side the
-   Generate page puts its transcript on, so a conversation is in one place in
-   this product rather than two. */
+/* The fleet's conversation panel. Right side, and the FULL height of the page
+   rather than starting under the tiles — it is a conversation about one design
+   sitting beside the fleet, not a detail of the list, and one that began
+   halfway down read as part of the table it was floating over. */
 
 .panel {
   flex: none;
@@ -8,7 +9,7 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
-  border-right: 1px solid var(--sh-line);
+  border-left: 1px solid var(--sh-line);
   background: var(--sh-panel);
 }
 

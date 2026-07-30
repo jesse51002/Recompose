@@ -32,7 +32,7 @@ import { FleetChat } from './FleetChat';
 import { SHELL_CLASS } from './phaseClass';
 import styles from './FleetView.module.css';
 
-export function FleetView() {
+export function FleetView({ onOpenLayouts }: { onOpenLayouts: () => void }) {
   // All, and it stays all until someone chooses otherwise. A fleet page that
   // opened pre-filtered would hide the one number it exists to show.
   const [filter, setFilter] = useState<FleetStatus | 'all'>('all');
@@ -42,7 +42,12 @@ export function FleetView() {
   const shown = filter === 'all' ? FLEET : FLEET.filter((a) => a.status === filter);
 
   return (
-    <div className={cx(styles.page, SHELL_CLASS)}>
+    // A ROW at the top level, so the conversation panel spans the whole height
+    // rather than starting under the tiles. It is a conversation about one
+    // design, not a detail of the list, and a panel that began halfway down
+    // read as part of the table it was floating over.
+    <div className={cx(styles.shell, SHELL_CLASS)}>
+      <div className={styles.page}>
       <header className={styles.head}>
         <div className={styles.headText}>
           <h1>CombatDen · customer apps</h1>
@@ -58,11 +63,26 @@ export function FleetView() {
             so the shared thing they all depend on needs somewhere to look.
             Without it the page showed thirty links into a repository it
             never named. */}
-        <a className={styles.fork} href={FORK.url}>
-          <span className={styles.forkLead}>Open the forked repo</span>
-          <b>{FORK.name}</b>
-          <u>{FORK.note}</u>
-        </a>
+        <div className={styles.headActs}>
+          <a className={styles.fork} href={FORK.url}>
+            <span className={styles.forkLead}>Open the forked repo</span>
+            <b>{FORK.name}</b>
+            <u>{FORK.note}</u>
+          </a>
+
+          {/* Beside the fork rather than in the top nav, because it answers a
+              question the fleet raises: this many designs, so how many things
+              are actually maintained? The nav's three pages are the demo's
+              spine and stay three. */}
+          <button
+            type="button"
+            className={styles.layoutsBtn}
+            onClick={onOpenLayouts}
+          >
+            <span className={styles.forkLead}>Layout cap</span>
+            <u>how few arrangements dress all of these</u>
+          </button>
+        </div>
       </header>
 
       <div className={styles.kpis}>
@@ -110,19 +130,7 @@ export function FleetView() {
         ))}
       </nav>
 
-      <div className={styles.body}>
-        {talking !== null && (
-          <FleetChat
-            // Re-keyed per row so switching rows starts the panel's entrance
-            // and its dispatch bar over, rather than leaving the previous
-            // conversation's animations mid-flight under new text.
-            key={talking.branch}
-            app={talking}
-            onClose={() => setTalking(null)}
-          />
-        )}
-
-        <div className={styles.cards}>
+      <div className={styles.cards}>
           {shown.map((app) => {
             const meta = statusMeta(app.status);
             return (
@@ -173,7 +181,6 @@ export function FleetView() {
               </article>
               );
             })}
-        </div>
       </div>
 
       <footer className={styles.foot}>
@@ -196,6 +203,18 @@ export function FleetView() {
         the fork at the top included. There are no customers. Only the logos are
         real — the pipeline made each one.
       </p>
+      </div>
+
+      {talking !== null && (
+        <FleetChat
+          // Re-keyed per row so switching rows replays the panel's entrance and
+          // its dispatch bar, rather than leaving the previous conversation's
+          // animations mid-flight under new text.
+          key={talking.branch}
+          app={talking}
+          onClose={() => setTalking(null)}
+        />
+      )}
     </div>
   );
 }

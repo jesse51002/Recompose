@@ -25,6 +25,7 @@ import {
   EXPECTED_TEXT,
 } from 'recompose-jsx-mockups';
 import { FleetView } from './generate/FleetView';
+import { LayoutsView } from './generate/LayoutsView';
 import { OnboardView } from './generate/OnboardView';
 import { StudioView } from './studio/StudioView';
 import { ADM } from './tokens/adminTokens';
@@ -77,7 +78,9 @@ export function App() {
           {view === 'generate' ? (
             <StudioView onDone={() => setView('fleet')} />
           ) : view === 'fleet' ? (
-            <FleetView />
+            <FleetView onOpenLayouts={() => setView('layouts')} />
+          ) : view === 'layouts' ? (
+            <LayoutsView onBack={() => setView('fleet')} />
           ) : (
             // Onboarding hands over to the customer's view when the fork is
             // ready. That handover IS the product's shape — admin sets a

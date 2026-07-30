@@ -10,7 +10,12 @@
 // than an address you navigate to.
 
 /**
- * The three pages of the product, in the order a demo walks them.
+ * The pages of the product, in the order a demo walks them.
+ *
+ * `layouts` is deliberately NOT in the top nav — it is reached from the fleet,
+ * because it answers a question the fleet raises (this many designs, so how
+ * many things are actually maintained?) rather than being a fourth peer. It is
+ * addressable all the same, so the demo can be handed over pointing at it.
  *
  * `onboard` is the default and is deliberately ABSENT from the URL — a bare
  * `/` is where the story starts, so the address a visitor shares stays clean
@@ -21,11 +26,16 @@
  * is a destination any more — a catalogue you had to leave the design to
  * visit was a shopping trip in the middle of a review.
  */
-export type AppView = 'onboard' | 'generate' | 'fleet';
+export type AppView = 'onboard' | 'generate' | 'fleet' | 'layouts';
 
 const VIEW_PARAM = 'view';
 
-const VIEWS: readonly AppView[] = Object.freeze(['onboard', 'generate', 'fleet']);
+const VIEWS: readonly AppView[] = Object.freeze([
+  'onboard',
+  'generate',
+  'fleet',
+  'layouts',
+]);
 
 function isAppView(value: string | null): value is AppView {
   return value !== null && (VIEWS as readonly string[]).includes(value);

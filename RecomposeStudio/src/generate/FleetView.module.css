@@ -1,15 +1,27 @@
 /* The Fleet page. Ported from design/studio-demo.html.
    Cards, not a table: the state has to land at a glance from across a room. */
 
-.page {
+/* The page and its conversation panel, side by side. A ROW at the top level so
+   the panel spans the whole height: it is a conversation about one design, not
+   a detail of the list, and one that began under the tiles read as part of the
+   table it was floating over. */
+.shell {
   display: flex;
-  flex-direction: column;
   height: 100%;
   min-height: 0;
   overflow: hidden;
   background: var(--sh-ground);
   color: var(--ink);
   font-family: var(--sans);
+}
+
+.page {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .head {
@@ -24,6 +36,39 @@
 .headText {
   flex: 1;
   min-width: 0;
+}
+
+/* The two things the header offers, side by side and the same height. */
+.headActs {
+  flex: none;
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+/* The way through to the layout board. Quieter than the fork — outlined rather
+   than filled — because two solid blocks side by side would compete, and the
+   fork is the one a visitor is more likely to want. */
+.layoutsBtn {
+  flex: none;
+  max-width: 190px;
+  padding: 11px 15px;
+  border: 1px solid var(--sh-line-3);
+  border-radius: 9px;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.layoutsBtn:hover { border-color: var(--ink-2); background: var(--sh-panel); }
+
+.layoutsBtn u {
+  display: block;
+  margin-top: 4px;
+  text-decoration: none;
+  font: 400 var(--fs-micro) / 1.4 var(--sans);
+  color: var(--ink-3);
 }
 
 /* THE FORK, once, at the top. Every row below is a branch of this one
@@ -196,15 +241,6 @@
 .filter.you i { color: var(--st-you); }
 .filter.merge i { color: var(--st-merge); }
 .filter.ship i { color: var(--st-ship); }
-
-/* The list, and the conversation panel beside it. The panel takes its width
-   from its own stylesheet; the list simply gets what is left. */
-.body {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  overflow: hidden;
-}
 
 .cards {
   flex: 1;

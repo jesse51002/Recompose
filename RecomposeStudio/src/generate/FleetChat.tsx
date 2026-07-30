@@ -1,4 +1,4 @@
-// Talking to one row's agent. Opens on the LEFT of the fleet, over the list.
+// Talking to one row's agent. Opens on the RIGHT, spanning the whole height.
 //
 // DEMO-WARE like the rest of the page, and the same rule applies: it says so on
 // its own surface rather than in a file nobody opens.
@@ -8,10 +8,9 @@
 // a status changed — and the row's `state`, `note` and `log` already ARE the
 // agent's account of itself, so quoting them back is both cheaper and truer.
 //
-// It sits on the left because that is where a conversation lives everywhere
-// else in this product: the Generate page's transcript is the left column, and
-// a chat that opened on the right would make the same act look like two
-// different things depending on which page you were on.
+// It spans the full height rather than starting under the tiles, because it is
+// a conversation about one design sitting BESIDE the fleet — a panel that began
+// halfway down read as a detail of the table it was floating over.
 
 import { cx } from '../widgets/cx';
 import { conversationFor, statusMeta, type FleetApp } from '../data/fleetFixtures';

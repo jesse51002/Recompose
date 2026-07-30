@@ -7,6 +7,13 @@ The product, as three pages walked in order:
 | *(default)* | admin | **Onboard** — point us at a platform, get a design fork. Demo-ware. |
 | `generate` | customer | **Generate** — answer an interview, watch the design get made. Real. |
 | `fleet` | admin | **Fleet** — every customer app and what an agent is doing to it. Demo-ware. |
+| `layouts` | admin | **Layouts** — how few arrangements dress every tenant. Demo-ware. |
+
+**Layouts is not in the switcher.** It is reached from the fleet's header,
+because it answers a question the fleet raises — this many designs, so how many
+things are actually maintained? — rather than being a fourth peer. The nav's
+three pages are the demo's spine and stay three. It is addressable all the same
+(`?view=layouts`), so the demo can be handed over pointing at it.
 
 **The pages hand over to each other.** Onboarding ends by opening the customer
 view; a signed-off design ends by returning to the fleet. That handover is the
@@ -183,6 +190,17 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
   celebration, so a design announced itself approved with nobody having pressed
   anything, every time the API was restarted mid-run. `view.settledError`
   separates them and `SessionLost` says what happened.
+- **The Layouts board is the one admin surface built to be LOOKED at.** Its
+  argument is that layout is code and theme is data, so they scale differently:
+  drag the cap and the same thirty-two marks re-pack into fewer columns. The
+  deal is round-robin rather than chunked precisely so that moving the cap
+  disturbs every column — chunking would leave the first columns untouched and
+  show nothing. The reveal is a pure CSS stagger with a per-cell
+  `animation-delay`, not a timer pushing state: thirty-two `setState` calls to
+  animate a list is work the compositor does for free, and this package treats
+  setting state from an effect as an error. The board is re-keyed on the cap so
+  the marks replay their entrance instead of silently teleporting between
+  columns.
 - **Fail visible.** A missing artifact, a failed run, an empty catalog: show the
   state. A blank pane that could mean "loading" or "broken" is the one failure
   mode that wastes the most time here.

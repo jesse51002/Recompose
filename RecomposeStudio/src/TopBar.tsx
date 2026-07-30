@@ -30,6 +30,10 @@ const POV: Readonly<Record<AppView, string>> = Object.freeze({
   onboard: 'Admin',
   generate: 'Customer',
   fleet: 'Admin',
+  // Reached from the fleet rather than from the switcher — it answers a
+  // question the fleet raises — but it is still the platform's own view, so
+  // the chip has to say so while it is open.
+  layouts: 'Admin',
 });
 
 export function TopBar({
