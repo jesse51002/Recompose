@@ -17,7 +17,7 @@
 // grey squares would prove nothing; thirty different marks sharing five
 // columns is the whole point rendered rather than claimed.
 
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 
 import { cx } from '../widgets/cx';
 import { FLEET, logoUrl } from '../data/fleetFixtures';
@@ -48,10 +48,38 @@ import styles from './LayoutsView.module.css';
 const STEP_MS = 6;
 const MAX_DELAY_MS = 1400;
 
+/**
+ * How the board is shaped, given how many cards it has to hold.
+ *
+ * **The board never scrolls.** A grid you have to scroll answers the question
+ * "how many are there?" with "keep going and find out", which is the one
+ * question this page exists to answer at a glance. So the cards get smaller
+ * instead — six of them are a comparison you can read, a hundred are a wall
+ * you take in whole, and both of those are the argument.
+ *
+ * Columns come from the square root biased for a wide viewport, so the cards
+ * stay roughly card-shaped at every cap rather than becoming slivers at one
+ * end and slabs at the other.
+ */
+function shape(cap: number): { cols: number; tile: number; named: boolean } {
+  const cols = Math.ceil(Math.sqrt(cap * 1.9));
+  return {
+    cols,
+    // The tiles carry the density, so they take the squeeze. Floors at 6px:
+    // below that a mark stops being a mark and becomes a texture, which still
+    // reads as "a lot" and is all that is left to say at that size.
+    tile: Math.max(6, Math.round(34 - cap * 0.34)),
+    // A name nobody can read is noise. Past this the count is the only thing
+    // a card has room to say, and the count is what matters at that end.
+    named: cap <= 20,
+  };
+}
+
 export function LayoutsView({ onBack }: { onBack: () => void }) {
   const [cap, setCap] = useState(DEFAULT_LAYOUTS);
   const layouts = dealLayouts(cap);
   const busiest = Math.max(...layouts.map((l) => l.tenants.length));
+  const { cols, tile, named } = shape(cap);
 
   return (
     <div className={cx(styles.page, SHELL_CLASS)}>
@@ -114,14 +142,23 @@ export function LayoutsView({ onBack }: { onBack: () => void }) {
           re-packs. Without it React reuses the cells and the tenants would
           silently teleport between columns — the one moment this page exists
           to show would be the one moment it did not animate. */}
-      <div className={styles.board} key={cap}>
+      <div
+        className={styles.board}
+        key={cap}
+        style={
+          {
+            '--cols': String(cols),
+            '--tile': `${String(tile)}px`,
+          } as CSSProperties
+        }
+      >
         {layouts.map((layout, column) => (
           <section className={styles.column} key={layout.name}>
             <header className={styles.columnHead}>
-              <b>{layout.name}</b>
+              {named && <b>{layout.name}</b>}
               <u>
-                {layout.tenants.length}{' '}
-                {layout.tenants.length === 1 ? 'tenant' : 'tenants'}
+                {layout.tenants.length}
+                {named ? (layout.tenants.length === 1 ? ' tenant' : ' tenants') : ''}
               </u>
             </header>
 

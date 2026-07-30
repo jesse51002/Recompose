@@ -208,7 +208,14 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
   show empty columns rather than shared ones. The repetition is stated on the
   page — a board of invented marks would be a bigger lie than a board of
   repeated real ones. Cells carry no names for the same reason: cycled names
-  would repeat down every column and read as a bug.
+  would repeat down every column and read as a bug. **The board is a grid that
+  never scrolls**: a board you had to scroll would answer "how many are there?"
+  with "keep going and find out", which is the one question the page exists to
+  answer at a glance, so the cards take the squeeze instead — columns from the
+  square root biased for a wide viewport, tiles shrinking with the cap, and
+  names dropped past ~20 cards because a name nobody can read is noise.
+  `minmax(0, 1fr)` on both grid axes is load-bearing: `1fr` alone floors at
+  content size and overflows at a hundred.
 - **Fail visible.** A missing artifact, a failed run, an empty catalog: show the
   state. A blank pane that could mean "loading" or "broken" is the one failure
   mode that wastes the most time here.
