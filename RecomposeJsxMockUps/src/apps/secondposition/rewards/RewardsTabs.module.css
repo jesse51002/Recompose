@@ -1,0 +1,59 @@
+/*
+ * Styles for ./RewardsTabs.tsx — which of the two reward lists is showing.
+ *
+ * `--sc-*` only (../showcaseTokens.ts). Longhands throughout, including the
+ * single-value fills: a shorthand carrying one unresolvable `var()` is invalid
+ * at computed-value time and the browser drops the WHOLE declaration, so
+ * `background-color` costs nothing and cannot take a neighbour down with it.
+ */
+
+/*
+ * TWO EQUAL COLUMNS, LEFT ALIGNED INSIDE THEM. Guardrail 15's two halves at
+ * once: the tabs are distinct entities and get the whole width spread between
+ * them rather than being packed behind one gap at the left, and each label
+ * still starts on an edge the eye can return to.
+ *
+ * The hairline closes the strip and is what the bill below opens against. It is
+ * the DIVIDER rather than brass, because the brass here is spent on the active
+ * mark and two brass lines a pixel apart would read as one thick one.
+ */
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  padding-inline: var(--sc-screen-padding-x);
+  border-bottom: var(--sc-divider-thickness) solid var(--sc-divider);
+}
+
+/*
+ * The tracked label register, shared with the section labels and the four
+ * destinations at the foot — a switch and a destination are the same kind of
+ * word in this app, so they are set the same way.
+ */
+.tab {
+  position: relative;
+  padding-block: var(--sc-spacing-medium);
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  /* 5.81:1 on the cream. The 50% tone is 2.92:1 and fails AA at every size. */
+  color: var(--sc-text-2nd);
+}
+
+/* Full-strength ink is half of the state; the brass mark below is the other. */
+.active {
+  color: var(--sc-text);
+}
+
+/*
+ * THE MARK. It sits ONE hairline low so it lands ON the strip's own rule rather
+ * than above it: the active cell's segment of that line simply becomes brass
+ * and thickens, which is a mark rather than a second line.
+ */
+.active::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: calc(var(--sc-divider-thickness) * -1);
+  height: var(--sc-rule-strong-thickness);
+  background-color: var(--sc-rule);
+}

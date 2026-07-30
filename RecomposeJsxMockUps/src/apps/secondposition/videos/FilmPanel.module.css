@@ -1,0 +1,231 @@
+/*
+ * Styles for ./FilmPanel.tsx — the unit this screen is built from. Read
+ * ../layout_brief.yaml before changing anything here; every rule below is a
+ * line in it.
+ *
+ * `--sc-*` comes from ../showcaseTokens.ts and `--sp-*` from ../shell/phrase.ts.
+ * Nothing else. A name that is in neither file resolves to NOTHING — no error,
+ * no warning, the declaration simply does not happen.
+ */
+
+/*
+ * No card, no radius, no shadow, no margin. Nothing in this app floats above
+ * anything: separation is a change of field and a hairline.
+ */
+.panel {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: start;
+}
+
+/* --- The billed register: the hero, edge to edge over its plinth. --------- */
+
+/*
+ * No hairline of its own. The hero's plinth is followed by its cream action
+ * band, and satin meeting cream IS the parting — separation in this design is a
+ * change of field first and a hairline second. The line that closes the whole
+ * object is drawn under the action, by ./FeaturedVideoCard.module.css.
+ */
+.billed {
+  width: 100%;
+}
+
+/* --- The shelf register: the same construction in a fixed column. --------- */
+
+/*
+ * A FIXED WIDTH, not a fraction of the strip. The picture's box has to be its
+ * own proportion, and a proportional width would make its height depend on the
+ * strip — which is exactly how a photograph ends up in a box of the wrong
+ * shape. `flex: 0 0 auto` is what stops the cards sharing the row and shrinking
+ * as a genre grows.
+ *
+ * 260 is the brief's "give the picture LESS WIDTH at the same proportion" for a
+ * denser region: two thirds of the hero's width at the identical 16:9, never a
+ * shorter box at the same width.
+ */
+.shelf {
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  width: 260px;
+}
+
+/* --- The picture. --------------------------------------------------------- */
+
+/*
+ * The frame is a separate box from the picture ON PURPOSE. Putting the brass
+ * border on the ratio box itself would make `aspect-ratio` describe the BORDER
+ * box, so the picture inside would land at 1.80 instead of 1.78 and `cover`
+ * would quietly shave it. The border lives out here; the exact 16:9 lives
+ * inside.
+ */
+.frame {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.framed {
+  border-width: var(--sc-rule-thickness);
+  border-style: solid;
+  border-color: var(--sc-rule);
+}
+
+/*
+ * 16:9, AND IT IS NOT A FREE VARIABLE. Every still this screen renders — the
+ * four generated slots at 1200x675 and the shared-pool fallbacks at 1280x720 —
+ * measures 1.78 and arrives with its title burnt into the frame. A box of any
+ * other shape does not resize it, it throws part of it away.
+ */
+.media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  /* Shows through while a still is in flight, so the panel is never a hole. */
+  background-color: var(--sc-popup);
+}
+
+/* --- The satin field. ----------------------------------------------------- */
+
+/*
+ * The plinth. `flex: 1 1 auto` is what makes every card on a strip end level:
+ * the strip stretches its cards to the tallest, and the satin takes the slack
+ * rather than leaving a ragged row of different-length panels.
+ */
+.field {
+  position: relative;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  /*
+   * Centred in the SLACK, not on the screen. A strip stretches every panel to
+   * the tallest one, and a two-line title next to a one-line title would
+   * otherwise leave the short one's name floating at the top of an empty
+   * plinth. The type itself is still left aligned, because it is scanned.
+   */
+  justify-content: center;
+  gap: var(--sc-spacing-small);
+  padding-block: var(--sc-spacing-large);
+  padding-inline: var(--sc-spacing-large);
+  background-color: var(--sc-satin);
+  color: var(--sc-on-satin);
+  overflow: hidden;
+}
+
+.billed .field {
+  gap: var(--sc-spacing-medium);
+}
+
+/*
+ * THE NAME. The display serif, knocked out in the light cream — the charcoal
+ * ink reaches only 2.70:1 on this field and is not an option here. Two lines
+ * maximum: a feed carries the occasional 84-character title, and four lines of
+ * serif turns the bill into a paragraph.
+ */
+.name {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  font: var(--sc-type-name-panel);
+  letter-spacing: var(--sc-type-name-panel-ls);
+  color: var(--sc-on-satin);
+}
+
+/*
+ * The hero's name is the largest thing on the screen, and it is a NAME rather
+ * than a figure — Guardrail 14, and the brief's flat refusal to let a number
+ * lead a browsing screen.
+ *
+ * THREE LINES HERE, TWO EVERYWHERE ELSE. A film's name is the longest name this
+ * app ever sets — the feed routinely carries 60-to-80-character titles where a
+ * class is three words — and the hero is the one place with 358px of width and
+ * a reason to spend it. Two lines at 30px would ellipsise most of them, which
+ * reads as a defect; four would turn the bill into a paragraph, which the brief
+ * rules out. A shelf film keeps two, because at 228px three lines of serif is a
+ * wall and every panel on the strip would grow to match it.
+ */
+.billed .name {
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  font: var(--sc-type-name-billed);
+  letter-spacing: var(--sc-type-name-billed-ls);
+}
+
+/*
+ * The facts about the film — its channel and its view count. Sans, tabular,
+ * and never set larger than the name it describes. It sits directly under the
+ * name because a name and the facts about it are one object (Guardrail 13).
+ */
+.meta {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-medium);
+  min-width: 0;
+  font: var(--sc-type-meta);
+  letter-spacing: var(--sc-type-meta-ls);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-on-satin);
+}
+
+/*
+ * The words inside that line — the channel, the count. ONE line, ellipsised.
+ * The name above is allowed to wrap because it is the thing being announced;
+ * these are the facts you choose BETWEEN films on, and a channel name wrapping
+ * to three lines would push a panel out of step with its neighbours on the
+ * strip. Without the ellipsis the field's own `overflow: hidden` would simply
+ * cut a word in half.
+ */
+.fact {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* --- The entrance. -------------------------------------------------------- */
+
+/*
+ * THE SATIN ARRIVES FIRST AND THE NAME IS REVEALED BY IT.
+ *
+ * A VEIL, NOT A CLIP. `clip-path` and `overflow` both remove what they hide
+ * from HIT TESTING, and nothing that can be tapped may be hidden while it
+ * moves. So the reveal is a sheet of the GROUND colour lying over the satin and
+ * retracting off it, with `pointer-events: none` so it can never intercept
+ * anything. The photograph does not move: it is simply there when its half of
+ * the panel is.
+ *
+ * It retracts DOWNWARD, off the plinth's own leading edge, on the one curve
+ * this app owns. Nothing bounces, springs or overshoots anywhere here.
+ */
+.veil {
+  position: absolute;
+  inset: 0;
+  background-color: var(--sc-background);
+  pointer-events: none;
+  transform-origin: center bottom;
+  animation: veilOff var(--sp-wipe) var(--sp-phrase) both;
+  animation-delay: calc(var(--film-index, 0) * var(--sp-stagger));
+}
+
+@keyframes veilOff {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0);
+  }
+}
+
+/*
+ * A member who asked for less motion still gets the design, just not the
+ * travel. Settled is a state this app can render directly.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .veil {
+    animation: none;
+    transform: scaleY(0);
+  }
+}

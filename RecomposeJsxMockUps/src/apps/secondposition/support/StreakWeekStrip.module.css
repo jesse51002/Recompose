@@ -1,0 +1,138 @@
+/*
+ * Styles for ./StreakWeekStrip.tsx — the week printed along the foot of the
+ * streak card.
+ *
+ * `--sc-*` are the design tokens (../showcaseTokens.ts), `--sp-*` the motion
+ * clock (../shell/phrase.ts) and `--wk-delay` is the one value the component
+ * writes inline, because a cell's place in the cascade is arithmetic over the
+ * row's length and cannot be a constant here.
+ */
+
+/*
+ * THE BAND IS THE READING GROUND, AND THAT IS THE PARTING.
+ *
+ * The card above is an ANNOUNCED thing and sits on satin; the week is a READ
+ * thing — a record you scan — so it sits on the cream, and the app's two fields
+ * alternate in whole regions exactly as ../layout_brief.yaml asks. No rule is
+ * drawn at the seam because none is needed: a change of field is this design's
+ * separator, and a brass hairline laid along a satin edge is 1.33:1 and simply
+ * would not be there.
+ *
+ * IT ALSO SOLVES A COLLISION THE SATIN COULD NOT. The flow stands its action on
+ * a satin band directly beneath this card. A satin week strip ran into that
+ * band with nothing between them, so the button stopped looking like a button —
+ * and Guardrail 12 is that a control must look like what it is. The cream band
+ * is what the action now stands on.
+ *
+ * SEVEN EQUAL CELLS, EDGE TO EDGE, and the band pads them top and bottom for a
+ * reason that is not rhythm: a struck cell is a SATIN block, and without that
+ * air it would fuse with the satin field above it and with the satin action
+ * below it, which is the same collision one field further in.
+ */
+.strip {
+  display: flex;
+  flex: 0 0 auto;
+  width: 100%;
+  padding-block: var(--sc-spacing-large);
+  /* Longhand, never the `background` shorthand — one unresolvable var() makes a
+     shorthand invalid at computed-value time and the browser drops all of it,
+     which would leave this band transparent over the satin and delete the
+     parting the whole component is for. */
+  background-color: var(--sc-background);
+}
+
+/*
+ * One day. `flex: 1 1 0` and not `1 1 auto`: every cell takes an equal seventh
+ * of the width whatever letter it carries, so the row is DISTRIBUTED across the
+ * whole band rather than packed by content (Guardrail 15) and the two struck
+ * cells are the same block as the five that are not.
+ */
+.cell {
+  display: flex;
+  flex: 1 1 0;
+  /* `flex-basis: 0` alone does not make a cell shrinkable — `min-width: auto` on
+     a flex item refuses to go below its content, so a label longer than the
+     seventh it is allotted would widen the ROW and push the band past the card
+     edge rather than being contained by it. The week is single letters today;
+     `days` is a prop and the next caller's is not guaranteed to be. */
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  /* The letter and its glyph are ONE object, so the gap inside is the small
+     one — smaller than the padding that separates the cell from the band's
+     edges (Guardrail 13). */
+  gap: var(--sc-spacing-small);
+  padding-block: var(--sc-spacing-medium);
+  color: var(--sc-text);
+  animation: weekCellArrive var(--sp-arrive) var(--sp-phrase) var(--wk-delay, 0ms) both;
+}
+
+/*
+ * A DAY THE MEMBER DANCED, STRUCK IN THE BRAND'S OWN FIELD.
+ *
+ * The cell fills with satin and its ink knocks out in cream. Both states are at
+ * FULL strength and it is the field that changes — which is not only this
+ * app's separator but the only thing the palette allows here. Charcoal on cream
+ * is 11.63:1 and cream on satin is 5.47:1; the two obvious alternatives both
+ * fail, because a held-back cream is under AA on satin at any opacity worth
+ * having and the blush as small TYPE on cream is 4.31:1, legible large and not
+ * legible small. Square, no radius, nothing floating.
+ */
+.danced {
+  background-color: var(--sc-satin);
+  color: var(--sc-on-satin);
+}
+
+/*
+ * The day letter. The sans, because it is a label rather than a name.
+ *
+ * THE RUNG IS SET BY WHAT IT MUST LOSE TO. The week is SUPPORTING on this card
+ * and "+160 points" is rank 3, so the day letter has to sit clearly under it —
+ * at the 15px value rung it tied with the 16px line above and the two ranks read
+ * as one. `--sc-type-meta-strong` is 13px at the same 600 weight, which keeps
+ * each letter firm enough for charcoal on cream and still reads across seven
+ * cells of a 390pt band without crowding.
+ */
+.day {
+  font: var(--sc-type-meta-strong);
+  letter-spacing: var(--sc-type-meta-strong-ls);
+  text-transform: uppercase;
+  /* The other half of the cell's `min-width: 0`: a label with no break
+     opportunity would otherwise spill sideways over its neighbours instead of
+     staying inside the seventh it was given. */
+  overflow-wrap: anywhere;
+  color: inherit;
+}
+
+/* Confirmation, not announcement — see the component. Inherits the cell's ink. */
+.glyph {
+  flex: 0 0 auto;
+  color: inherit;
+}
+
+/*
+ * Each cell arrives and comes to rest. One curve, one direction, no bounce and
+ * no scale-up-and-settle — the travel is a spacing-scale value rather than a
+ * one-off, for the same reason every gap here is.
+ */
+@keyframes weekCellArrive {
+  from {
+    opacity: 0;
+    transform: translateY(var(--sc-spacing-medium));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/*
+ * A member who asked for less motion still gets the whole week, just not the
+ * travel. Settled is a state this design can render directly.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .cell {
+    animation: none;
+  }
+}

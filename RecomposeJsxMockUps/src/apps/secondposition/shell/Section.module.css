@@ -1,0 +1,61 @@
+/*
+ * Styles for ./Section.tsx — how a region of the cream reading ground opens.
+ */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  /*
+   * The label and what it names are ONE object, so this gap is the SMALL one.
+   * Guardrail 13's exact failure was a label sitting 2px under the rule above
+   * it and 24px above the list it named, so it read as the previous region's
+   * footer instead of the next one's heading.
+   */
+  gap: var(--sc-spacing-medium);
+  padding-block: var(--sc-spacing-big);
+}
+
+/* The gap BETWEEN regions is the big one — that is what does the grouping. */
+.section + .section {
+  padding-top: 0;
+}
+
+/*
+ * The brass rule that opens a section. A LINE, never a word: brass is 3.25:1
+ * on the cream ground, which carries a border honestly and fails AA for text.
+ * The label beside it is therefore charcoal.
+ */
+.rule {
+  height: var(--sc-rule-thickness);
+  background: var(--sc-rule);
+  margin-bottom: var(--sc-spacing-medium);
+}
+
+.label {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-2nd);
+}
+
+.title {
+  font: var(--sc-type-name-title);
+  letter-spacing: var(--sc-type-name-title-ls);
+  color: var(--sc-text);
+}
+
+/*
+ * Running prose — the one place in this app that sets a line-height. Left
+ * aligned, always: centred paragraphs are a legibility defect, not a style.
+ */
+.prose {
+  font: var(--sc-type-prose);
+  letter-spacing: var(--sc-type-prose-ls);
+  color: var(--sc-text-2nd);
+  text-align: start;
+}
+
+/* A section whose body runs edge to edge — a carousel, a panel column. */
+.bleed {
+  margin-inline: calc(var(--sc-screen-padding-x) * -1);
+}

@@ -1,0 +1,194 @@
+/*
+ * Styles for ./Masthead.tsx. Replaces the base's
+ * `support/ShowcaseTopbar.module.css`, which is deleted from this folder.
+ */
+
+.masthead {
+  flex: 0 0 auto;
+  padding-top: var(--phone-status-inset, 0px);
+  background: var(--sc-background);
+}
+
+/*
+ * THE IDENTITY BLOCK IS CENTRED, AND IT IS THE ONLY CENTRED THING ON THE
+ * SCREEN. Guardrail 15: a masthead is an identity, which is the one thing on a
+ * phone that earns being centred. Everything below the rule is scanned, so
+ * everything below the rule is left aligned.
+ */
+.identity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sc-spacing-medium);
+  padding-top: var(--sc-spacing-large);
+  padding-bottom: var(--sc-spacing-large);
+  padding-inline: var(--sc-screen-padding-x);
+}
+
+/* `nameOnly` — the mark is suppressed, the row is just the name. */
+.identityCompact {
+  padding-top: var(--sc-spacing-medium);
+  padding-bottom: var(--sc-spacing-medium);
+}
+
+/*
+ * The mark is a cut-out roundel, so it is CONTAINED rather than cropped and it
+ * carries no frame of its own — the art already has its brass ring.
+ */
+.mark {
+  display: block;
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+}
+
+.markSmall {
+  width: 34px;
+  height: 34px;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-small);
+}
+
+.name {
+  font: var(--sc-type-name-masthead);
+  letter-spacing: var(--sc-type-name-masthead-ls);
+  color: var(--sc-text);
+}
+
+.chevron {
+  width: var(--sc-icon-xs);
+  height: var(--sc-icon-xs);
+  color: var(--sc-text-3rd);
+}
+
+/*
+ * THE BRASS RULE. Brass is a LINE here and never a word: it measures 3.25:1 on
+ * the cream ground, which carries a border honestly and fails AA for text at
+ * every size this app would set a label at. See ../showcaseTokens.ts.
+ */
+.rule {
+  height: var(--sc-rule-thickness);
+  background: var(--sc-rule);
+}
+
+/*
+ * THE CARRIED LINE — rank, streak, points, pass.
+ *
+ * Four SEMANTICALLY DISTINCT facts that happen to share a row, so Guardrail 15
+ * says spread them across the width they have rather than bunching them behind
+ * one small gap at the left. Equal columns is the plainest way to say that, and
+ * it is what the base's own `spread` layout does.
+ */
+.carried {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-items: center;
+  padding-block: var(--sc-spacing-medium);
+  padding-inline: var(--sc-screen-padding-x);
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/*
+ * An icon and the value it names are ONE object, so the gap INSIDE the pair is
+ * the small one. That is not a violation of the distribution above; it is what
+ * makes the four cells read as four things rather than eight.
+ */
+.pair {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-small);
+}
+
+.pairValue {
+  font: var(--sc-type-value);
+  letter-spacing: var(--sc-type-value-ls);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-text);
+}
+
+/* Every carried mark is a cut-out: contained, never cropped, never framed. */
+.pairIcon {
+  display: block;
+  object-fit: contain;
+}
+
+.belt {
+  display: block;
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+.qr {
+  display: block;
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+/*
+ * `GymNameLabel.visuallyHidden` — keeps a label in the document and in the
+ * accessibility tree while removing it from the visual layout. Never
+ * `display: none`, never `aria-hidden`.
+ */
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ------------------------------------------------------------------------- */
+/* The detail-screen variant: a back control, then the same carried line.     */
+/* ------------------------------------------------------------------------- */
+
+.backRow {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-medium);
+  padding-block: var(--sc-spacing-medium);
+  padding-inline: var(--sc-screen-padding-x);
+}
+
+/*
+ * Back is TOP LEFT, because that is where every phone app puts it and
+ * Guardrail 12 says a control must behave the way its platform behaves.
+ */
+.back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-inline-start: calc(var(--sc-spacing-medium) * -1);
+  border: 0;
+  background: none;
+  color: var(--sc-text);
+  cursor: pointer;
+}
+
+.backIcon {
+  width: var(--sc-icon-md);
+  height: var(--sc-icon-md);
+}
+
+/* The identity sits beside the back control rather than centred on that row. */
+.backName {
+  font: var(--sc-type-name-masthead);
+  letter-spacing: var(--sc-type-name-masthead-ls);
+  color: var(--sc-text);
+}

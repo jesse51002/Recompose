@@ -1,0 +1,187 @@
+/*
+ * Styles for ./ClassPanel.tsx — the facts a member chooses BETWEEN classes on,
+ * inside the satin field ../../shell/Panel.tsx draws.
+ *
+ * Everything here reads `--sc-*` (../../showcaseTokens.ts) and nothing else.
+ * Every colour is inherited: the field sets `--sc-on-satin`, which is the ONLY
+ * legible ink on the satin blush (5.47:1, where the charcoal reaches 2.70:1).
+ * Nothing in this file sets a colour, and nothing in it may.
+ */
+
+/*
+ * TWO LINES, NEVER THREE, AND THE REASON IS THE PHOTOGRAPH.
+ *
+ * ../../layout_brief.yaml: "the panel's height is whatever its picture's true
+ * proportion makes it at the width it was given; the satin field stretches to
+ * match the picture, never the other way round." In the split register the
+ * picture is 200px wide at 3:2, so the panel wants to be 133px tall — and the
+ * moment the field needs more than that, the FIELD sets the height and the
+ * picture is handed a box that is not its own shape.
+ *
+ * The budget is therefore hard, and it is arithmetic rather than taste: 133
+ * less the field's 16px of block padding on each side leaves 101px, of which a
+ * two-line class name in the display serif already spends about 57. What is
+ * left is two single lines and the gap between them, which is what sets the
+ * type sizes below. Measured on the longest data this app carries, the field
+ * lands at 133.3 against a 133.3 picture — the picture sets the height, which
+ * is what the brief asks for.
+ *
+ * So every fact line here is `nowrap` with an ellipsis rather than a wrap. That
+ * is not a hedge against long data — it is the trade stated out loud: a wrapped
+ * instructor name does not cost a word, it costs the photograph its proportion.
+ */
+.facts {
+  /* Claim the whole line of the field's wrapping meta row. */
+  flex: 1 1 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-small);
+  min-width: 0;
+}
+
+/* --- Line one: WHEN. Rank 2. ---------------------------------------------- */
+
+/*
+ * THE TWO REGISTERS TAKE DIFFERENT RUNGS, AND THE REASON IS THE WIDTH RATHER
+ * THAN A PREFERENCE. Measured, after the first pass shipped a clipped duration:
+ * the split field is 158px of text, and "11:00am - 11:55am" alone is 121 of it
+ * at 13px. There is no arrangement of a 13px range and a 13px duration that
+ * fits on one line there, and the only alternative — a third fact line — costs
+ * the photograph its 3:2 box.
+ *
+ * So the split register sets its facts one rung down and the billed register,
+ * which has 358px, keeps the larger ones. That is the same call the brief makes
+ * about the picture: where a denser row is wanted, give the thing less, do not
+ * give it a shape it does not have.
+ */
+
+/*
+ * The range and the duration are ONE fact ("its time range with duration"), so
+ * the gap inside the pair is the SMALL one — smaller than the gap down to the
+ * instructor line, which is a different fact (Guardrail 13).
+ */
+.when {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sc-spacing-small);
+  min-width: 0;
+}
+
+/*
+ * THE TIME LEADS THE FACTS AND FOLLOWS THE NAME, in that order, and it is never
+ * the largest thing in the panel.
+ *
+ * A start time is how a member chooses between classes once a class has caught
+ * their eye; it is not what catches it. A sibling fork set it at 40px over a
+ * 17px name and made the clock the loudest thing on the schedule. Weight and
+ * position carry rank 2 here, never scale: the strong weight against the 400 of
+ * the line below, and first.
+ *
+ * `font-weight` AFTER the shorthand is deliberate and invents no token. The
+ * ramp pairs 13px with two weights (`--sc-type-meta` / `--sc-type-meta-strong`)
+ * and 12px with one, and this line needs the 12px SIZE at the strong weight —
+ * so the token supplies the size and the longhand supplies the weight the ramp
+ * has no rung for. Order matters: `font` resets both weight and variant.
+ */
+.time {
+  font: var(--sc-type-p);
+  letter-spacing: var(--sc-type-p-ls);
+  font-weight: 600;
+  /* The `font` shorthand resets `font-variant`, so tabular is re-declared. */
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/*
+ * The billed register has 358px of field instead of 158, so the time takes the
+ * next rung up — and it should, because the opening work's name is 30px rather
+ * than 21, and 12px beneath that reads as a caption rather than as the second
+ * fact.
+ */
+.factsBilled .time {
+  font: var(--sc-type-value);
+  letter-spacing: var(--sc-type-value-ls);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * THE DURATION IS THE HALF OF THE FACT THAT YIELDS, and it is the only line in
+ * the field that has no other way out.
+ *
+ * `.mentor` can ellipsis and `.name` can clamp, but the satin field CLIPS
+ * (`overflow: hidden`, ../../shell/Panel.module.css) — so before this rule a
+ * time range one rung longer than the sample data ran silently under the
+ * panel's edge with nothing on screen saying a word had been lost. Measured on
+ * the real data the split register has 8px of slack, which is a margin thin
+ * enough that a tenant with a 90-minute class would have found the bug rather
+ * than us.
+ *
+ * The RANGE never yields, because a truncated time is a different time; a
+ * truncated duration is a duration the range already implies.
+ */
+.duration {
+  font: var(--sc-type-p-small);
+  letter-spacing: var(--sc-type-p-small-ls);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.factsBilled .duration {
+  font: var(--sc-type-meta);
+  letter-spacing: var(--sc-type-meta-ls);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Line two: WHO, and how many. Rank 3. --------------------------------- */
+
+/*
+ * Two DISTINCT facts sharing a line, so the gap here is the LARGER one — the
+ * opposite call to `.when`, and for the opposite reason.
+ */
+.who {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-medium);
+  min-width: 0;
+  font: var(--sc-type-p);
+  letter-spacing: var(--sc-type-p-ls);
+}
+
+.factsBilled .who {
+  font: var(--sc-type-meta);
+  letter-spacing: var(--sc-type-meta-ls);
+}
+
+/*
+ * The instructor yields the width, because the count cannot: a truncated name
+ * is still a name, and a truncated number is a different number.
+ */
+.mentor {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/*
+ * A mark and its value are ONE object, so the gap inside the pair is the small
+ * one — the same rule and the same value the masthead's carried line uses for
+ * the streak and the points. That is what makes this line read as two facts
+ * rather than three.
+ */
+.attending {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-small);
+  font-variant-numeric: tabular-nums;
+}
+
+.attendingIcon {
+  display: block;
+  flex: 0 0 auto;
+}

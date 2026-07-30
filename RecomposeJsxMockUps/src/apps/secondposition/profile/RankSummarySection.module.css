@@ -1,0 +1,108 @@
+/*
+ * Styles for ./RankSummarySection.tsx — the standing plate.
+ * `--sc-*` (../showcaseTokens.ts) and `--sp-*` (../shell/phrase.ts) only.
+ */
+
+/*
+ * A FIELD, NOT A CARD. Edge to edge, square, no radius, no shadow, nothing
+ * floating: separation in this app is a change of field and a hairline
+ * (../layout_brief.yaml). `position: relative` carries the veil.
+ *
+ * It declares no padding of its own — the insignia's mount brings the air above
+ * the belt and the streak line brings the air below the hairline, so the plate
+ * is exactly its contents and there is no outer inset silently doubling an
+ * inner one.
+ */
+.plate {
+  position: relative;
+  overflow: hidden;
+  background: var(--sc-satin);
+  color: var(--sc-on-satin);
+}
+
+/*
+ * The hairline parting the mounted object from the line that credits it. Inset
+ * from both edges so it reads as a rule inside one field rather than as the
+ * boundary between two.
+ */
+.hair {
+  height: var(--sc-rule-thickness);
+  margin-inline: var(--sc-spacing-large);
+  background: var(--sc-satin-hair);
+}
+
+/*
+ * The streak statement. Centred, because the whole plate is one focal object
+ * with nothing to scan — Guardrail 15's exception, and the same reason the
+ * masthead above it is centred.
+ *
+ * The block padding is asymmetric on purpose: 16 above pairs the line with the
+ * hairline that opens it, 32 below matches the air over the medallion, so the
+ * plate is balanced top to bottom while the grouping still reads.
+ */
+.streak {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--sc-spacing-small);
+  margin: 0;
+  padding-block-start: var(--sc-spacing-large);
+  padding-block-end: var(--sc-spacing-big);
+  padding-inline: var(--sc-spacing-large);
+}
+
+.streakWords {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-on-satin);
+}
+
+/* Tabular, because the count changes and nothing around it should shift. */
+.streakFigure {
+  font: var(--sc-type-value);
+  letter-spacing: var(--sc-type-value-ls);
+  font-variant-numeric: tabular-nums;
+  text-transform: uppercase;
+  color: var(--sc-on-satin);
+}
+
+/* --- The entrance. --------------------------------------------------------- */
+
+/*
+ * A sheet of the cream GROUND lying on the satin and retracting off it. With
+ * the origin at the bottom edge the sheet collapses downward, so the plate is
+ * revealed from the top — continuing the masthead's rule down the screen rather
+ * than opening from nowhere.
+ *
+ * `pointer-events: none` so it can never intercept anything it covers.
+ */
+.veil {
+  position: absolute;
+  inset: 0;
+  background: var(--sc-background);
+  pointer-events: none;
+  transform-origin: center bottom;
+  animation: plateOpen var(--sp-wipe) var(--sp-phrase) both;
+}
+
+@keyframes plateOpen {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0);
+  }
+}
+
+/*
+ * A member who asked for less motion still gets the design, just not the
+ * travel. Settled is a state this app can render directly.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .veil {
+    animation: none;
+    transform: scaleY(0);
+  }
+}

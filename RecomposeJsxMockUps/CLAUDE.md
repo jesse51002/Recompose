@@ -70,6 +70,11 @@ src/
       layout_brief.yaml
       shell/             its OWN chrome: screen, head, thread, nav, photo,
                          figure, action — plus breath.ts, its motion clock
+    secondposition/    a fifth redesign, for the AdultBallet run
+      layout_brief.yaml
+      shell/             its OWN chrome: screen, masthead, foot nav, PANEL,
+                         insignia, action band, section — plus phrase.ts, its
+                         motion clock
     index.ts           MOCK_APPS: every app, for a host that names none
   index.ts             the ONLY export surface
 ```
@@ -139,7 +144,7 @@ A redesign folder carries its own `layout_brief.yaml` naming the design it was
 made for. The base's names the base — it belongs to no run, and it is what
 every fork starts from.
 
-**There are three forks, and they are worked examples of different things.**
+**There are four forks, and they are worked examples of different things.**
 
 **A FOURTH FORK, `apps/zenbjj/`, WAS DELETED** — worth knowing because its
 lesson is still live. It was the first one built: same assets, same screens,
@@ -153,9 +158,10 @@ fork whose only value was as a warning is a fork every later agent has to read
 before learning it should not be copied.
 
 A fork renames its own surface component (`RomanaHouseSurface`,
-`MileMarkerSurface`, `VinyasaFlowSurface`, where the base has
-`CombatDenSurface`) and nothing else: a fork's token root is still its own
-`provider`, and the file name is the only part of it that belongs to the design.
+`MileMarkerSurface`, `VinyasaFlowSurface`, `SecondPositionSurface`, where the
+base has `CombatDenSurface`) and nothing else: a fork's token root is still its
+own `provider`, and the file name is the only part of it that belongs to the
+design.
 
 **`apps/romanahouse/`** is the second, built for the theme produced at
 `apps/combatden/ReformerClassical/`, and it shows how far a fork MAY go under
@@ -289,6 +295,71 @@ touching any of it:
   rewards bloom) have no keyframe to fast-forward and are handed over by their
   component's own branch instead.
 
+**`apps/secondposition/`** is the fifth, built for the theme produced at
+`apps/combatden/AdultBallet/` (Second Position Ballet). Its direction (read
+`layout_brief.yaml`) is a company's season, BILLED: every class, reward and film
+is one full-bleed panel that is half photograph and half satin-blush field, with
+the name set in the display serif and knocked out on the satin, and the day's
+first class / featured reward / hero film billed larger with the field carried
+underneath as a plinth instead of beside it. Its `shell/` replaces the base
+chrome outright, as the other three do, and `shell/phrase.ts` is its motion
+clock in the shape `vinyasaflow` established. What it adds that none of the
+other four do:
+
+- **CONTRAST WAS THE DESIGN INPUT, AND IT OVERTURNED THREE CHOICES BEFORE ANY
+  COMPONENT EXISTED.** `milemarker` established that contrast is an input rather
+  than a review finding; this fork is what that looks like when the palette
+  fights back hard. Measured on the run's own colours: the antique brass is
+  **3.25:1** on the cream ground, so brass is a LINE and a MARK in this app and
+  never spells a word; it is **1.33:1** on the satin, so brass and satin never
+  meet at all; and the warm charcoal is **2.70:1** on the satin, so everything
+  set on a satin field is the light cream (`--sc-on-satin`, 5.47:1). The third
+  one is the interesting one, because it killed the obvious foot-nav design:
+  **no opacity holds an inactive nav label above AA on satin** — 85% lands at
+  4.46:1 and every value below is worse — so all four destinations are set at
+  full strength and the active one is marked by a CREAM rule, its label weight,
+  and its ICON's opacity, which is the one element there allowed to be held back
+  because an icon answers to 3:1 rather than 4.5:1. Each of these is written
+  into `layout_brief.yaml` as a law, not left as a comment.
+- **A fork may change `DEFAULT_SHOWCASE_GROUP`, and this one is the first to.**
+  The base ships `'Fighting'`, which is right for CombatDen and wrong for every
+  redesign built against a different run. The harness opens UNTHEMED, so
+  `useThemeCategory()` returns nothing and that constant is what actually
+  decides the half of the screen the pipeline does not generate — leaving it
+  meant a ballet studio rendering "MMA Fundamentals" down its schedule and a
+  boxing feed on its video tab, under satin-and-brass insignia. It is `'Dance'`
+  here, which is the `category` the run itself carries, so the untheme'd default
+  now agrees with what a loaded theme would pick anyway. **The same gap is still
+  live in `romanahouse`, `milemarker` and `vinyasaflow`** — a Pilates studio, a
+  run club and a yoga studio each previewing a boxing feed.
+- **The ratio rule is stated as a CONDITIONAL, because Guardrail 10b says a
+  direction can cause the bug.** `milemarker`'s brief mandated a container shape
+  outright ("full-bleed or a disc") and thereby forced 1:1 boxes onto 1.78 art,
+  destroying every shelf thumbnail. This brief instead says a photograph gets a
+  box of ITS OWN proportion and a cut-out is CONTAINED — two rules, conditioned
+  on what the art is, and it names the numbers: the cut-outs here are NOT all
+  square (the satin chevrons are 0.60, the coin scatter 0.84), so a treatment
+  that cropped them to a square would behead one and clip the other.
+- **The type system is one sentence and the ramp enforces it.** The display
+  serif NAMES things and the sans carries every figure, label and line of prose.
+  `showcaseTokens.test.ts` asserts it two ways — which family each rung
+  resolves, and that every `-name-*` rung is larger than every metadata rung, so
+  the ramp itself now forbids the `vinyasaflow` failure where a start time at
+  40px sat above a class name at 17px.
+
+**The run it was built against is only half-filled, and that shaped the design.**
+Only the ten cut-out objects and five copy strings were generated for this
+brand. The four class photographs, all four reward photographs, the four video
+stills and the class / reward / video NAMES are verbatim `Dance` prefill
+placeholders (`apps/combatden/prefill/Dance/`, which labels itself
+"PLACEHOLDERS, not brand copy") — including a class called "High Energy Cardio",
+which the brand brief explicitly rules out, and video art with
+"EASY KIDS CHOREOGRAPHY" burnt into it. So the design is OBJECT-led rather than
+photography-led: the medallions, coins and still lifes are the on-brand material
+and they carry the screens, while photographs are contained inside panels at
+their own ratio. That is the honest response to the assets that exist, but the
+run wants a `regen` pass on those slots before this fork is shown to anyone.
+
 ## Assets, not screens
 
 The package ships **assets**: self-contained, interactive mocks you click
@@ -304,6 +375,8 @@ through. Not a gallery of stills behind a picker.
 | milemarker | `celebration` | the same post-class flow, reframed | the same five |
 | vinyasaflow | `app` | the same member app, redesigned a third time | the same six |
 | vinyasaflow | `celebration` | the same post-class flow, redesigned again | the same five |
+| secondposition | `app` | the same member app, redesigned a fourth time | the same six |
+| secondposition | `celebration` | the same post-class flow, redesigned again | the same five |
 
 A redesign's rows are the base's rows, and that is the point: **the asset and
 route sets are the thing a fork may not change.** If a fork ever needs a row of

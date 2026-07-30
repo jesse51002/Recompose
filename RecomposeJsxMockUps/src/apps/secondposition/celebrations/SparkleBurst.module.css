@@ -1,0 +1,79 @@
+/*
+ * Styles for ./SparkleBurst.tsx — the hit behind the trophy.
+ *
+ * `--sc-*` are the design tokens (../showcaseTokens.ts), `--sp-*` the fork's
+ * motion clock (../shell/phrase.ts) and `--sb-*` this burst's own geometry,
+ * written inline by the component from ./sparkleGeometry.ts — so no offset,
+ * delay or point of the star is restated as a literal here.
+ */
+
+/*
+ * The scatter's box. `overflow: visible`: particles sit up to 150px from the
+ * centre and are meant to escape a small box. Whatever clipping happens belongs
+ * to the HOST field, which is why ../WinsShowcase.module.css's `.crest` carries
+ * the `overflow: hidden` and this does not.
+ *
+ * `pointer-events: none` because it lies over a card whose whole surface is a
+ * tap-to-skip target, and a decoration may never intercept a tap.
+ */
+.burst {
+  position: relative;
+  overflow: visible;
+  pointer-events: none;
+}
+
+/*
+ * One particle: centred on the field, translated to its place in the scatter,
+ * then scaled about its own centre. The order matters and the three collapse
+ * into one declaration in the keyframes below.
+ *
+ * CREAM, NOT THE BLUSH. The burst only ever plays on a satin celebration
+ * ground, where `--sc-primary` is the ground itself — a spray painted in it
+ * would be invisible rather than subtle. `--sc-on-satin` is 5.47:1 there, and
+ * each particle's own settled opacity holds it back from the type without
+ * taking it below what a decoration needs.
+ */
+.particle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--sb-size);
+  height: var(--sb-size);
+  /* `background-color`, never the `background` shorthand: one unresolvable
+     var() invalidates the whole declaration and takes seven other properties
+     with it. ../RankShowcase.module.css carries the full note. */
+  background-color: var(--sc-on-satin);
+  clip-path: var(--sb-star);
+  animation: sparkleIn var(--sb-fade) var(--sp-phrase) var(--sb-delay) both;
+}
+
+/*
+ * Opacity and scale, both linear between fixed endpoints, so interpolating them
+ * under the phrase's own timing function is the whole motion. It grows to its
+ * size and stops there: no overshoot, no correction, nothing springs.
+ */
+@keyframes sparkleIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) translate(var(--sb-dx), var(--sb-dy))
+      scale(var(--sb-start-scale));
+  }
+
+  to {
+    opacity: var(--sb-opacity);
+    transform: translate(-50%, -50%) translate(var(--sb-dx), var(--sb-dy)) scale(1);
+  }
+}
+
+/*
+ * Under a reduced-motion preference the scatter renders settled. It has to be
+ * spelled out rather than left to `animation: none`, because `both` would
+ * otherwise hold every particle at its `from` frame — invisible — forever.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .particle {
+    animation: none;
+    opacity: var(--sb-opacity);
+    transform: translate(-50%, -50%) translate(var(--sb-dx), var(--sb-dy));
+  }
+}

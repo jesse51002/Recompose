@@ -1,0 +1,65 @@
+/* `PostClassScaffold` — the card fills the screen and the CTA stands on the
+   canvas beneath it. */
+
+.scaffold {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: var(--sc-background);
+}
+
+/* The card itself takes everything the CTA does not. `min-height: 0` because a
+   flex child's default `min-height: auto` refuses to shrink below its content,
+   which would push the CTA off the bottom of the phone. */
+.body {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* The CTA zone is ALWAYS laid out, even before the card settles — the member
+   app reserves it too (`kCelebrationCtaZone`), and it is the seam between the
+   card and the canvas the action stands on. Only its visibility changes, so a
+   settling card never reflows. */
+.cta {
+  flex: 0 0 auto;
+  /*
+   * NO INSET. This is a full-width satin band running to both edges, which is
+   * what ../layout_brief.yaml says a primary action is in this design and what
+   * `booking`'s own ActionBand already was — the two are the same control on
+   * two screens, and Guardrail 13's rule is that the same control gets the same
+   * treatment everywhere. The base's screen inset was inherited here and made
+   * the celebration's action a floating rectangle on a cream margin while the
+   * app's was a band; nobody decided that, it was just two files.
+   */
+  opacity: 0;
+  /* Not display:none — the button must keep its box so nothing moves when it
+     appears, and must not be tabbable while it is invisible. */
+  visibility: hidden;
+  /*
+   * The clock, not a literal. `260ms ease-out` was this file's own number and
+   * belonged to no other motion in the fork; ../shell/phrase.ts is where every
+   * duration and the one curve live, so a stylesheet and a driver sample the
+   * same beat.
+   */
+  transition:
+    opacity var(--sp-arrive) var(--sp-phrase),
+    visibility 0s linear var(--sp-arrive);
+}
+
+.ctaVisible {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity var(--sp-arrive) var(--sp-phrase),
+    visibility 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta,
+  .ctaVisible {
+    transition: none;
+  }
+}

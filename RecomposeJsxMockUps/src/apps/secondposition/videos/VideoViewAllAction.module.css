@@ -1,0 +1,28 @@
+/*
+ * Styles for ./VideoViewAllAction.tsx (ports MobileApp/lib/features/videos/
+ * presentation/widgets/video_view_all_action.dart).
+ * `--sc-*` only — see ../showcaseTokens.ts.
+ */
+
+/*
+ * The genre's action, at the trailing end of the line that names it. Same rung
+ * as the genre itself, because they are two ends of one row and a different
+ * size there would read as a heading with a footnote stuck to it.
+ *
+ * THE UNDERLINE IS THE BRASS. Brass may draw a line and mark a thing, and this
+ * is a mark: the same brass sits under the selected scope tab, so the two mean
+ * the same thing on this screen. The WORD is charcoal, because brass at 3.25:1
+ * on the cream ground fails AA for text at every size.
+ */
+.viewAll {
+  flex: 0 0 auto;
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-2nd);
+  text-decoration-line: underline;
+  text-decoration-color: var(--sc-rule);
+  text-decoration-thickness: var(--sc-rule-thickness);
+  text-underline-offset: var(--sc-spacing-small);
+  white-space: nowrap;
+}

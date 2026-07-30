@@ -1,0 +1,38 @@
+/*
+ * Styles for ./StoreBill.tsx — the column the reward panels stack in.
+ *
+ * `--sc-*` only (../showcaseTokens.ts).
+ */
+
+.bill {
+  /*
+   * NO GAP AND NO GUTTER between panels: each one closes with its own hairline
+   * (../shell/Panel.module.css), and that hairline IS the parting. A gap here
+   * would put a stripe of cream between two satin fields and turn every panel
+   * back into the card this design refuses.
+   */
+  display: flex;
+  flex-direction: column;
+
+  /*
+   * THE SPACE ABOVE THE BILL IS THE SMALL ONE, AND THAT IS THE POINT.
+   *
+   * The tab strip is the control that switches this list, so it has to read as
+   * the bill's own header rather than as something floating between the
+   * balance and the bill. It shipped at `large`, which is exactly the gap
+   * ../PointsHeadline.module.css put ABOVE the strip — three identical gaps
+   * down the cream, and Guardrail 13's "when every gap is the same value,
+   * nothing is grouped". The pair is now 32 above the strip and 8 below it, so
+   * the strip's own rule reads as the line the first panel opens against.
+   */
+  padding-top: var(--sc-spacing-medium);
+
+  /*
+   * AND THE SPACE BELOW IT IS NOT OPTIONAL. The foot is a solid satin band and
+   * the last panel's field is satin too, so with the column ending flush the
+   * two would meet and read as one shape — the same reason this app never puts
+   * an action band and the foot nav on the same screen. A stretch of cream is
+   * what closes the bill.
+   */
+  padding-bottom: var(--sc-spacing-big);
+}

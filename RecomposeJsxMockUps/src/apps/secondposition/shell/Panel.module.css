@@ -1,0 +1,245 @@
+/*
+ * Styles for ./Panel.tsx — THE UNIT of this design. Read ../layout_brief.yaml
+ * before changing anything here; every rule below is a line in it.
+ */
+
+/*
+ * Panels stack directly against one another, parted only by a hairline, so a
+ * column of them reads as a continuous printed bill rather than a tray of
+ * tiles. No gutter, no radius, no shadow, no margin.
+ */
+.panel {
+  position: relative;
+  display: block;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: none;
+  text-align: start;
+  cursor: pointer;
+}
+
+/*
+ * THE PARTING LINE IS TWO-TONE, because it crosses two fields.
+ *
+ * One hairline drawn in one colour cannot part both halves of a panel: the
+ * charcoal divider reads correctly where it runs under the PHOTOGRAPH and
+ * measures about 1.2:1 where it continues across the satin, so the right-hand
+ * half of every parting line was effectively invisible. `--sc-satin-hair`
+ * exists in ../showcaseTokens.ts for exactly this — "a parting line WITHIN the
+ * satin, where brass would vanish" — and until now nothing used it.
+ *
+ * Drawn as two children of the grid rather than as one `border-bottom`, which
+ * also retires the last multi-var shorthand in this file: one unresolvable var
+ * in `border-bottom: var(--a) solid var(--b)` drops the WHOLE declaration and
+ * takes the line off both halves at once (Guardrail 3).
+ */
+.split .rule,
+.billed .rule {
+  position: absolute;
+  inset-block-end: 0;
+  height: var(--sc-divider-thickness);
+}
+
+/* Under the picture: the charcoal divider, on cream. */
+.split .rule {
+  inset-inline-start: 0;
+  width: 200px;
+  background-color: var(--sc-divider);
+}
+
+/* Under the satin: the cream hairline, which is the only thing legible there. */
+.split .ruleField {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-start: 200px;
+  inset-inline-end: 0;
+  height: var(--sc-divider-thickness);
+  background-color: var(--sc-satin-hair);
+}
+
+/*
+ * A billed panel's plinth runs the full width, so its whole parting line sits
+ * on satin and takes the satin hairline.
+ */
+.billed .rule {
+  inset-inline: 0;
+  background-color: var(--sc-satin-hair);
+}
+
+/* --- The split register: picture beside its name, each owning a half. ----- */
+
+.split {
+  display: grid;
+  /*
+   * The picture takes a fixed width so its BOX can be its own proportion and
+   * the satin takes what is left. Sizing the picture as a fraction of the row
+   * would make its height depend on the text beside it, which is how a
+   * photograph ends up in a box of the wrong shape.
+   */
+  grid-template-columns: 200px 1fr;
+}
+
+/* --- The billed register: the opening work, picture over its plinth. ------ */
+
+.billed {
+  display: block;
+}
+
+/*
+ * THE PICTURE BOX IS THE PICTURE'S OWN PROPORTION. Guardrail 10b: a photograph
+ * arrives already composed, and a box of a different ratio does not resize it,
+ * it discards part of it. The ratio comes from the source art and is set
+ * inline by the component — never inherited from a container shape chosen for
+ * another reason.
+ */
+.media {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: var(--sc-popup);
+}
+
+.mediaImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* --- The satin field. ------------------------------------------------------ */
+
+.field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--sc-spacing-small);
+  background: var(--sc-satin);
+  color: var(--sc-on-satin);
+  padding-block: var(--sc-spacing-large);
+  padding-inline: var(--sc-spacing-large);
+  overflow: hidden;
+}
+
+.billed .field {
+  gap: var(--sc-spacing-medium);
+  padding-block: var(--sc-spacing-large);
+}
+
+/*
+ * THE NAME. The display serif, and the largest thing in the panel — a figure
+ * beside it is never set larger (Guardrail 14). Two lines maximum, because a
+ * name that runs to four turns the bill into a paragraph.
+ */
+.name {
+  font: var(--sc-type-name-panel);
+  letter-spacing: var(--sc-type-name-panel-ls);
+  color: var(--sc-on-satin);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.billed .name {
+  font: var(--sc-type-name-billed);
+  letter-spacing: var(--sc-type-name-billed-ls);
+  -webkit-line-clamp: 2;
+}
+
+/*
+ * The metadata sits UNDER the name and closer to it than to anything else,
+ * because a name and the facts about it are one object (Guardrail 13).
+ */
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sc-spacing-small) var(--sc-spacing-medium);
+  font: var(--sc-type-meta);
+  letter-spacing: var(--sc-type-meta-ls);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-on-satin);
+}
+
+/* A trailing value — a points cost, a duration. Sits on its own line. */
+.trailing {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-small);
+  font: var(--sc-type-value);
+  letter-spacing: var(--sc-type-value-ls);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-on-satin);
+}
+
+.trailingIcon {
+  display: block;
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+/* --- The entrance. --------------------------------------------------------- */
+
+/*
+ * THE SATIN ARRIVES FIRST AND THE NAME IS REVEALED BY IT.
+ *
+ * A VEIL, NOT A CLIP. `clip-path` and `overflow` both remove what they hide
+ * from HIT TESTING, and every tap target in this app has to be live from the
+ * first frame — a member standing in a doorway is never made to wait for a
+ * nicety. So the reveal is a sheet of the GROUND colour lying on top of the
+ * satin and retracting off it, with `pointer-events: none` so it can never
+ * intercept the tap it is covering.
+ *
+ * It retracts from the field's own LEADING edge: rightward off a split panel's
+ * field, downward off a billed panel's plinth.
+ */
+.veil {
+  position: absolute;
+  inset: 0;
+  background: var(--sc-background);
+  pointer-events: none;
+  transform-origin: right center;
+  animation: veilOffX var(--sp-wipe) var(--sp-phrase) both;
+  animation-delay: calc(var(--panel-index, 0) * var(--sp-stagger));
+}
+
+.billed .veil {
+  transform-origin: center bottom;
+  animation-name: veilOffY;
+}
+
+@keyframes veilOffX {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes veilOffY {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0);
+  }
+}
+
+/*
+ * A member who asked for less motion still gets the design, just not the
+ * travel. `settled` is a state this app can render directly.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .veil {
+    animation: none;
+    transform: scaleX(0);
+  }
+
+  .billed .veil {
+    transform: scaleY(0);
+  }
+}
