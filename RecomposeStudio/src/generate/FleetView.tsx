@@ -154,8 +154,9 @@ export function FleetView() {
         That is the shape the product is for. <b>Nothing here waits to be
         approved</b> — at this many branches an approval queue is the
         bottleneck, so a design ships when its own checks pass and only stops
-        when they do not. The three that need you are exceptions, and they are
-        the whole reason this page exists. None of it is a pull request into a
+        when they do not. {FLEET.filter((a) => a.status === 'help').length} of{' '}
+        {FLEET.length} needs you, and that one is the whole reason this page
+        exists. None of it is a pull request into a
         customer&rsquo;s repository; there is never one.
       </footer>
 

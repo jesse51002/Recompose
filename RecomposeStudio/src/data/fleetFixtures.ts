@@ -290,6 +290,19 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
     log: 'assets published · binary queued · 4m elapsed',
   },
   {
+    name: 'Hot Pilates 24',
+    branch: 'design/hotpilates',
+    run: 'HotPilates',
+    since: 'started 22 Jul',
+    status: 'deploying',
+    state: 'Shipping to production',
+    note:
+      'A screenshot check caught the booking sheet on the first attempt. It ' +
+      'rebuilt, matched, and carried on — which is the normal case and why ' +
+      'so few of these ever reach a person.',
+    log: 'uploading bundle 2 of 4 · ios + android · 14m elapsed',
+  },
+  {
     name: 'Hatha Studio',
     branch: 'design/hatha',
     run: 'HathaStudio',
@@ -421,6 +434,19 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
     log: 'reading the generated mock · 0 of 14 files · 4m elapsed',
   },
   {
+    name: 'Duck Dancer',
+    branch: 'design/duckdancer',
+    run: 'DuckDancer',
+    since: 'started 30 Jul',
+    status: 'productionalizing',
+    state: 'An agent is productionalizing this design',
+    note:
+      'Both brand colours were pinned by hand and the pair missed AA, so the ' +
+      'palette resolved a darker partner rather than stopping. Contrast is an ' +
+      'accept condition with a deterministic answer; it does not need a human.',
+    log: 'rewriting rewards_screen.dart · 8 of 14 files · 39m elapsed',
+  },
+  {
     name: 'Yin Restorative',
     branch: 'design/yin',
     run: 'YinRestorative',
@@ -432,6 +458,13 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
   },
 
   // ── Needs Human Help ─────────────────────────────────────────────────────
+  // ONE ROW, and it should stay about one. This status is the product's whole
+  // claim under load: if a person has to look at three designs out of thirty,
+  // the pipeline is not autonomous and the fleet does not scale. Three of these
+  // read as a queue, which is the thing the approval gate was removed to avoid.
+  // The one that remains is the case a check genuinely cannot decide — the
+  // arrangement-only invariant, where guessing would break the safety property
+  // the product sells.
   {
     name: 'Orange Theory Indie',
     branch: 'design/otindie',
@@ -444,32 +477,6 @@ export const FLEET: readonly FleetApp[] = Object.freeze([
       'arrangement change, so the agent refused to guess and stopped. This ' +
       'is the invariant working, not a failure.',
     log: 'halted at combatden/uat@d41c907 · waiting 3h 12m · nothing deployed',
-  },
-  {
-    name: 'Hot Pilates 24',
-    branch: 'design/hotpilates',
-    run: 'HotPilates',
-    since: 'started 22 Jul',
-    status: 'help',
-    state: 'A screenshot check failed twice',
-    note:
-      'The productionalized build does not match the design it was built ' +
-      'from on the booking sheet. It retried once, then stopped rather than ' +
-      'ship a difference it could not account for.',
-    log: 'halted after 2 attempts · waiting 51m · nothing deployed',
-  },
-  {
-    name: 'Duck Dancer',
-    branch: 'design/duckdancer',
-    run: 'DuckDancer',
-    since: 'started 30 Jul',
-    status: 'help',
-    state: 'Contrast fell below AA on two surfaces',
-    note:
-      'The operator pinned both brand colours by hand, and the pair cannot ' +
-      'meet AA together. One of them has to move, and which one is theirs ' +
-      'to choose.',
-    log: 'halted before deploy · waiting 22m · nothing deployed',
   },
 ]);
 
