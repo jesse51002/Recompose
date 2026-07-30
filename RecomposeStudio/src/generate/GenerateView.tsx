@@ -140,6 +140,17 @@ export function GenerateView({ sessionId, onDone }: GenerateViewProps) {
     const tick = (): void => {
       if (stopped) return;
       void selectDesign(themeId).then((ok) => {
+        // The one instrument on this loop, and it is here because the loop is
+        // the only thing making the canvas repaint mid-run: if the phone looks
+        // frozen, this line says whether the fetch is not happening, not
+        // landing, or landing on a theme that has not grown. `selectDesign`
+        // swallows every failure by design (it must never break a live view),
+        // so without this a 404, a 422 against a partial, and a successful
+        // no-op all look identical from out here.
+        console.debug(
+          `[studio] theme refresh ${themeId}: ${ok ? 'adopted' : 'not yet'}`,
+          { assetsRunning },
+        );
         if (stopped) return;
         // Once the run is done the theme is final, so one successful fetch
         // after it settles is the last one needed.

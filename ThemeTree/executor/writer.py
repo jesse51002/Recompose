@@ -179,8 +179,10 @@ class Writer:
     def write_partial(self, result: PipelineResult, run_ctx: RunContext) -> None:
         """Write ``output.yaml`` for a run that is still going.
 
-        Called once per settled level by a watcher passed to
-        ``Pipeline.run(on_partial=...)``. It exists so a live preview can
+        Called once per settled NODE by a watcher passed to
+        ``Pipeline.run(on_partial=...)`` — per node rather than per level
+        because every image slot is a sibling of every other, so a
+        level-grained write landed the whole gallery in one go at the end. It exists so a live preview can
         REPAINT while the run is in flight: images have their own files and
         can be shown the moment a node reports them, but colour, typography
         and copy exist nowhere except this file, so without it a watcher shows

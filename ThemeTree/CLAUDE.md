@@ -238,7 +238,23 @@ Two rules hold the design together:
 
 `Pipeline.run()` also takes an optional
 `on_partial: Callable[[PipelineResult], Awaitable[None]] | None`, called once
-after **each level settles** with the run assembled so far.
+after **each NODE settles** with the run assembled so far.
+
+**Per node, not per level, and the distinction is the whole feature.** Every
+image slot is a sibling of every other, so they are all one level — a
+level-grained partial therefore wrote nothing at all for the entire image
+phase and then landed the whole gallery in a single write at the end, which is
+indistinguishable from not being live and is exactly how it looked. The
+executor uses `as_completed` rather than `gather` to get that grain. A node
+enters `resolved` only once it has RETURNED, so what is handed out is always a
+coherent set of finished nodes, never a half-written one; a node that FAILED
+emits nothing, because it changed nothing anybody could look at.
+
+The cost of the finer grain is real and accepted: `Writer.write_partial`
+re-stamps every produced asset's `sha256` on each call, so a 23-node run hashes
+its images O(n²) times over a few minutes. It is off-loop and small against the
+run's own spend, but it is the first thing to look at if a partial write ever
+shows up as a bottleneck.
 
 The two seams answer different questions and neither replaces the other. The
 sink says what is *happening* — a level started, a node took 4.2 s, this one
@@ -247,10 +263,15 @@ their own files and are servable the moment a node reports them, while colour,
 typography and copy exist nowhere except `output.yaml` — so a watcher given
 events alone shows generated imagery over an unthemed shell for the whole run.
 
-- `Writer.write_partial()` is what a caller passes it to. **`output.yaml` only**
-  — no provenance, no asset upload, and above all no ledger entry, because
-  `expansion_cost.yaml` appends and one entry per level would record a dozen
-  phantom passes for a single run.
+- `Writer.write_partial()` is what a caller passes it to. **`output.yaml` plus
+  the two provenance files**, and nothing else — no asset upload (a partial is
+  not a publish), and above all no ledger entry, because
+  `expansion_cost.yaml` appends and one entry per node would record two dozen
+  phantom passes for a single run. The provenance is deliberate rather than an
+  oversight: the final write may never happen, and a run killed mid-flight then
+  left a directory the read API lists as a design with no frozen manifest —
+  listed, apparently finished, and impossible for `expand` / `regen` to
+  reopen.
 - That write is **atomic** (`Writer._dump_model_atomic`: temp file in the same
   directory plus `os.replace`). The plain dump truncates and then fills, which
   is harmless when nobody is watching and a fragment when the read API and a

@@ -21,9 +21,12 @@ run behaves exactly as it always has.
 There are **two** observation seams, and they answer different questions. The
 sink says what is HAPPENING — a level started, a node took 4.2 s, this one
 failed. ``on_partial`` says what has been MADE: the assembled ``Output`` so
-far, handed out after each level settles, for a caller that wants to write it
-and let a live preview repaint mid-run. Both are optional and independent; the
-CLI passes neither.
+far, handed out after every NODE settles, for a caller that wants to write it
+and let a live preview repaint mid-run. Per node rather than per level because
+every image in the DAG is a sibling of every other — one level — so a
+level-grained partial made all eighteen pictures appear at once at the end,
+which is indistinguishable from not being live. Both seams are optional and
+independent; the CLI passes neither.
 """
 
 from __future__ import annotations
@@ -413,9 +416,12 @@ class Pipeline:
         LOOK like so far? Colour, typography and copy have no per-node file to
         fetch — they exist only in the assembled ``Output`` — so a watcher
         given events alone can show images arriving over a dead grey shell.
-        Given a callback, this hands out the run so far after every level
+        Given a callback, this hands out the run so far after every NODE
         settles, and a caller that writes it lets the theme runtime repaint
-        mid-run. The CLI passes none and nothing is assembled between levels.
+        mid-run. Per node, not per level: every image is a sibling of every
+        other, so they are all one level, and a level-grained partial made the
+        whole gallery appear at once at the very end — the same thing as not
+        being live. The CLI passes none and nothing is assembled between nodes.
         """
         # A full (unseeded) run pointed at an existing run dir is an in-place
         # re-run: clear its produced artifacts first so it's a clean overwrite.
@@ -501,9 +507,28 @@ class Pipeline:
             logger.debug(
                 "running level: %s", [node.key for node in batch]
             )
-            results = await asyncio.gather(
-                *(
-                    self._run_capped(
+            # ONE PARTIAL PER NODE, NOT PER LEVEL — the difference between
+            # watching a design arrive and watching nothing happen for four
+            # minutes. Every image in the DAG is a sibling of every other, so
+            # they are all one level: emitting when the level settled meant the
+            # eighteen pictures appeared simultaneously at the end, which is
+            # the same thing as not being live at all.
+            #
+            # The old comment here said handing out mid-level would race the
+            # gather, and it was right about the gather — a node still running
+            # has no entry to hand out. It is wrong about the snapshot: a node
+            # is inserted into `resolved` only once it has RETURNED, so what is
+            # emitted is always a coherent set of finished nodes and never a
+            # half-written one. `as_completed` is what makes that available a
+            # node at a time instead of a level at a time.
+            #
+            # The node is carried back alongside its result rather than
+            # recovered by position, because completion order is not batch
+            # order and the failure handling below needs to know whose failure
+            # it is.
+            async def _one(node: Node) -> tuple[Node, BaseModel | Exception]:
+                try:
+                    return node, await self._run_capped(
                         node,
                         sem,
                         level=index,
@@ -512,11 +537,12 @@ class Pipeline:
                         ),
                         progress=progress,
                     )
-                    for node in batch
-                ),
-                return_exceptions=True,
-            )
-            for node, result in zip(batch, results):
+                except Exception as exc:  # noqa: BLE001 - handled below
+                    return node, exc
+
+            tasks = [asyncio.create_task(_one(node)) for node in batch]
+            for settled in asyncio.as_completed(tasks):
+                node, result = await settled
                 if isinstance(result, Exception):
                     # One bad node must not lose finished work. Skip only the
                     # dependents that would actually REGENERATE (they need the
@@ -536,21 +562,18 @@ class Pipeline:
                 else:
                     resolved[node.key] = result
                     generated |= node.regenerated
-
-            # The level is settled, so what resolved is a coherent snapshot:
-            # every node here either finished or was skipped, and none is
-            # half-written. Handing it out mid-level instead would race the
-            # gather above.
-            await self._emit_partial(
-                on_partial,
-                run_ctx,
-                resolved,
-                generated,
-                llm=llm,
-                image_gen=image_gen,
-                bg_remover=bg_remover,
-                icon_gen=icon_gen,
-            )
+                    # Every finished node, immediately. A failed one changes
+                    # nothing anybody could look at, so it does not emit.
+                    await self._emit_partial(
+                        on_partial,
+                        run_ctx,
+                        resolved,
+                        generated,
+                        llm=llm,
+                        image_gen=image_gen,
+                        bg_remover=bg_remover,
+                        icon_gen=icon_gen,
+                    )
 
         output = self._assemble(run_ctx, resolved)
         result = PipelineResult(
