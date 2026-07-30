@@ -147,6 +147,52 @@ would have stopped it.
   agent was allowed to resolve, and they are disproportionately cross-cutting.
 - **Promoted?** Not yet.
 
+## FM-8 — equal WIDTHS hide unequal HEIGHTS in a row of peers
+
+- **Hit by:** 2 of 5 apps shipped it. A third had already hit it, fixed it, and
+  named the symptom in its own stylesheet — where nobody looked. Found by
+  eye in the browser, not by any gate.
+- **What happens:** a row of sibling cells that read as ONE SET — stat tiles,
+  chips, metric cells, summary boxes — is given equal WIDTHS (`flex: 1 1 0`
+  plus `min-width: 0`) and content-sized HEIGHTS (`align-items: flex-start`,
+  which is also what a Flutter `crossAxisAlignment: start` ports to). The moment
+  one cell's caption wraps to a second line, that cell grows and its siblings do
+  not. Where each cell draws a border, a fill or a rule, the row goes visibly
+  ragged; where the cells carry dividers, the dividers stop short of each other.
+- **Why it is easy to miss, and why every gate passes:** the widths ARE equal,
+  so the row looks like the sizing job was done. The delta is small — 15px on a
+  390pt screen, then scaled down into a phone frame — and reads as a spacing
+  quirk rather than a defect. And it only appears for the ONE caption long
+  enough to wrap, so a screen reviewed against short demo strings never shows
+  it. Typecheck, lint, the suite, the token sweep and the inventory check are
+  all blind to it: nothing is missing, nothing is extra, no token is invented.
+- **The rule:** **siblings that read as one set must be one size on the axis
+  they share.** `align-items: stretch` on the row. **If the visible box — the
+  border, the fill, the radius — is on a CHILD of the flex item rather than on
+  the flex item itself, stretching the cell is not enough:** the child must fill
+  the cell it was handed, with `height: 100%` **and** `box-sizing: border-box`
+  (no global reset here — see FM-3, or the padding and border are added on top
+  of the cell and overflow it). The box a reader sees is the one that has to be
+  equal, and it is not always the flex item.
+- **Keep the content TOP-aligned, do not centre it.** Centring in the taller box
+  misaligns the icons and the figures across the row, which trades one raggedness
+  for another. Top-aligned, the icons, the figures and the first line of every
+  caption still line up; only the empty space under a short caption grows.
+- **Same failure on any shared axis** — a column of peers whose widths differ, a
+  grid row whose cells size to content. Nothing about it is specific to height.
+- **"The port is faithful" is how it survives review.** The origin app can carry
+  the same defect for the same reason, so matching it looks like correctness.
+  Fidelity is not the bar here; if you diverge, record the divergence in the
+  stylesheet or the next agent restores it.
+- **The check — measure, do not eyeball.** Read `getBoundingClientRect().height`
+  for every cell AND for the bordered box inside it, and assert ONE distinct
+  value across the row. A screenshot at phone scale will not reliably show a
+  15px delta, which is exactly why this shipped twice.
+- **Promoted?** Not yet. Belongs in `mockup-redesign-general` as its own
+  guardrail — nothing there covers it. Guardrail 13 is about the GAPS between
+  things and Guardrail 15 about DISTRIBUTION along the row; neither says that
+  peers must be one SIZE.
+
 ---
 
 ## Things that did NOT go wrong, worth knowing
