@@ -42,11 +42,20 @@ import { phaseClass, SHELL_CLASS } from './phaseClass';
 import styles from './GenerateView.module.css';
 
 /**
- * How often to re-try loading a run's design while it does not exist yet. The
- * first partial write lands within the first level, so this is seconds of
- * polling, not minutes.
+ * How often the canvas re-reads the theme WHILE THE RUN IS GOING.
+ *
+ * Not a retry interval — a refresh interval. `output.yaml` is rewritten after
+ * every level of the DAG, so the design in the catalogue keeps growing for the
+ * whole run: a palette, then type, then copy, then eighteen images arriving one
+ * at a time. `selectDesign` fetches once and caches, and nothing in the runtime
+ * re-fetches on its own, so this loop is the only thing that makes the phone
+ * repaint mid-run at all. Stopping at the first success — which is what it used
+ * to do — froze the canvas on whichever level happened to have landed first.
+ *
+ * Two seconds against a loopback read of one YAML file, for the few minutes a
+ * run lasts. It stops the moment the run settles.
  */
-const RETRY_MS = 2000;
+const REFRESH_MS = 2000;
 
 /** Which pane the canvas is showing. */
 type Pane = 'mockup' | 'inspect' | 'brief';
@@ -67,13 +76,17 @@ export function GenerateView({ sessionId, onDone }: GenerateViewProps) {
   const { records } = useSessionStream(sessionId);
 
   // The pane a person picked, and which proposal they picked it against.
-  const [picked, setPicked] = useState<{ at: number; pane: Pane } | null>(null);
+  const [picked, setPicked] = useState<{ at: string; pane: Pane } | null>(null);
   const [library, setLibrary] = useState(false);
   const [mockups, setMockups] = useState(false);
   // The MOCKUP axis, independent of the theme. It follows a layout generation
   // when one appears, because that is the thing the agent just made — but a
   // person can switch away and the generation stays put.
   const [appId, setAppId] = useState(MOCK_APPS[0]!.id);
+  // WHICH FLOW of that app. An app is more than one — the app itself and the
+  // post-class celebration — and the canvas only ever drew the first. Null
+  // means "its first", so switching app does not carry a flow id across.
+  const [assetId, setAssetId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -87,36 +100,46 @@ export function GenerateView({ sessionId, onDone }: GenerateViewProps) {
   const app =
     findMockApp(appId) ?? findMockApp(view.designId) ?? MOCK_APPS[0]!;
 
-  // WHEN A RUN STARTS, LOAD WHAT IT IS MAKING — and keep trying until it takes.
+  // WHEN A RUN STARTS, LOAD WHAT IT IS MAKING — and keep re-loading it until
+  // the run is over.
   //
-  // Two things fought this. The design is not in the catalogue until the first
-  // partial `output.yaml` lands, so the call right after launch resolves false;
-  // and a theme picked by hand is STICKY (the store persists the selection and
-  // prefers it on boot), so without an explicit override the run would generate
-  // into a design nobody was looking at. The generated theme wins.
+  // Three things fought this. The design is not in the catalogue until the
+  // first partial `output.yaml` lands, so the call right after launch resolves
+  // false; a theme picked by hand is STICKY (the store persists the selection
+  // and prefers it on boot), so without an explicit override the run would
+  // generate into a design nobody was looking at; and `selectDesign` fetches
+  // exactly once, with nothing in the runtime re-fetching after it.
   //
-  // It polls rather than firing once, because "the run has started" and "the
-  // design exists" are seconds apart and nothing announces the second. It stops
-  // on the first success, so a person can switch away afterwards and stay
-  // switched — the override is for the moment the run begins, not a lock.
+  // That last one is why this loop does not stop at the first success. The
+  // design GROWS for the whole run — a palette, then type, then copy, then the
+  // images one at a time — so a single successful fetch pinned the canvas to
+  // whatever had landed in the first few seconds and left it there. It now
+  // refreshes until the run settles, which is what makes the phone repaint
+  // live rather than only on reload.
   const themeId = view.themeId;
+  const assetsRunning = view.assetsRunning;
   useEffect(() => {
     if (themeId === null) return;
     let stopped = false;
+    // Serialised rather than an interval: a slow fetch must not stack up
+    // another behind it, and each tick is scheduled only after the last lands.
     let timer: number | undefined;
-    const attempt = (): void => {
+    const tick = (): void => {
       if (stopped) return;
       void selectDesign(themeId).then((ok) => {
-        if (stopped || ok) return;
-        timer = window.setTimeout(attempt, RETRY_MS);
+        if (stopped) return;
+        // Once the run is done the theme is final, so one successful fetch
+        // after it settles is the last one needed.
+        if (ok && !assetsRunning) return;
+        timer = window.setTimeout(tick, REFRESH_MS);
       });
     };
-    attempt();
+    tick();
     return () => {
       stopped = true;
       if (timer !== undefined) window.clearTimeout(timer);
     };
-  }, [themeId]);
+  }, [themeId, assetsRunning]);
 
   // A PROPOSAL OPENS ITSELF. The agent writes a document — five fields of
   // prose for the brand half — and the transcript card is only a notice that
@@ -131,17 +154,28 @@ export function GenerateView({ sessionId, onDone }: GenerateViewProps) {
   // chosen against, so a new proposal invalidates the pick and opens itself,
   // while switching to the Mockup mid-proposal is not yanked back on the very
   // next record.
+  // AND THE RUN STARTING OPENS THE MOCKUP, for the same reason in reverse.
+  // Accepting a brief pins the brief — it is the thing just approved and the
+  // right thing to read while the run spins up — but the moment the theme
+  // exists, the interesting surface is the phone repainting into it. Leaving
+  // the reviewer on a static document while the one live thing on the page
+  // happens behind a tab is the whole demo missed.
+  //
+  // Both are DERIVED, not pushed from an effect (`set-state-in-effect` is an
+  // error in this package). What is stored is the pane a PERSON chose and the
+  // MILESTONE it was chosen against, so each new milestone re-opens its own
+  // pane while a mid-milestone switch is not yanked back on the next record.
   const proposalCount = view.entries.filter(
     (entry) => entry.kind === 'brief',
   ).length;
+  const milestone =
+    themeId !== null ? `theme:${themeId}` : `brief:${String(proposalCount)}`;
+  const autoPane: Pane =
+    themeId !== null ? 'mockup' : proposalCount > 0 ? 'brief' : 'mockup';
   const pane: Pane =
-    picked !== null && picked.at === proposalCount
-      ? picked.pane
-      : proposalCount > 0
-        ? 'brief'
-        : 'mockup';
+    picked !== null && picked.at === milestone ? picked.pane : autoPane;
   const setPane = (next: Pane): void => {
-    setPicked({ at: proposalCount, pane: next });
+    setPicked({ at: milestone, pane: next });
   };
 
   /** Every write shares one guard: one in flight, and failures are shown. */
@@ -189,6 +223,15 @@ export function GenerateView({ sessionId, onDone }: GenerateViewProps) {
             onSay={(message) => act(() => takeTurn(sessionId, message))}
             onAccept={accept}
             onOpenProposal={() => setPane('brief')}
+            onStartLayout={() =>
+              act(async () => void (await startLayout(sessionId)))
+            }
+            onStopLayout={() =>
+              act(async () => {
+                const stopped = await stopLayout(sessionId);
+                if (stopped === 0) setError('Nothing was running.');
+              })
+            }
             busy={busy}
           />
         </aside>
@@ -205,48 +248,10 @@ export function GenerateView({ sessionId, onDone }: GenerateViewProps) {
             <span className={styles.push} />
             <SpendMeter view={view} />
             <RunMeter runId={view.runId} />
-            {/* STOPPING THE LAYOUT AGENT, and only while one is running.
-                It is the most expensive thing this page can start — a coding
-                agent that runs for a long time and bills the whole time — and
-                closing the tab does not stop it. A permanent button would
-                offer to stop something that mostly is not running; this
-                appears exactly when there is something to stop. */}
-            {/* STARTING IT BY HAND. The agent starts itself when the assets
-                settle, so this is not the normal path — it is what makes Stop
-                reversible, and what recovers a start that failed. It appears
-                only once there is a finished run to design against, because
-                before that there is nothing for an agent to look at. */}
-            {!view.layoutRunning && view.themeId !== null && (
-              <button
-                type="button"
-                className={styles.start}
-                disabled={busy}
-                title={
-                  view.designId === null
-                    ? 'Redesign the screens for this theme.'
-                    : 'Run the layout agent again on this design, continuing what is already there.'
-                }
-                onClick={() => act(async () => void (await startLayout(sessionId)))}
-              >
-                {view.designId === null ? 'Start the agent' : 'Run the agent again'}
-              </button>
-            )}
-            {view.layoutRunning && (
-              <button
-                type="button"
-                className={styles.stop}
-                disabled={busy}
-                title="Kill the layout agent. The screens keep whatever it has already written."
-                onClick={() =>
-                  act(async () => {
-                    const stopped = await stopLayout(sessionId);
-                    if (stopped === 0) setError('Nothing was running.');
-                  })
-                }
-              >
-                Stop the agent
-              </button>
-            )}
+            {/* The layout agent's Start and Stop USED TO SIT HERE and now live
+                in the transcript column (`SessionChat`). This row is about
+                what you are looking at — panes, chips, readouts — and the most
+                expensive button on the page read as chrome inside it. */}
             <button
               type="button"
               className={styles.approve}
@@ -260,7 +265,14 @@ export function GenerateView({ sessionId, onDone }: GenerateViewProps) {
           {error !== null && <div className={styles.error}>{error}</div>}
 
           <div className={styles.stage}>
-            {pane === 'mockup' && <GenerateCanvas view={view} app={app} />}
+            {pane === 'mockup' && (
+              <GenerateCanvas
+                view={view}
+                app={app}
+                assetId={assetId ?? app.assets[0]!.id}
+                onPickAsset={setAssetId}
+              />
+            )}
             {/* The artifact sheet — every slot the run produced, filling in as
                 the partial output.yaml grows. This IS the Inspect view; it is
                 not a separate destination any more. */}
@@ -278,7 +290,10 @@ export function GenerateView({ sessionId, onDone }: GenerateViewProps) {
       {mockups && (
         <MockupPopup
           activeId={app.id}
-          onPick={setAppId}
+          onPick={(id) => {
+            setAppId(id);
+            setAssetId(null);
+          }}
           onClose={() => setMockups(false)}
         />
       )}

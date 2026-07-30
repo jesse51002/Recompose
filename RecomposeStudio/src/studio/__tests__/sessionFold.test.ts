@@ -61,13 +61,54 @@ describe('foldSession', () => {
     // The name comes from the brief, not from a form in front of the page.
     expect(open.designName).toBe(BRIEF.design_direction.name);
 
+    // TALKING BACK DOES NOT ACCEPT IT. This is the regression that shipped:
+    // a proposal stops being the OPEN one as soon as the owner says anything
+    // — that is how a question knows it was answered — and the fold read
+    // "no longer open" as "accepted". So typing a note marked the brief
+    // accepted and took its Accept button away, and the run then started off
+    // a brief nobody had approved.
+    reset();
+    const talkedBack = foldSession([
+      OPENED(),
+      rec({ kind: 'proposed', brief: BRIEF }),
+      SAID('you', 'Can you make it warmer?'),
+    ]);
+    expect(talkedBack.proposal).toEqual(BRIEF);
+    expect(talkedBack.entries.find((e) => e.kind === 'brief')).toMatchObject({
+      accepted: false,
+      awaiting: true,
+    });
+
+    // Only the record written when the button is pressed accepts it.
     reset();
     const accepted = foldSession([
       OPENED(),
       rec({ kind: 'proposed', brief: BRIEF }),
+      rec({ kind: 'accepted' }),
       SAID('you', 'Accepted the brand brief.'),
     ]);
     expect(accepted.proposal).toBeNull();
+    expect(accepted.entries.find((e) => e.kind === 'brief')).toMatchObject({
+      accepted: true,
+    });
+  });
+
+  it('offers Accept on the newest brief only', () => {
+    // A brief the agent replaced is neither accepted nor waiting on anything.
+    // Two live Accept buttons would mean two answers and the second would
+    // silently overwrite the first — the same failure the ask rule prevents.
+    reset();
+    const second = { ...BRIEF, design_direction: { ...BRIEF.design_direction, name: 'Second' } };
+    const view = foldSession([
+      OPENED(),
+      rec({ kind: 'proposed', brief: BRIEF }),
+      SAID('you', 'Try again'),
+      rec({ kind: 'proposed', brief: second }),
+    ]);
+    const briefs = view.entries.filter((e) => e.kind === 'brief');
+    expect(briefs).toHaveLength(2);
+    expect(briefs.filter((b) => b.kind === 'brief' && b.awaiting)).toHaveLength(1);
+    expect(view.proposal).toEqual(second);
   });
 
   it('never leaves a question and a proposal both awaiting an answer', () => {

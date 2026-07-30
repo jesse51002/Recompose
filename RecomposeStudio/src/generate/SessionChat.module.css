@@ -236,6 +236,15 @@
   color: var(--st-bad);
 }
 
+/* Stopping the layout agent. Not destructive to the work — the folder keeps
+   whatever was written — but it does end something expensive and irreversible,
+   so it is not a plain button. */
+.danger {
+  border-color: var(--st-bad-l);
+  background: var(--st-bad-w);
+  color: var(--st-bad);
+}
+
 /* ── The composer ──────────────────────────────────────────────────────── */
 .composer {
   flex: none;

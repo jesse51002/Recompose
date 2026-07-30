@@ -27,6 +27,10 @@ interface SessionChatProps {
   readonly onAccept: () => void;
   /** Open the proposal in the centre pane's brief tab. */
   readonly onOpenProposal: () => void;
+  /** Run the layout agent on the settled theme, or continue its folder. */
+  readonly onStartLayout: () => void;
+  /** Kill the running layout agent. */
+  readonly onStopLayout: () => void;
   readonly busy: boolean;
 }
 
@@ -35,6 +39,8 @@ export function SessionChat({
   onSay,
   onAccept,
   onOpenProposal,
+  onStartLayout,
+  onStopLayout,
   busy,
 }: SessionChatProps) {
   const [draft, setDraft] = useState('');
@@ -68,6 +74,72 @@ export function SessionChat({
             busy={busy}
           />
         ))}
+        {/* THE LAYOUT AGENT LIVES WITH THE CONVERSATION, not in the canvas
+            bar, and it is a CARD IN THE FLOW rather than a strip pinned above
+            the composer. Starting and stopping the agent is a decision about
+            the design, the same kind of act as accepting a brief, and every
+            other such decision arrives here as something the agent said with a
+            button under it. A pinned strip was neither a message nor chrome
+            and read as both.
+
+            It sits after the entries because it is always about the state
+            right now — one card that changes, not one per start.
+
+            Stop and Start share the card and only one is ever shown. Stop is
+            gated on a running agent, because an offer to stop something that
+            is not running is worse than no offer. Start appears only once a
+            theme exists, since before that there is nothing to design against,
+            and it reads "again" once a folder is there — starting continues
+            that folder rather than discarding it. */}
+        {!view.settled && (view.layoutRunning || view.themeId !== null) && (
+          <div className={styles.msg}>
+            <div className={styles.who}>Recompose</div>
+            <div className={styles.card}>
+              <h4>
+                Layout agent
+                <span className={styles.cardState}>
+                  {view.layoutRunning ? 'working' : 'idle'}
+                </span>
+              </h4>
+              <p className={styles.cardDesc}>
+                {view.layoutRunning
+                  ? 'It is rewriting the screens for this theme. Closing this tab will not stop it.'
+                  : view.designId === null
+                    ? 'The theme is ready. An agent can now redesign the screens against it.'
+                    : 'It is not running. Starting it again continues the design folder it already wrote.'}
+              </p>
+              <div className={styles.actions}>
+                {view.layoutRunning ? (
+                  <button
+                    type="button"
+                    className={cx(styles.btn, styles.danger)}
+                    disabled={busy}
+                    title="Kill the layout agent. The screens keep whatever it has already written."
+                    onClick={onStopLayout}
+                  >
+                    Stop the agent
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className={cx(styles.btn, styles.primary)}
+                    disabled={busy}
+                    title={
+                      view.designId === null
+                        ? 'Redesign the screens for this theme.'
+                        : 'Run the layout agent again on this design, continuing what is already there.'
+                    }
+                    onClick={onStartLayout}
+                  >
+                    {view.designId === null
+                      ? 'Start the agent'
+                      : 'Run the agent again'}
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
         <div ref={endRef} />
       </div>
 
@@ -165,8 +237,15 @@ function EntryView({ entry, onPick, onAccept, onOpen, busy }: EntryViewProps) {
           <div className={styles.card}>
             <h4>
               Brand brief
+              {/* Three states, not two. A brief the agent replaced is
+                  neither accepted nor waiting on anything, and calling it
+                  "ready" would offer a decision that has moved on. */}
               <span className={styles.cardState}>
-                {entry.accepted ? 'accepted' : 'ready'}
+                {entry.accepted
+                  ? 'accepted'
+                  : entry.awaiting
+                    ? 'ready'
+                    : 'superseded'}
               </span>
             </h4>
             <p className={styles.cardName}>
@@ -175,7 +254,13 @@ function EntryView({ entry, onPick, onAccept, onOpen, busy }: EntryViewProps) {
             <p className={styles.cardDesc}>
               {entry.brief.design_direction.short_desc}
             </p>
-            {!entry.accepted && (
+            {/* ACCEPT IS SHOWN ONLY ON THE BRIEF THAT IS ACTUALLY WAITING.
+                It used to be shown on any unaccepted brief, and separately
+                any brief that stopped being the open one was MARKED accepted
+                — so typing a note after a proposal both took its button away
+                and told you it had been accepted, neither of which had
+                happened. Nothing accepts a brief now except pressing this. */}
+            {entry.awaiting && (
               <div className={styles.actions}>
                 {/* Accept is primary because the brief opens in the centre
                     pane on its own — the person has already seen it, so the

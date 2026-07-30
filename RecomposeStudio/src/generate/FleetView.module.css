@@ -74,6 +74,67 @@
 .ok b { color: var(--st-ok); }
 .you b { color: var(--st-you); }
 
+/* ── The status filter ─────────────────────────────────────────────────────
+   Lifecycle order, All first and selected by default. Each tab carries its
+   own count so the bar summarises as well as filters — which is what stops
+   it from being a second row of chrome under the four tiles. */
+
+.filters {
+  flex: none;
+  display: flex;
+  gap: 7px;
+  padding: 13px 26px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--sh-line);
+}
+
+.filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex: none;
+  padding: 6px 11px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-3);
+  font: 500 var(--fs-xs) / 1.5 var(--sans);
+  cursor: pointer;
+}
+
+.filter:hover { border-color: var(--sh-line-3); color: var(--ink-2); }
+
+.filter i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentcolor;
+}
+
+.filter em {
+  font: 400 var(--fs-micro) / 1 var(--mono);
+  font-style: normal;
+  color: var(--ink-4);
+}
+
+/* Selected reads as INK, not as the status hue. A tab tinted its own colour
+   and a tab selected would be the same signal twice, and the row of dots
+   already says which hue is which. */
+.filter.on {
+  border-color: var(--ink-2);
+  color: var(--ink);
+  background: var(--sh-panel);
+}
+
+.filter.on em { color: var(--ink-3); }
+
+/* The dot alone carries the hue, on every tab, selected or not. */
+.filter.run i { color: var(--st-run); }
+.filter.ok i { color: var(--st-ok); }
+.filter.you i { color: var(--st-you); }
+.filter.merge i { color: var(--st-merge); }
+.filter.ship i { color: var(--st-ship); }
+
 .cards {
   flex: 1;
   min-height: 0;
@@ -86,8 +147,8 @@
 
 .card {
   display: grid;
-  grid-template-columns: 220px minmax(0, 1fr) auto;
-  gap: 22px;
+  grid-template-columns: 56px 200px minmax(0, 1fr) auto;
+  gap: 20px;
   align-items: start;
   padding: 18px 20px;
   border: 1px solid var(--sh-line-2);
@@ -95,10 +156,28 @@
   background: var(--sh-panel);
 }
 
-/* A card an agent is working on right now has to be obviously alive. */
+/* The generated mark, and the only real thing on the page.
+   `contain` rather than `cover`: a logo cropped to fill a square is a logo
+   damaged, and these are the artifacts being shown off. A checked-transparent
+   mark needs a ground to sit on, so it gets a faint plate of its own — the
+   same reason inspect/AssetPlates.tsx exists. */
+.logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  object-fit: contain;
+  padding: 6px;
+  background: var(--sh-ground);
+  border: 1px solid var(--sh-line);
+}
+
+/* A card an agent is working on right now has to be obviously alive.
+   The LIFT is shared across all three busy statuses and the hue is left to
+   the tag, because three washes would put three near-identical tints on one
+   scroll and cost the page the scannability the lift is buying. */
 .live {
-  border-color: var(--st-run-l);
-  background: linear-gradient(var(--st-run-w), var(--st-run-w)), var(--sh-panel);
+  border-color: var(--sh-line-3);
+  box-shadow: 0 0 0 1px var(--sh-line-2), 0 6px 18px oklch(0 0 0 / 0.22);
 }
 
 .who b {
@@ -148,11 +227,17 @@
 }
 
 .tag.run { color: var(--st-run); border-color: var(--st-run-l); background: var(--st-run-w); }
-/* The same ring as the onboarding agent, meaning the same thing: this one is
-   working right now. A card that is merely in sync does not move. */
-.tag.run i { animation: var(--kf-pulse) 1.5s ease-in-out infinite; }
-.tag.ok { color: var(--st-ok); border-color: oklch(0.8 0.092 165 / 0.4); background: var(--st-ok-w); }
+.tag.merge { color: var(--st-merge); border-color: var(--st-merge-l); background: var(--st-merge-w); }
+.tag.ship { color: var(--st-ship); border-color: var(--st-ship-l); background: var(--st-ship-w); }
+.tag.ok { color: var(--st-ok); border-color: var(--st-ok-l); background: var(--st-ok-w); }
 .tag.you { color: var(--st-you); border-color: var(--st-you-l); background: var(--st-you-w); }
+
+/* The same ring as the onboarding agent, meaning the same thing: this one is
+   working right now. The three busy statuses pulse; in sync and needs-you do
+   not, because neither is moving — one is finished and the other is stuck. */
+.tag.run i,
+.tag.merge i,
+.tag.ship i { animation: var(--kf-pulse) 1.5s ease-in-out infinite; }
 
 .state > b {
   display: block;
@@ -193,6 +278,18 @@
 }
 
 .btn:hover { border-color: var(--sh-line-3); }
+
+/* The one action on the row that is not a read. Ink rather than a status hue:
+   in this shell a hue means a STATE, and a button is not a state. Ported from
+   `.btn.pri` in design/studio-demo.html, which the first port dropped. */
+.pri {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--sh-ground);
+  font-weight: 600;
+}
+
+.pri:hover { border-color: var(--ink); opacity: 0.88; }
 
 .foot {
   flex: none;

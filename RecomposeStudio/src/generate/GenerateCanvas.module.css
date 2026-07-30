@@ -11,6 +11,36 @@
   padding: 20px 20px 16px;
 }
 
+/* The flow switch. Deliberately the same segmented vocabulary as the pane
+   switch in the bar above: both answer "which of these am I looking at", and
+   giving one job two shapes is how a tool starts feeling arbitrary. */
+.flows {
+  flex: none;
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 7px;
+  background: var(--sh-raised);
+}
+
+.flows button {
+  padding: 5px 11px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--ink-3);
+  font: 500 var(--fs-xs) / 1.3 var(--sans);
+  cursor: pointer;
+}
+
+.flows button:hover { color: var(--ink); }
+
+.flowOn {
+  background: var(--sh-raised-2);
+  color: var(--ink) !important;
+}
+
 .stage {
   position: relative;
   width: 100%;

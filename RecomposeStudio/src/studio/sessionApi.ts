@@ -16,13 +16,14 @@ import { resolveStudioBaseUrl } from './studioConfig';
 import type { BriefInput } from './studioApi';
 import { StudioError } from './studioApi';
 
-/** `SessionRecordKind` — the seven line kinds a transcript can carry. */
+/** `SessionRecordKind` — the eight line kinds a transcript can carry. */
 export type SessionRecordKind =
   | 'opened'
   | 'phase'
   | 'said'
   | 'asked'
   | 'proposed'
+  | 'accepted'
   | 'task'
   | 'spent'
   | 'settled';

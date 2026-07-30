@@ -8,15 +8,22 @@ now has exactly one thing an owner decides.
 motion, a `LayoutProposal` to accept, and a `start_layout_agent` tool. All of it
 is gone: most owners have no layout direction to give, and the agent that does
 the work opens the generated images before deciding, which no interview out here
-can match. The layout starts itself when the assets settle (`run_settled`).
+can match.
+
+**Nor does the layout start itself.** For a while the asset run settling started
+it in code, on the reasoning that a finished run is its only precondition. That
+is true and it is still the wrong default: the layout agent is the most
+expensive thing this product launches, and a precondition being met is not the
+same as a person being ready. `start_layout` is now the only door, opened by a
+button in the conversation.
 
 **What the agent decides, and what it cannot.** It chooses *when* the asset run
 starts, and nothing else. It never decides *what happens*: the tool's body is
 the same deterministic launcher an HTTP client would hit, a brief is committed
 by ``BriefService`` before the agent is told, and the tool refuses outright when
 its precondition is unmet. A model cannot talk its way past a `ModelRetry` — it
-can only try again with a better turn. It cannot fail to start the layout
-either, because starting the layout is not something it is asked to do.
+can only try again with a better turn. It cannot start or forget to start the
+layout either, because starting the layout is not something it is asked to do.
 
 **Why per-session state exists here.** Pydantic AI needs its own message
 history, and a `SessionRecord` list is not that: the records are what a HUMAN
@@ -79,10 +86,12 @@ BRIEF_ACCEPTED = (
     "the asset run now.]"
 )
 RUN_SETTLED = (
-    "[The asset run finished. {summary} The layout agent has been started "
-    "automatically on the design folder {design_id}; it decides the "
-    "arrangement itself. Tell the owner the look is done and the screens "
-    "are being rearranged now. Do NOT ask them anything about layout.]"
+    "[The asset run finished. {summary} The look is done. The screens can now "
+    "be rearranged to suit it, but NOTHING HAS STARTED — the owner presses "
+    "Start the agent in the conversation when they are ready, and it decides "
+    "the arrangement itself from there. Tell them the look is done and that "
+    "the layout agent is theirs to start. Do NOT ask them anything about "
+    "layout, and do not imply anything is already running.]"
 )
 RUN_FAILED = "[The asset run failed: {error}. Tell the owner plainly.]"
 
@@ -243,9 +252,10 @@ class OrchestratorService:
         # THERE IS NO SECOND TOOL. Starting the layout used to be one, gated on
         # an accepted layout brief — so the model chose the moment, after an
         # interview about arrangement that most owners have no answer to. The
-        # asset run finishing is the only signal that was ever needed, and the
-        # service starts the layout on it directly (see `run_settled`). A model
-        # cannot forget to call something that is not a call.
+        # layout is now started by a person pressing a button, which reaches
+        # the service directly (`start_layout`). A model cannot forget to call
+        # something that is not a call, and cannot spend money nobody asked it
+        # to spend.
         return agent
 
     # --- the conversation -------------------------------------------------
@@ -278,6 +288,9 @@ class OrchestratorService:
         # moment one exists — nothing was typed before the conversation began.
         convo.design_name = brief.design_direction.name
         await self._sessions.named(session_id, convo.design_name)
+        # The durable fact, before the prose about it. Nothing else in the log
+        # can stand in for this — see `SessionRegistry.accepted`.
+        await self._sessions.accepted(session_id)
         await self._sessions.said(
             session_id, who="you", text="Accepted the brand brief."
         )
@@ -288,19 +301,18 @@ class OrchestratorService:
     async def run_settled(
         self, session_id: str, *, ok: bool, summary: str
     ) -> None:
-        """A background asset run ended: start the layout, then narrate both.
+        """A background asset run ended: narrate it. Start NOTHING.
 
-        **The layout starts here, in code, not because a model decided to.**
-        A finished asset run is the only precondition the layout ever had —
-        it is designed for those images, that palette and those typefaces —
-        so there is nothing left to judge and nothing to ask. The owner is
-        not consulted because most people have no layout direction to give,
-        and the agent that does the work has more to go on than either of
-        them: it opens the generated pictures.
+        **This used to start the layout agent automatically** and no longer
+        does. A finished asset run is the layout's only precondition, so
+        starting it here was defensible — but a precondition being met is not
+        the same as a person being ready, and the layout agent is the most
+        expensive thing this product launches. Spending a person's money on a
+        step they had not asked for, in the same second the thing they DID ask
+        for finished, is the wrong default however sound the trigger.
 
-        Order matters. The layout is started BEFORE the agent's turn so the
-        note can say it is already running; a turn that promised it first
-        would be a promise the code had not yet kept.
+        So the run settling now only says the look is done. `start_layout` is
+        the single door, and the button in the conversation is what opens it.
 
         A task finishing is not a human turn, so it reaches the model as a
         bracketed system note — the same convention `BRIEF_ACCEPTED` uses.
@@ -320,11 +332,7 @@ class OrchestratorService:
             await self._run_turn(session_id, RUN_FAILED.format(error=summary))
             return
 
-        design_id = await self._start_layout(session_id, convo)
-        await self._run_turn(
-            session_id,
-            RUN_SETTLED.format(summary=summary, design_id=design_id),
-        )
+        await self._run_turn(session_id, RUN_SETTLED.format(summary=summary))
 
     async def start_layout(self, session_id: str) -> str:
         """Launch the layout agent on this session's run. RAISES on failure.
@@ -347,29 +355,6 @@ class OrchestratorService:
             session_id, task="layout", state="started", design_id=design_id
         )
         return design_id
-
-    async def _start_layout(
-        self, session_id: str, convo: _Conversation
-    ) -> str:
-        """The AUTOMATIC start, when an asset run settles.
-
-        **Never raises**, which is the difference from `start_layout`. Nobody
-        pressed anything here: the assets are made and the theme is watchable,
-        so a layout that could not start is one half missing, not a dead
-        session. It is reported as a failed task — a visible red state in the
-        transcript, with a Start button beside it — and the conversation
-        carries on.
-        """
-        if convo.run_name is None:
-            return "(none)"
-        try:
-            return await self.start_layout(session_id)
-        except Exception as exc:
-            logger.exception("could not start the layout for %s", session_id)
-            await self._sessions.task(
-                session_id, task="layout", state="failed", error=str(exc)
-            )
-            return "(it could not be started)"
 
     def close(self, session_id: str) -> None:
         """Drop the conversation. The durable transcript is the JSONL."""

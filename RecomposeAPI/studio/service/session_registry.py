@@ -210,6 +210,17 @@ class SessionRegistry:
             session_id, kind=SessionRecordKind.PROPOSED, brief=brief
         )
 
+    async def accepted(self, session_id: str) -> None:
+        """The person pressed Accept on the open proposal.
+
+        **Its own record because acceptance cannot be inferred.** A proposal
+        stops being the OPEN one the moment the person says anything — that is
+        what closes a question too — so a transcript that read "not open any
+        more" as "accepted" marked a brief accepted the instant its owner
+        typed "make it darker", and took the Accept button away with it.
+        """
+        await self._record(session_id, kind=SessionRecordKind.ACCEPTED)
+
     async def task(
         self,
         session_id: str,

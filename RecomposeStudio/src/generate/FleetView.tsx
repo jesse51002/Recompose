@@ -7,14 +7,33 @@
 //
 // Cards, not a table. The state has to land at a glance from across a room,
 // and a card an agent is working on right now has to be obviously alive.
+//
+// **The mark is the row's identity.** Thirty rows of identical grey chrome is
+// a spreadsheet; thirty different logos, each one actually produced by the
+// pipeline, is the product's whole claim rendered as a list. So the logo comes
+// first in the row and everything else reads to the right of it.
+
+import { useState } from 'react';
 
 import { cx } from '../widgets/cx';
-import { FLEET, KPIS } from '../data/fleetFixtures';
+import {
+  FILTERS,
+  FLEET,
+  KPIS,
+  logoUrl,
+  statusMeta,
+  type FleetStatus,
+} from '../data/fleetFixtures';
 
 import { SHELL_CLASS } from './phaseClass';
 import styles from './FleetView.module.css';
 
 export function FleetView() {
+  // All, and it stays all until someone chooses otherwise. A fleet page that
+  // opened pre-filtered would hide the one number it exists to show.
+  const [filter, setFilter] = useState<FleetStatus | 'all'>('all');
+  const shown = filter === 'all' ? FLEET : FLEET.filter((a) => a.status === filter);
+
   return (
     <div className={cx(styles.page, SHELL_CLASS)}>
       <header className={styles.head}>
@@ -43,50 +62,87 @@ export function FleetView() {
         ))}
       </div>
 
-      <div className={styles.cards}>
-        {FLEET.map((app) => (
-          <article
-            key={app.repo}
-            className={cx(styles.card, app.live && styles.live)}
+      {/* Lifecycle order, left to right, so the bar reads as the pipeline a
+          design travels down rather than as a set of tags. */}
+      <nav className={styles.filters} aria-label="Filter by status">
+        {FILTERS.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            aria-pressed={filter === tab.id}
+            onClick={() => setFilter(tab.id)}
+            className={cx(
+              styles.filter,
+              filter === tab.id && styles.on,
+              tab.tone !== null && styles[tab.tone],
+            )}
           >
-            <div className={styles.who}>
-              <b>{app.name}</b>
-              <u>{app.repo}</u>
-              <span className={styles.since}>{app.since}</span>
-            </div>
-
-            <div className={styles.state}>
-              <span className={cx(styles.tag, styles[app.tone])}>
-                <i />
-                {app.tag}
-              </span>
-              <b>{app.state}</b>
-              <u>{app.note}</u>
-              <span className={styles.log}>{app.log}</span>
-            </div>
-
-            <div className={styles.acts}>
-              <button type="button" className={styles.btn}>
-                Talk to the agent
-              </button>
-              <button type="button" className={styles.btn}>
-                View repo
-              </button>
-            </div>
-          </article>
+            {tab.tone !== null && <i />}
+            {tab.label}
+            <em>{tab.n}</em>
+          </button>
         ))}
+      </nav>
+
+      <div className={styles.cards}>
+        {shown.map((app) => {
+          const meta = statusMeta(app.status);
+          return (
+            <article
+              key={app.repo}
+              className={cx(styles.card, meta.live && styles.live)}
+            >
+              {/* Decorative: the name sits beside it, so a mark that fails to
+                  load costs the row nothing. */}
+              <img className={styles.logo} src={logoUrl(app.run)} alt="" />
+
+              <div className={styles.who}>
+                <b>{app.name}</b>
+                <u>{app.repo}</u>
+                <span className={styles.since}>{app.since}</span>
+              </div>
+
+              <div className={styles.state}>
+                <span className={cx(styles.tag, styles[meta.tone])}>
+                  <i />
+                  {meta.label}
+                </span>
+                <b>{app.state}</b>
+                <u>{app.note}</u>
+                <span className={styles.log}>{app.log}</span>
+              </div>
+
+              <div className={styles.acts}>
+                <button type="button" className={cx(styles.btn, styles.pri)}>
+                  Talk to the agent
+                </button>
+                <button type="button" className={styles.btn}>
+                  View repo
+                </button>
+                <button type="button" className={styles.btn}>
+                  View design
+                </button>
+              </div>
+            </article>
+          );
+        })}
       </div>
 
       <footer className={styles.foot}>
-        <b>Two agents working, nothing waiting on you.</b> That is the shape the
-        product is for — when an agent is wrong it surfaces in <b>UAT</b> as a
-        queue rather than in production as an incident. None of this is a pull
-        request into a customer&rsquo;s repository; there is never one.
+        <b>
+          {FLEET.filter((a) => statusMeta(a.status).live).length} agents
+          working, {FLEET.filter((a) => a.status === 'help').length} waiting on
+          you.
+        </b>{' '}
+        That is the shape the product is for — when an agent is wrong it
+        surfaces in <b>UAT</b> as a queue rather than in production as an
+        incident. None of this is a pull request into a customer&rsquo;s
+        repository; there is never one.
       </footer>
 
       <p className={styles.synthetic}>
         Every customer, repository and figure on this page is invented. There
-        are no customers.
+        are no customers. Only the logos are real — the pipeline made each one.
       </p>
     </div>
   );

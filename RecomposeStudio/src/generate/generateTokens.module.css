@@ -39,14 +39,27 @@
   --st-ok: oklch(0.8 0.092 165);
   --st-you: oklch(0.8 0.118 79);
   --st-bad: oklch(0.72 0.175 26);
+  /* Two more machine-working hues, for the fleet's three busy statuses.
+     Merging, productionalizing and deploying all mean "an agent is working",
+     and they are still given separate hues rather than one shared busy colour
+     because WHICH stage a design is stuck in is the only question the fleet
+     page answers from across a room. Same lightness as the rest: 218 → 262 →
+     320 walks the machine end of the wheel without leaving it. */
+  --st-merge: oklch(0.8 0.115 262);
+  --st-ship: oklch(0.8 0.13 320);
 
   --st-run-w: oklch(0.8 0.126 218 / 0.13);
   --st-ok-w: oklch(0.8 0.092 165 / 0.12);
   --st-you-w: oklch(0.8 0.118 79 / 0.13);
   --st-bad-w: oklch(0.72 0.175 26 / 0.13);
+  --st-merge-w: oklch(0.8 0.115 262 / 0.13);
+  --st-ship-w: oklch(0.8 0.13 320 / 0.13);
   --st-run-l: oklch(0.8 0.126 218 / 0.4);
+  --st-ok-l: oklch(0.8 0.092 165 / 0.4);
   --st-you-l: oklch(0.8 0.118 79 / 0.4);
   --st-bad-l: oklch(0.72 0.175 26 / 0.42);
+  --st-merge-l: oklch(0.8 0.115 262 / 0.4);
+  --st-ship-l: oklch(0.8 0.13 320 / 0.4);
 
   /* PHASE hues, grouped by WHO IS WORKING rather than walked round the wheel.
      Violet = a person is authoring. Blue = a machine is working. Amber = a

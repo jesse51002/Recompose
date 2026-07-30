@@ -29,7 +29,19 @@ export type Entry =
        */
       readonly picked: string | null;
     }
-  | { readonly kind: 'brief'; readonly brief: BriefInput; readonly accepted: boolean }
+  | {
+      readonly kind: 'brief';
+      readonly brief: BriefInput;
+      /** Someone pressed Accept on it. Only an `accepted` record sets this. */
+      readonly accepted: boolean;
+      /**
+       * It is the one waiting on a decision right now.
+       *
+       * Separate from `!accepted`, because a brief the agent replaced with a
+       * newer one is also unaccepted and must not still offer its own Accept.
+       */
+      readonly awaiting: boolean;
+    }
   | { readonly kind: 'task'; readonly task: 'assets' | 'layout'; readonly state: string; readonly line: string | null; readonly error: string | null };
 
 export interface SessionView {
@@ -80,6 +92,16 @@ export interface SessionView {
    * something that is not running is worse than no offer at all.
    */
   readonly layoutRunning: boolean;
+  /**
+   * Whether the ASSET run is still going.
+   *
+   * The pair of `layoutRunning`, derived the same way and for the same kind of
+   * reason: the theme grows on disk for the whole run, so the canvas has to
+   * keep re-fetching it, and this is what says when to stop. Without it the
+   * page fetched the theme once — at whichever level happened to have landed
+   * first — and then showed that frozen partial for the rest of the run.
+   */
+  readonly assetsRunning: boolean;
   readonly settled: boolean;
 }
 
@@ -108,14 +130,16 @@ export function foldSession(records: readonly SessionRecord[]): SessionView {
   let themeId: string | null = null;
   let designName: string | null = null;
   let layoutRunning = false;
+  let assetsRunning = false;
   let agentCostUsd = 0;
   let assetsCostUsd = 0;
   let settled = false;
 
-  // Index of the still-open ask / proposal, or -1. At most one is ever set.
-  // Cleared by anything the owner says, because that IS the answer.
+  // Index of the still-open ask, or -1. Cleared by anything the owner says,
+  // because that IS the answer. A PROPOSAL has no equivalent: it stays
+  // acceptable until accepted or replaced, which is what `awaiting` below
+  // works out at the end.
   let openAsk = -1;
-  let openProposal = -1;
 
   for (const record of records) {
     switch (record.kind) {
@@ -130,13 +154,11 @@ export function foldSession(records: readonly SessionRecord[]): SessionView {
           entries.push({ kind: 'said', who: record.who, text: record.text });
           if (record.who === 'you') {
             openAsk = -1;
-            openProposal = -1;
           }
         }
         break;
       case 'asked':
         if (record.question) {
-          openProposal = -1;
           openAsk = entries.length;
           entries.push({
             kind: 'asked',
@@ -149,9 +171,31 @@ export function foldSession(records: readonly SessionRecord[]): SessionView {
       case 'proposed':
         if (record.brief) {
           openAsk = -1;
-          openProposal = entries.length;
           designName = record.brief.design_direction.name;
-          entries.push({ kind: 'brief', brief: record.brief, accepted: false });
+          entries.push({
+            kind: 'brief',
+            brief: record.brief,
+            accepted: false,
+            awaiting: false,
+          });
+        }
+        break;
+      case 'accepted':
+        // THE ONLY THING THAT ACCEPTS A BRIEF. It used to be inferred — a
+        // proposal that was no longer the open one read as accepted — but a
+        // proposal stops being open the moment the person says ANYTHING, so
+        // typing "make it darker" marked the brief accepted and took its
+        // Accept button away. Not open and accepted are different facts.
+        //
+        // It accepts the LAST brief rather than the open one, because the two
+        // can differ: saying something closes the open proposal, and the
+        // person may then press Accept on the card they were already reading.
+        {
+          const at = lastBriefIndex(entries);
+          const brief = at >= 0 ? entries[at] : undefined;
+          if (brief !== undefined && brief.kind === 'brief') {
+            entries[at] = { ...brief, accepted: true };
+          }
         }
         break;
       case 'task':
@@ -162,6 +206,10 @@ export function foldSession(records: readonly SessionRecord[]): SessionView {
         if (record.design_id) {
           if (record.task === 'assets') themeId = record.design_id;
           else designId = record.design_id;
+        }
+        if (record.task === 'assets' && record.task_state) {
+          assetsRunning =
+            record.task_state === 'started' || record.task_state === 'progress';
         }
         if (record.task === 'layout' && record.task_state) {
           // 'started' and 'progress' both mean a process is alive; anything
@@ -197,21 +245,44 @@ export function foldSession(records: readonly SessionRecord[]): SessionView {
   // approving stops the agent server-side, so nothing is running either.
   if (settled) {
     openAsk = -1;
-    openProposal = -1;
     layoutRunning = false;
+    assetsRunning = false;
   }
 
   const pendingEntry = openAsk >= 0 ? entries[openAsk] : undefined;
-  const proposalEntry = openProposal >= 0 ? entries[openProposal] : undefined;
+
+  // WHAT IS AWAITING AN ACCEPT: the last brief that has not been accepted.
+  //
+  // Not "the open proposal" any more, and that distinction is the whole fix.
+  // Saying anything closes the open proposal — that is how a question knows it
+  // was answered — so a person who typed "make it warmer" and then reached for
+  // Accept was pressing a button wired to null. A brief stays acceptable until
+  // it is either accepted or replaced by a newer one.
+  //
+  // Suppressed while a question is open, so the CLAUDE.md invariant holds:
+  // never live chips above a live Accept.
+  const lastBrief = lastBriefIndex(entries);
+  const lastBriefEntry = lastBrief >= 0 ? entries[lastBrief] : undefined;
+  const awaiting =
+    openAsk < 0 &&
+    !settled &&
+    lastBriefEntry !== undefined &&
+    lastBriefEntry.kind === 'brief' &&
+    !lastBriefEntry.accepted
+      ? lastBrief
+      : -1;
 
   return {
     entries: entries.map((entry, i) =>
-      i === openAsk || i === openProposal
-        ? entry
-        : markResolved(entry, entries, i),
+      i === awaiting
+        ? { ...(entry as Extract<Entry, { kind: 'brief' }>), awaiting: true }
+        : i === openAsk
+          ? entry
+          : markResolved(entry, entries, i),
     ),
     designName,
     layoutRunning,
+    assetsRunning,
     agentCostUsd,
     assetsCostUsd,
     phase,
@@ -219,12 +290,23 @@ export function foldSession(records: readonly SessionRecord[]): SessionView {
     designId,
     themeId,
     pending: pendingEntry?.kind === 'asked' ? pendingEntry.question : null,
-    proposal: proposalEntry?.kind === 'brief' ? proposalEntry.brief : null,
+    proposal:
+      awaiting >= 0 && lastBriefEntry?.kind === 'brief'
+        ? lastBriefEntry.brief
+        : null,
     settled,
   };
 }
 
-/** A question or proposal that is no longer the open one reads as resolved. */
+/** The most recent brief in the transcript, or -1 if there is none yet. */
+function lastBriefIndex(entries: readonly Entry[]): number {
+  for (let i = entries.length - 1; i >= 0; i -= 1) {
+    if (entries[i]!.kind === 'brief') return i;
+  }
+  return -1;
+}
+
+/** A question that is no longer the open one reads as answered. */
 function markResolved(
   entry: Entry,
   entries: readonly Entry[],
@@ -233,7 +315,8 @@ function markResolved(
   if (entry.kind === 'asked') {
     return { ...entry, answered: true, picked: answerTo(entries, index) };
   }
-  if (entry.kind === 'brief') return { ...entry, accepted: true };
+  // A BRIEF IS NOT TOUCHED HERE. Being closed and being accepted are
+  // different facts, and only an `accepted` record carries the second.
   return entry;
 }
 

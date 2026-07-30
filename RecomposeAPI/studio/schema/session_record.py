@@ -43,6 +43,7 @@ class SessionRecordKind(str, enum.Enum):
     SAID = "said"
     ASKED = "asked"
     PROPOSED = "proposed"
+    ACCEPTED = "accepted"
     TASK = "task"
     SPENT = "spent"
     SETTLED = "settled"
@@ -70,7 +71,7 @@ class SessionRecord(BaseModel):
     """One append-only line — and one SSE frame's payload.
 
     Every field but ``kind``/``index``/``at`` is optional because one model
-    covers all seven kinds; one frame shape means a client needs only
+    covers all eight kinds; one frame shape means a client needs only
     ``EventSource.onmessage``. Which kind carries what:
 
     - ``OPENED`` — ``session_id``, ``app_id``, ``design_name``
@@ -78,6 +79,11 @@ class SessionRecord(BaseModel):
     - ``SAID`` — ``who`` and ``text``
     - ``ASKED`` — ``question``
     - ``PROPOSED`` — ``brief``, awaiting an Accept
+    - ``ACCEPTED`` — nothing. The person pressed Accept on the last proposal,
+      and that is the whole payload. It exists because acceptance cannot be
+      inferred: a proposal stops being the OPEN one as soon as the person
+      says anything at all, so "no longer open" and "accepted" are different
+      facts and the log has to carry the second one itself.
     - ``TASK`` — ``task``, ``task_state``, and then whichever of ``run_id`` /
       ``design_id`` / ``line`` / ``error`` that state carries
     - ``SPENT`` — ``cost_usd`` and what it was for (``spent_on``)

@@ -377,3 +377,62 @@ def test_the_two_halves_are_totalled_apart(studio) -> None:
     # The interview's spend never leaks into the pipeline's column, which is
     # the whole point of totalling them apart.
     assert snapshot["assets_cost_usd"] == 0.0
+
+
+def test_a_settled_run_does_not_start_the_layout_agent(
+    studio, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A FINISHED ASSET RUN STARTS NOTHING. It only narrates.
+
+    This used to be the opposite: the run settling launched the layout agent
+    in code, on the reasoning that a finished run is its only precondition.
+    That reasoning is sound and the default was still wrong — the layout agent
+    is the most expensive thing this product launches, and a precondition
+    being met is not the same as a person being ready. Spending someone's
+    money on a step they never asked for, in the same second the step they DID
+    ask for finished, is what this test exists to stop coming back.
+
+    The conversation here is registered by hand and its turn is stubbed, so
+    the ONLY thing under test is whether settling reaches a launcher. The
+    manual door (`POST /sessions/{id}/layout/start`) is unaffected and has its
+    own tests.
+    """
+    client, _ = studio
+    started: list[str] = []
+
+    class _Spy:
+        async def start(self, *, app: str, theme_run: str) -> str:
+            started.append(theme_run)
+            return "gen-x"
+
+        async def stop(self) -> int:
+            return 0
+
+    monkeypatch.setattr(layout_task_module, "_task", _Spy())
+
+    service = orchestrator_module.orchestrator_service()
+    opened = _open(client)
+    session_id = opened["session_id"]
+
+    # A conversation that has everything the old automatic path needed: a
+    # committed brief and a settled run to design against.
+    convo = orchestrator_module._Conversation(app_id=APP)
+    convo.run_name = "stillwater-01"
+    convo.run_id = "r1"
+    service._live[session_id] = convo
+
+    turns: list[str] = []
+
+    async def _no_model(sid: str, message: str) -> None:
+        turns.append(message)
+
+    monkeypatch.setattr(service, "_run_turn", _no_model)
+
+    asyncio.run(
+        service.run_settled(session_id, ok=True, summary="22 of 23 slots.")
+    )
+
+    assert started == [], "a settled run started a layout agent by itself"
+    # It still says the look is done — narrating is the whole job now.
+    assert len(turns) == 1
+    assert "22 of 23 slots." in turns[0]
