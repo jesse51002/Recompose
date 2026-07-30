@@ -603,49 +603,171 @@ export interface Conversation {
 /**
  * The conversation behind "Talk to the agent". Mocked, like the fleet itself.
  *
- * Built FROM the row rather than written per row: thirty hand-written scripts
- * would drift from the states they describe the first time a status changed,
- * and the point of the panel is that the agent knows what its own row says.
- * The row's `state`, `note` and `log` are the agent's answer because they are
- * already the agent's account of itself.
+ * **The engineer speaks first, and about something concrete.** The first
+ * version had the agent open by announcing the row's own status and then had
+ * the engineer ask what it would take to sort it out — on rows where nothing
+ * was wrong. Nobody has that conversation. You open this panel because a
+ * specific screen is doing a specific thing, and the agent's job is to say
+ * what it found and what it would change.
+ *
+ * One script per status, because the honest exchange genuinely differs: you
+ * report a bug against something live, you ask about a stall on something
+ * deploying, and you answer a question on something halted. The single
+ * template covering all five is what produced the nonsense.
  */
+function script(app: FleetApp): readonly ChatTurn[] {
+  switch (app.status) {
+    case 'synced':
+      return [
+        {
+          who: 'you',
+          text:
+            'Class card on the schedule screen clips the coach name at 320px. ' +
+            'Reported on an iPhone SE.',
+        },
+        {
+          who: 'agent',
+          text:
+            'Reproduced at 320. The name and the time share a row with no ' +
+            'min-width, so the name is what gives. It is this design only — ' +
+            'the base arrangement wraps there.',
+        },
+        {
+          who: 'you',
+          text: 'Wrap it rather than truncate. The name matters more than the row.',
+        },
+      ];
+
+    case 'deploying':
+      return [
+        {
+          who: 'you',
+          text: 'This has been rolling a while. Stuck, or is that review?',
+        },
+        {
+          who: 'agent',
+          text:
+            'Review. Android went live, iOS is still pending — nothing on our ' +
+            'side is running. The artifact hash matches what the checks passed.',
+        },
+        {
+          who: 'you',
+          text:
+            'Fine. While it sits there: the splash asset is still the ' +
+            'pre-redesign one. Fix it for the next build.',
+        },
+      ];
+
+    case 'merging':
+      return [
+        {
+          who: 'you',
+          text:
+            'Trunk added a waitlist field to the booking payload. Are you ' +
+            'placing it or dropping it?',
+        },
+        {
+          who: 'agent',
+          text:
+            'Placing it. A new field on an existing screen is arrangement, so ' +
+            'it goes under the class time in the same card. Dropping it would ' +
+            'change what the screen does, and I will not do that.',
+        },
+        {
+          who: 'you',
+          text: 'Agreed. Keep it below the fold if the card gets tall.',
+        },
+      ];
+
+    case 'productionalizing':
+      return [
+        {
+          who: 'you',
+          text: 'The schedule grid has been open a while. What is slow about it?',
+        },
+        {
+          who: 'agent',
+          text:
+            'It is the densest screen in the design and every cell reads three ' +
+            'theme tokens. I am rewriting it once rather than patching it — the ' +
+            'API surface has to come out identical and I diff it per file.',
+        },
+        {
+          who: 'you',
+          text: 'Carry on. Flag it if the diff touches the public surface.',
+        },
+      ];
+
+    case 'help':
+      return [
+        {
+          who: 'you',
+          text: 'You stopped on the class screen split. Why not just follow trunk?',
+        },
+        {
+          who: 'agent',
+          text:
+            'Because splitting one screen into two is not an arrangement ' +
+            'change. I would have had to decide what belongs on each, and that ' +
+            'is a product decision — guessing it breaks the only guarantee ' +
+            'this design makes.',
+        },
+        {
+          who: 'you',
+          text:
+            'Right. Follow the split: booking action on the first screen, ' +
+            'everything else on the second.',
+        },
+      ];
+  }
+}
+
+/** What the agent goes off to do, given what was just agreed. */
+function dispatchFor(app: FleetApp): Dispatch {
+  switch (app.status) {
+    case 'synced':
+      return {
+        title: 'Dispatching a coding agent',
+        detail:
+          'Wrapping the coach name on the schedule card, re-running the ' +
+          'screenshot check at 320, and shipping it if it passes.',
+        etaMinutes: 30,
+      };
+    case 'deploying':
+      return {
+        title: 'Dispatching a coding agent',
+        detail:
+          'Replacing the splash asset on this branch so it lands in the next ' +
+          'build. The release in flight is untouched.',
+        etaMinutes: 30,
+      };
+    case 'merging':
+      return {
+        title: 'Dispatching a coding agent',
+        detail:
+          'Placing the waitlist field under the class time and re-running the ' +
+          'equivalence check against trunk.',
+        etaMinutes: 30,
+      };
+    case 'productionalizing':
+      return {
+        title: 'Dispatching a coding agent',
+        detail:
+          'Finishing the grid, then diffing the public API surface file by ' +
+          'file before anything ships.',
+        etaMinutes: 30,
+      };
+    case 'help':
+      return {
+        title: 'Dispatching a coding agent',
+        detail:
+          'Applying the split as decided, re-running the checks, and carrying ' +
+          'on from where it stopped.',
+        etaMinutes: 30,
+      };
+  }
+}
+
 export function conversationFor(app: FleetApp): Conversation {
-  const meta = statusMeta(app.status);
-  const opening =
-    app.status === 'help'
-      ? `I stopped and I need a decision on ${app.name}.`
-      : `${app.name} is with me right now — ${meta.label.toLowerCase()}.`;
-
-  const dispatch: Dispatch =
-    app.status === 'help'
-      ? {
-          title: 'Dispatching an agent',
-          detail:
-            'It will apply the decision to the design fork, re-run the ' +
-            'checks, and carry on from where it stopped.',
-          etaMinutes: 30,
-        }
-      : {
-          title: 'Dispatching an agent',
-          detail:
-            'It will make the change on this design branch, re-run the ' +
-            'checks, and ship it if they pass.',
-          etaMinutes: 30,
-        };
-
-  return {
-    turns: [
-      { who: 'agent', text: opening },
-      { who: 'agent', text: app.note },
-      { who: 'you', text: 'What would it take to sort it out?' },
-      {
-        who: 'agent',
-        text:
-          'One pass over this design. I would not touch the base fork — the ' +
-          'change lives on this branch, so nothing else on the fleet moves.',
-      },
-      { who: 'you', text: 'Go ahead.' },
-    ],
-    dispatch,
-  };
+  return { turns: script(app), dispatch: dispatchFor(app) };
 }

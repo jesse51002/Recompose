@@ -87,6 +87,26 @@ export function FleetChat({
                   a deadline the studio has no way to keep. */}
               <b>about {dispatch.etaMinutes} minutes</b>
             </div>
+
+            {/* TWO WAYS OUT OF A RUNNING AGENT, and they are different acts.
+                Cancel stops it — the agent bills for as long as it runs, so a
+                dispatch you did not mean must be reachable without waiting
+                thirty minutes for it. Expand opens the coding agent's own
+                session, because this panel is a summary of it and the moment
+                you disagree with what it is doing you want the thing itself,
+                not a paraphrase.
+
+                Expand is primary: cancelling is the rarer act and the
+                destructive one, and a destructive button should not be the
+                easiest thing to hit. */}
+            <div className={styles.dispatchActs}>
+              <button type="button" className={cx(styles.act, styles.actPri)}>
+                Expand coding agent
+              </button>
+              <button type="button" className={styles.act}>
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       </div>

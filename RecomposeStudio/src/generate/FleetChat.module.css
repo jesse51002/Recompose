@@ -104,6 +104,38 @@
   color: var(--ink-3);
 }
 
+/* ── What you can do to a running agent ────────────────────────────────────
+   Two different acts: stop it, or go and look at it properly. */
+.dispatchActs {
+  display: flex;
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.act {
+  flex: 1;
+  padding: 7px 10px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 6px;
+  background: var(--sh-panel);
+  color: var(--ink);
+  font: 500 var(--fs-xs) / 1.2 var(--sans);
+  cursor: pointer;
+}
+
+.act:hover { border-color: var(--sh-line-3); }
+
+/* Expand is primary and Cancel is not, because cancelling is the destructive
+   one and a destructive button should not be the easiest thing to hit. */
+.actPri {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--sh-ground);
+  font-weight: 600;
+}
+
+.actPri:hover { border-color: var(--ink); opacity: 0.9; }
+
 /* The person's own turns sit inset and dimmer — same treatment as the Generate
    transcript, because it is the same kind of thing. */
 .you {
