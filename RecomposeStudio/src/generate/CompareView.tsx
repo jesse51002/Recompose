@@ -163,12 +163,23 @@ function Pane({
           // live, and re-keying on it would throw the document away on every
           // tap and lose the scroll position with it.
           key={`${side.theme ?? 'none'}-${side.app}-${flow}`}
+          // THE ROUTE IS NOT IN HERE. React writes `src` whenever the prop
+          // changes, and writing `src` NAVIGATES the iframe — so carrying the
+          // route in the URL reloaded both documents on every tap, which is
+          // the flash. The current screen is posted in on load instead.
           src={stageUrl({
             theme: side.theme,
             app: side.app,
             asset: flow,
-            route,
+            route: null,
           })}
+          onLoad={(event) => {
+            if (route === null) return;
+            event.currentTarget.contentWindow?.postMessage(
+              { type: ROUTE_MESSAGE, route },
+              window.location.origin,
+            );
+          }}
         />
       </div>
 
@@ -184,7 +195,14 @@ function Pane({
   );
 }
 
-/** The popup behind Edit: this side's theme and layout, in one place. */
+/**
+ * The sheet behind Edit: this side's theme and layout, in ONE place.
+ *
+ * It used to open the catalogue as a second dialog on top of itself — two
+ * scrims, two closes, and the thing you were editing hidden behind the thing
+ * editing it. The list is inline now, and picking a theme applies it and closes,
+ * because picking IS the decision and a confirm after it buys nothing.
+ */
 function EditSide({
   label,
   side,
@@ -196,24 +214,6 @@ function EditSide({
   onChange: (next: Side) => void;
   onClose: () => void;
 }) {
-  const [picking, setPicking] = useState(false);
-
-  if (picking) {
-    return (
-      <ThemeCatalog
-        activeId={side.theme}
-        onPick={(id) => {
-          // The catalogue reports "no theme" as an empty id; a side stores
-          // null, because null is the absence of a runtime rather than a design
-          // whose name happens to be blank.
-          onChange({ ...side, theme: id === '' ? null : id });
-          setPicking(false);
-        }}
-        onClose={() => setPicking(false)}
-      />
-    );
-  }
-
   return (
     <div className={styles.modal} role="dialog" aria-label={`Edit ${label}`}>
       <div className={styles.scrim} onClick={onClose} aria-hidden="true" />
@@ -229,17 +229,6 @@ function EditSide({
             ×
           </button>
         </header>
-
-        <label className={styles.field}>
-          <em>Theme</em>
-          <button
-            type="button"
-            className={styles.fieldControl}
-            onClick={() => setPicking(true)}
-          >
-            {side.theme ?? 'No theme'}
-          </button>
-        </label>
 
         <label className={styles.field}>
           <em>Layout</em>
@@ -258,14 +247,19 @@ function EditSide({
           </select>
         </label>
 
-        <p className={styles.fieldNote}>
-          The flow and the screen are shared with the other side, so they are
-          not here — the only things a side may differ in are the two above.
-        </p>
-
-        <button type="button" className={styles.done} onClick={onClose}>
-          Done
-        </button>
+        <div className={styles.field}>
+          <em>Theme</em>
+          <ThemeCatalog
+            activeId={side.theme}
+            onPick={(id) => {
+              // The catalogue reports "no theme" as an empty id; a side stores
+              // null, because null is the absence of a runtime rather than a
+              // design whose name happens to be blank.
+              onChange({ ...side, theme: id === '' ? null : id });
+              onClose();
+            }}
+          />
+        </div>
       </div>
     </div>
   );
@@ -336,25 +330,64 @@ function useSyncedScroll(
   const findScroller = useCallback((frame: HTMLIFrameElement): Element | null => {
     const doc = frame.contentDocument;
     if (doc === null) return null;
+    // THE ONE WITH THE MOST TO SCROLL, not the first one found. Taking the
+    // first meant a different app could hand back some minor inner scroller
+    // instead of the screen body, and the two sides would then be syncing two
+    // different things — which reads as "scroll desynced after switching the
+    // layout" rather than as a wrong element.
+    let best: Element | null = null;
+    let most = 0;
     for (const element of doc.querySelectorAll('*')) {
-      if (element.scrollHeight <= element.clientHeight + 4) continue;
+      const room = element.scrollHeight - element.clientHeight;
+      if (room <= 4 || room <= most) continue;
       const overflow = doc.defaultView?.getComputedStyle(element).overflowY ?? '';
-      if (overflow === 'auto' || overflow === 'scroll') return element;
+      if (overflow !== 'auto' && overflow !== 'scroll') continue;
+      best = element;
+      most = room;
     }
-    return null;
+    return best;
   }, []);
 
   useEffect(() => {
-    const frames = [a.current, b.current].filter(
-      (frame): frame is HTMLIFrameElement => frame !== null,
-    );
-    if (frames.length < 2) return;
-
+    // WHAT IS CURRENTLY WIRED UP. Re-keying an iframe (a theme or layout
+    // change) makes React throw the element away and mount a NEW one, so
+    // anything holding the old element is holding a corpse. The previous
+    // version captured both frames once and never looked again, which is why
+    // the sync died the first time a layout changed and never came back —
+    // switching back did not help, because the elements it was listening to
+    // had been discarded too.
+    let wired: (Element | null)[] = [];
     const cleanups: (() => void)[] = [];
 
     const wire = (): void => {
+      // The cheap guard first: if both scrollers are still in their document
+      // and still have room to move, nothing has changed and the full scan is
+      // not worth doing. Only a reload or an in-phone navigation trips this.
+      const stillGood =
+        wired.length === 2 &&
+        wired.every(
+          (element) =>
+            element !== null &&
+            element.isConnected &&
+            element.scrollHeight > element.clientHeight,
+        );
+      if (stillGood) return;
+
+      // Read the refs NOW rather than trusting a captured value.
+      const frames = [a.current, b.current];
+      const scrollers = frames.map((frame) =>
+        frame === null ? null : findScroller(frame),
+      );
+      if (
+        scrollers.length === wired.length &&
+        scrollers.every((element, index) => element === wired[index])
+      ) {
+        return;
+      }
+
       for (const cleanup of cleanups.splice(0)) cleanup();
-      const scrollers = frames.map(findScroller);
+      wired = scrollers;
+
       scrollers.forEach((source, index) => {
         if (source === null) return;
         const onScroll = (): void => {
@@ -378,24 +411,15 @@ function useSyncedScroll(
       });
     };
 
-    // Re-wired on every load, and again a moment later: a stage's scroller does
-    // not exist until its app has rendered, and navigating inside one phone
-    // replaces the element the listener was attached to.
-    const onLoad = (): void => {
-      wire();
-      window.setTimeout(wire, 400);
-    };
-    for (const frame of frames) frame.addEventListener('load', onLoad);
-    onLoad();
-
-    // Cheap and dumb on purpose: a MutationObserver across two documents to
-    // catch every in-phone navigation is far more machinery than a demo
-    // surface earns, and re-finding the scroller costs one query.
-    const poll = window.setInterval(wire, 1500);
+    wire();
+    // Polling rather than load events and observers across two documents: the
+    // guard above makes the common tick a two-property check, and this recovers
+    // from every cause at once — a reload, an in-phone navigation that replaces
+    // the scrolling element, a frame that had not rendered yet.
+    const poll = window.setInterval(wire, 500);
 
     return () => {
       window.clearInterval(poll);
-      for (const frame of frames) frame.removeEventListener('load', onLoad);
       for (const cleanup of cleanups.splice(0)) cleanup();
     };
   }, [a, b, findScroller]);

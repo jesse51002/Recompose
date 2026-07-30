@@ -13,7 +13,7 @@
 // Beyond that it stays dumb. Any control it grew could drift the two sides
 // apart in a way the parent cannot see.
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ThemeProvider } from 'recompose-react';
 import { MOCK_APPS, MockAssetStage, findMockApp } from 'recompose-jsx-mockups';
 
@@ -33,9 +33,14 @@ export function StageView() {
   const asset =
     app.assets.find((candidate) => candidate.id === PARAMS.asset) ?? app.assets[0]!;
 
-  // The screen this stage is on. Seeded from the URL, then driven by whichever
-  // side the person is actually touching.
-  const [route, setRoute] = useState<string | null>(PARAMS.route);
+  // WHERE THIS STAGE MOUNTS. Not "the screen it is on" — the kit navigates
+  // itself perfectly well once mounted, and re-mounting it on its own
+  // navigation is what made the app blink on every tap.
+  const [mountAt, setMountAt] = useState<string | null>(PARAMS.route);
+  // The last screen this stage reported. A route coming back that matches it is
+  // this stage's own move echoing round the relay, and remounting for that
+  // would restart the screen under the finger that tapped it.
+  const own = useRef<string | null>(PARAMS.route);
 
   useEffect(() => {
     const onMessage = (event: MessageEvent): void => {
@@ -43,7 +48,9 @@ export function StageView() {
       // else on the page being able to send them is not worth the convenience.
       if (event.origin !== window.location.origin) return;
       if (!isRouteMessage(event.data)) return;
-      setRoute(event.data.route);
+      if (event.data.route === own.current) return;
+      own.current = event.data.route;
+      setMountAt(event.data.route);
     };
     window.addEventListener('message', onMessage);
     return () => {
@@ -56,14 +63,16 @@ export function StageView() {
       <PhoneFrame>
         <div className={styles.screen}>
           <MockAssetStage
-            // Re-keyed on the route because `initialRoute` is read at mount:
-            // the kit has no imperative "go here", and a comparison changing
-            // screens is rare enough that a remount is the honest cost.
-            key={`${asset.id}-${route ?? 'initial'}`}
+            // Keyed on where it should MOUNT, which only changes when the
+            // OTHER side moved: `initialRoute` is read at mount and the kit has
+            // no imperative "go here". Keying on the live route instead
+            // remounted this stage on its own navigation, which is what made
+            // the app blink in and out on every tap.
+            key={`${asset.id}-${mountAt ?? 'initial'}`}
             asset={asset}
-            initialRoute={route ?? undefined}
+            initialRoute={mountAt ?? undefined}
             onRouteChange={(next) => {
-              setRoute(next);
+              own.current = next;
               // Tell the parent, which tells the other side. Guarded on being
               // framed at all, so a stage opened on its own to debug one half
               // does not throw on every tap.

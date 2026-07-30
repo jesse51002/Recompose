@@ -251,6 +251,23 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
   ABOVE both sides, and one **Edit** button per side opens theme and layout
   together — they are chosen for the same reason, so they are chosen in one
   place.
+- **The route never goes in the iframe `src`.** React writes `src` whenever the
+  prop changes and writing `src` NAVIGATES the frame, so carrying the screen in
+  the URL reloaded both documents on every tap — the app blinking in and out.
+  The current screen is posted in on `load` instead, and a stage re-mounts only
+  for a route that did NOT come from itself.
+- **The scroll sync re-reads its refs; it must never capture the frames.**
+  Re-keying an iframe makes React discard the element and mount a new one, so a
+  captured frame is a corpse — which is why the sync used to die the first time
+  a layout changed and never come back, switching back included. A 500ms poll
+  re-reads `ref.current`, and a cheap `isConnected` + still-scrollable guard
+  makes the common tick two property reads rather than a DOM scan. It also picks
+  the scroller with the MOST room rather than the first match, so a different
+  app cannot hand back some minor inner scroller instead of the screen body.
+- **`useStylesPager` is capped at `pageSize: 100`** — `limit` above that is a
+  422 from the API, and the pager reports a 422 the same way it reports the API
+  being down, so asking for 200 read on screen as "the catalogue is not
+  reachable" with the catalogue perfectly reachable.
 - **The screen syncs by postMessage in both directions.** A stage reports every
   move up and accepts one back; `useSyncedRoute` relays it to whichever frame
   did not send it. Guarding on `event.source` rather than a flag is what stops
