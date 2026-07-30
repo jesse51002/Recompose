@@ -24,7 +24,9 @@ import {
   EXPECTED_IMAGES,
   EXPECTED_TEXT,
 } from 'recompose-jsx-mockups';
+import { CompareView } from './generate/CompareView';
 import { FleetView } from './generate/FleetView';
+import { StageView } from './generate/StageView';
 import { LayoutsView } from './generate/LayoutsView';
 import { OnboardView } from './generate/OnboardView';
 import { StudioView } from './studio/StudioView';
@@ -47,6 +49,13 @@ export function App() {
   useEffect(() => {
     syncViewUrl(view);
   }, [view]);
+
+  // THE STAGE IS NOT A PAGE OF THIS APP, it is the document a comparison loads
+  // per side (see `generate/CompareView.tsx`). It returns before the shell so
+  // it carries no nav, no gate and no theme of its own — its runtime is booted
+  // inside it, from the URL, and anything drawn out here would appear twice on
+  // the page that embeds it.
+  if (view === 'stage') return <StageView />;
 
   return (
     <div className={cx(styles.app, SHELL_CLASS)}>
@@ -79,6 +88,8 @@ export function App() {
             <StudioView onDone={() => setView('fleet')} />
           ) : view === 'fleet' ? (
             <FleetView onOpenLayouts={() => setView('layouts')} />
+          ) : view === 'compare' ? (
+            <CompareView />
           ) : view === 'layouts' ? (
             <LayoutsView onBack={() => setView('fleet')} />
           ) : (

@@ -1,0 +1,145 @@
+/* The before/after page. Two equal halves and nothing competing with them:
+   this is the one admin surface whose entire job is to make two renders
+   comparable, so every pixel the chrome takes is a pixel of evidence lost. */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--sh-ground);
+  color: var(--ink);
+  font-family: var(--sans);
+}
+
+.head {
+  flex: none;
+  padding: 16px 26px 14px;
+  border-bottom: 1px solid var(--sh-line);
+}
+
+.head h1 {
+  margin: 0;
+  font: 700 var(--fs-xl) / 1.08 var(--sans);
+  font-variation-settings: 'wdth' 106;
+  letter-spacing: var(--tr-title);
+}
+
+.head p {
+  margin: 6px 0 0;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+
+/* EQUAL HALVES, always. `minmax(0, 1fr)` rather than `1fr` because the frames
+   inside would otherwise floor the columns at their own content width and the
+   two sides would stop being the same size — which is the one property a
+   comparison cannot lose. */
+.pair {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  padding: 16px 26px;
+}
+
+.pane {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Big enough to read from across a room, because in a demo this label is
+   doing the narration. */
+.label {
+  margin: 0;
+  font: 600 var(--fs-md) / 1 var(--sans);
+  letter-spacing: var(--tr-title);
+  color: var(--ink-2);
+}
+
+/* The after side is marked, and only the after side. Two coloured titles would
+   be a palette; one is a direction of travel. */
+.labelAccent { color: var(--st-ok); }
+
+.controls {
+  display: flex;
+  gap: 8px;
+}
+
+.control {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 7px 10px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 8px;
+  background: var(--sh-panel);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.control:hover { border-color: var(--sh-line-3); }
+
+.control em {
+  font: 500 var(--fs-micro) / 1 var(--mono);
+  font-style: normal;
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.control b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 500 var(--fs-xs) / 1.3 var(--sans);
+}
+
+.control select {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 500 var(--fs-xs) / 1.3 var(--sans);
+  cursor: pointer;
+  max-width: 100%;
+}
+
+.frameWrap {
+  flex: 1;
+  min-height: 0;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 12px;
+  background: var(--sh-panel);
+  overflow: hidden;
+}
+
+/* The stage draws its own phone and its own ground; this is a window onto it.
+   `colorScheme: normal` stops the iframe inheriting the studio's dark scope
+   and repainting the phone's chrome. */
+.frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  color-scheme: normal;
+}
+
+.note {
+  flex: none;
+  margin: 0;
+  padding: 10px 26px 13px;
+  border-top: 1px solid var(--sh-line);
+  max-width: 96ch;
+  font: 400 var(--fs-xs) / 1.5 var(--sans);
+  color: var(--ink-4);
+}

@@ -8,6 +8,8 @@ The product, as three pages walked in order:
 | `generate` | customer | **Generate** — answer an interview, watch the design get made. Real. |
 | `fleet` | admin | **Fleet** — every customer app and what an agent is doing to it. Demo-ware. |
 | `layouts` | admin | **Layouts** — how few arrangements dress every tenant. Demo-ware. |
+| `compare` | admin | **Before / after** — two live renders side by side, scrolling together. |
+| `stage` | — | **Not a page.** One phone, driven by the URL, loaded per side by `compare`. |
 
 **Layouts is not in the switcher.** It is reached from the fleet's header,
 because it answers a question the fleet raises — this many designs, so how many
@@ -239,6 +241,27 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
   comparing two numbers is reading. `minmax(0, 1fr)` on both axes of BOTH grids is
   load-bearing: `1fr` alone floors at content size, which is how a grid that
   should shrink overflows instead.
+- **The before/after page renders each side in an IFRAME, and that is forced.**
+  The theme runtime is a module singleton on purpose, and the mockups lean on
+  it deliberately — `showcaseTokens.ts` resolves its colours through the
+  NON-HOOK resolvers (`themeColor`, `themePaletteEntry`, `themeFontFamily`) so a
+  token module can resolve outside React. Those read the singleton and can never
+  see a React context, so a `ThemeScope` provider would have left both halves on
+  one theme with no sign of it. A separate document gets its own module instance
+  and its own store, which makes two live themes a property of the browser. Same
+  origin is also what makes the scroll sync reachable.
+- **A stage is not sticky.** `ThemeProvider` takes `sticky={false}` there, added
+  to the runtime for this: a sticky store prefers the visitor's remembered pick
+  over the design it was told to show and writes its own pick back, so two
+  previews would both boot into whichever theme was last chosen in the studio
+  and would overwrite each other's selection as they loaded.
+- **The scroll sync matches PIXELS, not percentages.** The two screens are rarely
+  the same height, and a proportional sync would mean one gesture showed you
+  different parts of each design — the one thing a comparison must not do. The
+  short side reaches its end and stops, which the page says out loud. The
+  scroller is found by searching for the first element taller than itself with
+  `overflow-y: auto`, because the mockups are an island this package must not
+  reach into and their scroller is a hashed CSS-module class.
 - **Fail visible.** A missing artifact, a failed run, an empty catalog: show the
   state. A blank pane that could mean "loading" or "broken" is the one failure
   mode that wastes the most time here.

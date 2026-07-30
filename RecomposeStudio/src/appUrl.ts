@@ -26,7 +26,7 @@
  * is a destination any more — a catalogue you had to leave the design to
  * visit was a shopping trip in the middle of a review.
  */
-export type AppView = 'onboard' | 'generate' | 'fleet' | 'layouts';
+export type AppView = 'onboard' | 'generate' | 'fleet' | 'layouts' | 'compare' | 'stage';
 
 const VIEW_PARAM = 'view';
 
@@ -35,6 +35,12 @@ const VIEWS: readonly AppView[] = Object.freeze([
   'generate',
   'fleet',
   'layouts',
+  'compare',
+  // NOT A PAGE ANYBODY NAVIGATES TO. `stage` renders one phone and nothing
+  // else, and exists to be loaded in an iframe by `compare` — see
+  // `generate/CompareView.tsx` for why that has to be an iframe rather than
+  // two components. It is in this list only so a URL carrying it resolves.
+  'stage',
 ]);
 
 function isAppView(value: string | null): value is AppView {

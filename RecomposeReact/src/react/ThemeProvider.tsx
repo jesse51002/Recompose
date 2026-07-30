@@ -42,6 +42,9 @@ export function ThemeProvider({
   designId,
   themeBaseUrl,
   livePreview = false,
+  // Defaulted here as well as in the store, because this component enumerates
+  // what it forwards — a prop it does not name is a prop the store never sees.
+  sticky = true,
   expectedColors = NO_KEYS,
   expectedImages = NO_KEYS,
   expectedFonts = NO_KEYS,
@@ -58,6 +61,7 @@ export function ThemeProvider({
       appId,
       designId,
       livePreview,
+      sticky,
       expectedColors,
       expectedImages,
       expectedFonts,
@@ -68,6 +72,7 @@ export function ThemeProvider({
   }, [
     appId,
     designId,
+    sticky,
     themeBaseUrl,
     livePreview,
     expectedColors,
