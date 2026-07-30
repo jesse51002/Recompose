@@ -1,0 +1,205 @@
+/* The fleet's conversation panel. Left side, over the list — the same side the
+   Generate page puts its transcript on, so a conversation is in one place in
+   this product rather than two. */
+
+.panel {
+  flex: none;
+  width: 360px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid var(--sh-line);
+  background: var(--sh-panel);
+}
+
+.head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--sh-line);
+}
+
+.who {
+  flex: 1;
+  min-width: 0;
+}
+
+.who b {
+  display: block;
+  font: 600 var(--fs-sm) / 1.2 var(--sans);
+  letter-spacing: var(--tr-title);
+}
+
+.who u {
+  display: block;
+  margin-top: 3px;
+  text-decoration: none;
+  font: 400 var(--fs-micro) / 1 var(--mono);
+  color: var(--ink-3);
+}
+
+.tag {
+  flex: none;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--sh-line-2);
+  font: 500 var(--fs-micro) / 1.6 var(--mono);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* The same five hues the list uses, meaning the same five things. */
+.run { color: var(--st-run); border-color: var(--st-run-l); background: var(--st-run-w); }
+.merge { color: var(--st-merge); border-color: var(--st-merge-l); background: var(--st-merge-w); }
+.ship { color: var(--st-ship); border-color: var(--st-ship-l); background: var(--st-ship-w); }
+.ok { color: var(--st-ok); border-color: var(--st-ok-l); background: var(--st-ok-w); }
+.you { color: var(--st-you); border-color: var(--st-you-l); background: var(--st-you-w); }
+
+.close {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--ink-3);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.close:hover { background: var(--sh-raised); color: var(--ink); }
+
+.scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.msg {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: var(--kf-rise) 0.4s ease both;
+}
+
+.msg p {
+  margin: 0;
+  font: 400 var(--fs-sm) / 1.55 var(--sans);
+  color: var(--ink);
+}
+
+.role {
+  font: 500 var(--fs-micro) / 1 var(--mono);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* The person's own turns sit inset and dimmer — same treatment as the Generate
+   transcript, because it is the same kind of thing. */
+.you {
+  padding-left: 11px;
+  border-left: 2px solid var(--sh-line-2);
+}
+
+.you p { color: var(--ink-2); }
+
+/* ── The dispatch module ───────────────────────────────────────────────────
+   A card rather than a sentence: what a person wants at this moment is the two
+   facts prose is worst at — that it is running, and roughly how long. */
+.dispatch {
+  margin-top: 3px;
+  padding: 13px 14px;
+  border: 1px solid var(--st-run-l);
+  border-radius: 10px;
+  background: var(--st-run-w);
+}
+
+.dispatchHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dispatchHead b {
+  font: 600 var(--fs-sm) / 1.2 var(--sans);
+  color: var(--ink);
+}
+
+/* The same ring the fleet's live rows wear, meaning the same thing. */
+.spark {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--st-run);
+  animation: var(--kf-pulse) 1.5s ease-in-out infinite;
+}
+
+.dispatch p {
+  margin: 8px 0 0;
+  font: 400 var(--fs-xs) / 1.55 var(--sans);
+  color: var(--ink-2);
+}
+
+/* INDETERMINATE. It travels rather than fills, because filling states a
+   percentage and a dispatched agent reports nothing back until it lands. */
+.bar {
+  margin-top: 12px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--sh-raised-2);
+  overflow: hidden;
+}
+
+.bar i {
+  display: block;
+  width: 30%;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--st-run);
+  animation: var(--kf-crawl) 1.9s ease-in-out infinite;
+}
+
+.eta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 9px;
+}
+
+.eta span {
+  font: 400 var(--fs-micro) / 1 var(--mono);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.eta b {
+  font: 500 var(--fs-xs) / 1 var(--sans);
+  color: var(--ink);
+}
+
+.synthetic {
+  flex: none;
+  margin: 0;
+  padding: 10px 16px 12px;
+  border-top: 1px solid var(--sh-line);
+  font: 400 var(--fs-micro) / 1.5 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar i { animation: none; width: 100%; opacity: 0.5; }
+}

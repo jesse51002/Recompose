@@ -30,8 +30,15 @@
  */
 export const FORK = Object.freeze({
   name: 'recompose/combatden-tokenized',
-  /** Where it sits. Invented, like everything else on the page. */
-  url: 'https://example.invalid/recompose/combatden-tokenized',
+  /**
+   * Where it points ON THIS LAPTOP: the real CombatDen repository.
+   *
+   * The fork itself does not exist — the name above is invented like the rest
+   * of the page — but a demo link that goes nowhere is worse than one that
+   * goes to the thing being forked, and CombatDen is the reference
+   * implementation every row is a design of.
+   */
+  url: 'https://github.com/jesse51002/CombatDen',
   /** What it is, in one line, for the button's second row. */
   note: 'the tokenized fork every design branches from',
 });
@@ -562,3 +569,83 @@ export const ONBOARD_FOUND: readonly { readonly n: string; readonly label: strin
     { n: '41', label: 'colour literals' },
     { n: '18', label: 'asset references' },
   ]);
+
+
+/**
+ * WHERE A ROW'S "VIEW BRANCH" GOES.
+ *
+ * The same place for every row, and deliberately so: the branches do not
+ * exist, and pointing thirty rows at thirty invented URLs would be a page full
+ * of dead links pretending to be a product. The repository they would all be
+ * branches of is real, so that is where they go.
+ */
+export const BRANCH_URL = 'https://github.com/jesse51002/CombatDen';
+
+/** One turn of a mocked conversation with a row's agent. */
+export interface ChatTurn {
+  readonly who: 'you' | 'agent';
+  readonly text: string;
+}
+
+/** What the agent says it is going off to do, once the talk is over. */
+export interface Dispatch {
+  readonly title: string;
+  readonly detail: string;
+  /** Rounded, and a RANGE in prose elsewhere — see the module's own note. */
+  readonly etaMinutes: number;
+}
+
+export interface Conversation {
+  readonly turns: readonly ChatTurn[];
+  readonly dispatch: Dispatch;
+}
+
+/**
+ * The conversation behind "Talk to the agent". Mocked, like the fleet itself.
+ *
+ * Built FROM the row rather than written per row: thirty hand-written scripts
+ * would drift from the states they describe the first time a status changed,
+ * and the point of the panel is that the agent knows what its own row says.
+ * The row's `state`, `note` and `log` are the agent's answer because they are
+ * already the agent's account of itself.
+ */
+export function conversationFor(app: FleetApp): Conversation {
+  const meta = statusMeta(app.status);
+  const opening =
+    app.status === 'help'
+      ? `I stopped and I need a decision on ${app.name}.`
+      : `${app.name} is with me right now — ${meta.label.toLowerCase()}.`;
+
+  const dispatch: Dispatch =
+    app.status === 'help'
+      ? {
+          title: 'Dispatching an agent',
+          detail:
+            'It will apply the decision to the design fork, re-run the ' +
+            'checks, and carry on from where it stopped.',
+          etaMinutes: 30,
+        }
+      : {
+          title: 'Dispatching an agent',
+          detail:
+            'It will make the change on this design branch, re-run the ' +
+            'checks, and ship it if they pass.',
+          etaMinutes: 30,
+        };
+
+  return {
+    turns: [
+      { who: 'agent', text: opening },
+      { who: 'agent', text: app.note },
+      { who: 'you', text: 'What would it take to sort it out?' },
+      {
+        who: 'agent',
+        text:
+          'One pass over this design. I would not touch the base fork — the ' +
+          'change lives on this branch, so nothing else on the fleet moves.',
+      },
+      { who: 'you', text: 'Go ahead.' },
+    ],
+    dispatch,
+  };
+}

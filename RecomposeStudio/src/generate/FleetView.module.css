@@ -197,8 +197,18 @@
 .filter.merge i { color: var(--st-merge); }
 .filter.ship i { color: var(--st-ship); }
 
+/* The list, and the conversation panel beside it. The panel takes its width
+   from its own stylesheet; the list simply gets what is left. */
+.body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+}
+
 .cards {
   flex: 1;
+  min-width: 0;
   min-height: 0;
   overflow-y: auto;
   padding: 22px 26px;
@@ -329,6 +339,9 @@
 }
 
 .btn {
+  display: block;
+  text-align: center;
+  text-decoration: none;
   padding: 7px 12px;
   border: 1px solid var(--sh-line-2);
   border-radius: 6px;

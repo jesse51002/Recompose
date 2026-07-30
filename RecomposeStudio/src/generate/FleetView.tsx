@@ -17,15 +17,18 @@ import { useState } from 'react';
 
 import { cx } from '../widgets/cx';
 import {
+  BRANCH_URL,
   FILTERS,
   FLEET,
   FORK,
   KPIS,
   logoUrl,
   statusMeta,
+  type FleetApp,
   type FleetStatus,
 } from '../data/fleetFixtures';
 
+import { FleetChat } from './FleetChat';
 import { SHELL_CLASS } from './phaseClass';
 import styles from './FleetView.module.css';
 
@@ -33,6 +36,9 @@ export function FleetView() {
   // All, and it stays all until someone chooses otherwise. A fleet page that
   // opened pre-filtered would hide the one number it exists to show.
   const [filter, setFilter] = useState<FleetStatus | 'all'>('all');
+  // Which row's agent is being talked to. The ROW, not its id, because the
+  // panel renders from the row and nothing else needs to look it up again.
+  const [talking, setTalking] = useState<FleetApp | null>(null);
   const shown = filter === 'all' ? FLEET : FLEET.filter((a) => a.status === filter);
 
   return (
@@ -104,51 +110,70 @@ export function FleetView() {
         ))}
       </nav>
 
-      <div className={styles.cards}>
-        {shown.map((app) => {
-          const meta = statusMeta(app.status);
-          return (
-            <article
-              key={app.branch}
-              className={cx(styles.card, meta.live && styles.live)}
-            >
-              {/* Decorative: the name sits beside it, so a mark that fails to
-                  load costs the row nothing. */}
-              <img className={styles.logo} src={logoUrl(app.run)} alt="" />
+      <div className={styles.body}>
+        {talking !== null && (
+          <FleetChat
+            // Re-keyed per row so switching rows starts the panel's entrance
+            // and its dispatch bar over, rather than leaving the previous
+            // conversation's animations mid-flight under new text.
+            key={talking.branch}
+            app={talking}
+            onClose={() => setTalking(null)}
+          />
+        )}
 
-              <div className={styles.who}>
-                <b>{app.name}</b>
-                <u>{app.branch}</u>
-                <span className={styles.since}>{app.since}</span>
-              </div>
+        <div className={styles.cards}>
+          {shown.map((app) => {
+            const meta = statusMeta(app.status);
+            return (
+              <article
+                key={app.branch}
+                className={cx(styles.card, meta.live && styles.live)}
+              >
+                {/* Decorative: the name sits beside it, so a mark that fails to
+                    load costs the row nothing. */}
+                <img className={styles.logo} src={logoUrl(app.run)} alt="" />
 
-              <div className={styles.state}>
-                <span className={cx(styles.tag, styles[meta.tone])}>
-                  <i />
-                  {meta.label}
-                </span>
-                <b>{app.state}</b>
-                <u>{app.note}</u>
-                <span className={styles.log}>{app.log}</span>
-              </div>
+                <div className={styles.who}>
+                  <b>{app.name}</b>
+                  <u>{app.branch}</u>
+                  <span className={styles.since}>{app.since}</span>
+                </div>
 
-              <div className={styles.acts}>
-                <button type="button" className={cx(styles.btn, styles.pri)}>
-                  Talk to the agent
-                </button>
-                {/* The BRANCH, not the repo. One fork, one branch per
-                    design — "View repo" sent thirty rows to the same place
-                    and described an arrangement that does not exist. */}
-                <button type="button" className={styles.btn}>
-                  View branch
-                </button>
-                <button type="button" className={styles.btn}>
-                  View design
-                </button>
-              </div>
-            </article>
-          );
-        })}
+                <div className={styles.state}>
+                  <span className={cx(styles.tag, styles[meta.tone])}>
+                    <i />
+                    {meta.label}
+                  </span>
+                  <b>{app.state}</b>
+                  <u>{app.note}</u>
+                  <span className={styles.log}>{app.log}</span>
+                </div>
+
+                <div className={styles.acts}>
+                  <button
+                    type="button"
+                    className={cx(styles.btn, styles.pri)}
+                    aria-pressed={talking?.branch === app.branch}
+                    onClick={() => setTalking(app)}
+                  >
+                    Talk to the agent
+                  </button>
+                  {/* The BRANCH, not the repo — one fork, one branch per design.
+                      Every one of them points at CombatDen itself: the branches
+                      do not exist, and thirty invented URLs would be a page of
+                      dead links pretending to be a product. */}
+                  <a className={styles.btn} href={BRANCH_URL}>
+                    View branch
+                  </a>
+                  <button type="button" className={styles.btn}>
+                    View design
+                  </button>
+                </div>
+              </article>
+              );
+            })}
+        </div>
       </div>
 
       <footer className={styles.foot}>

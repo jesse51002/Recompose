@@ -90,6 +90,7 @@ img {
 :root {
   --kf-rise: rise;
   --kf-pulse: pulse;
+  --kf-crawl: crawl;
 }
 
 @keyframes rise {
@@ -106,6 +107,18 @@ img {
   }
   60% {
     box-shadow: 0 0 0 9px oklch(0.8 0.126 218 / 0);
+  }
+}
+
+/* An indeterminate bar for work whose progress cannot be known — a dispatched
+   agent reports nothing back until it lands. It travels rather than fills,
+   because a bar that fills implies a percentage the studio does not have. */
+@keyframes crawl {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(320%);
   }
 }
 
