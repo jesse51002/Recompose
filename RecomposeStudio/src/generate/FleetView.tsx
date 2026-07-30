@@ -64,7 +64,17 @@ export function FleetView({ onOpenLayouts }: { onOpenLayouts: () => void }) {
             Without it the page showed thirty links into a repository it
             never named. */}
         <div className={styles.headActs}>
-          <a className={styles.fork} href={FORK.url}>
+          {/* New tab, both here and on every row. Leaving the studio to look
+              at a repository would abandon whatever is running — a session, a
+              conversation, a board mid-animation — for a link you glance at
+              and come back from. `noreferrer` comes with `noopener` because
+              splitting them is how the opener handle gets left behind. */}
+          <a
+            className={styles.fork}
+            href={FORK.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <span className={styles.forkLead}>Open the forked repo</span>
             <b>{FORK.name}</b>
             <u>{FORK.note}</u>
@@ -171,7 +181,12 @@ export function FleetView({ onOpenLayouts }: { onOpenLayouts: () => void }) {
                       Every one of them points at CombatDen itself: the branches
                       do not exist, and thirty invented URLs would be a page of
                       dead links pretending to be a product. */}
-                  <a className={styles.btn} href={BRANCH_URL}>
+                  <a
+                    className={styles.btn}
+                    href={BRANCH_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     View branch
                   </a>
                   <button type="button" className={styles.btn}>
