@@ -90,6 +90,16 @@
   color: var(--ink-2);
 }
 
+/* Says the row behaves differently before the first press rather than after.
+   Without it, a multi-select question is indistinguishable from a single one
+   until you have already answered it wrong. */
+.hint {
+  font: 400 var(--fs-micro) / 1 var(--mono);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--ink-4);
+}
+
 /* ── A question's chips ────────────────────────────────────────────────── */
 .choices {
   display: flex;

@@ -106,11 +106,21 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
   makes one TURN produce one arm, but a turn is not the unit that matters: a
   system note (a run settling) starts a turn with nothing said, so an ask left
   open before it would still be live underneath.
-- **An answered question shows WHICH option was taken**, in the shell's own
+- **An answered question shows WHICH option(s) were taken**, in the shell's own
   colour for "you". Derived by matching the next thing the person said against
   the options — a chip press posts the option's own text, so the records
   genuinely cannot tell a pick from typing. Without it a finished interview
   scrolled back as identical grey rows: every question kept, every answer lost.
+- **`multi_select` is honoured, and it needs a Send.** The flag has been on the
+  agent's own schema all along and the UI ignored it, so a question the model
+  meant as "pick any that apply" answered with exactly one and silently sent a
+  fraction of what was true. Single-select still sends on the press — a confirm
+  on a one-of-six is a click that buys nothing — but multi-select cannot work
+  that way, since the first press would send it, so the chips accumulate in
+  local draft state and one Send posts them joined by `ANSWER_SEPARATOR`. That
+  draft is deliberately NOT folded from the records: it lives only between the
+  first press and the Send, and nothing outside the row can act on a half-made
+  answer. `picked` is a list for the same reason.
 - **The layout agent is started and stopped from the TRANSCRIPT**, as a card in
   the flow (`SessionChat`), not from the canvas bar. It is the most expensive
   thing the page can start, and in the bar it sat among the readouts and the

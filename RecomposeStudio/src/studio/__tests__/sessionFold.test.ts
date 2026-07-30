@@ -7,6 +7,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { SessionRecord } from '../sessionApi';
 import {
+  ANSWER_SEPARATOR,
   appendSessionRecord,
   foldSession,
   goneSessionRecords,
@@ -151,9 +152,36 @@ describe('foldSession', () => {
     ]);
 
     const asked = view.entries.filter((e) => e.kind === 'asked');
-    expect(asked[0]).toMatchObject({ answered: true, picked: 'B' });
+    expect(asked[0]).toMatchObject({ answered: true, picked: ['B'] });
     // The live one has nothing picked yet.
-    expect(asked[1]).toMatchObject({ answered: false, picked: null });
+    expect(asked[1]).toMatchObject({ answered: false, picked: [] });
+  });
+
+  it('marks every option a multi-select question was answered with', () => {
+    // `multi_select` has been on the agent's schema all along and the UI
+    // ignored it, so a question meant as "pick any that apply" answered with
+    // exactly one — silently sending a fraction of what was true. Several
+    // picks arrive as ONE message, because a turn is a string and the records
+    // cannot tell a chip press from typing.
+    reset();
+    const view = foldSession([
+      OPENED(),
+      rec({
+        kind: 'asked',
+        question: {
+          question: 'what is in the space?',
+          options: ['Mats', 'Bags', 'Rings'],
+          multi_select: true,
+        },
+      }),
+      SAID('you', ['Mats', 'Rings'].join(ANSWER_SEPARATOR)),
+      ASK('next'),
+    ]);
+
+    expect(view.entries.filter((e) => e.kind === 'asked')[0]).toMatchObject({
+      answered: true,
+      picked: ['Mats', 'Rings'],
+    });
   });
 
   it('does not attribute a typed answer that matches no option', () => {
@@ -170,7 +198,7 @@ describe('foldSession', () => {
 
     expect(view.entries.filter((e) => e.kind === 'asked')[0]).toMatchObject({
       answered: true,
-      picked: null,
+      picked: [],
     });
   });
 

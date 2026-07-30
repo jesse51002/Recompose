@@ -10,6 +10,16 @@
 import type { AgentQuestion, SessionPhase, SessionRecord } from './sessionApi';
 import type { BriefInput } from './studioApi';
 
+/**
+ * How a multi-select answer is joined into the one message a turn carries.
+ *
+ * A turn is a string — the records cannot tell a chip press from typing, which
+ * is deliberate — so several picks have to arrive as one line. Chosen over a
+ * comma because an option may well contain a comma and this one will not, and
+ * because it reads as a list to the model rather than as prose.
+ */
+export const ANSWER_SEPARATOR = ' · ';
+
 /** One thing the transcript shows, in order. */
 export type Entry =
   | { readonly kind: 'said'; readonly who: 'agent' | 'you'; readonly text: string }
@@ -19,15 +29,16 @@ export type Entry =
       readonly question: AgentQuestion;
       readonly answered: boolean;
       /**
-       * The option the person took, once they have.
+       * The option(s) the person took, once they have. Empty until then.
        *
-       * Not in the records — answering is just the next `said`, so this is
-       * derived by matching that text back against the options. A typed reply
-       * that happens to match an option counts as picking it, which is the
-       * honest reading: the transcript cannot tell them apart either, and
-       * neither can the agent.
+       * A LIST because a question can be multi-select (`multi_select` on the
+       * agent's own schema, which the UI used to ignore). Not in the records —
+       * answering is just the next `said`, so this is derived by matching that
+       * text back against the options. A typed reply that happens to match an
+       * option counts as picking it, which is the honest reading: the
+       * transcript cannot tell them apart either, and neither can the agent.
        */
-      readonly picked: string | null;
+      readonly picked: readonly string[];
     }
   | {
       readonly kind: 'brief';
@@ -164,7 +175,7 @@ export function foldSession(records: readonly SessionRecord[]): SessionView {
             kind: 'asked',
             question: record.question,
             answered: false,
-            picked: null,
+            picked: [],
           });
         }
         break;
@@ -332,17 +343,21 @@ function markResolved(
  * Stops at the next question so a later answer cannot be attributed to an
  * earlier ask.
  */
-function answerTo(entries: readonly Entry[], index: number): string | null {
+function answerTo(entries: readonly Entry[], index: number): readonly string[] {
   for (let i = index + 1; i < entries.length; i += 1) {
     const entry = entries[i]!;
-    if (entry.kind === 'asked') return null;
+    if (entry.kind === 'asked') return [];
     if (entry.kind === 'said' && entry.who === 'you') {
       const asked = entries[index];
-      if (asked?.kind !== 'asked') return null;
-      return asked.question.options.includes(entry.text) ? entry.text : null;
+      if (asked?.kind !== 'asked') return [];
+      // Split first, so a multi-select answer resolves to every chip it
+      // names. A single pick has no separator in it and falls out of the same
+      // code as a one-element list.
+      const said = entry.text.split(ANSWER_SEPARATOR);
+      return asked.question.options.filter((option) => said.includes(option));
     }
   }
-  return null;
+  return [];
 }
 
 /**

@@ -13,7 +13,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { cx } from '../widgets/cx';
-import type { Entry } from '../studio/sessionFold';
+import { ANSWER_SEPARATOR, type Entry } from '../studio/sessionFold';
 import type { SessionView } from '../studio/sessionFold';
 
 import { phaseClass } from './phaseClass';
@@ -198,37 +198,7 @@ function EntryView({ entry, onPick, onAccept, onOpen, busy }: EntryViewProps) {
       );
 
     case 'asked':
-      return (
-        <div className={styles.msg}>
-          <div className={styles.who}>Recompose</div>
-          <p>{entry.question.question}</p>
-          <div className={styles.choices}>
-            {entry.question.options.map((option) => (
-              <button
-                key={option}
-                type="button"
-                // THE ANSWER IS MARKED, not just recorded. An answered row
-                // used to grey out whole, so scrolling back through a
-                // finished interview showed eight identical dim rows and no
-                // trace of what had actually been decided — the transcript
-                // kept the questions and lost the answers.
-                className={cx(
-                  styles.choice,
-                  entry.picked === option && styles.chosen,
-                )}
-                aria-pressed={entry.picked === option}
-                // An answered question keeps its options visible but inert:
-                // the transcript is a record, and hiding what was on offer
-                // would make an earlier decision unreadable later.
-                disabled={entry.answered || busy}
-                onClick={() => onPick(option)}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
-        </div>
-      );
+      return <AskedView entry={entry} onPick={onPick} busy={busy} />;
 
     case 'brief':
       return (
@@ -302,4 +272,101 @@ function EntryView({ entry, onPick, onAccept, onOpen, busy }: EntryViewProps) {
     default:
       return null;
   }
+}
+
+/**
+ * One question's chips.
+ *
+ * **Two modes, one component.** `multi_select` has been on the agent's own
+ * schema all along and the UI ignored it, so a question the model meant as
+ * "pick any that apply" behaved as "pick exactly one and send it now" —
+ * silently answering with a fraction of what was true.
+ *
+ * Single-select still sends on the press: a confirm on a one-of-six is a
+ * second click that buys nothing. Multi-select cannot work that way — the
+ * first press would send — so it accumulates and needs a SUBMIT of its own,
+ * which is the button below.
+ *
+ * The draft is local state and deliberately not folded from the records: it
+ * exists only between the first press and the submit, and nothing outside
+ * this row can act on a half-made answer.
+ */
+function AskedView({
+  entry,
+  onPick,
+  busy,
+}: {
+  entry: Extract<Entry, { kind: 'asked' }>;
+  onPick: (text: string) => void;
+  busy: boolean;
+}) {
+  const [draft, setDraft] = useState<readonly string[]>([]);
+  const multi = entry.question.multi_select;
+  // An answered row reads from the record; a live row reads from the draft,
+  // and single-select has no draft — the press IS the answer.
+  const chosen = entry.answered ? entry.picked : multi ? draft : [];
+
+  const toggle = (option: string): void => {
+    if (!multi) {
+      onPick(option);
+      return;
+    }
+    setDraft((current) =>
+      current.includes(option)
+        ? current.filter((each) => each !== option)
+        : // In the OPTIONS' order, not the press order, so the message the
+          // agent reads matches the list it just offered.
+          entry.question.options.filter(
+            (each) => each === option || current.includes(each),
+          ),
+    );
+  };
+
+  return (
+    <div className={styles.msg}>
+      <div className={styles.who}>Recompose</div>
+      <p>{entry.question.question}</p>
+      {multi && !entry.answered && (
+        <span className={styles.hint}>Pick any that apply</span>
+      )}
+      <div className={styles.choices}>
+        {entry.question.options.map((option) => (
+          <button
+            key={option}
+            type="button"
+            // THE ANSWER IS MARKED, not just recorded. An answered row used to
+            // grey out whole, so scrolling back through a finished interview
+            // showed eight identical dim rows and no trace of what had
+            // actually been decided — the transcript kept the questions and
+            // lost the answers.
+            className={cx(styles.choice, chosen.includes(option) && styles.chosen)}
+            aria-pressed={chosen.includes(option)}
+            // An answered question keeps its options visible but inert: the
+            // transcript is a record, and hiding what was on offer would make
+            // an earlier decision unreadable later.
+            disabled={entry.answered || busy}
+            onClick={() => toggle(option)}
+          >
+            {option}
+          </button>
+        ))}
+      </div>
+      {multi && !entry.answered && (
+        <div className={styles.actions}>
+          <button
+            type="button"
+            className={cx(styles.btn, styles.primary)}
+            // Nothing picked is not an answer. The composer is right there for
+            // "none of these", and it says so better than an empty send would.
+            disabled={busy || draft.length === 0}
+            onClick={() => onPick(draft.join(ANSWER_SEPARATOR))}
+          >
+            {draft.length <= 1
+              ? 'Send answer'
+              : `Send ${String(draft.length)} answers`}
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
