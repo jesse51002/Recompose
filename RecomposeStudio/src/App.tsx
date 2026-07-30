@@ -24,7 +24,6 @@ import {
   EXPECTED_IMAGES,
   EXPECTED_TEXT,
 } from 'recompose-jsx-mockups';
-import { CompareView } from './generate/CompareView';
 import { FleetView } from './generate/FleetView';
 import { StageView } from './generate/StageView';
 import { LayoutsView } from './generate/LayoutsView';
@@ -88,8 +87,6 @@ export function App() {
             <StudioView onDone={() => setView('fleet')} />
           ) : view === 'fleet' ? (
             <FleetView onOpenLayouts={() => setView('layouts')} />
-          ) : view === 'compare' ? (
-            <CompareView />
           ) : view === 'layouts' ? (
             <LayoutsView onBack={() => setView('fleet')} />
           ) : (

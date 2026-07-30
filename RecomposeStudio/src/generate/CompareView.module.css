@@ -1,49 +1,195 @@
-/* The before/after page. Two equal halves and nothing competing with them:
-   this is the one admin surface whose entire job is to make two renders
-   comparable, so every pixel the chrome takes is a pixel of evidence lost. */
+/* Before and after. Two equal halves and nothing competing with them: the whole
+   job of this pane is to make two renders comparable, so every pixel the chrome
+   takes is a pixel of evidence lost. */
 
+/* A PANE of the Generate canvas now, not a page: it inherits that view's dark
+   scope and ground rather than declaring its own, and it has no title of its
+   own because the pane switch above it already says what you are looking at. */
 .page {
   display: flex;
   flex-direction: column;
   height: 100%;
   min-height: 0;
   overflow: hidden;
-  background: var(--sh-ground);
-  color: var(--ink);
-  font-family: var(--sans);
 }
 
-.head {
-  flex: none;
-  padding: 16px 26px 14px;
-  border-bottom: 1px solid var(--sh-line);
-}
 
-.head h1 {
-  margin: 0;
-  font: 700 var(--fs-xl) / 1.08 var(--sans);
-  font-variation-settings: 'wdth' 106;
-  letter-spacing: var(--tr-title);
-}
 
-.head p {
-  margin: 6px 0 0;
-  font-size: var(--fs-sm);
-  line-height: 1.5;
-  color: var(--ink-3);
-}
+
+
+
 
 /* EQUAL HALVES, always. `minmax(0, 1fr)` rather than `1fr` because the frames
    inside would otherwise floor the columns at their own content width and the
    two sides would stop being the same size — which is the one property a
    comparison cannot lose. */
+/* THE FLOW SWITCH SITS ABOVE BOTH, because it is shared. Same segmented
+   vocabulary the canvas uses for its own panes — one job, one shape. */
+.flows {
+  flex: none;
+  align-self: center;
+  display: flex;
+  gap: 2px;
+  margin: 12px 0 0;
+  padding: 2px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 7px;
+  background: var(--sh-raised);
+}
+
+.flows button {
+  padding: 5px 12px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--ink-3);
+  font: 500 var(--fs-xs) / 1.3 var(--sans);
+  cursor: pointer;
+}
+
+.flows button:hover { color: var(--ink); }
+
+.flowOn {
+  background: var(--sh-raised-2);
+  color: var(--ink) !important;
+}
+
 .pair {
   flex: 1;
   min-height: 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 16px;
-  padding: 16px 26px;
+  padding: 12px 16px;
+}
+
+/* The title, what this side is, and the way to change it — one row, so the
+   label and the control that governs it are never far apart. */
+.paneHead {
+  flex: none;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.summary {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 400 var(--fs-xs) / 1.3 var(--mono);
+  color: var(--ink-4);
+}
+
+.edit {
+  flex: none;
+  padding: 5px 11px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 6px;
+  background: var(--sh-panel);
+  color: var(--ink);
+  font: 500 var(--fs-xs) / 1 var(--sans);
+  cursor: pointer;
+}
+
+.edit:hover { border-color: var(--sh-line-3); }
+
+/* ── The edit sheet ─────────────────────────────────────────────────────── */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+}
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  background: oklch(0 0 0 / 0.55);
+}
+
+.sheet {
+  position: relative;
+  width: min(340px, 90vw);
+  padding: 16px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 12px;
+  background: var(--sh-panel);
+  box-shadow: 0 18px 50px oklch(0 0 0 / 0.45);
+}
+
+.sheetHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.sheetHead b {
+  font: 600 var(--fs-md) / 1 var(--sans);
+  letter-spacing: var(--tr-title);
+}
+
+.x {
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--ink-3);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.x:hover { background: var(--sh-raised); color: var(--ink); }
+
+.field {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.field em {
+  display: block;
+  margin-bottom: 5px;
+  font: 500 var(--fs-micro) / 1 var(--mono);
+  font-style: normal;
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.fieldControl {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--sh-line-2);
+  border-radius: 7px;
+  background: var(--sh-raised);
+  color: var(--ink);
+  font: 500 var(--fs-sm) / 1.3 var(--sans);
+  text-align: left;
+  cursor: pointer;
+}
+
+.fieldControl:hover { border-color: var(--sh-line-3); }
+
+.fieldNote {
+  margin: 0 0 14px;
+  font: 400 var(--fs-micro) / 1.5 var(--sans);
+  color: var(--ink-4);
+}
+
+.done {
+  width: 100%;
+  padding: 9px;
+  border: 1px solid var(--ink);
+  border-radius: 7px;
+  background: var(--ink);
+  color: var(--sh-ground);
+  font: 600 var(--fs-xs) / 1 var(--sans);
+  cursor: pointer;
 }
 
 .pane {
@@ -137,7 +283,7 @@
 .note {
   flex: none;
   margin: 0;
-  padding: 10px 26px 13px;
+  padding: 8px 16px 12px;
   border-top: 1px solid var(--sh-line);
   max-width: 96ch;
   font: 400 var(--fs-xs) / 1.5 var(--sans);

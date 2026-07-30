@@ -23,10 +23,6 @@ const PAGES: readonly { readonly view: AppView; readonly n: string; readonly lab
     { view: 'onboard', n: '1', label: 'Onboard' },
     { view: 'generate', n: '2', label: 'Generate' },
     { view: 'fleet', n: '3', label: 'Fleet' },
-    // In the switcher because it is a thing you SHOW, on its own, at a point in
-    // the demo — unlike Layouts, which answers a question the fleet raises and
-    // is reached from there.
-    { view: 'compare', n: '4', label: 'Before / after' },
   ]);
 
 /** Whose view each page is. */
@@ -38,7 +34,9 @@ const POV: Readonly<Record<AppView, string>> = Object.freeze({
   // question the fleet raises — but it is still the platform's own view, so
   // the chip has to say so while it is open.
   layouts: 'Admin',
-  compare: 'Admin',
+  // A pane of the Generate page rather than a page (see GenerateView), but the
+  // map is total over AppView so the route still needs a point of view.
+  compare: 'Customer',
   // Never rendered with the shell — the stage returns before it (see App.tsx)
   // — but the map is total over AppView, so it needs an entry.
   stage: 'Admin',

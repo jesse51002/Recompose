@@ -31,6 +31,7 @@ import {
 
 import { Approved } from './Approved';
 import { BriefSheet } from './BriefSheet';
+import { CompareView } from './CompareView';
 import { GenerateCanvas } from './GenerateCanvas';
 import { RunMeter } from './RunMeter';
 import { SpendMeter } from './SpendMeter';
@@ -57,8 +58,14 @@ import styles from './GenerateView.module.css';
  */
 const REFRESH_MS = 2000;
 
-/** Which pane the canvas is showing. */
-type Pane = 'mockup' | 'inspect' | 'brief';
+/**
+ * Which pane the canvas is showing.
+ *
+ * `compare` is a pane rather than a page of its own: it is the SAME design
+ * being looked at, next to another one, so it belongs beside the mock and the
+ * artifacts rather than in the nav as a fourth peer.
+ */
+type Pane = 'mockup' | 'compare' | 'inspect' | 'brief';
 
 interface GenerateViewProps {
   readonly sessionId: string;
@@ -284,6 +291,7 @@ export function GenerateView({ sessionId, onDone }: GenerateViewProps) {
           <div className={styles.bar}>
             <div className={styles.seg}>
               <Seg now={pane} me="mockup" set={setPane} label="Mockup" />
+              <Seg now={pane} me="compare" set={setPane} label="Before / after" />
               <Seg now={pane} me="inspect" set={setPane} label="Inspect" />
               <Seg now={pane} me="brief" set={setPane} label="Brief" />
             </div>
@@ -327,6 +335,10 @@ export function GenerateView({ sessionId, onDone }: GenerateViewProps) {
             {/* The artifact sheet — every slot the run produced, filling in as
                 the partial output.yaml grows. This IS the Inspect view; it is
                 not a separate destination any more. */}
+            {/* Two live renders of the same app, one per theme and layout.
+                Mounted here rather than as a page because it is a way of
+                LOOKING at this design, which is what the pane switch selects. */}
+            {pane === 'compare' && <CompareView />}
             {pane === 'inspect' && (
               <div className={styles.sheet}>
                 <InspectView />

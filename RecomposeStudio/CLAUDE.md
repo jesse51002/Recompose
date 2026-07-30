@@ -8,8 +8,7 @@ The product, as three pages walked in order:
 | `generate` | customer | **Generate** — answer an interview, watch the design get made. Real. |
 | `fleet` | admin | **Fleet** — every customer app and what an agent is doing to it. Demo-ware. |
 | `layouts` | admin | **Layouts** — how few arrangements dress every tenant. Demo-ware. |
-| `compare` | admin | **Before / after** — two live renders side by side, scrolling together. |
-| `stage` | — | **Not a page.** One phone, driven by the URL, loaded per side by `compare`. |
+| `stage` | — | **Not a page.** One phone, driven by the URL, loaded per side by the Generate page's Before/after pane. |
 
 **Layouts is not in the switcher.** It is reached from the fleet's header,
 because it answers a question the fleet raises — this many designs, so how many
@@ -241,7 +240,26 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
   comparing two numbers is reading. `minmax(0, 1fr)` on both axes of BOTH grids is
   load-bearing: `1fr` alone floors at content size, which is how a grid that
   should shrink overflows instead.
-- **The before/after page renders each side in an IFRAME, and that is forced.**
+- **Before/after is a PANE of Generate, not a page.** It is the same design
+  being looked at next to another one, so it sits in the canvas pane switch
+  beside Mockup, Inspect and Brief rather than in the nav as a fourth peer.
+- **Only theme and layout are per side; everything else is shared.** The flow,
+  the screen and the scroll offset are one value driving both frames, so the
+  only difference on screen is the difference being demonstrated. A comparison
+  whose halves sit on different screens looks exactly like a working one until
+  you read it, which makes it worse than none. The flow switch therefore sits
+  ABOVE both sides, and one **Edit** button per side opens theme and layout
+  together — they are chosen for the same reason, so they are chosen in one
+  place.
+- **The screen syncs by postMessage in both directions.** A stage reports every
+  move up and accepts one back; `useSyncedRoute` relays it to whichever frame
+  did not send it. Guarding on `event.source` rather than a flag is what stops
+  the echo — a frame is never told to go where it just went, which would remount
+  the screen under the finger that tapped it. The iframe key deliberately
+  excludes the route: theme and layout changes must reload the document, but
+  re-keying on the route would throw it away on every tap and lose the scroll
+  position with it.
+- **The before/after pane renders each side in an IFRAME, and that is forced.**
   The theme runtime is a module singleton on purpose, and the mockups lean on
   it deliberately — `showcaseTokens.ts` resolves its colours through the
   NON-HOOK resolvers (`themeColor`, `themePaletteEntry`, `themeFontFamily`) so a

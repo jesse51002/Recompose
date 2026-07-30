@@ -38,6 +38,30 @@ export function stageParamsFromUrl(): StageParams {
   };
 }
 
+/**
+ * The message a stage and its parent pass in both directions.
+ *
+ * ONE shape for both directions on purpose: a stage reports the screen it moved
+ * to, and the parent hands that same screen to the other stage. Two message
+ * types would let the two halves mean subtly different things by the screen
+ * they name, which is the failure this whole page exists to avoid.
+ */
+export const ROUTE_MESSAGE = 'recompose:route';
+
+export interface RouteMessage {
+  readonly type: typeof ROUTE_MESSAGE;
+  readonly route: string;
+}
+
+export function isRouteMessage(data: unknown): data is RouteMessage {
+  return (
+    typeof data === 'object' &&
+    data !== null &&
+    (data as { type?: unknown }).type === ROUTE_MESSAGE &&
+    typeof (data as { route?: unknown }).route === 'string'
+  );
+}
+
 /** The URL one side of a comparison loads. Absolute, same origin. */
 export function stageUrl(params: StageParams): string {
   const search = new URLSearchParams({ view: 'stage' });
