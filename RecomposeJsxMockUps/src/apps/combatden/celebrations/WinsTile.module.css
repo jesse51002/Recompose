@@ -13,6 +13,19 @@
  * wrapped in a `StaggeredReveal(delay)`.
  */
 .tile {
+  /*
+   * FILL THE CELL, so all three boxes are one height however many lines a
+   * caption takes — ./WinsTileRow.module.css stretches the cells and carries the
+   * full reasoning. `box-sizing` is load-bearing with it: this package has NO
+   * global reset, so `height: 100%` on a content-box would add the padding and
+   * the border on top of the cell and overflow it.
+   *
+   * The content stays TOP-aligned rather than centring in the taller box, so the
+   * icons, the figures and the first line of each caption still line up across
+   * the row. Only the empty space below a one-line caption grows.
+   */
+  box-sizing: border-box;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
