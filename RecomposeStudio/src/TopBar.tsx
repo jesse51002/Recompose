@@ -42,7 +42,12 @@ export function TopBar({
   return (
     <header className={styles.top}>
       <div className={styles.brand}>
-        <i />
+        {/* THE MARK ONLY, with the name set in the shell's own type beside it.
+            The source lockup's wordmark is white with a light outline, which
+            is invisible on this chrome — and the studio is a tool, so its
+            header should read in the tool's own voice rather than paste in a
+            marketing asset. The R carries the brand; the type carries the UI. */}
+        <img className={styles.mark} src="/recompose-mark.png" alt="" />
         Recompose
       </div>
       <span className={styles.pov}>{POV[view]}</span>

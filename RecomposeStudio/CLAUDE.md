@@ -63,6 +63,11 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
   API at a hardcoded loopback URL. A fleet of grey initials argues nothing; a
   column of thirty different marks the pipeline actually made is the page's
   whole point, so it says that on the page too.
+- `public/` — static assets served at the site root: the brand lockup as
+  delivered, plus the R mark and the favicons cropped from it. The header and
+  the browser tab use the **mark**, never the lockup — its wordmark is white on
+  a light outline and vanishes on this chrome, and at 16px a wordmark is a
+  smudge. `public/README.md` records how the derived files were made.
 - `design/` — **a clickable demo of a proposed redesign, not code.** One
   self-contained `studio-demo.html`: open it, no build, no server. Three pages
   across two points of view — Onboard and Fleet are admin, Generate is the

@@ -27,14 +27,14 @@
   color: var(--ink);
 }
 
-.brand i {
-  width: 15px;
-  height: 15px;
-  border: 1.5px solid var(--ink);
-  border-radius: 3px;
-  transform: rotate(45deg);
+/* The mark, at cap height. `contain` so the source's own proportions survive
+   — it is a logo, and a logo squashed to fit a box is a logo damaged. */
+.mark {
+  width: 20px;
+  height: 20px;
   display: block;
   flex: none;
+  object-fit: contain;
 }
 
 /* Which point of view this page is. The three pages are not peers — two are
