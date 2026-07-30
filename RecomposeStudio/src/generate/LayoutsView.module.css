@@ -194,28 +194,40 @@
    labelled rows would be a scroll nobody reads; wrapped marks read as a
    quantity at a glance, which is the only thing this page needs them to do.
 
-   `overflow: hidden` is the board's no-scroll rule held one level down: the
-   tile size is chosen to fit, and if a viewport is short enough to beat the
-   arithmetic a card clips rather than growing a scrollbar of its own. */
+   A GRID THAT FILLS, not fixed tiles that wrap. Wrapping leaves dead space
+   under the last row, and a card two-thirds full reads as a card with
+   something missing; fixed tiles could only ever fill by accident, at
+   whichever viewport width the arithmetic happened to land on. The column
+   count comes from the card's measured aspect (`--icols`), and the rows
+   divide whatever height is left — so the mosaic is exactly the card.
+
+   `minmax(0, 1fr)` on both axes for the same reason the board needs it: plain
+   `1fr` floors at content size, which is how a grid that should shrink
+   overflows instead. */
 .cells {
   flex: 1;
   min-height: 0;
   overflow: hidden;
-  display: flex;
-  flex-wrap: wrap;
-  align-content: flex-start;
+  display: grid;
+  grid-template-columns: repeat(var(--icols), minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
   gap: 4px;
   padding: 7px;
 }
 
 /* One tenant on one layout, and nothing but its mark — the roster cycles the
-   fleet's logos, so names would repeat down every column and read as a bug. */
+   fleet's logos, so names would repeat down every column and read as a bug.
+
+   The mark fills its cell and the cell is whatever the grid gives it, so
+   density is a consequence of the arithmetic rather than a number tuned by
+   hand. `contain` keeps the logo's own proportions inside that: a mark
+   stretched to fill a cell is a mark damaged, and these are the artifacts the
+   page exists to show off. */
 .cell {
-  /* Set on the board from the cap: the tiles are what carry the density, so
-     they are what shrinks as the count climbs. */
-  width: var(--tile);
-  height: var(--tile);
-  flex: none;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
   object-fit: contain;
   border-radius: 5px;
   background: var(--sh-ground);

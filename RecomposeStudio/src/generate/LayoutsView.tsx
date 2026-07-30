@@ -20,6 +20,7 @@
 import { useState, type CSSProperties } from 'react';
 
 import { cx } from '../widgets/cx';
+import { useElementSize } from '../widgets/useElementSize';
 import { FLEET, logoUrl } from '../data/fleetFixtures';
 import {
   DEFAULT_LAYOUTS,
@@ -57,29 +58,62 @@ const MAX_DELAY_MS = 1400;
  * instead — six of them are a comparison you can read, a hundred are a wall
  * you take in whole, and both of those are the argument.
  *
- * Columns come from the square root biased for a wide viewport, so the cards
- * stay roughly card-shaped at every cap rather than becoming slivers at one
- * end and slabs at the other.
+ * Columns come from the MEASURED aspect of the board rather than a guessed
+ * bias — see `fitCols`.
  */
-function shape(cap: number): { cols: number; tile: number; named: boolean } {
-  const cols = Math.ceil(Math.sqrt(cap * 1.9));
+function shape(cap: number, w: number, h: number): { cols: number; named: boolean } {
   return {
-    cols,
-    // The tiles carry the density, so they take the squeeze. Floors at 6px:
-    // below that a mark stops being a mark and becomes a texture, which still
-    // reads as "a lot" and is all that is left to say at that size.
-    tile: Math.max(6, Math.round(34 - cap * 0.34)),
+    cols: fitCols(cap, w, h),
     // A name nobody can read is noise. Past this the count is the only thing
     // a card has room to say, and the count is what matters at that end.
     named: cap <= 20,
   };
 }
 
+/** The board's own gap, and the chrome one card spends on itself. In px. */
+const BOARD_GAP = 8;
+const CARD_PAD = 14;
+const CARD_BORDER = 2;
+const CARD_HEAD = 28;
+
+/**
+ * How many columns fit `n` near-square items into a `w`x`h` box.
+ *
+ * **The whole geometry of this page is this one function, used twice** — once
+ * for the cards in the board, once for the marks inside a card. Fitting n
+ * squares into a rectangle wants `cols ≈ sqrt(n · w/h)`: the aspect term is
+ * what stops a wide box being filled with tall thin cells and a tall one with
+ * squat wide ones. Rounding up guarantees the rows fit rather than nearly fit.
+ *
+ * This replaces two guessed bias factors. They were right at one viewport and
+ * wrong at every other, which is the thing measuring fixes.
+ *
+ * Before the first measurement lands `w`/`h` are zero, so it falls back to a
+ * plain square — one frame of slightly-wrong grid rather than a divide by nought.
+ */
+function fitCols(n: number, w: number, h: number): number {
+  if (n <= 1) return 1;
+  if (w <= 0 || h <= 0) return Math.ceil(Math.sqrt(n));
+  return Math.max(1, Math.min(n, Math.ceil(Math.sqrt((n * w) / h))));
+}
+
 export function LayoutsView({ onBack }: { onBack: () => void }) {
   const [cap, setCap] = useState(DEFAULT_LAYOUTS);
   const layouts = dealLayouts(cap);
   const busiest = Math.max(...layouts.map((l) => l.tenants.length));
-  const { cols, tile, named } = shape(cap);
+  // MEASURED, not guessed. The board is one box whose aspect decides both
+  // grids, and one measurement serves every card because the grid makes them
+  // identical — a hundred observers would report a hundred copies of one number.
+  const [boardRef, board] = useElementSize<HTMLDivElement>();
+  const { cols, named } = shape(cap, board.width, board.height);
+  const rows = Math.max(1, Math.ceil(cap / cols));
+
+  // What one card's mosaic actually gets, once the grid's gaps and the card's
+  // own chrome are taken out of the board.
+  const cardW = (board.width - BOARD_GAP * (cols - 1)) / cols;
+  const cardH = (board.height - BOARD_GAP * (rows - 1)) / rows;
+  const cellsW = cardW - CARD_PAD - CARD_BORDER;
+  const cellsH = cardH - CARD_PAD - CARD_BORDER - CARD_HEAD;
 
   return (
     <div className={cx(styles.page, SHELL_CLASS)}>
@@ -144,13 +178,10 @@ export function LayoutsView({ onBack }: { onBack: () => void }) {
           to show would be the one moment it did not animate. */}
       <div
         className={styles.board}
+        // The key replays the entrance when the cap changes; the ref measures.
         key={cap}
-        style={
-          {
-            '--cols': String(cols),
-            '--tile': `${String(tile)}px`,
-          } as CSSProperties
-        }
+        ref={boardRef}
+        style={{ '--cols': String(cols) } as CSSProperties}
       >
         {layouts.map((layout, column) => (
           <section className={styles.column} key={layout.name}>
@@ -166,7 +197,16 @@ export function LayoutsView({ onBack }: { onBack: () => void }) {
                 cycled up to a platform-sized count, so names would repeat down
                 every column and read as a bug. The mark is what the page is
                 about — the name is on the tile's title for anyone who asks. */}
-            <div className={styles.cells}>
+            <div
+              className={styles.cells}
+              style={
+                {
+                  '--icols': String(
+                    fitCols(layout.tenants.length, cellsW, cellsH),
+                  ),
+                } as CSSProperties
+              }
+            >
               {layout.tenants.map((tenant, row) => (
                 <img
                   className={styles.cell}

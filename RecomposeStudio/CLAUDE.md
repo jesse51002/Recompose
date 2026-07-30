@@ -211,11 +211,18 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
   would repeat down every column and read as a bug. **The board is a grid that
   never scrolls**: a board you had to scroll would answer "how many are there?"
   with "keep going and find out", which is the one question the page exists to
-  answer at a glance, so the cards take the squeeze instead — columns from the
-  square root biased for a wide viewport, tiles shrinking with the cap, and
-  names dropped past ~20 cards because a name nobody can read is noise.
-  `minmax(0, 1fr)` on both grid axes is load-bearing: `1fr` alone floors at
-  content size and overflows at a hundred.
+  answer at a glance, so the cards take the squeeze instead. **The whole geometry
+  is one function used twice** — `fitCols(n, w, h) = ceil(sqrt(n·w/h))`, for the
+  cards in the board and again for the marks in a card — fed by ONE
+  `useElementSize` on the board, because the grid makes every card identical and
+  a hundred observers would report a hundred copies of one number. It replaced
+  two guessed bias factors that were right at one viewport and wrong at every
+  other. The mark mosaic is a filling grid rather than wrapping tiles: wrapping
+  leaves dead space under the last row, and a card two-thirds full reads as a
+  card with something missing. Names drop past ~20 cards because a name nobody
+  can read is noise. `minmax(0, 1fr)` on both axes of BOTH grids is
+  load-bearing: `1fr` alone floors at content size, which is how a grid that
+  should shrink overflows instead.
 - **Fail visible.** A missing artifact, a failed run, an empty catalog: show the
   state. A blank pane that could mean "loading" or "broken" is the one failure
   mode that wastes the most time here.
