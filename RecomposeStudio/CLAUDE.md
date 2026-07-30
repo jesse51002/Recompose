@@ -219,8 +219,10 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
   two guessed bias factors that were right at one viewport and wrong at every
   other. The mark mosaic is a filling grid rather than wrapping tiles: wrapping
   leaves dead space under the last row, and a card two-thirds full reads as a
-  card with something missing. Names drop past ~20 cards because a name nobody
-  can read is noise. `minmax(0, 1fr)` on both axes of BOTH grids is
+  card with something missing. A card's header carries its name and nothing else
+  — the tenant count used to sit under it, and the mosaic below already says it
+  more legibly, because comparing two columns of marks is instant while
+  comparing two numbers is reading. `minmax(0, 1fr)` on both axes of BOTH grids is
   load-bearing: `1fr` alone floors at content size, which is how a grid that
   should shrink overflows instead.
 - **Fail visible.** A missing artifact, a failed run, an empty catalog: show the

@@ -61,20 +61,17 @@ const MAX_DELAY_MS = 1400;
  * Columns come from the MEASURED aspect of the board rather than a guessed
  * bias — see `fitCols`.
  */
-function shape(cap: number, w: number, h: number): { cols: number; named: boolean } {
-  return {
-    cols: fitCols(cap, w, h),
-    // A name nobody can read is noise. Past this the count is the only thing
-    // a card has room to say, and the count is what matters at that end.
-    named: cap <= 20,
-  };
+function shape(cap: number, w: number, h: number): { cols: number } {
+  return { cols: fitCols(cap, w, h) };
 }
 
 /** The board's own gap, and the chrome one card spends on itself. In px. */
 const BOARD_GAP = 8;
 const CARD_PAD = 14;
 const CARD_BORDER = 2;
-const CARD_HEAD = 28;
+// One line of text plus its padding and rule — the header carries the name and
+// nothing else now, so this is a measured constant rather than a guess.
+const CARD_HEAD = 26;
 
 /**
  * How many columns fit `n` near-square items into a `w`x`h` box.
@@ -105,7 +102,7 @@ export function LayoutsView({ onBack }: { onBack: () => void }) {
   // grids, and one measurement serves every card because the grid makes them
   // identical — a hundred observers would report a hundred copies of one number.
   const [boardRef, board] = useElementSize<HTMLDivElement>();
-  const { cols, named } = shape(cap, board.width, board.height);
+  const { cols } = shape(cap, board.width, board.height);
   const rows = Math.max(1, Math.ceil(cap / cols));
 
   // What one card's mosaic actually gets, once the grid's gaps and the card's
@@ -185,12 +182,13 @@ export function LayoutsView({ onBack }: { onBack: () => void }) {
       >
         {layouts.map((layout, column) => (
           <section className={styles.column} key={layout.name}>
+            {/* THE NAME AND NOTHING ELSE. The count used to sit under it, and
+                the mosaic below already says it — more legibly than a number,
+                because comparing two columns of marks is instant and comparing
+                two numbers is reading. A label that repeats what is drawn just
+                below it is a label doing nothing. */}
             <header className={styles.columnHead}>
-              {named && <b>{layout.name}</b>}
-              <u>
-                {layout.tenants.length}
-                {named ? (layout.tenants.length === 1 ? ' tenant' : ' tenants') : ''}
-              </u>
+              <b>{layout.name}</b>
             </header>
 
             {/* MARKS ONLY, no names. The roster is the fleet's own logos

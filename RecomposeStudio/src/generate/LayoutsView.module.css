@@ -167,10 +167,12 @@
 
 .columnHead {
   flex: none;
-  padding: 7px 9px;
+  padding: 6px 9px;
   border-bottom: 1px solid var(--sh-line);
 }
 
+/* The only text on a card. It truncates rather than wrapping, because a
+   two-line header at a hundred cards would eat the mosaic it labels. */
 .columnHead b {
   display: block;
   overflow: hidden;
@@ -178,16 +180,6 @@
   white-space: nowrap;
   font: 600 var(--fs-xs) / 1.25 var(--sans);
   letter-spacing: var(--tr-title);
-}
-
-.columnHead u {
-  display: block;
-  margin-top: 3px;
-  text-decoration: none;
-  font: 400 var(--fs-micro) / 1 var(--mono);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ink-4);
 }
 
 /* A mosaic rather than a list. The roster runs to hundreds, so a column of

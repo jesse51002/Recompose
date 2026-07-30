@@ -44,38 +44,22 @@ export const DEFAULT_LAYOUTS = 6;
  */
 export const TENANT_COUNT = 300;
 
-/**
- * The pool of layout names, longest-lived first.
- *
- * Named for what the ARRANGEMENT does, never for a tenant — the whole point is
- * that no layout belongs to anybody. A layout called "Apex MMA" would be a
- * design fork wearing a different word.
- */
-const NAMES: readonly string[] = Object.freeze([
-  'Schedule-first',
-  'Studio hero',
-  'Progress-led',
-  'Booking-forward',
-  'Community feed',
-  'Minimal card',
-  'Coach spotlight',
-  'Class grid',
-]);
-
 export interface Layout {
   readonly name: string;
   readonly tenants: readonly FleetApp[];
 }
 
 /**
- * A layout's name.
+ * A layout's name: numbered, and nothing else.
  *
- * The pool is named for what the ARRANGEMENT does; past it, numbered. A
- * hundred hand-written names would be a hundred inventions nobody reads, and
- * "Layout 41" is the honest label for a column that exists to be counted.
+ * There was a pool of descriptive names — "Schedule-first", "Progress-led" —
+ * and they were inventions carrying no information: this board is not about
+ * what any one arrangement looks like, it is about HOW MANY there are. A
+ * hundred hand-written names would be a hundred things nobody reads, and at a
+ * hundred cards there is no room to read them anyway.
  */
 function layoutName(index: number): string {
-  return NAMES[index] ?? `Layout ${String(index + 1)}`;
+  return `Layout ${String(index + 1)}`;
 }
 
 /** The tenant roster, the fleet's real marks cycled to `TENANT_COUNT`. */
