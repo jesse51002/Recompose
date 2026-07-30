@@ -41,7 +41,7 @@
 //     lines arriving rather than one line travelling.
 
 import { Curves, clamp01, phaseProgress } from './celebrations/curves';
-import { ARRIVE_MS, BREATH, CLOSE_MS, DRAW_MS as SCREEN_DRAW_MS, HOLD_MS as SETTLED_HOLD_MS } from './shell/breath';
+import { ARRIVE_MS, BREATH, DRAW_MS as SCREEN_DRAW_MS, HOLD_MS as SETTLED_HOLD_MS } from './shell/breath';
 import type { ShowcaseRewardItem, ShowcaseRewardsStats } from './celebrations/showcaseCelebrationStats';
 import { SHOWCASE_REWARDS_STATS } from './celebrations/showcaseCelebrationStats';
 import type { ShowcaseAssetFile } from './showcaseAssets';
@@ -146,8 +146,21 @@ export const BREATH_EASE = BREATH;
 export const DRAW_MS = SCREEN_DRAW_MS;
 /** The held breath at the top of the flow, with the box inside the closed loop. */
 export const HOLD_MS = Math.round(ARRIVE_MS / 2);
-/** The four-count out: the box opens into the bloom and is gone. */
-export const BLOOM_MS = CLOSE_MS - ARRIVE_MS;
+/**
+ * The box opening into the bloom — AN IMPACT, AND IT STAYS QUICK.
+ *
+ * Fixed, and deliberately NOT derived from `CLOSE_MS` like everything else on
+ * this card. It was `CLOSE_MS - ARRIVE_MS`, so slowing the celebration clock
+ * stretched the burst from ~440ms to 800ms and turned a pop into a drift —
+ * coins wafting outward rather than being thrown.
+ *
+ * Guardrail 16 says a celebration must be slow enough to take in, and that is
+ * about what a member READS: the box arriving, the reward revealed, the cost.
+ * An EXPLOSION is not read, it is felt, and a slow explosion is not a generous
+ * explosion — it is a weak one. The burst stays fast; the appear it uncovers is
+ * what takes the time.
+ */
+export const BLOOM_MS = 440;
 
 /** The intro's whole timeline. */
 export const INTRO_TOTAL_MS = DRAW_MS + HOLD_MS + BLOOM_MS;

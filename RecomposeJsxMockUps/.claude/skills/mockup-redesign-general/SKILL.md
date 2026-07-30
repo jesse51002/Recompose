@@ -576,6 +576,13 @@ A celebration exists to be ENJOYED. Play it faster than a member can register
 what they earned and it has delivered nothing while still costing them the time.
 When in doubt, slower.
 
+**But an IMPACT stays quick.** A burst, a pop, a box flying open — that is not
+read, it is felt, and a slow explosion is not a generous explosion, it is a weak
+one: coins wafting outward instead of being thrown. Slow the ARRIVAL and the
+REVEAL, never the hit. Pin an impact to its own short duration rather than
+deriving it from the celebration clock, or the next person to slow the flow will
+stretch it by accident — which is exactly how this was found.
+
 It stays skippable, and that is what makes slow acceptable: a tap on a
 still-playing card resolves it immediately (Guardrails 4 and 5). A celebration
 nobody can get past is not slow, it is a block.
