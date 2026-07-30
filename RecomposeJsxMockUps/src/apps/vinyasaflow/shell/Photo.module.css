@@ -1,0 +1,92 @@
+/*
+ * Styles for ./Photo.tsx — the only rectangle this app contains.
+ *
+ * THE RULE THIS STYLESHEET ENFORCES STRUCTURALLY: no variant ever sets BOTH
+ * width and height. One axis is given, the other is `auto`, so the browser
+ * derives it from the picture's own intrinsic ratio and there is no box for the
+ * art to be cropped to. Guardrail 10b describes what happens otherwise — a 16:9
+ * still forced into a 1:1 box loses 44% of its width, silently, with the layout
+ * still "correct".
+ *
+ * Reads ONLY `--sc-*`. Never `--gw-*` / `--adm-*` (eslint Gates 2a/2b).
+ */
+
+/*
+ * FULL BLEED — a photograph that is the subject of its screen or the head of a
+ * list. Edge to edge, and its HEIGHT is whatever its own proportion makes it.
+ */
+.bleed {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.bleedImg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/*
+ * The thread, redrawn ON TOP of the picture in the knockout ink and one pixel
+ * heavier. `.rail` in ../shell/Screen.module.css runs behind the body, so a
+ * full-bleed photograph covers it — and the line may never break. This is the
+ * brief's "the same line in two inks, not two devices".
+ */
+.over {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--sc-thread-x) + var(--sc-thread-width) / 2);
+  width: var(--sc-thread-width-over);
+  transform: translateX(-50%);
+  background: var(--sc-knockout);
+  pointer-events: none;
+}
+
+/*
+ * INLINE — a photograph that is one of many in a list. Small, beside its node,
+ * width given and height derived.
+ */
+.inline {
+  display: block;
+  flex: 0 0 auto;
+  width: 96px;
+  height: auto;
+  border-radius: 0;
+}
+
+/*
+ * STRIP — a frame on a shelf. HEIGHT is the given axis here, not width, which
+ * is what lets stills of differing proportion sit in one row without any of
+ * them being cropped to match a neighbour: they align on their tops and
+ * bottoms and differ in width, like frames on a strip.
+ */
+.strip {
+  display: block;
+  flex: 0 0 auto;
+  height: 108px;
+  width: auto;
+  border-radius: 0;
+}
+
+/*
+ * A cut-out object this brand minted — the roundel, the medallion, a struck
+ * coin. These are square, centre-weighted and transparent-edged, so a circle
+ * costs them nothing and belongs to them. A landscape photograph is NOT square
+ * and never gets this class.
+ */
+.minted {
+  display: block;
+  flex: 0 0 auto;
+  border-radius: var(--sc-radius-circle);
+  object-fit: contain;
+}
+
+/* The caption sits outside the frame, never over it. */
+.caption {
+  margin: var(--sc-spacing-small) 0 0;
+  font: var(--sc-type-fine);
+  letter-spacing: var(--sc-type-fine-ls);
+  color: var(--sc-text-2nd);
+}

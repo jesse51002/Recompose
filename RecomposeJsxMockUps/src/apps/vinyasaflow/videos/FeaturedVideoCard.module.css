@@ -1,0 +1,31 @@
+/*
+ * Styles for ./FeaturedVideoCard.tsx — the hero and its one action.
+ * `--sc-*` only — see ../ShowcaseThemeVars.tsx.
+ */
+
+/*
+ * `Column(crossAxisAlignment: stretch)`.
+ *
+ * `--sc-spacing-large` between the recommendation and its action, matching the
+ * gap the recommendation holds between its own picture and its own words: the
+ * hero is one object at one internal rhythm, and the gap OUT of it to the next
+ * region is `--sc-spacing-big` (../VideoShowcase.module.css). No surface, no
+ * radius and no clip — the base rounded a card here, and this design has no
+ * card to round.
+ */
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--sc-spacing-large);
+}
+
+/*
+ * The action sits at the thread's inset, on the same left edge as the title and
+ * the count above it, so the whole spoken half of the hero lines up on the
+ * thread instead of the action floating full-bleed under a picture.
+ */
+.ctaRow {
+  padding-left: var(--sc-thread-inset);
+  padding-right: var(--sc-screen-padding-x);
+}

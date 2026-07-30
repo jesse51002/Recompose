@@ -1,0 +1,32 @@
+/*
+ * Styles for ./rankLayoutData.tsx.
+ * `--sc-*` only — see ../ShowcaseThemeVars.tsx.
+ */
+
+/*
+ * The invariant gate's marker (./rankParts.ts). `display: contents` removes the
+ * element from the box tree entirely while leaving it in the DOM, so its
+ * children lay out as direct children of whatever contains the marker — a
+ * marker can never move a pixel of the arrangement it exists to check.
+ */
+.marker {
+  display: contents;
+}
+
+/*
+ * The streak statement: the figure and its unit are ONE object, so they share a
+ * baseline and sit a single small step apart.
+ */
+.streak {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sc-spacing-medium);
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.streakUnit {
+  font: var(--sc-type-read);
+  letter-spacing: var(--sc-type-read-ls);
+  color: var(--sc-text-2nd);
+}

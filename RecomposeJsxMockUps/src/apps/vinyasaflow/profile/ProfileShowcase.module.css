@@ -1,0 +1,30 @@
+/*
+ * Styles for ./ProfileShowcase.tsx — the FRAME ONLY.
+ *
+ * `--sc-*` only — see ../ShowcaseThemeVars.tsx. The thread itself is drawn by
+ * ../shell/Screen.module.css on the screen root; nothing here touches it.
+ */
+
+/*
+ * The regions the line passes through, top to bottom.
+ *
+ * `--sc-spacing-big` between regions against `--sc-spacing-medium` inside one
+ * (../shell/Thread.module.css `.content`) is the grouping: a label sits nearer
+ * the thing it names than the next region sits to it. Guardrail 13.
+ *
+ * ONE RIGHT GUTTER, HERE, FOR THE WHOLE SCREEN. A region's own grid runs its
+ * content column to the container's right edge, so the gutter has to be on the
+ * container or it has to be repeated in five stylesheets that then drift apart.
+ * The left edge needs nothing: every region is placed off `--sc-thread-x` /
+ * `--sc-thread-inset`, which is the same left edge the head and the foot use.
+ */
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-big);
+  padding-right: var(--sc-screen-padding-x);
+  /* The head is a different object from the body — a region gap, not less. */
+  padding-top: var(--sc-spacing-big);
+  /* Room under the last region so the shelf never ends against the foot. */
+  padding-bottom: var(--sc-spacing-big);
+}

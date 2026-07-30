@@ -1,0 +1,218 @@
+/*
+ * Styles for ./BookingShowcase.tsx — the one screen where the thread CLOSES.
+ *
+ * Reads `--sc-*` for every design token (see ./ShowcaseThemeVars.tsx) and
+ * `--bk-*` for this screen's own measurements and timings, which the component
+ * derives and writes inline so nothing is restated as a literal here.
+ * Never `--gw-*` / `--adm-*` (eslint Gates 2a/2b).
+ *
+ * LONGHANDS ONLY where a var() is involved. A shorthand carrying one
+ * unresolvable name is invalid at computed-value time and the browser drops the
+ * WHOLE declaration, so a typo costs the axes it never touched.
+ */
+
+/*
+ * THE SWEEP, as a registered custom property so it can be interpolated.
+ *
+ * `initial-value: 0deg` is the safe end, not the start: the mask below reads
+ * "transparent up to --bk-sweep, ink from there on", so 0deg is the FINISHED
+ * ring. A browser that does not support `@property` therefore renders a
+ * complete loop rather than an invisible one.
+ */
+@property --bk-sweep {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+/* Fills the shell's body, which is a flex child with a definite height. */
+.screen {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  height: 100%;
+}
+
+/*
+ * The held shape: the loop and the headline that names it, as one object.
+ *
+ * `padding-bottom` biases the pair a little above true centre — a celebration
+ * sitting on the exact midline reads as floating. It also lengthens the run of
+ * bare thread above the loop, which is the sequence arriving.
+ */
+.stage {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  padding-bottom: var(--sc-spacing-big);
+}
+
+/*
+ * The ring's box. Its left edge is the descent (`--bk-loop-left` is the line's
+ * centre pulled back half the ring's stroke), and its diameter is what puts its
+ * centre on the screen's centre — so the loop hangs off the thread AND sits
+ * square in the frame. Both numbers are derived in the component.
+ */
+.loopWrap {
+  position: relative;
+  flex: 0 0 auto;
+  width: var(--bk-loop-size);
+  height: var(--bk-loop-size);
+  margin-left: var(--bk-loop-left);
+}
+
+/*
+ * THE CLOSING OF THE LOOP IS THE ANIMATION.
+ *
+ * A conic mask starting at 9 o'clock — where the descent meets the ring — with
+ * the ink growing COUNTERCLOCKWISE, because a line arriving at the leftmost
+ * point of a circle is travelling downward and that is the direction it
+ * continues in. `--bk-sweep` runs 360deg (nothing drawn) to 0deg (closed).
+ *
+ * ON THE BREATH, like the four celebration loops it is a fifth of. This rule
+ * ran `linear` for one release, reading "a ring or an arc fills by drawing, at
+ * an even rate" as a licence for the one curve that stops dead. It is not: that
+ * sentence sits in the paragraph about figures reaching a VALUE without a final
+ * tick, while the paragraph about the line is unconditional — "nothing here
+ * decelerates into a hard stop, and nothing accelerates away from one".
+ * ../BookingShowcase.tsx's header carries the argument in full.
+ *
+ * The mask is on this wrapper rather than on the `<Loop>` so that masking the
+ * stroke cannot touch the hero, which is a sibling and paints above it.
+ */
+.ring {
+  position: absolute;
+  inset: 0;
+  /*
+   * `0deg`, not `0`. A conic stop's position is an <angle-percentage>, and CSS
+   * permits a unitless zero only for <length> — a bare `0` invalidates the
+   * whole gradient, which would silently drop the mask and with it the one
+   * piece of motion this screen is built around.
+   */
+  -webkit-mask-image: conic-gradient(from 270deg, transparent var(--bk-sweep), #000 0deg);
+  mask-image: conic-gradient(from 270deg, transparent var(--bk-sweep), #000 0deg);
+  animation: closeLoop var(--bk-loop-draw-ms) var(--bk-breath) both;
+}
+
+/*
+ * The rolled mat, inside the loop.
+ *
+ * HEIGHT ONLY. Width is derived from the art's own proportion, so there is no
+ * box for anything to be cropped to — the rule every picture in this app obeys
+ * (../shell/Photo.module.css states it at length). Never add a width, an
+ * aspect-ratio or an object-fit here.
+ */
+.hero {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: block;
+  height: var(--bk-hero-height);
+  width: auto;
+  transform: translate(-50%, -50%);
+  animation: heroArrive var(--bk-image-scale-ms) var(--bk-breath) both;
+}
+
+/*
+ * The headline naming the screen, hung right of the thread like every other
+ * piece of content in this app.
+ *
+ * `--sc-spacing-big` above it and the rest of the stage's slack below it: the
+ * gap binding the headline to the loop it names must be SMALLER than the gap to
+ * the action at the foot, which is what does the grouping (Guardrail 13).
+ */
+.headline {
+  flex: 0 0 auto;
+  margin-top: var(--sc-spacing-big);
+  padding-inline-start: var(--sc-thread-inset);
+  padding-inline-end: var(--sc-screen-padding-x);
+  animation: fadeIn var(--bk-reveal-ms) var(--bk-breath) var(--bk-settle-delay-ms) both;
+}
+
+/*
+ * The action's zone, laid out from the FIRST frame so nothing reflows when the
+ * button arrives — only its opacity changes.
+ *
+ * THERE IS NO `pointer-events` RULE HERE AND THERE MUST NEVER BE ONE. This CTA
+ * is the only way off booking, and it has been unreachable twice: once with no
+ * handler, and once with a `pointer-events: none` that had outlived its reason.
+ * The brief agrees on its own terms — every tap target is live from the first
+ * frame regardless of what the line is doing.
+ *
+ * Full width, so the descent runs INTO the capsule and back out below it. That
+ * is also this screen's single terracotta fill.
+ */
+.actionZone {
+  flex: 0 0 auto;
+  padding-inline: var(--sc-screen-padding-x);
+  padding-bottom: var(--sc-spacing-big);
+  animation: fadeIn var(--bk-cta-fade-ms) var(--bk-breath) var(--bk-settle-delay-ms) both;
+}
+
+/* The line travelling round the hero until it meets itself. */
+@keyframes closeLoop {
+  from {
+    --bk-sweep: 360deg;
+  }
+
+  to {
+    --bk-sweep: 0deg;
+  }
+}
+
+/*
+ * The hero arriving. Scale and fade only — no bounce, no spring, no overshoot
+ * and settle; there is no elastic easing anywhere in this app.
+ */
+@keyframes heroArrive {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(var(--bk-start-scale));
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/*
+ * The headline and the action land together on the close, and they land by
+ * OPACITY ALONE.
+ *
+ * The headline used to rise 12px into place. Every other surface in this fork
+ * says the same thing in its own comments — "opacity only, nothing here slides"
+ * — because ../layout_brief.yaml opens with it: "A screen does not fade in and
+ * does not slide in… each region arrives at the moment the line reaches it." A
+ * translate is a second idea about how things appear here, and there is only
+ * one. `--bk-reveal-offset` went with it.
+ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/*
+ * Under a reduced-motion preference the line is simply already drawn, the card
+ * is already settled, and the action is already present. The component also
+ * declines to arm the loop timer, so nothing restarts.
+ *
+ * `.ring` falls back to `--bk-sweep`'s registered initial value of 0deg, which
+ * is the CLOSED loop — see the `@property` block at the top.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .ring,
+  .hero,
+  .headline,
+  .actionZone {
+    animation: none;
+  }
+}

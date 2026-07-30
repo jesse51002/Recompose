@@ -1,0 +1,36 @@
+/*
+ * Styles for ./DayClassGroup.tsx — one day of the schedule.
+ *
+ * Reads ONLY `--sc-*`. Never `--gw-*` / `--adm-*` (eslint Gates 2a/2b).
+ *
+ * THE SPACING IS THE GROUPING, and this file is where the middle two rungs of
+ * it live. Read down the screen the gaps go 8 → 16 → 32 → 64:
+ *
+ *   8   the day's name to the photograph it introduces  (../shell/Thread.module.css)
+ *  16   that photograph to its own type                 (./classItem/ClassItemHero.module.css)
+ *  32   one class to the next                           (here)
+ *  64   one day to the next                             (./HomeShowcase.module.css)
+ *
+ * Every one of them comes off the scale, and each is at least double the one
+ * inside it — which is what makes a label read as the heading of what follows
+ * rather than as the footer of what came before (Guardrail 13).
+ */
+
+.day {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  /* The day's lead class to the compact rows beneath it. */
+  gap: var(--sc-spacing-big);
+}
+
+/*
+ * The rest of the day. No horizontal padding: each row places itself against
+ * the thread with its own node (./classItem/ClassItemRow.module.css), the same
+ * way a region does, so nothing here may inset them off the line.
+ */
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-big);
+}

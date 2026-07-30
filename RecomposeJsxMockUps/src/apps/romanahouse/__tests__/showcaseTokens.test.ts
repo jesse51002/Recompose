@@ -52,7 +52,7 @@ const NO_THEME = Object.freeze({
 });
 
 describe('brand fallbacks', () => {
-  // THIS FORK REPLACES THE FALLBACK SET, where ../../zenbjj inherits it. The
+  // THIS FORK REPLACES THE FALLBACK SET rather than inheriting the base's. The
   // values are the produced run this layout was designed against,
   // `apps/combatden/ReformerClassical/output.yaml`, and the reason is in
   // ../showcaseTokens.ts: the direction is committed to a light canvas, and the

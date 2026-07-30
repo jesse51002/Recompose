@@ -57,10 +57,10 @@ import {
 // ROMANA HOUSE fallbacks — used only when no theme loads.
 // ---------------------------------------------------------------------------
 //
-// THIS FORK DIVERGES FROM ../zenbjj HERE, DELIBERATELY. That fork kept the
-// base's CombatDen fallbacks on the argument that a redesign changes
-// arrangement rather than palette. True for a direction that is palette-
-// agnostic; this one is not. Romana House is committed to a LIGHT canvas — an
+// THIS FORK REPLACES THE BASE'S FALLBACKS, DELIBERATELY. A fork MAY inherit
+// CombatDen's values, on the argument that a redesign changes arrangement
+// rather than palette — true for a direction that is palette-agnostic; this one
+// is not. Romana House is committed to a LIGHT canvas — an
 // ivory sheet ruled in walnut hairlines, with the largest element on any
 // screen a walnut numeral. Rendered against CombatDen's near-black canvas the
 // rules are invisible and the arrangement cannot be judged at all, and the

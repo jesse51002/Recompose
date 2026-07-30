@@ -1,0 +1,47 @@
+/*
+ * Styles for ./ClassItemRow.tsx — a compact class, beside its node on the line.
+ *
+ * Reads ONLY `--sc-*`. Never `--gw-*` / `--adm-*` (eslint Gates 2a/2b).
+ *
+ * NOTHING HERE SIZES THE PHOTOGRAPH — see ./ClassItemHero.module.css for why.
+ * <InlinePhoto> is given a width and derives its own height, so a row of
+ * classes stays a row of uncropped 3:2 pictures.
+ */
+
+/*
+ * The same two-column grid ../../shell/Thread.module.css gives a region: the
+ * first column is the thread's inset and the <Node> places itself on the line's
+ * centre inside it. `align-items: center` puts the bead at the row's middle
+ * rather than at its top, so a row that wraps to a taller measure still reads as
+ * hanging from one point.
+ */
+.row {
+  display: grid;
+  grid-template-columns: var(--sc-thread-inset) 1fr;
+  align-items: center;
+  padding-right: var(--sc-screen-padding-x);
+  cursor: pointer;
+}
+
+/* The picture and the words, in the order the eye travels. */
+.body {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-large);
+  min-width: 0;
+}
+
+/*
+ * `min-width: 0` is what lets a long class name or instructor wrap instead of
+ * pushing the row wider than the screen — a flex item's default `min-width:
+ * auto` refuses to shrink below its content.
+ */
+.info {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sc-spacing-small);
+}

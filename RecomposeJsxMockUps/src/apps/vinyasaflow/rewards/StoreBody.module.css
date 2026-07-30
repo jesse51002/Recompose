@@ -1,0 +1,46 @@
+/*
+ * Styles for ./StoreBody.tsx — the points store hung on the thread.
+ *
+ * Reads ONLY `--sc-*`. Never `--gw-*` / `--adm-*` (eslint Gates 2a/2b).
+ *
+ * EVERY VALUE COMES FROM THE SCALE. `--sc-spacing-big` (32) between the three
+ * stops, `--sc-spacing-large` (16) and below inside one of them. There is no
+ * typed-in px anywhere in this file, which is the check Guardrail 13 asks for.
+ */
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--sc-spacing-big);
+  /*
+   * The right gutter for everything on this screen. ../shell/Thread.tsx's
+   * `Region` pads neither edge on purpose, so the surface that stacks regions
+   * owes them the margin. The LEFT edge is not padded here: the thread and its
+   * nodes are placed off `--sc-thread-x`, and content clears them with
+   * `--sc-thread-inset`.
+   */
+  padding-right: var(--sc-screen-padding-x);
+  /*
+   * Off the head. The masthead already closes with `--sc-spacing-medium`, so
+   * this lands the tabs a full step clear of the four carried items rather than
+   * reading as a fifth row of chrome.
+   */
+  padding-top: var(--sc-spacing-big);
+  /* Room for the four destinations, so the last reward scrolls clear of them. */
+  padding-bottom: var(--sc-spacing-big);
+}
+
+/*
+ * THE STORE IS ONE GROUP, not six regions. Its own internal gap matches the
+ * stack's, and the extra `padding-top` is what makes the step INTO the store
+ * twice the step between two rewards — the grouping rule, applied to a list
+ * whose items are themselves multi-line.
+ */
+.store {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--sc-spacing-big);
+  padding-top: var(--sc-spacing-big);
+}

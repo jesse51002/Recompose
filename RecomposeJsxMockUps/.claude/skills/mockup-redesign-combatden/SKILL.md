@@ -60,6 +60,64 @@ that had outlived its reason.
 A **tap anywhere on a still-animating celebration card** skips to settled, so a
 slow entrance never strands anyone. The last card wraps to the first.
 
+## WHAT EACH SCREEN IS ABOUT — the emphasis ranking
+
+**Read this before the inventory below, and design to it.** The inventory says
+what must be PRESENT. This says what must be PROMINENT, and it is the half that
+gets lost — a redesign can render every element on the list and still be wrong,
+because it made the biggest thing on the screen the least important thing on it.
+
+This ranking is a property of the PRODUCT, not of any one design. "A member
+scanning a schedule is looking for the class, not the clock" is true of every
+fork, so it is decided once, here, and every redesign inherits it. A fork may
+express it however it likes — scale, weight, colour, position, space — but it
+may not reorder it.
+
+**Rank 1 should be unmistakable at a glance, before anything is read.** If two
+elements tie for the eye, rank 1 is not winning.
+
+| screen | 1 — leads | 2 | 3 | supporting |
+| --- | --- | --- | --- | --- |
+| `home` | the class NAME **and its photograph, together** | its time | instructor, attending | the day selector, the carried stats |
+| `class` | the class NAME **and its photograph, together** | the **Reserve** action | time + duration | description, instructor, location |
+| `booking` | the confirmation headline | the **Continue** action | — | the hero image |
+| `store` | each reward's NAME **and its photograph, together** | its points cost | the member's points balance | the price label, the tabs |
+| `video` | the video TITLE **and its thumbnail, together** | channel, views | — | the scope tabs, the section headers |
+| `profile` | the current RANK **and its belt, together** | progress to the next rank | streak and class counts | the rating graph, the level-up shelf |
+| `streak` | the week COUNT | the streak mark | the +N points | the week strip |
+| `points` | the points GAINED | the hero image | the running total | — |
+| `rewards` | the featured reward's NAME **and its photograph** | its points cost | the carousel | the giftbox intro |
+| `rank` | the rank NAME **and its belt, together** | classes in rank | — | — |
+| `wins` | the title copy | the three stat values | their labels | the trophy, the burst |
+
+**A NAME AND ITS PICTURE ARE ONE OBJECT AT RANK 1, NOT A THING AND ITS
+DECORATION.** This is the correction that matters most in the table, and the
+codebase already says why elsewhere: `class_photo_2` declares
+`depends_on_text: [class_name_2]` in `apps/combatden/app.yaml`, so the picture is
+generated FROM the copy. They are one claim about one class. Treating the
+photograph as support leads to the small-thumbnail-beside-small-text row that
+every scheduling app looks identical in; treating them as one object is what
+lets a class read as a thing worth attending.
+
+So they are sized, placed and emphasised TOGETHER. The photograph may be large —
+it should be — and the name has to hold its own beside it rather than shrinking
+because the picture is doing the work. **The failure is not "the photo is too
+big", it is "the name is too small for the photo it belongs to."**
+
+**What is genuinely supporting**: the time, the instructor, the attending count,
+the tabs, the day selector, the carried stats. Those are how a member chooses
+BETWEEN classes once the class has caught their eye — they are not what catches
+it.
+
+**Two failures this has already produced here**, both of which passed every gate:
+
+- `apps/vinyasaflow/`'s schedule set the start time at 40px and the class name at
+  17px, so the loudest thing on the screen was the clock. Every element was
+  present, correctly themed, correctly spaced, and the screen answered the wrong
+  question.
+- A figure is seductive because the display face makes it look good at size.
+  That is a reason to be suspicious of a big number, not a reason to keep it.
+
 ## Every screen, and what it must contain
 
 ### Asset `app`
@@ -72,11 +130,21 @@ heading; and a list of class rows. Each row carries the class name, its time
 range with duration, the instructor, an attending count, and a thumbnail.
 Bottom nav present, Home active.
 
-**`class`** — the class detail page. Must contain: a topbar with a **back**
-button, a full-width class photo, the class meta (name, time, duration,
-instructor, attending), a description section, an instructor section with bio,
-a location section with its map image, and exactly one **Reserve** action. No
+**`class`** — the class detail page. Must contain: a **back** control; the same
+identity and four carried items the other app screens show (gym mark, gym name
+with its chevron, rank belt, streak with its count, points total, QR
+affordance); a full-width class photo; the class meta (name, time, duration,
+instructor, attending); a description section; an instructor section with bio; a
+location section with its map image; and exactly one **Reserve** action. No
 bottom nav.
+
+**The identity and carried items are easy to miss here and this entry used to
+omit them.** `parts/ClassScreenTopbar.tsx` composes `support/ShowcaseTopbar` in
+its `nameOnly` mode, and `nameOnly` suppresses only the big MARK — every
+arrangement `TopbarStacked` builds still renders `<InfoBar>`. A redesign reading
+"a topbar with a back button" and building exactly that drops five elements and
+passes every mechanical gate. `apps/vinyasaflow/` shipped that for an afternoon
+before it was caught by reading the base rather than this list.
 
 **`booking`** — the post-reservation celebration. Must contain: the celebration
 hero image scaling in, the "Class Booked" headline (themed copy slot), and a

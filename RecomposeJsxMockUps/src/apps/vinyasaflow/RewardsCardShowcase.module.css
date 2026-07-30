@@ -1,0 +1,407 @@
+/*
+ * Styles for ./RewardsCardShowcase.tsx — celebration card 3 of 5.
+ *
+ * `--sc-*` are the design tokens (see ./ShowcaseThemeVars.tsx). `--rw-*` are
+ * values this card both writes and reads: its own geometry and the intro's
+ * timings, handed in from ./rewardsCelebration.ts so no measurement and no
+ * duration is restated as a literal here.
+ *
+ * THE ONE STRUCTURAL IDEA. Everything BELOW the bow is a fixed number — half
+ * the shelf, the gap, the loop, the foot inset — and everything above it is
+ * however tall its type makes it. So the column is laid out from the bottom up
+ * (`justify-content: flex-end`) and every piece of the thread is placed from
+ * the card's BOTTOM edge. That is what puts the loop in exactly the same place
+ * in the intro, which renders only the loop, and in the settled card, which
+ * renders four things above it: the line does not move when the shelf replaces
+ * the box.
+ *
+ * NOTHING IN HERE MAY CLIP. The bloom paints outside the card on purpose, and
+ * one scrolling or hidden axis computes the other to `auto`.
+ */
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  /* Laid out from the bottom up — see the header. */
+  justify-content: flex-end;
+  width: 100%;
+  height: 100%;
+  /*
+   * NOT the default. This island sets no global `border-box`, so a card at
+   * `height: 100%` with a foot inset grew 32px TALLER than the box it fills —
+   * which put the loop's bottom edge exactly on the action's top edge and left
+   * the card's own padding hanging behind it, swallowing the tap. Every
+   * measurement in `--rw-bow-from-bottom` is quoted inside this box, so it has
+   * to be the border box.
+   */
+  box-sizing: border-box;
+  padding-bottom: var(--sc-spacing-big);
+  color: var(--sc-text);
+  font: var(--sc-type-read);
+  letter-spacing: var(--sc-type-read-ls);
+
+  /*
+   * Where the sideways excursion crosses, measured up from the card's bottom
+   * edge: the foot inset, the loop, the gap above it, and half the shelf. Every
+   * term is a token or a published constant, so moving any one of them moves
+   * the whole stroke with it.
+   */
+  --rw-bow-from-bottom: calc(
+    var(--sc-spacing-big) + var(--rw-loop) + var(--sc-spacing-big) + var(--rw-shelf-h) / 2
+  );
+}
+
+/* --- The stroke ----------------------------------------------------------- */
+
+/*
+ * The line sits BEHIND everything the card hangs on it, so a photograph covers
+ * it without either having to know about the other — which is how the shelf's
+ * frames come to have the thread running behind them.
+ */
+.thread {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Down the left margin, from the top edge to the bow. Same x as every other
+   screen's descent, because it is the same line. */
+.descent {
+  position: absolute;
+  top: 0;
+  bottom: var(--rw-bow-from-bottom);
+  left: var(--sc-thread-x);
+  width: var(--sc-thread-width);
+  background-color: var(--sc-primary);
+  transform-origin: top center;
+}
+
+/*
+ * Out sideways to gather the shelf, and off the right edge — because the shelf
+ * runs off it too. It starts where the descent ends rather than at the screen
+ * edge: the junction is the point of a bow.
+ */
+.bow {
+  position: absolute;
+  right: 0;
+  bottom: calc(var(--rw-bow-from-bottom) - var(--sc-thread-width) / 2);
+  left: var(--sc-thread-x);
+  height: var(--sc-thread-width);
+  background-color: var(--sc-primary);
+  transform-origin: left center;
+}
+
+/*
+ * And back down, out from behind the featured frame, into the loop. It leaves
+ * the bow at the card's centre because that is where the featured page sits, so
+ * the reward the line drops through is the reward whose cost the loop holds.
+ */
+.drop {
+  position: absolute;
+  bottom: calc(var(--sc-spacing-big) + var(--rw-loop));
+  left: 50%;
+  margin-left: calc(var(--sc-thread-width) / -2);
+  width: var(--sc-thread-width);
+  height: calc(var(--rw-shelf-h) / 2 + var(--sc-spacing-big));
+  background-color: var(--sc-primary);
+  transform-origin: top center;
+}
+
+/*
+ * THE CLOSING LOOP, and the only place in this app where the line completes
+ * instead of continuing off an edge. One pixel heavier than the descent,
+ * because it is the same line drawn over a busier field.
+ */
+.ring {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.ringStroke {
+  fill: none;
+  stroke: var(--sc-primary);
+  stroke-width: var(--sc-thread-width-over);
+  /* `pathLength="1"` on the element normalises the circumference, so the dash
+     pattern is a plain 1 → 0 and no radius arithmetic leaks into CSS. */
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  /* Start the stroke at twelve o'clock — where the drop arrives. */
+  transform: rotate(-90deg);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* --- The two things the card says ----------------------------------------- */
+
+/*
+ * A node and the label beside it are ONE object, so they share a grid row and
+ * centre on each other; the second line hangs under the first at the small
+ * step. The gap to the NEXT region is `--sc-spacing-big`, which is what does
+ * the grouping.
+ */
+.head,
+.caption {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: var(--sc-thread-inset) 1fr;
+  align-items: center;
+  padding-right: var(--sc-screen-padding-x);
+}
+
+.caption {
+  margin-top: var(--sc-spacing-big);
+}
+
+/* The one headline that names this card. Display face, light, sentence case —
+   ./shell/Figure.tsx owns everything but where it sits. */
+.title {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.subtitle {
+  grid-column: 2;
+  grid-row: 2;
+  margin: 0;
+  margin-top: var(--sc-spacing-small);
+  font: var(--sc-type-say);
+  letter-spacing: var(--sc-type-say-ls);
+  color: var(--sc-text-2nd);
+}
+
+/* The featured reward's name — the name of a thing in a list. */
+.name {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0;
+  font: var(--sc-type-name);
+  letter-spacing: var(--sc-type-name-ls);
+  color: var(--sc-text);
+}
+
+/*
+ * What it costs on top of the points. A brand-coloured chip in the base; here
+ * it is type, because this design has no box to put a chip in and neither brand
+ * colour may set 13px running copy on the linen canvas.
+ */
+.price {
+  grid-column: 2;
+  grid-row: 2;
+  margin: 0;
+  margin-top: var(--sc-spacing-small);
+  font: var(--sc-type-quiet);
+  letter-spacing: var(--sc-type-quiet-ls);
+  color: var(--sc-text-2nd);
+}
+
+/* --- The shelf ------------------------------------------------------------ */
+
+/*
+ * What the bow carries. It runs to BOTH edges with no inset of its own: the
+ * frames at the rim are meant to leave the screen, which is what says the
+ * catalogue continues past what is on it.
+ *
+ * The gap above it is smaller than the gap above the caption, because the
+ * caption NAMES what is on this shelf and the two are one object.
+ */
+.shelf {
+  position: relative;
+  z-index: 1;
+  height: var(--rw-shelf-h);
+  margin-top: var(--sc-spacing-large);
+}
+
+/* --- The close ------------------------------------------------------------ */
+
+/*
+ * The loop, and whatever the card is holding inside it: the giftbox while the
+ * line is still arriving, the featured cost once it has. Fixed to the loop's
+ * own size in both views, which is what keeps the ring from moving between them.
+ */
+.close {
+  position: relative;
+  z-index: 1;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--rw-loop);
+  height: var(--rw-loop);
+  margin-top: var(--sc-spacing-big);
+}
+
+/*
+ * The cost, inside the loop. The single most characteristic mark this design
+ * makes: a big figure set LIGHT in the display face, with its unit stepped
+ * right down beneath it so the number is what the eye lands on.
+ */
+.cost {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sc-spacing-tiny);
+  margin: 0;
+}
+
+.costValue {
+  text-align: center;
+}
+
+.costUnit {
+  font: var(--sc-type-quiet);
+  letter-spacing: var(--sc-type-quiet-ls);
+  color: var(--sc-text-2nd);
+}
+
+/* --- The intro ------------------------------------------------------------ */
+
+/*
+ * The box and the coins it opens into. Both are placed by the loop's centre and
+ * pulled back half their own size by the driver, which writes the whole
+ * transform per frame — these classes only give each one its box.
+ */
+.box,
+.coin {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: block;
+  will-change: transform, opacity;
+}
+
+/* --- Motion --------------------------------------------------------------- */
+
+/*
+ * ONE STROKE PASSING EACH PIECE IN TURN. The four windows overlap (they are
+ * published that way in ./rewardsCelebration.ts), so what is on screen is a
+ * line travelling rather than four lines arriving on their own schedules. Every
+ * one of them carries the breath ease: soft at BOTH ends, because a breath
+ * begins gently and finishes gently. Nothing here overshoots and settles.
+ */
+.descentDraw {
+  animation: drawDown var(--rw-descent-ms) var(--rw-breath) var(--rw-descent-delay) both;
+}
+
+.bowDraw {
+  animation: drawAcross var(--rw-bow-ms) var(--rw-breath) var(--rw-bow-delay) both;
+}
+
+.dropDraw {
+  animation: drawDown var(--rw-drop-ms) var(--rw-breath) var(--rw-drop-delay) both;
+}
+
+.ringDraw {
+  animation: closeLoop var(--rw-ring-ms) var(--rw-breath) var(--rw-ring-delay) both;
+}
+
+@keyframes drawDown {
+  from {
+    transform: scaleY(0);
+  }
+
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes drawAcross {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes closeLoop {
+  from {
+    stroke-dashoffset: 1;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/*
+ * What hangs on the line arrives after it, top to bottom, in the order the line
+ * reached each one. A pure fade and no slide: this app's things are drawn or
+ * they are simply there — nothing here travels in from an offset it never had.
+ */
+.arrive1 {
+  animation: arrive var(--rw-arrive-ms) var(--rw-breath) var(--rw-arrive-1) both;
+}
+
+.arrive2 {
+  animation: arrive var(--rw-arrive-ms) var(--rw-breath) var(--rw-arrive-2) both;
+}
+
+.arrive3 {
+  animation: arrive var(--rw-arrive-ms) var(--rw-breath) var(--rw-arrive-3) both;
+}
+
+.arrive4 {
+  animation: arrive var(--rw-arrive-ms) var(--rw-breath) var(--rw-arrive-4) both;
+}
+
+@keyframes arrive {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/*
+ * A page advance re-fires the caption and the cost through the `key` remount.
+ * Declared AFTER the arrival classes so it wins on source order — the first
+ * featured item is not a switch, it is what the card opened on, and only a
+ * genuine advance carries this.
+ */
+.captionSwitch {
+  animation: arrive var(--rw-switch-ms) var(--rw-breath) both;
+}
+
+/*
+ * Under a reduced-motion preference the line is simply already drawn, the card
+ * is already settled, and everything on it is already present. The component
+ * also skips the intro entirely and never arms the loop or advance timers — and
+ * it settles the flow before it returns, so the action still arrives.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .descentDraw,
+  .bowDraw,
+  .dropDraw,
+  .ringDraw,
+  .arrive1,
+  .arrive2,
+  .arrive3,
+  .arrive4,
+  .captionSwitch {
+    animation: none;
+  }
+}
+
+/*
+ * A TAP FINISHES THE DRAW — the rule that outranks the motion
+ * (./shell/useTapToSettle.ts). A negative delay past the longest animation on
+ * the card runs every one of them to its own end and holds it there: the
+ * descent, the bow, the drop and the closing ring all complete, and every
+ * arrival lands. The component hands the bloom over to the shelf separately,
+ * because a per-frame driver has no keyframe for this to fast-forward.
+ */
+.finished,
+.finished * {
+  animation-delay: -30s !important;
+}

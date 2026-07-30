@@ -1,0 +1,62 @@
+/* `PostClassScaffold` — the card fills the screen and the CTA stands on the
+   canvas beneath it. */
+
+.scaffold {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: var(--sc-background);
+}
+
+/* The card itself takes everything the CTA does not. `min-height: 0` because a
+   flex child's default `min-height: auto` refuses to shrink below its content,
+   which would push the CTA off the bottom of the phone. */
+.body {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* The CTA zone is ALWAYS laid out, even before the card settles — the member
+   app reserves it too (`kCelebrationCtaZone`), and it is the seam between the
+   card and the canvas the action stands on. Only its visibility changes, so a
+   settling card never reflows. */
+.cta {
+  flex: 0 0 auto;
+  /* Longhands, not the `padding` shorthand. A shorthand containing ONE
+     unresolvable var() is invalid at computed-value time and the browser drops
+     the WHOLE declaration — which is how this rule lost its bottom padding as
+     well as its sides: it named `--sc-padding-standard`, which does not exist.
+     The screen inset is `--sc-screen-padding-x` (what ShowcaseScaffold's
+     `padStandard` uses); the bottom gap is its own token. */
+  padding-inline: var(--sc-screen-padding-x);
+  padding-bottom: var(--sc-spacing-big);
+  opacity: 0;
+  /* Not display:none — the button must keep its box so nothing moves when it
+     appears, and must not be tabbable while it is invisible. */
+  visibility: hidden;
+  /* The breath, like everything else in this app. `ease-out` was the one
+     hard-stop curve left in the asset, and it sat on the single most-watched
+     moment of the flow — the action arriving as the loop closes.
+     `--vf-switch` is the shared clock (./shell/breath.ts). */
+  transition:
+    opacity var(--vf-switch) var(--vf-breath),
+    visibility 0s linear var(--vf-switch);
+}
+
+.ctaVisible {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity var(--vf-switch) var(--vf-breath),
+    visibility 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta,
+  .ctaVisible {
+    transition: none;
+  }
+}

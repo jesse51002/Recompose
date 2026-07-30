@@ -143,6 +143,28 @@ $B console --errors
 
 ---
 
+### When a stylesheet you just rewrote appears to do nothing
+
+**Suspect the dev server's cache before you suspect your CSS.** A rewritten
+`.module.css` can compile to an EMPTY module — Vite serves
+`__vite__css = ""` and `export default {}` — after enough HMR churn on that
+file. Every `styles.x` in the component is then `undefined`, which React renders
+as no class at all, so the element arrives completely unstyled. It looks exactly
+like the Guardrail 2 trap of naming a class the stylesheet does not define, and
+it is not: the file on disk is correct.
+
+Check the class map rather than the CSS text, because `?direct` will happily
+show you a file that the module build dropped:
+
+```bash
+curl -s "http://localhost:8081/src/apps/<app>/<path>.module.css" | tail -c 300
+```
+
+If `export default {}` is empty, restart the harness with a clean cache
+(`rm -rf node_modules/.vite`) and re-check before changing a single declaration.
+This cost a real misdiagnosis here — a correct flex row was rewritten twice on
+the theory that the selector was wrong.
+
 ## Pass 1b — every element is somewhere it MEANS something
 
 **The inventory check is necessary and not sufficient.** It asks "is this
@@ -198,6 +220,52 @@ purpose.
 
 
 ---
+
+## Pass 1c — the most important thing LOOKS the most important
+
+**The inventory check asks whether elements are PRESENT. This asks whether the
+right one is PROMINENT**, and a screen can pass every other pass in this file
+while failing here — every element rendered, correctly themed, correctly spaced,
+nothing clipped, and the biggest thing on the screen is the least important
+thing on it.
+
+The app's own skill carries an **EMPHASIS RANKING**, one row per screen: what
+leads, what follows, what supports. Check the render against it, screen by
+screen. A fork may express the ranking any way it likes; it may not reorder it.
+
+**The test is one second long.** Look at the screenshot for a beat and look
+away. *What did you see first?* If that is not the screen's rank 1, the
+hierarchy is inverted, however good each individual choice was. Squinting works
+too — it collapses the screen to contrast and mass, which is what the eye
+actually sorts on.
+
+Then measure the thing you suspect, because "it looks fine" is exactly what was
+said about the case below:
+
+```bash
+$B js "(()=>{const s=document.querySelector('[class*=_screen_]');const out=[];
+s.querySelectorAll('*').forEach(e=>{const t=[...e.childNodes].filter(n=>n.nodeType===3)
+  .map(n=>n.textContent.trim()).join('');if(!t||t.length>40)return;
+const c=getComputedStyle(e);const px=parseFloat(c.fontSize);if(px<15)return;
+out.push(Math.round(px)+'px '+c.fontWeight+'  '+t.slice(0,28));});
+return JSON.stringify([...new Set(out)].sort((a,b)=>parseFloat(b)-parseFloat(a)).slice(0,12));})()"
+```
+
+**Read the top of that list against the ranking.** The largest type on the
+screen should be its rank 1. It is a finding whenever a supporting element — a
+time, a count, a total, a cost — is set larger than the name of the thing it
+describes.
+
+**A NAME AND ITS PICTURE ARE ONE OBJECT AT RANK 1.** The pipeline generates the
+image FROM the copy (`depends_on_text`), so they are one claim about one thing.
+The failure to look for is not "the photograph is too big" — it is **"the name
+is too small for the photograph it belongs to."**
+
+This pass exists because `apps/vinyasaflow/` shipped a schedule with the start
+time at 40px above a class name at 17px. The loudest element on the screen a
+member opens to choose a class was the clock. `make check` passed, the token
+sweep passed, the inventory check passed, and nothing in this file caught it
+until it was added.
 
 ## Pass 2 — every affordance is actually hittable
 
@@ -416,6 +484,104 @@ product being cheap; slightly loose is at worst a missed opportunity, and on a
 390pt screen it usually reads as calm rather than empty. Almost every spacing
 finding in this package has been "not enough", and none has been "too much".
 
+**2b. Is a row of DISTINCT things packed, with a void at one end?** Guardrail 15.
+Different from rule 2 above: every gap can come from the scale, be identical to
+every other, and the row still be wrong — because consistency is not
+distribution.
+
+Find rows whose content stops well short of the width they have:
+
+```bash
+$B js "(()=>{const s=document.querySelector('[class*=_screen_]');const W=s.getBoundingClientRect();
+const bad=[];s.querySelectorAll('*').forEach(e=>{const c=getComputedStyle(e);
+if(!c.display.includes('flex')||c.flexDirection!=='row')return;
+const kids=[...e.children].filter(k=>k.getBoundingClientRect().width>8);
+if(kids.length<3)return;
+const r=e.getBoundingClientRect();if(r.width<W.width*0.5)return;
+const last=kids[kids.length-1].getBoundingClientRect();
+const slack=Math.round((r.right-last.right)/r.width*100);
+if(slack>18)bad.push(String(e.className).slice(0,30)+' n='+kids.length+' unused right '+slack+'%');});
+return bad.length?JSON.stringify(bad.slice(0,6)):'no packed rows';})()"
+```
+
+**A hit is a prompt to look, not a verdict.** It is CORRECT for a row to stop
+early when its children are one semantic group (a photograph and the name beside
+it) or when the row is genuinely a left-aligned list of two things. It is a
+FINDING when the children are semantically distinct — separate facts, separate
+controls — and they are bunched at one edge with a third of the row empty.
+
+**Do not "fix" this by centring things.** Left alignment is correct for anything
+scanned, and wrapping text must be left aligned. The fix is to DISTRIBUTE the
+distinct entities across the width they occupy — equal columns, `space-between`,
+or a deliberately larger uniform gap — while keeping each entity's own internal
+gap tight. Re-read Guardrail 15 before changing anything here; over-applying it
+produces centred layouts that are worse than what they replaced.
+
+**2c. Do STACKED blocks agree on their edges?** A QA check only — deliberately
+not a design guardrail, because stated as a rule it would push every layout
+toward centring, and that would be a worse outcome than the thing it fixes.
+
+The shape: one block stops well short of the content width, and the block
+directly above or below it spans margin to margin. Each is defensible alone.
+Stacked, the eye sees two different right edges within one region and reads the
+composition as broken — most visibly at the top of a screen, where a masthead
+sitting in the left third above a full-width row of stats makes the whole head
+look misaligned.
+
+**MEASURE THE INK, NOT THE BOX** — the same trap rule 2 documents for gaps, and
+it makes this check useless if you get it wrong. A block laid out with
+`space-between` or `flex: 1` has a BOX that spans the full width whether or not
+its content does, so comparing `getBoundingClientRect().right` on two stacked
+blocks reports them as identical while one is visibly half empty. That happened
+here: both blocks measured 366 and the real ink edges were 164 and 292.
+
+Walk to the deepest painted descendants and take the rightmost:
+
+```bash
+$B js "(()=>{const s=document.querySelector('[class*=_screen_]');const sc=390/s.getBoundingClientRect().width;
+const ink=(el)=>{let m=0;el.querySelectorAll('*').forEach(e=>{if(e.children.length)return;
+  const r=e.getBoundingClientRect();if(r.width<1||r.height<1)return;m=Math.max(m,r.right);});return m;};
+const out=[];s.querySelectorAll('*').forEach(p=>{
+  if(getComputedStyle(p).flexDirection==='row')return;
+  const kids=[...p.children].filter(k=>k.getBoundingClientRect().height>8&&k.getBoundingClientRect().width>40);
+  for(let i=0;i<kids.length-1;i++){
+    const a=ink(kids[i]),b=ink(kids[i+1]);if(!a||!b)continue;
+    const d=Math.round(Math.abs(a-b)*sc);
+    if(d>48)out.push(String(kids[i].className).slice(0,16)+' / '+String(kids[i+1].className).slice(0,16)+' ink edges differ by '+d+'px');
+  }});
+return out.length?JSON.stringify([...new Set(out)].slice(0,6)):'stacked blocks agree on their edges';})()"
+```
+
+**A hit is a prompt to look, and there are good reasons to differ.** A
+full-bleed photograph above inset type is correct and will flag every time. A
+short heading above a long paragraph is correct. A list row above a wider list
+row is correct.
+
+**It is a finding when neither block has a reason to stop where it stops** —
+typically a row that was stretched to full width by `space-between` or `flex: 1`
+sitting under a block sized by its own content.
+
+The honest fixes, in order of preference:
+
+- **If the short block is an IDENTITY or a TITLE — a masthead, a screen name, a
+  logo and its word — CENTRE IT.** This is the common case at the head of a
+  screen, it is what most apps do, and it is what makes a full-width row beneath
+  read as deliberate rather than as two blocks disagreeing about where the
+  screen ends. Do not pull the wide row in to meet a left-aligned masthead; that
+  was tried here and is worse, because it re-introduces a ragged middle and
+  buys nothing.
+- If the short block is neither — it is content — let the stretched block size
+  to its content instead, with a gap generous enough that it is still not packed
+  (Guardrail 15).
+- Give the short block something that legitimately belongs at its trailing edge,
+  if the inventory already contains such an element — never invent one.
+- Accept it, and say why in the report.
+
+**Centring the masthead is NOT licence to centre the screen.** Everything that
+is scanned — days, list rows, names, times — and every piece of wrapping text
+stays on the left margin. The distinction is identity versus content, not
+"top of the screen versus the rest".
+
 **3. Does the spacing GROUP?** This is the half no script can check, and it is
 the half that decides whether a screen reads. **Related things sit closer
 together than unrelated things.** A label and the figure it names are one object
@@ -509,6 +675,11 @@ exactly that shape.
 
 ## Pass 5 — states and edges
 
+- **Celebration tempo.** Guardrail 16: a celebration has to be slow enough to
+  take in what was earned. Watch each card play at full speed and ask whether
+  you could register it. Then confirm a tap still resolves it immediately — slow
+  is only acceptable because it can be skipped.
+
 - **Reduced motion.** Entrances must not be the only thing that makes content
   appear. `$B js "matchMedia('(prefers-reduced-motion: reduce)')"` will not
   change the setting; check the CSS has a `prefers-reduced-motion` branch and
@@ -581,7 +752,8 @@ State the scope you actually covered: **N screens of M, across K assets.**
 For each finding: the screen, what is wrong, the evidence (screenshot path,
 `BLOCKED by …`, console error), and whether it is a **dead end** (blocking), a
 **missing element**, an **added element** (both break the invariant), a
-**misplaced element** (present but meaningless where it landed — Pass 1b), a
+**misplaced element** (present but meaningless where it landed — Pass 1b), an
+**inverted hierarchy** (the wrong thing leads the screen — Pass 1c), a
 **mangled image** (a photograph in a box of the wrong ratio — Pass 2c), a
 **spacing** finding (missing, inconsistent, or ungrouped — Pass 2d), or
 **cosmetic**.
