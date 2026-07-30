@@ -1,0 +1,87 @@
+/*
+ * Styles for ./PointsHeadline.tsx — the member's balance, on the cream ground.
+ *
+ * `--sc-*` only (../showcaseTokens.ts). Longhands throughout: one unresolvable
+ * name inside a shorthand takes the whole declaration with it.
+ */
+
+/*
+ * LEFT ALIGNED, because everything below the masthead's rule is scanned and a
+ * member's eye returns to one edge. The gutter is the screen inset rather than
+ * the panel's zero, so the balance lines up with the tabs under it and with the
+ * carried line above it.
+ */
+.headline {
+  display: flex;
+  flex-direction: column;
+  /*
+   * The label and the figure it names are ONE object, so this is the SMALL gap.
+   * The region's own padding below is what parts it from the tabs — related
+   * things closer than unrelated things.
+   */
+  gap: var(--sc-spacing-small);
+  padding-inline: var(--sc-screen-padding-x);
+
+  /*
+   * THE TWO PADDINGS ARE DELIBERATELY UNEQUAL, and that asymmetry is the only
+   * thing on this screen saying which region the tab strip belongs to.
+   *
+   * It shipped symmetric — 16 above the strip and 16 below it — which put the
+   * balance, the tabs and the bill at three identical gaps. Guardrail 13's
+   * exact wording: when every gap on a screen is the same value, nothing is
+   * grouped. The tabs are the control that SWITCHES the bill, so the big gap
+   * goes above them and ../StoreBill.module.css keeps the small one below.
+   */
+  padding-top: var(--sc-spacing-large);
+  padding-bottom: var(--sc-spacing-big);
+}
+
+/*
+ * The tracked label register — the same rung the section labels and the foot's
+ * destinations use. Charcoal at 75%, which measures 5.81:1 on the cream; the
+ * 50% tone lands at 2.92:1 and is not available to type anywhere in this app.
+ */
+.eyebrow {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  color: var(--sc-text-2nd);
+}
+
+/* The figure and its unit sit on one baseline, as one statement. */
+.balance {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sc-spacing-medium);
+}
+
+/*
+ * THE BALANCE IS A FIGURE, SO IT IS THE SANS — the display serif in this app
+ * names things and nothing else, and the one exception is a celebration card
+ * whose whole subject IS its number. This is a browsing screen.
+ *
+ * AND IT IS 16px, NOT 24px, WHICH IS THE SECOND THING THIS SCREEN GOT WRONG.
+ * At the 24px rung the balance measured LARGER than a split panel's reward
+ * name (21px) — so a rank-3 fact out-sized three of the four rank-1 objects it
+ * was supposed to sit under. Squinting at the render confirmed the order:
+ * photograph, billed name, `3,400`, and only then `Club t-shirt`. Guardrail
+ * 14's whole subject.
+ *
+ * Bold rather than regular so dropping the size does not also drop the
+ * presence: it is still the largest thing on the cream band, which is all rank
+ * 3 asks for, while the cost — 15px but knocked out of a saturated satin field
+ * and repeated down the whole bill — reads louder, which is what rank 2 asks
+ * for. The ladder is carried by CONTRAST and REPETITION here, not by scale;
+ * scale is spent entirely on the names.
+ */
+.value {
+  font: var(--sc-type-h2-bold);
+  letter-spacing: var(--sc-type-h2-bold-ls);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-text);
+}
+
+.unit {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  color: var(--sc-text-2nd);
+}

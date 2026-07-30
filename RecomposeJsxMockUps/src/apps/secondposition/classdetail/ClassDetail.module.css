@@ -1,0 +1,365 @@
+/*
+ * Styles for ./ClassDetailShowcase.tsx — the class, billed.
+ *
+ * Everything here reads `--sc-*` (../showcaseTokens.ts) and `--sp-*`
+ * (../shell/phrase.ts) and nothing else. Read ../layout_brief.yaml before
+ * changing any of it; the two registers, the ratio rule and the three contrast
+ * laws below are all lines in it.
+ *
+ * EVERY COLOUR IS SET WITH `background-color`, NEVER THE `background`
+ * SHORTHAND. Guardrail 3: a shorthand carrying one unresolvable `var()` is
+ * invalid at computed-value time and the browser drops the WHOLE declaration,
+ * so a mistyped token name costs the box its image, its position and its
+ * repeat as well as its colour. A longhand can only ever cost the one property
+ * it names.
+ */
+
+/* ------------------------------------------------------------------------- */
+/* THE BILL — the opening work, in the billed register.                       */
+/* ------------------------------------------------------------------------- */
+
+/*
+ * The screen's rank 1 is the class NAME and its PHOTOGRAPH, and they are one
+ * object rather than a picture with a caption. So they are one block: the
+ * photograph full width at its own proportion, the satin plinth carried
+ * directly underneath it with no gutter, no radius and no shadow between them.
+ *
+ * It carries no `position` of its own — the entrance veil is a child of the
+ * PLINTH, not of the whole bill, because the photograph does not move.
+ */
+.bill {
+  display: block;
+}
+
+/*
+ * THE PICTURE BOX IS THE PICTURE'S OWN PROPORTION. The generated class
+ * photographs measure 1.50, so the box is 3:2 and the layout is solved around
+ * it — a box of any other shape would not resize the photograph, it would throw
+ * part of it away (Guardrail 10b). `--sc-popup` is what shows while the image
+ * loads or if it never arrives, so the block keeps the picture's shape either
+ * way.
+ */
+.photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background-color: var(--sc-popup);
+}
+
+.photoImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/*
+ * THE PLINTH. On a browsing screen the satin field sits BESIDE the picture; on
+ * the billed register it is carried UNDERNEATH as a plinth, and this screen is
+ * one work billed alone, so it is always that register.
+ *
+ * Its inline padding is `--sc-screen-padding-x` rather than a spacing step so
+ * the class name starts on the same left edge as every section label below it.
+ * One left edge is what makes the whole column scannable (Guardrail 15).
+ *
+ * The BLOCK padding is the big step where ../shell/Panel.tsx's billed field
+ * takes the large one, and the difference is deliberate rather than drift: a
+ * schedule bills one work at the head of a COLUMN of others, and this screen
+ * bills one work on the whole sheet. A plinth is a mounting, and a mounting
+ * that hugs what it carries reads as a caption bar. Guardrail 13 — when torn
+ * between two steps, take the larger.
+ */
+.plinth {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-medium);
+  padding-block: var(--sc-spacing-big);
+  padding-inline: var(--sc-screen-padding-x);
+  background-color: var(--sc-satin);
+  color: var(--sc-on-satin);
+  overflow: hidden;
+}
+
+/*
+ * The largest thing on the screen, and the only thing set in the display serif
+ * here. Charcoal on satin measures 2.70:1 and fails AA, so every word on this
+ * field is `--sc-on-satin` (5.47:1) — see ../showcaseTokens.ts.
+ *
+ * `overflow-wrap: anywhere` is the overflow behaviour, not decoration: the
+ * plinth clips (it has to, for the veil), and a tenant whose class name is one
+ * long unbroken word would otherwise have it silently sheared off at the right
+ * edge rather than wrapped onto a second line.
+ */
+.name {
+  margin: 0;
+  font: var(--sc-type-name-billed);
+  letter-spacing: var(--sc-type-name-billed-ls);
+  color: var(--sc-on-satin);
+  overflow-wrap: anywhere;
+}
+
+/*
+ * THE FACTS BELONG TO THE NAME, AND TO EACH OTHER MORE THAN TO IT.
+ *
+ * Three lines at one uniform gap would group nothing (Guardrail 13): the name
+ * is the claim and the two lines under it are the small print about it, so they
+ * are one sub-object held at the SMALL step, set off from the name by the
+ * medium step the plinth's own `gap` supplies.
+ */
+.plinthMeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-small);
+}
+
+/*
+ * Rank 3: the date, the start / end time and the duration, as one line. The
+ * SANS, because a figure is never the display face on a screen a member
+ * browses, and never set larger than the name it describes. Tabular so the two
+ * clock times and the minute count line up on their digits.
+ */
+.when {
+  font: var(--sc-type-value);
+  letter-spacing: var(--sc-type-value-ls);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-on-satin);
+}
+
+/*
+ * The instructor and the attending count — two distinct facts sharing a line,
+ * so the gap BETWEEN them is the large one while each stays internally tight.
+ */
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-small) var(--sc-spacing-large);
+  font: var(--sc-type-meta);
+  letter-spacing: var(--sc-type-meta-ls);
+  color: var(--sc-on-satin);
+}
+
+/* An icon and the value it names are ONE object: the small gap says so. */
+.attending {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-small);
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * `--sc-icon-xs`, not the base's 20px. The base set this glyph beside its own
+ * larger meta text; here it sits on a 13px line, and a 20px box puts a mark
+ * half again the height of the cap it stands next to — the icon starts reading
+ * as the subject rather than as the unit. 16 lands the drawn figure at about
+ * the line's own cap height, which is what "small, exact and unaccompanied"
+ * means in ../layout_brief.yaml.
+ */
+.attendingIcon {
+  flex: 0 0 auto;
+  width: var(--sc-icon-xs);
+  height: var(--sc-icon-xs);
+  color: var(--sc-on-satin);
+}
+
+/* ------------------------------------------------------------------------- */
+/* THE READING GROUND — description, instructor, location.                    */
+/* ------------------------------------------------------------------------- */
+
+/*
+ * The counterweight to the bill: cream, inset, opened by a brass rule and a
+ * tracked label. The app alternates whole REGIONS between announced things and
+ * read things, and that alternation is the page rhythm.
+ *
+ * The inset lives here and not on `<Screen prose>` because the bill above runs
+ * edge to edge — a gutter around the whole body would turn the panel back into
+ * the card this design refuses.
+ */
+.reading {
+  padding-inline: var(--sc-screen-padding-x);
+}
+
+/* A section's own contents. `<Section>` supplies the rule, the label and the
+ * gap beneath it; this is the gap WITHIN the body it wraps. */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-medium);
+}
+
+.prose {
+  margin: 0;
+}
+
+/*
+ * THE HEADSHOT IS A PLATE, NOT A DISC. The base masked it into a circle; this
+ * design has square corners throughout, and a portrait cropped square is the
+ * same crop the circle already took. It is a PHOTOGRAPH, so it gets a box and
+ * `cover` — the containment rule belongs to the cut-out insignia and the two
+ * are not interchangeable (../shell/Insignia.tsx).
+ */
+.instructor {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sc-spacing-large);
+}
+
+.face {
+  flex: 0 0 auto;
+  width: 96px;
+  height: 96px;
+  overflow: hidden;
+  background-color: var(--sc-popup);
+}
+
+.faceImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* `min-width: 0` or the bio refuses to wrap inside the flex row. */
+.bio {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+}
+
+.where {
+  font: var(--sc-type-value);
+  letter-spacing: var(--sc-type-value-ls);
+  color: var(--sc-text);
+}
+
+/*
+ * The map runs edge to edge, out of the reading inset, because every picture in
+ * this app is full width or nothing — an inset rectangle would be the only
+ * floating plate on the screen. The tile measures 2.00, so it gets a 2:1 box.
+ *
+ * The extra block start is the grouping (Guardrail 13). The address is the
+ * map's CAPTION and stays at the stack's own medium gap; the studio name above
+ * is a separate fact, so it is held off at twice that. Two gaps that differ are
+ * what say which of the three lines belong together.
+ */
+.map {
+  display: block;
+  margin-block-start: var(--sc-spacing-medium);
+  margin-inline: calc(var(--sc-screen-padding-x) * -1);
+  aspect-ratio: 2 / 1;
+  overflow: hidden;
+  background-color: var(--sc-popup);
+}
+
+.mapImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.address {
+  margin: 0;
+  font: var(--sc-type-meta);
+  letter-spacing: var(--sc-type-meta-ls);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-text-2nd);
+}
+
+/* ------------------------------------------------------------------------- */
+/* THE ENTRANCE — one phrase, one interval.                                   */
+/* ------------------------------------------------------------------------- */
+
+/*
+ * THE SATIN ARRIVES FIRST AND THE NAME IS REVEALED BY IT, and the photograph
+ * does not move: it is simply there when its half of the panel is.
+ *
+ * A VEIL, NOT A CLIP — the same construction as ../shell/Panel.tsx and for the
+ * same reason. `clip-path` and `overflow` remove what they hide from HIT
+ * TESTING, and nothing tappable in this app may be dead while it moves. This
+ * one covers no control, but building the reveal a second way would give the
+ * fork two answers to one question.
+ */
+.veil {
+  position: absolute;
+  inset: 0;
+  background-color: var(--sc-background);
+  pointer-events: none;
+  transform-origin: center bottom;
+  animation-name: veilOffY;
+  animation-duration: var(--sp-wipe);
+  animation-timing-function: var(--sp-phrase);
+  animation-fill-mode: both;
+}
+
+@keyframes veilOffY {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0);
+  }
+}
+
+/*
+ * The three reading sections arrive after it on the SAME even interval the
+ * panels of a schedule open on — a steady count, never an accelerating
+ * flourish. `--sp-arrive` and not a celebration duration: this is ordinary
+ * content, and slowing it to match a celebration would make the whole app
+ * sluggish to fix a problem that only exists where something is being shown off.
+ *
+ * Longhands rather than the `animation` shorthand so the per-step delay below
+ * cannot be reset by source order.
+ */
+.arrive {
+  animation-name: arrive;
+  animation-duration: var(--sp-arrive);
+  animation-timing-function: var(--sp-phrase);
+  animation-fill-mode: both;
+}
+
+.step1 {
+  animation-delay: var(--sp-stagger);
+}
+
+.step2 {
+  animation-delay: calc(var(--sp-stagger) * 2);
+}
+
+.step3 {
+  animation-delay: calc(var(--sp-stagger) * 3);
+}
+
+/*
+ * The travel is one spacing step, not a hand-typed distance. Every number in
+ * this fork comes off a scale — the clock off ../shell/phrase.ts, the lengths
+ * off the token surface — and a lone `10px` here is how a screen starts
+ * carrying values nothing else agrees with.
+ */
+@keyframes arrive {
+  from {
+    opacity: 0;
+    transform: translateY(var(--sc-spacing-medium));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/*
+ * A member who asked for less motion still gets the design, just not the
+ * travel. Settled is a state this screen can render directly.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .veil {
+    animation-name: none;
+    transform: scaleY(0);
+  }
+
+  .arrive {
+    animation-name: none;
+  }
+}

@@ -1,0 +1,231 @@
+/*
+ * Styles for ./BookingShowcase.tsx — the post-reservation confirmation, in the
+ * brief's BILLED register: one work, its picture on the cream ground and its
+ * name announced on the satin plinth carried underneath it.
+ *
+ * `--sc-*` are the design tokens (./showcaseTokens.ts), `--sp-*` the shared
+ * motion clock (./shell/phrase.ts), and `--bk-*` this screen's own two delays,
+ * which the component derives from that clock and writes inline — so no timing
+ * is restated as a literal here.
+ *
+ * EVERY COLOUR IS SET WITH `background-color`, NEVER THE `background`
+ * SHORTHAND, exactly as ./classdetail/ClassDetail.module.css states it.
+ * Guardrail 3: a shorthand carrying one unresolvable `var()` is invalid at
+ * computed-value time and the browser drops the WHOLE declaration, so a
+ * mistyped token name here would cost the veil its position and its repeat as
+ * well as its colour — and a veil with no colour is a transparent sheet that
+ * reveals nothing while still covering everything.
+ */
+
+/*
+ * `Screen`'s body is a plain block, so the column lives here. Three parts and
+ * nothing else: the ground the still life rests on, the plinth that announces
+ * the booking, and the action.
+ */
+.screen {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* --- The ground: the still life, mounted, with clear air around it. ------- */
+
+/*
+ * The cream reading ground, and on a confirmation it holds one object. Centred,
+ * which Guardrail 15 allows for exactly this case — "a single focal object with
+ * nothing to scan": a celebration hero and its one line, an empty state, a
+ * confirmation. Nothing here is a list, so there is no left edge to return to.
+ *
+ * It takes every row the plinth and the action do not, so the air above the
+ * still life is whatever the phone has left rather than a number typed in. That
+ * is the same reason `min-height: 0` is here: a flex child's `auto` minimum
+ * refuses to shrink below its content, which would push the action off the
+ * bottom of a shorter frame.
+ *
+ * THE MARK IS BIASED DOWNWARD, AND THAT IS GUARDRAIL 13 RATHER THAN TASTE.
+ * Centred in the bare stage it landed with equal air above and below — 166px
+ * each — which groups it with the top edge exactly as strongly as with the
+ * announcement it belongs to, and a screen carrying three elements at one
+ * uniform gap has grouped nothing. The still life and the headline are one
+ * claim about one booking, so the top inset opens the gap above to roughly
+ * twice the gap below and the mark reads as MOUNTED OVER the plinth rather
+ * than floating between two voids. Looked at both ways in the harness before
+ * choosing; glueing it to the plinth (a 32px foot) was tried too and lost the
+ * "clear air around it" the brief asks of every insignia.
+ */
+.stage {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--sc-screen-padding-x);
+  padding-block-start: calc(var(--sc-spacing-big) * 3);
+}
+
+/* --- The plinth: the satin field the confirmation is announced on. -------- */
+
+/*
+ * FULL BLEED, SQUARE, NO RADIUS, NO SHADOW. Nothing in this app floats above
+ * anything; separation is a change of field, and the plinth's own edge against
+ * the cream is that change. It is the heaviest object on the screen because the
+ * headline is rank 1 and this is what carries it — the brief's committed colour
+ * doing the emphasis a bigger type rung would otherwise have to. Squint at the
+ * screen and the field is what you see; the still life is plainly the support.
+ *
+ * ITS DEPTH IS SET BY HOW MUCH SATIN THE SCREEN OWES, not by taste. The brief
+ * commits the blush to between a third and a half of a screen's surface, and a
+ * caption strip ruled under the picture leaves this one at about a quarter.
+ * Three of the scale's largest step, top and bottom, puts the plinth and the
+ * action cell beneath it together at just over a third of 844 — still a value
+ * off the scale, just at a multiple of it.
+ */
+.plinth {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--sc-satin);
+  color: var(--sc-on-satin);
+  padding-block: calc(var(--sc-spacing-big) * 3);
+  padding-inline: var(--sc-spacing-big);
+  /* The veil is sized to this box and must never paint past it. */
+  overflow: hidden;
+}
+
+/*
+ * THE NAME OF WHAT HAPPENED, in the display serif — the face that names things
+ * in this app, and the billed rung, which is the largest name the ramp carries.
+ *
+ * Cream and never charcoal. This is a contrast law rather than a preference: the
+ * warm charcoal on the satin blush measures 2.70:1 and fails AA at every size,
+ * where `--sc-on-satin` is 5.47:1 on the same field.
+ *
+ * TWO OF THESE LINES ARE OVERFLOW BEHAVIOUR, NOT STYLING. The headline is
+ * a tenant's copy slot, so its length is not ours: this run resolves "You're
+ * in" and the untheme'd fallback is "Class Booked", but the next one may not be
+ * either. The plinth CLIPS (it has to, for the veil), so a studio whose
+ * headline is one long unbroken word would have it silently sheared off at the
+ * right edge rather than wrapped — the same reason
+ * ./classdetail/ClassDetail.module.css spells `overflow-wrap` on the class
+ * name. And a centred line that wraps rags badly by default; `balance` is what
+ * keeps two lines even, and it costs nothing where it is unsupported.
+ */
+.headline {
+  margin: 0;
+  font: var(--sc-type-name-billed);
+  letter-spacing: var(--sc-type-name-billed-ls);
+  color: var(--sc-on-satin);
+  text-align: center;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+/* --- The action. ---------------------------------------------------------- */
+
+/*
+ * THE ACTION IS THE PLINTH'S LAST CELL, PARTED BY A HAIRLINE — not a second band
+ * standing off it.
+ *
+ * Built the other way first, with a `--sc-spacing-big` of cream between them,
+ * and it was wrong on the screen in two ways at once: a 32px stripe of ground
+ * between two satin blocks reads as a seam rather than as a decision, and
+ * splitting the satin left the blush holding about a quarter of the surface
+ * where the brief commits it to between a third and a half. Joined, the foot is
+ * one continuous field that the two wipes open in sequence, and it lands at
+ * roughly a third.
+ *
+ * The parting is CREAM and not brass, for the same measured reason the foot nav
+ * is marked in cream: brass on the satin is 1.33:1 and simply is not there.
+ * `--sc-satin-hair` exists for exactly this line. Over the cream ground it is a
+ * 28%-alpha cream on cream — invisible, which is what lets it be drawn outside
+ * the veil without showing before the cell it separates has arrived.
+ *
+ * Longhands, because the `border-block-start` shorthand would carry two `var()`s
+ * and one bad name would drop the whole rule.
+ */
+.action {
+  position: relative;
+  flex: 0 0 auto;
+  border-block-start-width: var(--sc-divider-thickness);
+  border-block-start-style: solid;
+  border-block-start-color: var(--sc-satin-hair);
+}
+
+/* --- The entrance. --------------------------------------------------------- */
+
+/*
+ * THE SATIN ARRIVES FIRST AND WHAT IT CARRIES IS REVEALED BY IT.
+ *
+ * A VEIL, NOT A CLIP, and on this screen that is a correctness rule rather than
+ * a stylistic one. `clip-path`, `overflow` and a `disabled` attribute all remove
+ * what they hide from HIT TESTING, and the Continue beneath this sheet is the
+ * only way off booking — it has been a dead end twice, once with no handler and
+ * once behind a `pointer-events: none` that had outlived its reason. So the
+ * reveal is a sheet of the GROUND colour lying on top and retracting off, with
+ * `pointer-events: none` so it can never intercept the tap it is covering. Every
+ * target on this screen is live from the first frame; the motion is a covering
+ * over a working button, and that rule outranks the motion.
+ *
+ * Longhands rather than the `animation` shorthand: it would carry two `var()`s,
+ * and one unresolvable name in a shorthand makes the browser drop the WHOLE
+ * declaration — which here would mean a veil that never retracts, permanently
+ * hiding the headline and the action behind it.
+ *
+ * `both` is what holds it at full cover through its delay and at nothing
+ * afterwards, so the three beats can be spaced without any of them flashing.
+ */
+.veil {
+  position: absolute;
+  inset: 0;
+  background-color: var(--sc-background);
+  pointer-events: none;
+  /* Collapsing toward the bottom edge is what makes the field open DOWNWARD,
+     from its own leading edge — the same direction a billed panel's plinth opens
+     in, and the same direction the phrase travels down this screen. */
+  transform-origin: center bottom;
+  animation-name: veilOffY;
+  animation-duration: var(--sp-wipe);
+  animation-timing-function: var(--sp-phrase);
+  animation-fill-mode: both;
+}
+
+/* Beat two: the still life has come to rest, so the plinth opens. */
+.veilPlinth {
+  animation-delay: var(--bk-plinth-delay);
+}
+
+/*
+ * Beat three: the card has finished saying what it came to say, so the action
+ * appears. Its moment is derived from the beats before it and never set by a
+ * timer of its own — a card whose action arrives on a clock unrelated to what
+ * the card is doing reads as broken, which is the whole reason this screen and
+ * the five celebration cards share ./shell/phrase.ts.
+ */
+.veilAction {
+  animation-delay: var(--bk-action-delay);
+}
+
+@keyframes veilOffY {
+  from {
+    transform: scaleY(1);
+  }
+
+  to {
+    transform: scaleY(0);
+  }
+}
+
+/*
+ * Settled is a state this app can render directly, so a member who asked for
+ * less motion gets the whole confirmation with its action present — just not the
+ * travel. The component also declines to arm the loop timer, so nothing
+ * restarts. (The still life's own arrival is suppressed by `./shell/Insignia`.)
+ */
+@media (prefers-reduced-motion: reduce) {
+  .veil {
+    animation-name: none;
+    transform: scaleY(0);
+  }
+}

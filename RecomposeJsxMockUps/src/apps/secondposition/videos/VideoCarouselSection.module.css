@@ -1,0 +1,59 @@
+/*
+ * Styles for ./VideoCarouselSection.tsx (ports MobileApp/lib/features/videos/
+ * presentation/widgets/video_carousel_section.dart).
+ * `--sc-*` only — see ../showcaseTokens.ts.
+ */
+
+/*
+ * SPACING CARRIES THE GROUPING (Guardrail 13), and this section spends three
+ * distances on it rather than one:
+ *
+ *   rule --large--> genre --medium--> the films
+ *
+ * The genre is closer to the strip it names than to the hairline above it,
+ * because that hairline CLOSES the region before this one. Getting those two
+ * the wrong way round is the failure the guardrail names by example, and this
+ * file shipped it: the label read as the previous genre's footer.
+ * ./sections/VideoSectionHeader.module.css owns the first distance; this one
+ * owns the second.
+ *
+ * The third — the gap BETWEEN regions — is `big` and belongs to the feed column
+ * (../VideoShowcase.module.css) rather than to a margin here, so no two
+ * adjacent sections can disagree about it.
+ */
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--sc-spacing-medium);
+}
+
+/*
+ * The genre's films, running sideways inside the page's own vertical scroll.
+ *
+ * `align-items: stretch` is what makes a row of plinths end level: the panels
+ * take the height of the tallest and each satin field absorbs the slack
+ * (../FilmPanel.module.css's `.field`), so a one-line title and a two-line
+ * title do not leave a ragged row.
+ *
+ * The scrollbar is hidden on purpose: a desktop scrollbar track drawn inside a
+ * phone mock is the one thing that gives away that this is not a device. iOS
+ * paints an overlay bar that occupies no layout, which is what this matches.
+ */
+.strip {
+  display: flex;
+  align-items: stretch;
+  gap: var(--sc-spacing-large);
+  padding-inline: var(--vc-inset, 0px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  /* A sideways swipe must not chain into the page's vertical scroll. */
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.strip::-webkit-scrollbar {
+  display: none;
+}

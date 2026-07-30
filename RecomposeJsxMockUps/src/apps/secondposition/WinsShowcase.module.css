@@ -1,0 +1,335 @@
+/*
+ * Styles for ./WinsShowcase.tsx — the wins card, the last of the five.
+ *
+ * `--sc-*` are the design tokens (./showcaseTokens.ts), `--sp-*` the motion
+ * clock (./shell/phrase.ts) and `--wn-*` the two delays the component writes
+ * inline, so no beat of the phrase is a literal here.
+ *
+ * LONGHANDS THROUGHOUT, including `background-color` in place of `background`,
+ * for ./RankShowcase.module.css's reason: a shorthand carrying one unresolvable
+ * `var()` is invalid at computed-value time and the browser drops the WHOLE
+ * declaration — and `background` resets seven other properties on its way out,
+ * so it is the most expensive shorthand in the file to get wrong. The `font:`
+ * rungs are the sanctioned exception; they are authored as shorthands and
+ * always come with their paired `-ls`.
+ *
+ * EVERY COLOUR ON THIS CARD IS FORCED BY A MEASUREMENT, and this card uses more
+ * of the palette than its four siblings because it inverts a band:
+ *   on-satin on satin ........... 5.47:1   the trophy field and the tally
+ *   satin on the raised cream ... 5.46:1   the title, and display size only
+ *   ink@2nd on the raised cream . 6.65:1   the subtitle
+ *   ink on satin ................ 2.70:1   never used here
+ *   brass on satin .............. 1.33:1   which is why no rule on this card
+ *                                          is brass; they are all satin-hair
+ */
+
+/*
+ * The card's own box, filling ./celebrationAsset.module.css's `.body`.
+ *
+ * IT IS THE ROOT AND IT FILLS EVERYTHING, which is what makes the tap honest:
+ * `bind` sits on this element, so a pointer landing anywhere the scaffold counts
+ * as "on the card" finishes the card too. `position: relative` is what the veil
+ * is absolute to, and it is on THIS element rather than on an inner box so the
+ * covering reaches the status inset as well.
+ *
+ * It paints the cream ground so the strip the field leaves clear below has
+ * something to be, rather than showing whatever is behind the asset.
+ */
+.card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: var(--sc-background);
+}
+
+/*
+ * THE SATIN FIELD, and it is the skeleton the other four cards already stand
+ * on: edge to edge, a focal mount centred in everything the foot does not take,
+ * and a ruled entry pinned to that foot. What this card adds is the cream head
+ * above them, which is the one thing it has that they do not — the studio's own
+ * sentence. Cream then satin is the brief's own alternation at the scale of one
+ * card: the read thing, then the announced one.
+ *
+ * IT STOPS ONE `--sc-spacing-large` SHORT OF THE FOOT, which is
+ * ./PointsShowcase.module.css's value and ./RankShowcase.module.css's reason.
+ * ./celebrationAsset.tsx's CTA zone insets the action by `--sc-screen-padding-x`
+ * with NO gap above it, and that action is itself a satin band
+ * (./shell/ActionBand.module.css, whose own note is "two adjacent satin bands
+ * would read as one"). Run the field to the card's bottom edge and the button's
+ * top boundary vanishes into it. One `--sc-spacing-large` gives the band cream
+ * on all four sides, the same measure as the flanks it already has, so the gap
+ * reads as a margin rather than as a gap — and the three cards that reason it
+ * out land on the same number rather than on three.
+ *
+ * NO INLINE PADDING HERE. The plinth is a full-bleed inversion and the tally is
+ * a full-bleed printed band; both own their own inset so their FIELDS can run
+ * edge to edge. Guardrail 13's warning about a container stripped of padding
+ * applies in reverse: anything added to this column must bring its own.
+ *
+ * Absolutely positioned with all four offsets and `width`/`height` left auto,
+ * so a child's padding is resolved out of the offsets rather than added to them
+ * — this package carries no global `box-sizing: border-box`.
+ */
+.field {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: var(--sc-spacing-large);
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--sc-satin);
+  color: var(--sc-on-satin);
+}
+
+/* --- The plinth: rank 1, at the head -------------------------------------- */
+
+/*
+ * THE ANNOUNCEMENT, STRUCK OUT OF THE SATIN, AND IT LEADS BY POSITION.
+ *
+ * A full-bleed band of the raised cream sheet, square, edge to edge, with no
+ * radius and no shadow — nothing in this app floats above anything, and
+ * separation here is a change of field. It is the same mechanism
+ * ./support/StreakWeekStrip.tsx uses to mark a danced day, at the scale of a
+ * whole region.
+ *
+ * IT IS THE FIRST BAND ON THE CARD and that is the correction this pass makes.
+ * The naming serif stops at 30px, so the announcement cannot out-measure a
+ * still life; put beneath one it loses on both size and reading order, which is
+ * two ways of losing a fight rank 1 is not allowed to lose. At the head it is
+ * read first, uncovered first by the veil, and set on the only inverted field
+ * on the card — three redundant channels, none of which costs the picture
+ * anything.
+ *
+ * Left aligned, because it is read rather than looked at (Guardrail 15): the
+ * subtitle is a sentence and a sentence that wraps must have one left edge to
+ * return to. Only the trophy below it is centred, and that is the single focal
+ * object centring is for. Its inset is `--sc-screen-padding-x`, which is where
+ * the tally's first column starts too, so the head and the foot share one left
+ * margin.
+ *
+ * THE STATUS INSET IS ITS PROBLEM NOW. Nothing else on this card touches the
+ * top edge, so when the host publishes `--phone-status-inset` (the studio's
+ * phone frame publishes 52px) this band is what would run under the dynamic
+ * island. It carries the inset in its own leading padding rather than letting
+ * the scaffold reserve a strip, because a reserved strip would be a fourth
+ * band of a fourth colour above a design built on two.
+ */
+.plinth {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  /*
+   * The title and its subtitle are ONE object, so the gap between them is the
+   * smallest on the card — smaller than the plinth's own block padding, which
+   * is smaller again than the stretch of satin parting the head from the mark
+   * below it. Get that order wrong and the subtitle reads as the trophy's
+   * heading (Guardrail 13's exact failure).
+   */
+  gap: var(--sc-spacing-small);
+  padding-block-start: calc(var(--phone-status-inset, 0px) + var(--sc-spacing-big));
+  padding-block-end: var(--sc-spacing-big);
+  padding-inline: var(--sc-screen-padding-x);
+  background-color: var(--sc-ground-raised);
+}
+
+/*
+ * RANK 1. The display serif, which is what NAMES things in this app — and the
+ * headline of a card is a name. `--sc-type-name-billed` is the largest naming
+ * rung the surface carries, which is the point: rank 1 has to be unmistakable
+ * before anything is read, and the rung below it would tie with the tally.
+ *
+ * Satin ink on the raised cream is 5.46:1. The brief allows the blush as TYPE
+ * on cream at display sizes only — 30px clears that by a wide margin, and no
+ * smaller mark on this card is set in it.
+ *
+ * `overflow-wrap` because this is a TENANT-AUTHORED string: `wins_title` is one
+ * of the two sentences a studio writes itself, and a single unbroken word
+ * longer than the band would otherwise run out through the card's edge.
+ */
+.title {
+  margin: 0;
+  font: var(--sc-type-name-billed);
+  letter-spacing: var(--sc-type-name-billed-ls);
+  color: var(--sc-satin);
+  overflow-wrap: anywhere;
+  animation: winsArrive var(--sp-arrive) var(--sp-phrase) var(--wn-title-delay, 0ms) both;
+}
+
+/*
+ * The second line of the announcement. The SANS, because the serif's whole job
+ * on this card has already been spent on the title above it and a second name
+ * would give the card two rank 1s. Charcoal at second strength on the raised
+ * cream — 6.65:1, comfortably clear at this size, and held back from the ink
+ * the app sets prose in so the two lines read as a statement and its footing.
+ */
+.subtitle {
+  margin: 0;
+  font: var(--sc-type-p-big);
+  letter-spacing: var(--sc-type-p-big-ls);
+  color: var(--sc-text-2nd);
+  overflow-wrap: anywhere;
+  animation: winsArrive var(--sp-arrive) var(--sp-phrase) var(--wn-subtitle-delay, 0ms) both;
+}
+
+/* --- The field: the trophy and its burst ---------------------------------- */
+
+/*
+ * The trophy's field takes everything the plinth and the tally do not, so the
+ * mark sits in the largest stretch of clear satin on the card and the slack is
+ * spent as air around a single focal object — which is what the same region
+ * does on ./RankShowcase and ./StatsShowcase. `min-height: 0` because a flex
+ * child's default `min-height: auto` refuses to shrink below its content, which
+ * on a shorter device would push the tally off the foot.
+ *
+ * `overflow: hidden` is the base's own Flutter `Stack`, which clips by default.
+ * At 390pt the scatter (±150px plus the star's own box) fits inside the width
+ * with room to spare, so nothing is trimmed in practice — it is here so that a
+ * shorter field trims the outermost sparkles instead of letting them land over
+ * the announcement. Clipping a decorative child costs nothing: the tap target
+ * this card lives inside is an ANCESTOR of it, so no affordance is hidden.
+ */
+.crest {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* `Positioned.fill` — the scatter centres on the field, not on the mark. */
+.burst {
+  position: absolute;
+  inset: 0;
+}
+
+/*
+ * The mount. It sits in the flex flow rather than being positioned, because
+ * <Insignia>'s own `settling` animation moves `transform` and a centring
+ * translate underneath it would be overwritten the moment the keyframe ran.
+ */
+.trophy {
+  flex: 0 0 auto;
+}
+
+/* --- The tally ------------------------------------------------------------ */
+
+/*
+ * Printed along the very foot, and parted from the mark above it by whatever
+ * satin the field has left over rather than by a margin of its own — the same
+ * way ./RankShowcase.module.css pins its entry, and for the same reason. The
+ * slack belongs to the focal object, so a fixed gap here would take air away
+ * from the mark on a short device and add nothing on a tall one.
+ *
+ * The separation that has to be explicit is the one INSIDE the band, and that
+ * is the hairline ./celebrations/WinsTileRow.module.css opens it with. Every
+ * gap within a column is smaller again (`--sc-spacing-large` of block padding,
+ * `--sc-spacing-small` between a mark and its figure), so the grouping runs
+ * strictly from loosest to tightest down the card.
+ */
+.tally {
+  flex: 0 0 auto;
+}
+
+/* --- The phrase ----------------------------------------------------------- */
+
+/*
+ * ONE CURVE, AND IT RESOLVES. `--sp-phrase` is a plain deceleration: it leaves
+ * immediately, sheds speed the whole way and stops dead. Nothing here bounces,
+ * springs, overshoots or rubber-bands.
+ *
+ * Guardrail 16 split three ways on this card: the trophy's arrival is the
+ * unhurried beat (`--sp-settle`, on ./shell/Insignia.tsx), the tally cascades
+ * over `--sp-cascade` and its figures resolve over `--sp-count`, and the burst
+ * is an IMPACT pinned to `--sp-impact`. The announcement at the head runs on
+ * the ordinary `--sp-arrive` — a celebration is slow where it is being LOOKED
+ * at, not uniformly slow.
+ */
+@keyframes winsArrive {
+  from {
+    opacity: 0;
+    transform: translateY(var(--sc-spacing-medium));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/*
+ * THE SATIN ARRIVES FIRST AND EVERYTHING IS REVEALED BY IT.
+ *
+ * A sheet of the cream ground lying over the whole card, retracting toward the
+ * bottom edge so its own leading edge travels DOWN — the announcement, then the
+ * trophy, then the tally, which is the emphasis ranking's own order. One
+ * gesture, one element, and the stagger is a consequence of one stroke passing
+ * each region rather than three delays to keep in sync.
+ *
+ * A VEIL, NOT A CLIP, for the reason ./shell/Panel.module.css gives: `clip-path`
+ * and `overflow` both remove what they hide from HIT TESTING, and the
+ * scaffold's tap-to-skip target has to be live from the first frame. So this is
+ * a covering with `pointer-events: none`, which can never intercept the tap it
+ * is lying over.
+ *
+ * `inset` is the one shorthand here and it is safe because it carries no
+ * `var()` to fail to resolve.
+ */
+.veil {
+  position: absolute;
+  inset: 0;
+  background-color: var(--sc-background);
+  pointer-events: none;
+  transform-origin: center bottom;
+  animation: fieldOpen var(--sp-wipe) var(--sp-phrase) both;
+}
+
+@keyframes fieldOpen {
+  from {
+    transform: scaleY(1);
+  }
+
+  to {
+    transform: scaleY(0);
+  }
+}
+
+/* --- Settled -------------------------------------------------------------- */
+
+/*
+ * A TAP FINISHES THE CARD RATHER THAN MERELY REVEALING ITS BUTTON.
+ *
+ * One declaration does the whole job: every CSS animation on this card and in
+ * its subtree — the veil, the insignia's settle, the announcement, all twelve
+ * sparkles, all three cells of the tally — is pushed thirty seconds past its
+ * own end and holds its final frame. Nothing here has to restate what "settled"
+ * looks like, which is the point: a second description of the resting state is
+ * a second thing to keep true. ./celebrations/CountUpText.tsx is the exception
+ * and is handed over in ./celebrations/WinsTile.tsx's own branch, because a
+ * per-frame driver has no keyframe to fast-forward.
+ */
+.finished,
+.finished * {
+  animation-delay: -30s !important;
+}
+
+/*
+ * Under a reduced-motion preference the card renders ALREADY SETTLED and the
+ * component still reports that it settled — a member who asked for less motion
+ * gets the whole celebration, just not the travel. Settled is a state this
+ * design renders directly: the field is simply open, the type is simply there,
+ * and each figure lands on its value through its own branch.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .title,
+  .subtitle {
+    animation: none;
+  }
+
+  .veil {
+    animation: none;
+    transform: scaleY(0);
+  }
+}

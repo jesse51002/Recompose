@@ -1,0 +1,54 @@
+/*
+ * Styles for ./TimeframeSelector.tsx.
+ * `--sc-*` (../showcaseTokens.ts) and `--sp-*` (../shell/phrase.ts) only.
+ */
+
+/*
+ * Four equal columns across the full width of whatever it is given — which is
+ * the PLOT's column, not the section's, because ../profile/RatingGraph.module.css
+ * seats it in the chart's own grid. A scale that overshot the line it measures
+ * would read as a misalignment rather than as a control.
+ *
+ * There are exactly four ranges and there always will be, so this is a scale
+ * under a chart rather than a strip that might scroll — the videos tab's scope
+ * row is the scrolling one because a tenant's genre set is not fixed.
+ */
+.scale {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-items: end;
+}
+
+/*
+ * One range. The mark is reserved as a TRANSPARENT border on every one of them
+ * rather than added to the chosen one, so the row cannot re-lay-out when the
+ * selection moves — the same construction the scope tabs use
+ * (../videos/VideoCategoryTabs.module.css), because it is the same mark.
+ */
+.range {
+  padding-block-end: var(--sc-spacing-small);
+  border-block-end-width: var(--sc-rule-strong-thickness);
+  border-block-end-style: solid;
+  border-block-end-color: transparent;
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  font-variant-numeric: tabular-nums;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--sc-text-2nd);
+  white-space: nowrap;
+  transition: color var(--sp-switch) var(--sp-phrase);
+}
+
+/*
+ * THE WINDOW IN FORCE. Brass under the label, which is legal on the cream
+ * ground (3.25:1 carries a rule) and nowhere on the satin (1.33:1 — invisible;
+ * the foot's marker is cream for that reason). The word itself goes to the full
+ * charcoal ink and the heavier weight, so the state survives with the rule
+ * ignored entirely.
+ */
+.active {
+  border-block-end-color: var(--sc-rule);
+  color: var(--sc-text);
+  font-weight: 700;
+}

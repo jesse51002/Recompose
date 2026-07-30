@@ -1,0 +1,17 @@
+/*
+ * Styles for ./RankHeader.tsx.
+ *
+ * There is almost nothing here, and that is the point: the belt is mounted by
+ * ../shell/Insignia.tsx, which owns how this brand presents a struck object.
+ * A second opinion about that in this file is exactly how two screens end up
+ * mounting the same medallion two different ways.
+ */
+
+/*
+ * The inventory marker (./rankParts.ts). `display: contents` removes the
+ * element from the box tree entirely while leaving it in the DOM, so the
+ * insignia lays out as a direct child of the plate around it.
+ */
+.marker {
+  display: contents;
+}

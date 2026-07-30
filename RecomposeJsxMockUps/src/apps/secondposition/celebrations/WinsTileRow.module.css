@@ -1,0 +1,66 @@
+/*
+ * Styles for ./WinsTileRow.tsx — the tally printed along the foot of the wins
+ * card. `--sc-*` only (../showcaseTokens.ts).
+ */
+
+/*
+ * THE BAND, EDGE TO EDGE. No gutter between the columns and no radius on any of
+ * them: a gap would turn each column back into the floating tile this design
+ * refuses, and the whole point of the row is that it reads as one printed band.
+ *
+ * The hairline that opens it is `--sc-satin-hair` and not `--sc-rule`, because
+ * brass on this field lands at 1.33:1 — a rule drawn in it here would not be
+ * faint, it would not be there. Longhands, so one bad name can only cost the
+ * edge it is on.
+ *
+ * The row's own inline padding is HALF the screen inset and each column carries
+ * the other half, so the first column's content starts exactly on the app's
+ * left margin while the parting lines between columns stay inside the band.
+ *
+ * `box-sizing: border-box` is load-bearing and not boilerplate, and this rule
+ * shipped without it: the package carries no reset, so `width: 100%` plus
+ * `padding-inline` made the band 16px WIDER than the card it sits in — the
+ * opening hairline ran off the right edge and the third column's content sat
+ * 8px past the screen. `.column` below already carried the note; the row it
+ * lives in did not.
+ */
+.row {
+  box-sizing: border-box;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  padding-inline: var(--sc-spacing-medium);
+  border-block-start-width: var(--sc-rule-thickness);
+  border-block-start-style: solid;
+  border-block-start-color: var(--sc-satin-hair);
+}
+
+/*
+ * One column. `flex: 1 1 0` and not `1 1 auto`: every column takes an equal
+ * third of the band whatever its label says, so three distinct facts are
+ * DISTRIBUTED across the whole width rather than packed by content
+ * (Guardrail 15). `min-width: 0` lets a long label wrap inside its third
+ * instead of widening it.
+ *
+ * `box-sizing: border-box` is load-bearing and not boilerplate: this package
+ * carries no reset, so without it the parting line below would make its column
+ * a pixel wider than its two neighbours.
+ */
+.column {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  padding-inline: var(--sc-spacing-medium);
+}
+
+/*
+ * The parting line between two columns. Every column but the first draws its
+ * own leading edge, which is what makes the band a tally of three entries
+ * rather than three things that happen to be next to each other.
+ */
+.column + .column {
+  border-inline-start-width: var(--sc-rule-thickness);
+  border-inline-start-style: solid;
+  border-inline-start-color: var(--sc-satin-hair);
+}

@@ -1,0 +1,297 @@
+/*
+ * Styles for ./RankShowcase.tsx — the RANK celebration card.
+ *
+ * Reads `--sc-*` (./showcaseTokens.ts) and `--sp-*` (./shell/phrase.ts) and
+ * nothing else. Every colour pairing below was measured rather than chosen:
+ * type on the satin field is `--sc-on-satin` at 5.47:1, the charcoal ink is
+ * 2.70:1 there and fails AA at every size, and brass is 1.33:1 and is not a
+ * faint line on satin, it is no line at all.
+ *
+ * LONGHANDS THROUGHOUT, including `background-color` in place of `background`.
+ * A shorthand carrying one unresolvable `var()` is invalid at computed-value
+ * time and the browser drops the WHOLE declaration — and `background` resets
+ * seven other properties on its way out, so it is the most expensive shorthand
+ * in the file to get wrong. The `font:` rungs are the sanctioned exception; they
+ * are authored as shorthands and always come with their paired `-ls`.
+ */
+
+/* --- The field ------------------------------------------------------------ */
+
+/*
+ * The card's own box, filling ./celebrationAsset.module.css's `.body`.
+ *
+ * IT IS THE ROOT AND IT FILLS EVERYTHING, which is what makes the tap honest:
+ * `bind` sits on this element, so a pointer landing anywhere the scaffold counts
+ * as "on the card" finishes the card too. A box that stopped short would leave a
+ * band where the scaffold reveals the action while the card carries on
+ * animating underneath it — the card contradicting itself, which reads as a bug
+ * rather than as a design (./shell/useTapToSettle.ts).
+ *
+ * It paints the cream ground so the strip the field leaves clear below has
+ * something to be, rather than showing whatever is behind the asset.
+ */
+.card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: var(--sc-background);
+}
+
+/*
+ * THE SATIN IS THE GROUND OF A CELEBRATION CARD (./layout_brief.yaml, "COLOUR
+ * IS COMMITTED, NOT SPRINKLED"): a field, not a card — edge to edge, no gutter,
+ * no radius, no shadow, nothing floating.
+ *
+ * WHY IT STOPS SHORT AT THE BOTTOM, WHICH IS THE ONE PLACE THIS CARD IS NOT EDGE
+ * TO EDGE, and the value is ./PointsShowcase.module.css's for its reason.
+ * ./celebrationAsset.tsx's CTA zone insets the action by `--sc-screen-padding-x`
+ * on its flanks with NO gap above it, and that action is itself a satin band
+ * (./shell/ActionBand.module.css, whose own note is "two adjacent satin bands
+ * would read as one"). Run the field to the card's bottom edge and the button's
+ * top and side boundaries vanish into it: the only evidence a button is there at
+ * all would be two 16px cream notches, which is Guardrail 12's failure — a
+ * control has to look like what it is. One `--sc-spacing-large` gives the band
+ * cream on all four sides, the same measure as the flanks it already has, so the
+ * gap reads as a margin rather than as a gap.
+ *
+ * Absolutely positioned with all four offsets and `width`/`height` left auto, so
+ * its padding is resolved out of the offsets rather than added to them — this
+ * package carries no global `box-sizing: border-box`, and that is the arithmetic
+ * that would otherwise bite.
+ */
+.field {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: var(--sc-spacing-large);
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  padding-inline: var(--sc-screen-padding-x);
+  padding-block: var(--sc-spacing-big);
+  background-color: var(--sc-satin);
+  color: var(--sc-on-satin);
+}
+
+/* --- Rank 1: the mark and the name it carries ----------------------------- */
+
+/*
+ * The focal object, centred in everything the foot does not take.
+ *
+ * This is the one arrangement that earns centring (Guardrail 15): a single focal
+ * object with its own line and nothing to scan. It takes the free space rather
+ * than sharing it with the tally, so the mark sits where the eye lands instead
+ * of being pushed up by whatever the entry below happens to be tall.
+ *
+ * `min-height: 0` so it yields before the foot does — a rank name long enough to
+ * wrap must eat into the air around the mark, never push the tally off the card.
+ */
+.statement {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/*
+ * The mount takes the field's full width so a longer rank name wraps against the
+ * card's own inset rather than against the width of the word it happens to be.
+ * The satin it paints is the satin it stands on, so nothing shows a seam.
+ *
+ * `overflow-wrap` is set HERE and inherits into ./shell/Insignia.module.css's
+ * caption, which this file cannot otherwise reach: a rank whose name is one
+ * unbroken word longer than the card would otherwise run out through the field's
+ * edge instead of breaking.
+ */
+.hero {
+  align-self: stretch;
+  overflow-wrap: anywhere;
+}
+
+/* --- Rank 2: the entry at the foot of the bill ---------------------------- */
+
+/*
+ * What the rank cost, pinned to the foot behind its own rule — the same place
+ * ./PointsShowcase.module.css keeps its running total and ./StatsShowcase.tsx
+ * its printed week, because the three cards share a skeleton.
+ *
+ * LEFT ALIGNED, and the difference from the block above is doing work. Centring
+ * is spent on the single focal object; everything below a rule in this app is
+ * scanned and is therefore set against the left edge (./layout_brief.yaml). That
+ * contrast is what stops the entry reading as a second caption belonging to the
+ * mark, and it leaves rank 1 as the only centred thing on the card.
+ */
+.tally {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  /*
+   * A label and the figure it names are ONE object, so this is the smallest gap
+   * on the card — a quarter of the `--sc-spacing-large` under the rule, which is
+   * in turn a quarter of the air the mount carries above it. Get that order
+   * wrong and the label reads as the insignia's footer instead of the count's
+   * heading, which is Guardrail 13's exact failure.
+   */
+  gap: var(--sc-spacing-small);
+}
+
+/*
+ * The parting hairline, edge to edge. It bleeds back out through the field's
+ * inline padding because a rule that stops short of the edge is a border, and
+ * this design has no borders.
+ *
+ * It DRAWS, from the left, once the veil has passed it — the same wipe every
+ * satin field in this app opens with, at the scale of one line.
+ */
+.part {
+  align-self: stretch;
+  height: var(--sc-rule-thickness);
+  margin-inline: calc(var(--sc-screen-padding-x) * -1);
+  margin-bottom: var(--sc-spacing-large);
+  background-color: var(--sc-satin-hair);
+  transform-origin: left center;
+  animation: partDraw var(--sp-arrive) var(--sp-phrase) var(--sp-wipe) both;
+}
+
+/*
+ * The tracked cap that names the figure. At FULL strength: no opacity holds ink
+ * above AA on this field, so rank is carried by size and never by fading.
+ */
+.tallyLabel {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-on-satin);
+}
+
+/*
+ * RANK 2, AND IT IS DELIBERATELY NOT ALLOWED TO WIN.
+ *
+ * `--sc-type-h1-regular` is the largest rung the body sans has, at the weight
+ * that loses cleanly: a figure is never set larger than the name it describes,
+ * and this card's name is `--sc-type-name-title` — 26px of display serif. The
+ * bold cut of the same rung ties with it for the eye, and two things tying for
+ * the eye means rank 1 is not winning. It is the same rung ./StatsShowcase.tsx
+ * gives the figure that card is not about, for the same reason. The serif figure
+ * rungs belong to the cards whose whole subject IS the number; this card's
+ * subject is a rank.
+ *
+ * `display: flex` rather than a line box, so the odometer and the settled value
+ * it is swapped for occupy the same height as well as the same width — an
+ * inline-flex reel baselines on its bottom edge and would sit a couple of pixels
+ * off the plain number that replaces it.
+ *
+ * `font-variant-numeric` comes AFTER the shorthand on purpose: `font:` resets
+ * `font-variant`, so the order is what makes the digits tabular rather than a
+ * declaration the browser has already thrown away. NO numeric line-height
+ * anywhere near this — a line box shorter than the font's own makes adjacent
+ * digit cells overlap through the reel's clip, which `apps/romanahouse/` shipped
+ * once.
+ */
+.tallyFigure {
+  display: flex;
+  align-items: center;
+  font: var(--sc-type-h1-regular);
+  letter-spacing: var(--sc-type-h1-regular-ls);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-on-satin);
+}
+
+/* --- The entrance --------------------------------------------------------- */
+
+/*
+ * THE SATIN ARRIVES FIRST AND EVERYTHING IS REVEALED BY IT.
+ *
+ * A sheet of the cream ground lying over the whole card, retracting toward the
+ * bottom edge so its own leading edge travels DOWN it — the mark, then the name,
+ * then the entry at the foot. One gesture on one element, and the stagger is a
+ * consequence of one stroke passing each region rather than three delays to keep
+ * in sync.
+ *
+ * A VEIL, NOT A CLIP: `clip-path` and `overflow` both remove what they hide from
+ * HIT TESTING, and the scaffold's tap-to-skip target has to be live from the
+ * first frame. So this is a covering with `pointer-events: none`, which can
+ * never intercept the tap it is lying over.
+ *
+ * `inset` is the one shorthand here, and it is safe because it carries no
+ * `var()` to fail to resolve.
+ */
+.veil {
+  position: absolute;
+  inset: 0;
+  background-color: var(--sc-background);
+  pointer-events: none;
+  transform-origin: center bottom;
+  animation: fieldOpen var(--sp-wipe) var(--sp-phrase) both;
+}
+
+/*
+ * ONE CURVE, AND IT RESOLVES. `--sp-phrase` is a plain deceleration: it leaves
+ * immediately, sheds speed the whole way and stops dead. Nothing here bounces,
+ * springs, overshoots or rubber-bands, on this card or on any other.
+ *
+ * Guardrail 16: the belt's arrival is the unhurried beat the card exists for
+ * (`--sp-settle`, on ./shell/Insignia.module.css) and the figure resolves over
+ * longer still (`--sp-count`, driven in TS). The field's own opening and the
+ * rule's draw are not the celebration — they are how this app puts anything on
+ * screen — so both run on the ordinary durations. A celebration is slow where it
+ * is being LOOKED at, not uniformly slow.
+ */
+@keyframes fieldOpen {
+  from {
+    transform: scaleY(1);
+  }
+
+  to {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes partDraw {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* --- Settled -------------------------------------------------------------- */
+
+/*
+ * A TAP FINISHES THE CARD RATHER THAN MERELY REVEALING ITS BUTTON.
+ *
+ * One declaration does the whole job: every CSS animation on this card and in
+ * its subtree — the veil, the rule, and <Insignia>'s own settle, which this file
+ * cannot otherwise reach — is pushed thirty seconds past its own end and holds
+ * its final frame. Nothing here has to restate what "settled" looks like, which
+ * is the point: a second description of the resting state is a second thing to
+ * keep true. ./celebrations/CountUpText.tsx is the exception and is handed over
+ * in the component's own branch, because a per-frame driver has no keyframe to
+ * fast-forward.
+ */
+.finished,
+.finished * {
+  animation-delay: -30s !important;
+}
+
+/*
+ * A member who asked for less motion still gets the whole celebration, just not
+ * the travel. Settled is a state this design renders directly — the field is
+ * simply open, the rule is simply drawn, the type is simply there, and the
+ * count-up is swapped for its own answer in the component.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .part {
+    animation: none;
+  }
+
+  .veil {
+    animation: none;
+    transform: scaleY(0);
+  }
+}

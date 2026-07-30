@@ -1,0 +1,348 @@
+/*
+ * Styles for ./RewardsCardShowcase.tsx — the rewards celebration, billed.
+ *
+ * `--sc-*` are the design tokens (./showcaseTokens.ts) and `--sp-*` the app's
+ * one clock and one curve (./shell/phrase.ts); both are written onto the asset
+ * root by ./SecondPositionSurface.tsx. `--rw-*` is the single composed delay the
+ * component derives (see `REWARDS_VARS` there).
+ *
+ * THE GIFTBOX INTRO HAS NO MOTION HERE. Its transforms and opacities are
+ * written per frame by the driver in the component, because the box's swell and
+ * fourteen thrown coins share one clock (./rewardsCelebration.ts). What the
+ * classes below give it is only the box each element sits in.
+ *
+ * EVERY COLOUR ON THIS CARD IS MEASURED. The ground is the satin blush, so all
+ * type is `--sc-on-satin` (5.47:1) and never `--sc-text` (2.70:1 there, which
+ * fails AA at every size). The one rule on the card is `--sc-satin-hair`, a
+ * cream hairline, because brass on satin is 1.33:1 — invisible. There is no
+ * brass anywhere on this screen and there cannot be.
+ */
+
+/*
+ * The card fills the satin sheet ./shell/Screen.tsx paints. Nothing here clips:
+ * the coins are thrown past the card's edges and the shelf's rim pages run off
+ * the screen, both on purpose.
+ *
+ * THE WHOLE ANNOUNCEMENT IS ONE CENTRED OBJECT, and it was built the other way
+ * first: the head pinned to the top edge like an app masthead, the shelf
+ * centred in what was left. That put ~150px of unclaimed satin between the rule
+ * and the photograph and left the head reading as a stranded caption — a void
+ * at one end that nothing owns (Guardrail 15). A celebration card has no
+ * masthead to pin; it is a bill, and a bill is one thing mounted on a field
+ * with clear air around it. So the three parts are centred TOGETHER and the air
+ * lands where the brief wants it: around the object, not inside it.
+ */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  /* Between the head and the bill it names. See `.bill` for the gap inside. */
+  gap: var(--sc-spacing-big);
+  color: var(--sc-on-satin);
+  overflow: visible;
+}
+
+/*
+ * A TAP FINISHES THE CARD (./shell/useTapToSettle.ts). The whole body of this
+ * rule is a negative delay on the card and its subtree: every CSS animation
+ * runs past its end and holds its own final frame, so no file has to restate
+ * what "settled" looks like. The two per-frame drivers have no keyframe to
+ * fast-forward and are handed over by their own branch instead — the intro by
+ * being replaced with the bill, the shelf by `immediate`.
+ */
+.finished,
+.finished * {
+  animation-delay: -30s !important;
+}
+
+/* --- The card's masthead --------------------------------------------------- */
+
+/*
+ * What is being offered, and what to do about it. An announcement's own title
+ * is the one kind of heading that earns being centred — it is an identity
+ * rather than something scanned — and the serif is at the MASTHEAD rung, well
+ * under the billed rung the reward's own name takes, so it names the card
+ * without competing with the card's subject.
+ */
+.head {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* The title and the line under it are ONE object, so this is the small gap. */
+  gap: var(--sc-spacing-small);
+  animation: rewardsRise var(--sp-arrive) var(--sp-phrase) both;
+}
+
+.title {
+  font: var(--sc-type-name-masthead);
+  letter-spacing: var(--sc-type-name-masthead-ls);
+  color: var(--sc-on-satin);
+  padding-inline: var(--sc-screen-padding-x);
+  text-align: center;
+}
+
+.subtitle {
+  font: var(--sc-type-meta);
+  letter-spacing: var(--sc-type-meta-ls);
+  color: var(--sc-on-satin);
+  padding-inline: var(--sc-screen-padding-x);
+  text-align: center;
+}
+
+/*
+ * The rule under the identity, edge to edge, exactly as ./shell/Masthead.tsx
+ * draws one. CREAM and not brass: this is the same law that forces the foot
+ * nav's active marker to be cream — brass on satin is 1.33:1.
+ */
+.headRule {
+  align-self: stretch;
+  height: var(--sc-rule-thickness);
+  /* `background-color`, not the `background` shorthand: one unresolvable var()
+     in a shorthand is invalid at computed-value time and the browser drops the
+     WHOLE declaration, which on a 1px element means no rule at all. */
+  background-color: var(--sc-satin-hair);
+  margin-top: var(--sc-spacing-large);
+}
+
+/*
+ * THE BILL'S CLOSING RULE, AND IT IS A CORRECTNESS FIX RATHER THAN AN ORNAMENT.
+ *
+ * The flow's primary action (../celebrationAsset.tsx → ./shell/ActionBand.tsx)
+ * is a full-width SATIN band, and this card's ground is a full-bleed satin
+ * FIELD. The band's own file warns about exactly this — "two adjacent satin
+ * bands would read as one" — and that is what happens here: once the card
+ * settles, the satin runs unbroken from the top of the phone through the
+ * button, and `Continue` reads as a stray word on the field rather than as
+ * something pressable (Guardrail 12).
+ *
+ * Separation in this app is a change of field and a hairline. The field cannot
+ * change — satin is the ground of every celebration card — so it is the
+ * hairline, in the cream that `--sc-satin-hair` exists for (brass on satin is
+ * 1.33:1 and would not be there at all). It sits on the card's own bottom edge,
+ * which is the seam, and it is an absolutely positioned element rather than a
+ * border so it cannot add a pixel to a box that is already `height: 100%`.
+ */
+.footRule {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--sc-rule-thickness);
+  background-color: var(--sc-satin-hair);
+  pointer-events: none;
+}
+
+/* --- The bill -------------------------------------------------------------- */
+
+/*
+ * The bill itself: the shelf, and the name of the work it opened on.
+ *
+ * THE GAP IN HERE IS HALF THE GAP TO THE HEAD, and that is the whole grouping
+ * (Guardrail 13). A photograph and the name generated from it are ONE object,
+ * so they sit close; the title above is a different thing, so it sits further
+ * away. Every gap the same value would group nothing.
+ */
+.bill {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--sc-spacing-large);
+  overflow: visible;
+}
+
+/*
+ * The shelf's own arrival is a pure fade over the bloom's window; the spreading
+ * is the driver's (./celebrations/RewardsCarousel.tsx). Two halves of one
+ * gesture, on one duration, so they cannot drift apart.
+ */
+.shelf {
+  overflow: visible;
+  animation: rewardsFade var(--sp-cascade) var(--sp-phrase) both;
+}
+
+/* --- The featured reward's name, and what it costs ------------------------- */
+
+.caption {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sc-spacing-small);
+  padding-inline: var(--sc-screen-padding-x);
+  padding-block: var(--sc-spacing-medium);
+}
+
+/*
+ * RANK 1, with the photograph directly above it. The display serif at the
+ * BILLED rung — the largest type anywhere on this card, and larger than the
+ * figure beneath it, because a figure is never set larger than the name it
+ * describes.
+ */
+.name {
+  font: var(--sc-type-name-billed);
+  letter-spacing: var(--sc-type-name-billed-ls);
+  color: var(--sc-on-satin);
+  text-align: center;
+  /* A gym names its own rewards, so the length is not ours to assume. Wrapping
+     is fine here — the card has room for three lines and rank 1 is the last
+     thing that should be truncated — but a single unbroken token has to break
+     rather than run off both edges of the field. */
+  overflow-wrap: anywhere;
+}
+
+/* What the reward is worth off the points — a fact about the name above it. */
+.discount {
+  font: var(--sc-type-meta);
+  letter-spacing: var(--sc-type-meta-ls);
+  color: var(--sc-on-satin);
+  text-align: center;
+}
+
+/*
+ * RANK 2. The sans, always: the serif NAMES things and this is a cost. Tabular,
+ * so the digits do not shift sideways when the shelf advances to a reward with
+ * a different number of them.
+ *
+ * THE REGULAR CUT, NOT THE BOLD ONE, AND THAT CAME OUT OF LOOKING AT IT. At
+ * `--sc-type-h1` (700/24px sans) the cost carried more ink than the 400/30px
+ * serif name above it and the two TIED for the eye — Guardrail 14's own test,
+ * which rank 1 then fails however correct the point sizes are. The regular cut
+ * keeps the figure unmistakably second while leaving it far above the 13px
+ * discount line.
+ *
+ * The gap ABOVE it is the large one for the same reason the gap below the name
+ * is the small one: the name and what it is worth off the points are one
+ * object, and the cost is the next thing (Guardrail 13). At the medium rung the
+ * discount was pinched between two larger lines and read as neither's.
+ */
+.cost {
+  margin-top: var(--sc-spacing-large);
+  font: var(--sc-type-h1-regular);
+  letter-spacing: var(--sc-type-h1-regular-ls);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-on-satin);
+  text-align: center;
+}
+
+/*
+ * THE FIELD PASSING OVER THE TYPE IS WHAT PUTS THE TYPE ON SCREEN. Every name
+ * in this app arrives that way (./shell/Panel.tsx says the same), and on a
+ * satin ground the sheet that retracts is the CREAM one.
+ *
+ * A VEIL, NOT A CLIP: `clip-path` and `overflow` both remove what they hide
+ * from hit testing, and nothing in this app may be untappable while it moves.
+ * `pointer-events: none` so it can never swallow the tap that finishes the card.
+ */
+.captionVeil {
+  position: absolute;
+  inset: 0;
+  background-color: var(--sc-background);
+  pointer-events: none;
+  transform-origin: right center;
+  animation: rewardsVeilOff var(--sp-wipe) var(--sp-phrase) var(--rw-caption-delay) both;
+}
+
+/*
+ * An ADVANCE is one name replacing another rather than the first one arriving,
+ * so it runs on the switch beat — the same one the page slide runs on — and it
+ * does not wait out the bloom's delay a second time.
+ */
+.captionSwitch .captionVeil {
+  animation-duration: var(--sp-switch);
+  animation-delay: 0ms;
+}
+
+/* --- The giftbox intro ----------------------------------------------------- */
+
+/* The whole field, with the box and the coins stacked at its centre. */
+.stage {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: visible;
+}
+
+.giftbox {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  will-change: transform, opacity;
+}
+
+/*
+ * One thrown coin. Its size is the seed's own, written inline — the burst does
+ * NOT scale with the box, because a coin is thrown whole.
+ */
+.coin {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  will-change: transform, opacity;
+}
+
+/* CONTAINED, like every cut-out in this app. `single_point` measures 0.98. */
+.coinImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* --- Keyframes. One curve, and it is always `var(--sp-phrase)`. ------------ */
+
+/* An arrival: it travels, slows and stops. Nothing overshoots. */
+@keyframes rewardsRise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes rewardsFade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* The cream sheet retracting off the satin, from the field's leading edge. */
+@keyframes rewardsVeilOff {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
+}
+
+/*
+ * A member who asked for less motion still gets the whole celebration, just not
+ * the travel — settled is a state this card can render directly. The component
+ * also skips the giftbox intro outright and never arms the loop or the advance,
+ * and it fires `onCycleComplete` before it returns, so the flow's action is
+ * present from the first frame.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .head,
+  .shelf,
+  .captionVeil {
+    animation: none;
+  }
+
+  .captionVeil {
+    transform: scaleX(0);
+  }
+}

@@ -1,0 +1,76 @@
+/*
+ * Styles for ./FeaturedVideoCard.tsx (ports MobileApp/lib/features/videos/
+ * presentation/widgets/featured_video_card.dart).
+ *
+ * `--sc-*` comes from ../showcaseTokens.ts and `--sp-*` from ../shell/phrase.ts.
+ * Nothing else.
+ */
+
+/*
+ * The hero and its action are ONE object: the billed panel, then the band that
+ * plays it, then the hairline that closes them both. Edge to edge, square,
+ * nothing floating and nothing inset — this design has no card.
+ */
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  border-bottom-width: var(--sc-divider-thickness);
+  border-bottom-style: solid;
+  border-bottom-color: var(--sc-divider);
+}
+
+/*
+ * THE ACTION BAND, INVERTED. Every primary action in this fork is a full-width
+ * band with a serif label; this one is the raised cream carrying blush ink
+ * rather than the other way round, because it sits directly under the hero's
+ * satin plinth and two satin bands touching read as one.
+ *
+ * The pairing is measured, and it is the SAME PAIR as a knocked-out name read
+ * backwards — `--sc-ground-raised` and `--sc-on-satin` resolve to one colour —
+ * so blush on it is 5.47:1 and passes AA at any size. It would NOT be safe on
+ * the page's own cream ground (`--sc-background`), where the identical ink is
+ * 4.31:1 and legible only at the display sizes. That is why the band paints its
+ * own field rather than sitting transparent on the page.
+ *
+ * `min-height` and the block padding both match ../shell/ActionBand.module.css,
+ * so the two land on the same height and read as the same species of control at
+ * a glance. Both boxes are content-box, so the band is 58 + 32 tall.
+ */
+.play {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 58px;
+  padding-block: var(--sc-spacing-large);
+  padding-inline: var(--sc-spacing-large);
+  background-color: var(--sc-ground-raised);
+}
+
+.playLabel {
+  font: var(--sc-type-name-panel);
+  letter-spacing: var(--sc-type-name-panel-ls);
+  color: var(--sc-satin);
+  /*
+   * It arrives with the plinth above it rather than before it, so the hero
+   * reads as one gesture: the satin opens, and the band it stands on is there
+   * by the time the eye reaches the bottom of the picture.
+   */
+  animation: appear var(--sp-arrive) var(--sp-phrase) both;
+  animation-delay: var(--sp-wipe);
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .playLabel {
+    animation: none;
+  }
+}

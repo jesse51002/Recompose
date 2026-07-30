@@ -1,0 +1,57 @@
+/*
+ * Styles for ./DateRow.tsx — the third and last ruled row of the head.
+ *
+ * Everything here reads `--sc-*` (../showcaseTokens.ts) and nothing else.
+ */
+
+/*
+ * FIVE DISTINCT DAYS SPREAD ACROSS THE WIDTH THEY HAVE, not bunched behind one
+ * small gap at the left. Guardrail 15's exact failure shipped in a sibling
+ * fork: four unrelated facts packed into the left third of a row with the right
+ * third empty, every gap "from the scale" and the row still wrong.
+ *
+ * `grid-auto-columns: 1fr` rather than `repeat(5, 1fr)` because the count is a
+ * prop — the window is five days here and the real board runs to sixty.
+ *
+ * IT IS CENTRED PER CELL, AND THAT IS NOT A BREACH OF "EVERYTHING BELOW THE
+ * RULE IS LEFT ALIGNED". This is the head, not the board: the row directly
+ * above it (../shell/Masthead.tsx's carried line) is four equal cells with
+ * their contents centred, and two ruled rows of one identity block reading to
+ * two different grids is worse than either grid. The BOARD below — the labels,
+ * the names, the facts — is left aligned throughout.
+ */
+.index {
+  position: sticky;
+  top: 0;
+  /*
+   * Above the panels, which carry `position: relative` of their own. Without
+   * it the pinned row is painted under whatever scrolls past it.
+   */
+  z-index: 2;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  align-items: end;
+  padding-inline: var(--sc-screen-padding-x);
+  /*
+   * `background-color`, never the `background` shorthand. Guardrail 3: one
+   * unresolvable name inside a shorthand is invalid at computed-value time and
+   * the browser drops the WHOLE declaration — and an opaque ground is not
+   * decoration here, it is what makes the pinned row legible over whatever
+   * scrolls beneath it.
+   */
+  background-color: var(--sc-background);
+  /*
+   * The hairline that parts one panel from the next, doing the same job at the
+   * foot of the head: it says the row ends here. NOT brass — brass is already
+   * carrying the two rules above and each day's mark below, and a third brass
+   * line 12px from the second reads as a fence rather than as a rule.
+   *
+   * LONGHANDS, because the shorthand carried TWO custom properties: a single
+   * bad name would have taken the width, the style and the colour with it, so
+   * the row would have lost its edge entirely rather than lost its colour.
+   */
+  border-block-end-width: var(--sc-divider-thickness);
+  border-block-end-style: solid;
+  border-block-end-color: var(--sc-divider);
+}

@@ -4,10 +4,25 @@
  * `--sc-*` only — see ../ShowcaseThemeVars.tsx.
  */
 
-/* `Row(crossAxisAlignment: start, spacing: spacingMedium)`. */
+/*
+ * `Row(spacing: spacingMedium)`, but `stretch` where the Dart says
+ * `crossAxisAlignment: start`, and that divergence is deliberate.
+ *
+ * THREE BORDERED BOXES IN A ROW MUST BE ONE HEIGHT. "Classes this week" wraps to
+ * two lines and the other two captions do not, so under `flex-start` the left
+ * tile drew a box 15px taller than its neighbours — three tiles saying the same
+ * KIND of thing in three different sizes, which reads as a layout bug rather
+ * than as a row. The Dart has the same defect for the same reason; this is the
+ * mock being right rather than being faithful. `../romanahouse` fixed the
+ * identical symptom the same way (see its own copy of this file).
+ *
+ * `stretch` alone only equalises the CELLS. The border lives on `.tile`, so
+ * ./WinsTile.module.css also has to fill the cell it was handed — the box a
+ * reader actually sees is the tile's, not the cell's.
+ */
 .row {
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
   gap: var(--sc-spacing-medium);
 }
 

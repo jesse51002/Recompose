@@ -1,0 +1,91 @@
+/*
+ * Styles for ./FootNav.tsx. Replaces the base's
+ * `support/ShowcaseBottomNav.module.css`, which is deleted from this folder.
+ *
+ * PRIMARY NAV LIVES AT THE FOOT (Guardrail 11). Not a side rail, not the top:
+ * the bottom is the reachable edge on a 390pt phone and where every mobile OS
+ * puts it. The FORM is this fork's — a solid satin band, square, edge to edge,
+ * with no radius and nothing floating — but the position is fixed.
+ */
+
+.nav {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  height: 64px;
+  background-color: var(--sc-satin);
+}
+
+/*
+ * A destination. `position: relative` carries the active rule, which is drawn
+ * on the cell's own top edge rather than as a separate row — the band stays one
+ * unbroken field of satin.
+ */
+.item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sc-spacing-small);
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  /*
+   * FULL STRENGTH ON EVERY DESTINATION, ACTIVE OR NOT. Measured, not chosen:
+   * the cream ink is 5.47:1 on this field, and every faded variant fails AA —
+   * 85% is 4.46:1 and it only gets worse from there. State is carried by the
+   * rule, the weight and the icon instead. See ../layout_brief.yaml.
+   */
+  color: var(--sc-on-satin);
+}
+
+/* THE MARKER. Cream, because brass on this field is 1.33:1 — invisible. */
+.item.active::before {
+  content: '';
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  height: var(--sc-rule-strong-thickness);
+  background-color: var(--sc-on-satin);
+}
+
+.icon {
+  /*
+   * The one element here that may be held back, because an icon is not text
+   * and answers to 3:1 rather than 4.5:1. At 0.70 it measures 3.5:1.
+   */
+  opacity: 0.7;
+  transition: opacity var(--sp-arrive) var(--sp-phrase);
+}
+
+.item.active .icon {
+  opacity: 1;
+}
+
+.label {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+}
+
+.item.active .label {
+  font-weight: 700;
+}
+
+/*
+ * `AppNavItem.showLabel: false` — not laid out, still built and still
+ * announced. Never `display: none`, never `aria-hidden`.
+ */
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
