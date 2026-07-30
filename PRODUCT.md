@@ -17,8 +17,10 @@ P&L.
 **Two operators inside the product.** An *admin* (Recompose, or the platform's
 own staff) onboards a codebase and watches a fleet of designs stay current. A
 *tenant* — the platform's customer, e.g. a Pilates studio on a gym CRM — writes
-a brand brief and approves the design made from it. They never see the fork, the
-repository, or the review queue.
+a brand brief and signs off the design made from it. They never see the fork or
+the repository. **That sign-off is the only gate in the product**, and it is one
+design by the person whose brand it is; everything after it runs without waiting
+for anybody.
 
 **The audience for the demo surface** is a YC / investor room watching a pitch,
 not a buyer evaluating a purchase. They need the mechanism legible in seconds
@@ -50,10 +52,18 @@ code by a productionalize agent.
 
 **Recompose never writes to the platform's trunk.** Two agent-maintained fork
 layers, re-derived as the platform ships. They grant read access; that is the
-integration. Changes surface in UAT, never straight to production.
+integration.
 
-The promise is leverage, not autonomy: not that agents are magic, but that one
-person can manage a hundred at a time.
+**Nothing waits to be approved.** A design ships when its own checks pass and
+stops when they do not — because at a hundred branches an approval queue is the
+bottleneck, and a reviewer who must clear every one of them is the thing that
+stops this scaling. Human attention goes to the exceptions instead: a design
+that halted is a design that needs a decision, and the fleet page exists to show
+which ones those are.
+
+The promise is still leverage rather than magic — one person managing a hundred
+designs — but the leverage comes from only being asked about the ones that
+stopped, not from reviewing every one.
 
 ## Operating Context
 
@@ -61,14 +71,19 @@ person can manage a hundred at a time.
   no branch on their trunk, no library to install, no integration work.
 - Onboarding is **once per platform**, not once per tenant, and takes roughly an
   hour. Its cost amortizes across every design.
-- Per design: brief → asset pipeline → design agent → validation → human
-  approval → productionalize → UAT.
+- Per design: brief → asset pipeline → design agent → validation →
+  productionalize → deploy. No approval step between them; a stage that cannot
+  satisfy its own checks halts and asks, and that is the only time a person is
+  involved after the brief.
 - **Most passes are slow and that is fine.** The design pass is the fast one
   (~2 minutes). Validation is 20–40 minutes because it walks every screen in
   every state and then a functional-equivalence gate. Productionalize is 1–2
   hours because its output ships.
-- Stated error budget ~95% clean / 4% minor / 1% significant, acceptable
-  *because* a human reviewing UAT is the designed architecture, not a fallback.
+- Stated error budget ~95% clean / 4% minor / 1% significant. What makes it
+  survivable is that the 5% **stops itself** rather than shipping: the checks
+  are the architecture, and the exception queue is what a person actually
+  works. A reviewer clearing every design was the earlier answer and does not
+  survive contact with a hundred branches.
 
 ## Capabilities and Constraints
 
@@ -118,8 +133,9 @@ than argued. The gate has never been built or run.
    rather than answering it.
 3. **Arrangement only.** A larger product surface under a tighter constraint,
    checkable rather than argued.
-4. **Human leverage, not autonomy.** UAT and a reviewer are the design, which is
-   what makes the error budget survivable.
+4. **Autonomous by default, human by exception.** Checks gate the pipeline, not
+   a reviewer, because an approval queue does not survive a hundred branches.
+   People are spent on the designs that halted.
 5. **Default quality is the product.** A full redesign fails *visibly*, so the
    first pass has to be good.
 

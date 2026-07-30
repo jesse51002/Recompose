@@ -63,14 +63,19 @@ the work runs, not the shape of the request.
   interview produces, and `/sessions/active` reports `null` until it does. The
   form that used to ask for a name up front asked a person to name a thing that
   did not exist yet, for a fact the agent's first question collects anyway.
-- **There is ONE approval gate: the brand brief.** The layout is not interviewed
-  for and not proposed. When an asset run settles, `run_settled` makes
-  `src/apps/gen-<run>/` as a copy of the base and launches the layout agent on
-  it — in code, not because a model chose to. That agent authors its own
+- **The brand brief is the one thing a person accepts.** The layout is not
+  interviewed for and not proposed: the layout agent authors its own
   `layout_brief.yaml` before it writes any code, having actually opened the
-  generated images; a direction authored out here could only be a thinner guess.
-  Most owners have no layout direction to give, and asking produced a shrug or
-  an invention.
+  generated images, and a direction authored out here could only be a thinner
+  guess. Most owners have no layout direction to give, and asking produced a
+  shrug or an invention.
+- **`run_settled` starts nothing.** It used to make `src/apps/gen-<run>/` and
+  launch the layout agent the instant the assets settled. A finished run is
+  genuinely the layout's only precondition, and it was still the wrong default —
+  a precondition being met is not the same as a person being ready, and this is
+  the most expensive thing the product launches. `start_layout` is the only
+  door, behind `POST /sessions/{id}/layout/start` and a button in the
+  transcript.
 - **THE LAYOUT AGENT IS THE MOST EXPENSIVE THING THIS SERVICE STARTS**, and two
   rules keep it controllable. It is spawned into its OWN process group
   (`start_new_session=True`) because a coding agent spawns children of its own,
@@ -152,9 +157,15 @@ runs; both are independently watchable, which is why `session_router.py` sits
   twenty-three nodes into a second stream would be two places that can disagree
   about one run.
 - **A session is settled by a person, a run by the executor.** The work stopping
-  is not what makes a design done — approving it is. That is why `SessionRegistry`
-  is a sibling of `RunRegistry` rather than a generalisation of it. They are
-  near-copies on purpose; extract only if they converge.
+  is not what makes a design done — the tenant signing it off is. That is the
+  ONE human gate in the product and it is per design, by the person whose brand
+  it is; nothing downstream waits on a reviewer, because an approval queue does
+  not survive a hundred branches. It is also why `SessionRegistry` is a sibling
+  of `RunRegistry` rather than a generalisation of it. They are near-copies on
+  purpose; extract only if they converge.
+  A settled session is not necessarily an approved one: the stream synthesises a
+  terminal record, carrying an error, when a session is not in memory because
+  the process restarted mid-design.
 - **`POST /brief-agent` is still stateless** — the client holds that transcript
   and posts it back each turn. A session is not. Read `agent_turn.py`'s
   stateless claim as scoped to that one endpoint.

@@ -151,10 +151,12 @@ export function FleetView() {
           working, {FLEET.filter((a) => a.status === 'help').length} waiting on
           you.
         </b>{' '}
-        That is the shape the product is for — when an agent is wrong it
-        surfaces in <b>UAT</b> as a queue rather than in production as an
-        incident. None of this is a pull request into a customer&rsquo;s
-        repository; there is never one.
+        That is the shape the product is for. <b>Nothing here waits to be
+        approved</b> — at this many branches an approval queue is the
+        bottleneck, so a design ships when its own checks pass and only stops
+        when they do not. The three that need you are exceptions, and they are
+        the whole reason this page exists. None of it is a pull request into a
+        customer&rsquo;s repository; there is never one.
       </footer>
 
       <p className={styles.synthetic}>

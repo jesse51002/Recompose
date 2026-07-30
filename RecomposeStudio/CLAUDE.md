@@ -9,7 +9,7 @@ The product, as three pages walked in order:
 | `fleet` | admin | **Fleet** — every customer app and what an agent is doing to it. Demo-ware. |
 
 **The pages hand over to each other.** Onboarding ends by opening the customer
-view; an approved design ends by returning to the fleet. That handover is the
+view; a signed-off design ends by returning to the fleet. That handover is the
 product's shape — set a platform up once, generate against it many times — so
 the pages perform it rather than leaving a person to find the right tab.
 
