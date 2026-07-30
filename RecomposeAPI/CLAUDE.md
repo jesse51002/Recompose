@@ -139,8 +139,11 @@ the work runs, not the shape of the request.
 ### Sessions and runs are different units
 
 A **run** is one pipeline launch. A **session** is one design end to end — the
-brand interview, the asset run, and the layout agent that starts itself when
-that run settles. A session starts
+brand interview, the asset run, and the layout agent — which a person starts by
+hand, from a button in the conversation. It used to start itself when the run
+settled; a finished run is its only precondition, but a precondition being met
+is not the same as a person being ready, and it is the most expensive thing the
+product launches. A session starts
 runs; both are independently watchable, which is why `session_router.py` sits
 *beside* `run_router.py` rather than wrapping it.
 

@@ -87,6 +87,11 @@ export function GenerateView({ sessionId, onDone }: GenerateViewProps) {
   // post-class celebration — and the canvas only ever drew the first. Null
   // means "its first", so switching app does not carry a flow id across.
   const [assetId, setAssetId] = useState<string | null>(null);
+  // The screen being looked at, remembered ACROSS mockup switches — comparing
+  // two designs means flipping between them on the same screen. The kit falls
+  // back to an asset's own root when it does not declare the route, so this
+  // is safe to carry into an unrelated app.
+  const [route, setRoute] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -271,6 +276,8 @@ export function GenerateView({ sessionId, onDone }: GenerateViewProps) {
                 app={app}
                 assetId={assetId ?? app.assets[0]!.id}
                 onPickAsset={setAssetId}
+                route={route}
+                onRouteChange={setRoute}
               />
             )}
             {/* The artifact sheet — every slot the run produced, filling in as

@@ -1,10 +1,16 @@
 // Ports ../../../../../CRM/lib/shared/widgets/phone_frame.dart.
 //
 // A realistic phone mockup that wraps `children` in a device body — rounded
-// titanium frame, thin bezel, and a dynamic-island pill — scaled to fit.
+// titanium frame and a thin bezel — scaled to fit.
+//
+// **NO DYNAMIC ISLAND.** It was drawn in the device-body colour over the top of
+// the screen, so on every generated theme it read as a black blob punched into
+// somebody's header. The frame is here to make a mock feel like a phone, not to
+// reproduce one particular handset, and the one piece of chrome that overlapped
+// the design was the one piece actively working against it.
 //
 // The geometry constants below are PHYSICAL DEVICE MEASUREMENTS (a real phone's
-// body radius, bezel, dynamic island), not fungible design tokens, which is why
+// body radius, bezel, status inset), not fungible design tokens, which is why
 // the Dart file keeps them as private consts and why they are repeated here
 // rather than pushed into ../tokens/adminTokens.ts.
 //
@@ -23,9 +29,11 @@
 // does.
 //
 // Dart also overrides the child's `MediaQuery` with a `padding.top` status
-// inset so content clears the island. The web has no MediaQuery to override, so
-// the inset is published as a CSS variable (`--phone-status-inset`) on the
-// screen element and inherited by whatever renders inside it.
+// inset. The web has no MediaQuery to override, so the inset is published as a
+// CSS variable (`--phone-status-inset`) on the screen element and inherited by
+// whatever renders inside it. It is still published with the island gone —
+// every app uses it as its top spacer — but it is now a plain status-bar
+// height rather than the room an island needed.
 
 import type { CSSProperties, ReactNode } from 'react';
 
@@ -38,10 +46,9 @@ const SCREEN_H = 844;
 const BEZEL = 14;
 const BODY_RADIUS = 66;
 const SCREEN_RADIUS = 52;
-const STATUS_INSET = 52; // room below the dynamic island
-const ISLAND_W = 122;
-const ISLAND_H = 34;
-const ISLAND_TOP_GAP = 11;
+// A status bar's height, not the room an island needed — that was 52, and
+// leaving it would have kept an island-shaped hole after removing the island.
+const STATUS_INSET = 20;
 
 const BODY_W = SCREEN_W + BEZEL * 2;
 const BODY_H = SCREEN_H + BEZEL * 2;
@@ -77,15 +84,6 @@ export function PhoneFrame({ children }: PhoneFrameProps) {
         >
           {children}
         </div>
-        <div
-          className={styles.island}
-          style={{
-            top: `${BEZEL + ISLAND_TOP_GAP}px`,
-            width: `${ISLAND_W}px`,
-            height: `${ISLAND_H}px`,
-            borderRadius: `${ISLAND_H / 2}px`,
-          }}
-        />
       </div>
     </div>
   );

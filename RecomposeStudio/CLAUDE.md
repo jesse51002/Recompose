@@ -57,7 +57,12 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
 - `data/` — defaults and fixtures the views fall back to, including
   `fleetFixtures.ts`. **Everything in that file is invented** — there are no
   customers and no deployment — and both pages that read it say so on the page
-  itself, which is the only place a viewer would otherwise be misled.
+  itself, which is the only place a viewer would otherwise be misled. **The
+  logos are the one exception and they are real:** every fleet row names a run
+  that exists in `apps/combatden/` and draws its `logo_primary` off the read
+  API at a hardcoded loopback URL. A fleet of grey initials argues nothing; a
+  column of thirty different marks the pipeline actually made is the page's
+  whole point, so it says that on the page too.
 - `design/` — **a clickable demo of a proposed redesign, not code.** One
   self-contained `studio-demo.html`: open it, no build, no server. Three pages
   across two points of view — Onboard and Fleet are admin, Generate is the
@@ -106,15 +111,46 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
   the options — a chip press posts the option's own text, so the records
   genuinely cannot tell a pick from typing. Without it a finished interview
   scrolled back as identical grey rows: every question kept, every answer lost.
-- **Stop and Start share one slot, and only one is ever shown.** The layout
-  agent is the most expensive thing the page can start and closing the tab does
-  not stop it, so Stop exists — gated on `view.layoutRunning`, because an offer
-  to stop something that is not running is worse than no offer. Start is its
-  pair: without it, stopping would be a one-way door out of the whole design.
-  It appears only once `view.themeId` exists, since before a run has settled
-  there is nothing for an agent to look at, and it reads "Run the agent again"
-  once a design folder is there — starting continues that folder rather than
-  discarding it.
+- **The layout agent is started and stopped from the TRANSCRIPT**, as a card in
+  the flow (`SessionChat`), not from the canvas bar. It is the most expensive
+  thing the page can start, and in the bar it sat among the readouts and the
+  pane switches — a row about what you are *looking at* — so the costliest
+  button on the page read as chrome. Starting it is a decision about the
+  design, and every other such decision arrives in that column as something
+  the agent said with a button under it. Stop and Start share the card and only
+  one is ever shown: Stop is gated on `view.layoutRunning`, because an offer to
+  stop something that is not running is worse than no offer, and Start appears
+  only once `view.themeId` exists, since before a run has settled there is
+  nothing for an agent to look at. It reads "Run the agent again" once a design
+  folder is there — starting continues that folder rather than discarding it.
+- **Nothing spends money without a press.** The layout used to start itself the
+  moment the asset run settled. A finished run is genuinely its only
+  precondition, and that was still the wrong default — a precondition being met
+  is not the same as a person being ready. The button is the only door now.
+- **Only an `accepted` record accepts a brief.** A proposal stops being the
+  *open* one as soon as the owner says anything, which is how a question knows
+  it was answered — so reading "no longer open" as "accepted" marked a brief
+  accepted the instant someone typed "make it warmer", took its Accept button
+  away, and left the run to start off a brief nobody had approved. Not open and
+  accepted are different facts and the log carries the second one itself. A
+  brief that was replaced by a newer one reads as *superseded*, and only the
+  newest unaccepted brief offers Accept — two live Accepts would be two answers
+  with the second silently overwriting the first.
+- **The canvas keeps re-reading the theme for the whole run.** `selectDesign`
+  fetches once and caches, and nothing in `recompose-react` re-fetches on its
+  own — so the loop in `GenerateView` is the only thing that makes the phone
+  repaint mid-run. It used to stop at the first success, which pinned the
+  canvas to whichever DAG level happened to have landed first; it now refreshes
+  until `view.assetsRunning` goes false.
+- **The screen survives a mockup switch.** Comparing two designs means flipping
+  between them on the same screen, so the route is remembered in `GenerateView`
+  and handed back through `MockAssetStage`'s `initialRoute` / `onRouteChange`.
+  The kit falls back to an asset's own root for a route it does not declare,
+  which is what makes carrying one into an unrelated app safe.
+- **An app is more than one flow.** Every app ships the app itself and the
+  post-class celebration; the canvas drew only the first, so half of what a
+  redesign changed was unreachable. The flow switch renders only when there is
+  more than one.
 - **Fail visible.** A missing artifact, a failed run, an empty catalog: show the
   state. A blank pane that could mean "loading" or "broken" is the one failure
   mode that wastes the most time here.

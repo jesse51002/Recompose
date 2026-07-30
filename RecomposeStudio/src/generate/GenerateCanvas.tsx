@@ -28,6 +28,9 @@ interface GenerateCanvasProps {
   /** The flow being shown. */
   readonly assetId: string;
   readonly onPickAsset: (id: string) => void;
+  /** The screen to open on — the last one that was being looked at. */
+  readonly route: string | null;
+  readonly onRouteChange: (route: string) => void;
 }
 
 export function GenerateCanvas({
@@ -35,6 +38,8 @@ export function GenerateCanvas({
   app,
   assetId,
   onPickAsset,
+  route,
+  onRouteChange,
 }: GenerateCanvasProps) {
   // AN APP IS MORE THAN ONE FLOW, and only the first was ever drawn.
   // `combatden` ships the app itself and the post-class celebration, and every
@@ -68,13 +73,22 @@ export function GenerateCanvas({
       <PhoneFrame>
         <div className={styles.stage}>
           <MockAssetStage
-            // Remounted when the generation or the FLOW changes, so each opens
-            // at its own starting route rather than wherever the previous one
-            // was left. A THEME change deliberately does not remount: that is
-            // the same screen repainted, and bouncing the reviewer to home
-            // every time a level lands would make the run unwatchable.
+            // Remounted when the app, the flow or the generation changes,
+            // because each is a different tree. A THEME change deliberately
+            // does not remount: that is the same screen repainted, and
+            // bouncing the reviewer home every time a level lands would make
+            // the run unwatchable.
             key={`${app.id}-${asset.id}-${view.designId ?? 'base'}`}
             asset={asset}
+            // THE SCREEN SURVIVES A MOCKUP SWITCH. Comparing two designs means
+            // flipping between them on the SAME screen, and a remount that
+            // always opened at the root made that impossible — every switch
+            // sent you home and you re-navigated to compare. The kit is built
+            // for this: a route it does not declare falls back to the asset's
+            // own root, so handing a fork's route to an unrelated app is safe
+            // rather than broken.
+            initialRoute={route ?? undefined}
+            onRouteChange={onRouteChange}
             // PhoneFrame already scales its whole body to 390x844; scaling
             // here too would compound into a doubly-shrunk screen.
             fit="none"
