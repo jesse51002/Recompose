@@ -87,6 +87,12 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
   it with `recompose-react` resolvers, and do not let its widgets drift toward
   looking like product UI — the whole point is that the previewed screen is the
   only themed thing on the page.
+- **Imagery leads the Inspect sheet**, above colour, type, copy and icons. It
+  is the only section whose subject is a picture and the thing a person opens
+  the sheet to judge — the plates are what a redesign is most visibly made of,
+  and they used to sit under five sections of swatches and strings. The
+  `IndexRail` order moves with it: the rail is an index of the sheet, and one
+  that disagreed with what it indexes would be worse than none.
 - **The Inspect sheet is the one exception, and it is total.** It is where the
   artifact is JUDGED, and judging a palette on the tool's ground is how a warm
   sand reads as grey and a dark theme reads as broken. So `inspect/InspectView`

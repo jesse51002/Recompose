@@ -211,6 +211,49 @@ export function InspectView() {
       <div className={styles.sheet}>
         <Masthead artifact={artifact} designId={activeDesign.id} displayFont={displayFont} />
 
+        {/* IMAGERY FIRST. It is the only section whose subject is a PICTURE,
+            and the thing a person opens this sheet to judge — the plates are
+            what a redesign is most visibly made of, and they were sitting
+            under five sections of swatches, specimens and strings. Everything
+            below reads better once you have seen what the run actually drew. */}
+        <section className={styles.section}>
+          <SectionHead
+            id="imagery"
+            title="Imagery"
+            count={`${String(artifact.counts.images)} slots`}
+          >
+            Transparent artwork generated for this theme and authored against
+            its ground. Every plate below is painted in that ground, so what
+            renders here is what renders on the phone. Each caption carries the
+            complexity tier the run gave that prompt — the tier that chose how
+            much compute the generator spent on it.
+          </SectionHead>
+          <div className={styles.featureGrid}>
+            {featureImages(artifact.images).map((image) => (
+              <ImagePlate
+                key={image.slot}
+                slot={image.slot}
+                url={image.value?.url ?? null}
+                complexity={image.value?.complexity ?? ''}
+                background={artifact.background}
+                wide
+              />
+            ))}
+          </div>
+          <div className={styles.imageGrid}>
+            {restImages(artifact.images).map((image) => (
+              <ImagePlate
+                key={image.slot}
+                slot={image.slot}
+                url={image.value?.url ?? null}
+                complexity={image.value?.complexity ?? ''}
+                background={artifact.background}
+              />
+            ))}
+          </div>
+        </section>
+
+
         <section className={styles.section}>
           <SectionHead
             id="colours"
@@ -321,43 +364,6 @@ export function InspectView() {
                 key={icon.slot}
                 slot={icon.slot}
                 present={icon.value !== null}
-                background={artifact.background}
-              />
-            ))}
-          </div>
-        </section>
-
-        <section className={styles.section}>
-          <SectionHead
-            id="imagery"
-            title="Imagery"
-            count={`${String(artifact.counts.images)} slots`}
-          >
-            Transparent artwork generated for this theme and authored against
-            its ground. Every plate below is painted in that ground, so what
-            renders here is what renders on the phone. Each caption carries the
-            complexity tier the run gave that prompt — the tier that chose how
-            much compute the generator spent on it.
-          </SectionHead>
-          <div className={styles.featureGrid}>
-            {featureImages(artifact.images).map((image) => (
-              <ImagePlate
-                key={image.slot}
-                slot={image.slot}
-                url={image.value?.url ?? null}
-                complexity={image.value?.complexity ?? ''}
-                background={artifact.background}
-                wide
-              />
-            ))}
-          </div>
-          <div className={styles.imageGrid}>
-            {restImages(artifact.images).map((image) => (
-              <ImagePlate
-                key={image.slot}
-                slot={image.slot}
-                url={image.value?.url ?? null}
-                complexity={image.value?.complexity ?? ''}
                 background={artifact.background}
               />
             ))}
@@ -479,6 +485,9 @@ function NothingLoaded() {
 /** The rail's contents, built from the same counts the section heads print. */
 function railEntries(artifact: Inspection): readonly RailEntry[] {
   return [
+    // Same order as the sheet: the rail is an index of it, and an index that
+    // disagreed with what it indexes is worse than none.
+    { id: 'imagery', label: 'Imagery', count: `${String(artifact.counts.images)} slots` },
     { id: 'colours', label: 'Colour roles', count: `${String(artifact.counts.roles)} roles` },
     {
       id: 'palette',
@@ -488,7 +497,6 @@ function railEntries(artifact: Inspection): readonly RailEntry[] {
     { id: 'type', label: 'Typefaces', count: `${String(artifact.counts.fonts)} slots` },
     { id: 'voice', label: 'Written copy', count: `${String(artifact.counts.texts)} strings` },
     { id: 'icons', label: 'Navigation icons', count: `${String(artifact.counts.icons)} slots` },
-    { id: 'imagery', label: 'Imagery', count: `${String(artifact.counts.images)} slots` },
     // Omitted, not zeroed, when the run predates the format node — the rail
     // indexes what the sheet actually renders.
     ...(artifact.formats.length > 0
