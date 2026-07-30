@@ -87,11 +87,19 @@ export function SessionChat({
 
             Stop and Start share the card and only one is ever shown. Stop is
             gated on a running agent, because an offer to stop something that
-            is not running is worse than no offer. Start appears only once a
-            theme exists, since before that there is nothing to design against,
-            and it reads "again" once a folder is there — starting continues
-            that folder rather than discarding it. */}
-        {!view.settled && (view.layoutRunning || view.themeId !== null) && (
+            is not running is worse than no offer.
+
+            START IS GATED ON THE RUN HAVING FINISHED — `assetsSettled`, not
+            `themeId`. The started record already names the theme it is going
+            to make, so gating on the theme EXISTING announced "the theme is
+            ready" a second after launch and offered to lay out a design that
+            was three images deep. The layout agent is built for that palette,
+            those typefaces and those pictures; there is nothing for it to look
+            at until they are all there.
+
+            It reads "again" once a folder is there — starting continues that
+            folder rather than discarding it. */}
+        {!view.settled && (view.layoutRunning || view.assetsSettled) && (
           <div className={styles.msg}>
             <div className={styles.who}>Recompose</div>
             <div className={styles.card}>
@@ -105,7 +113,7 @@ export function SessionChat({
                 {view.layoutRunning
                   ? 'It is rewriting the screens for this theme. Closing this tab will not stop it.'
                   : view.designId === null
-                    ? 'The theme is ready. An agent can now redesign the screens against it.'
+                    ? 'The theme is finished. An agent can now redesign the screens against it.'
                     : 'It is not running. Starting it again continues the design folder it already wrote.'}
               </p>
               <div className={styles.actions}>

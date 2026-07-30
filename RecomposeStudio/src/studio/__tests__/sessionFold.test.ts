@@ -202,6 +202,39 @@ describe('foldSession', () => {
     });
   });
 
+  it('only calls the theme settled once the run FINISHED', () => {
+    // The started record already names the theme it is going to make, so
+    // `themeId !== null` is true from the first second of a run. Gating the
+    // layout offer on it announced "the theme is ready" a second after launch
+    // and offered to lay out a design that was three images deep.
+    reset();
+    const running = foldSession([
+      OPENED(),
+      rec({ kind: 'task', task: 'assets', task_state: 'started', run_id: 'r1', design_id: 'stillwater-01' }),
+    ]);
+    expect(running.themeId).toBe('stillwater-01');
+    expect(running.assetsSettled).toBe(false);
+
+    reset();
+    const done = foldSession([
+      OPENED(),
+      rec({ kind: 'task', task: 'assets', task_state: 'started', run_id: 'r1', design_id: 'stillwater-01' }),
+      rec({ kind: 'task', task: 'assets', task_state: 'finished', run_id: 'r1', design_id: 'stillwater-01' }),
+    ]);
+    expect(done.assetsSettled).toBe(true);
+
+    // A run that FAILED is not a theme to lay out either, and `!assetsRunning`
+    // alone would have said it was.
+    reset();
+    const failed = foldSession([
+      OPENED(),
+      rec({ kind: 'task', task: 'assets', task_state: 'started', run_id: 'r1', design_id: 'stillwater-01' }),
+      rec({ kind: 'task', task: 'assets', task_state: 'failed', run_id: 'r1', error: 'boom' }),
+    ]);
+    expect(failed.assetsRunning).toBe(false);
+    expect(failed.assetsSettled).toBe(false);
+  });
+
   it('knows whether a layout agent is running, so Stop can be offered', () => {
     // The agent is the most expensive thing the page starts and closing the
     // tab does not stop it — but an offer to stop something that is not

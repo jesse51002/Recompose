@@ -130,9 +130,14 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
   the agent said with a button under it. Stop and Start share the card and only
   one is ever shown: Stop is gated on `view.layoutRunning`, because an offer to
   stop something that is not running is worse than no offer, and Start appears
-  only once `view.themeId` exists, since before a run has settled there is
-  nothing for an agent to look at. It reads "Run the agent again" once a design
-  folder is there — starting continues that folder rather than discarding it.
+  only once `view.assetsSettled` is true. **Not `view.themeId`** — the started
+  record already names the theme it is going to make, so gating on the theme
+  existing announced "the theme is ready" a second after launch and offered to
+  lay out a design that was three images deep. Nor `!assetsRunning`, which is
+  equally true of a failed run and of one that never began. The layout agent is
+  built for that palette, those typefaces and those pictures, so only a
+  `finished` state will do. It reads "Run the agent again" once a design folder
+  is there — starting continues that folder rather than discarding it.
 - **Nothing spends money without a press.** The layout used to start itself the
   moment the asset run settled. A finished run is genuinely its only
   precondition, and that was still the wrong default — a precondition being met

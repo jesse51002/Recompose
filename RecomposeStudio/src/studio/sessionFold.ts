@@ -113,6 +113,19 @@ export interface SessionView {
    * first — and then showed that frozen partial for the rest of the run.
    */
   readonly assetsRunning: boolean;
+  /**
+   * The asset run FINISHED, and finished well.
+   *
+   * Distinct from `themeId !== null`, which is true from the moment the run
+   * STARTS — the started record already names the theme it is going to make.
+   * Gating the layout offer on that said "the theme is ready" within a second
+   * of launching, minutes before it was, and offered to lay out a design that
+   * was three images deep.
+   *
+   * Distinct from `!assetsRunning` too, because that is also true of a run
+   * that failed and of one that never began. Only a `finished` state sets it.
+   */
+  readonly assetsSettled: boolean;
   readonly settled: boolean;
 }
 
@@ -142,6 +155,7 @@ export function foldSession(records: readonly SessionRecord[]): SessionView {
   let designName: string | null = null;
   let layoutRunning = false;
   let assetsRunning = false;
+  let assetsSettled = false;
   let agentCostUsd = 0;
   let assetsCostUsd = 0;
   let settled = false;
@@ -221,6 +235,8 @@ export function foldSession(records: readonly SessionRecord[]): SessionView {
         if (record.task === 'assets' && record.task_state) {
           assetsRunning =
             record.task_state === 'started' || record.task_state === 'progress';
+          // Last record wins, so a re-run correctly un-settles it.
+          assetsSettled = record.task_state === 'finished';
         }
         if (record.task === 'layout' && record.task_state) {
           // 'started' and 'progress' both mean a process is alive; anything
@@ -294,6 +310,7 @@ export function foldSession(records: readonly SessionRecord[]): SessionView {
     designName,
     layoutRunning,
     assetsRunning,
+    assetsSettled,
     agentCostUsd,
     assetsCostUsd,
     phase,
