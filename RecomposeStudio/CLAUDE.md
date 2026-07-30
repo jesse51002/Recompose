@@ -142,11 +142,15 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
   repaint mid-run. It used to stop at the first success, which pinned the
   canvas to whichever DAG level happened to have landed first; it now refreshes
   until `view.assetsRunning` goes false.
-- **The screen survives a mockup switch.** Comparing two designs means flipping
-  between them on the same screen, so the route is remembered in `GenerateView`
-  and handed back through `MockAssetStage`'s `initialRoute` / `onRouteChange`.
-  The kit falls back to an asset's own root for a route it does not declare,
-  which is what makes carrying one into an unrelated app safe.
+- **The whole view survives a mockup switch — flow AND screen.** Comparing two
+  designs means flipping between them on the same screen, so `GenerateView`
+  remembers both the asset id and the route and hands the route back through
+  `MockAssetStage`'s `initialRoute` / `onRouteChange`. Both carry across apps
+  because both id spaces are shared by convention (`app` / `celebration`, and
+  a fork keeps its base's route ids), and both degrade rather than break: the
+  kit falls back to an asset's own root for a route it does not declare, and
+  the canvas falls back to the first asset for an id an app does not have.
+  Resetting either on a switch is what made a design impossible to compare.
 - **An app is more than one flow.** Every app ships the app itself and the
   post-class celebration; the canvas drew only the first, so half of what a
   redesign changed was unreachable. The flow switch renders only when there is

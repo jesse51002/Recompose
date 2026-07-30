@@ -84,8 +84,16 @@ export function GenerateView({ sessionId, onDone }: GenerateViewProps) {
   // person can switch away and the generation stays put.
   const [appId, setAppId] = useState(MOCK_APPS[0]!.id);
   // WHICH FLOW of that app. An app is more than one — the app itself and the
-  // post-class celebration — and the canvas only ever drew the first. Null
-  // means "its first", so switching app does not carry a flow id across.
+  // post-class celebration — and the canvas only ever drew the first.
+  //
+  // KEPT ACROSS A MOCKUP SWITCH, exactly like the route below and for the same
+  // reason: comparing two designs means flipping between them on the same
+  // screen, and the celebration screen is not the same screen as the app's.
+  // Resetting the flow on every switch sent you back to the app flow and made
+  // the celebration impossible to compare at all. Asset ids are shared across
+  // apps (`app`, `celebration`) the way route ids are, and the canvas falls
+  // back to the first asset for an id an app does not declare, so carrying one
+  // into an unrelated app degrades rather than breaks. Null means "its first".
   const [assetId, setAssetId] = useState<string | null>(null);
   // The screen being looked at, remembered ACROSS mockup switches — comparing
   // two designs means flipping between them on the same screen. The kit falls
@@ -297,10 +305,7 @@ export function GenerateView({ sessionId, onDone }: GenerateViewProps) {
       {mockups && (
         <MockupPopup
           activeId={app.id}
-          onPick={(id) => {
-            setAppId(id);
-            setAssetId(null);
-          }}
+          onPick={setAppId}
           onClose={() => setMockups(false)}
         />
       )}
