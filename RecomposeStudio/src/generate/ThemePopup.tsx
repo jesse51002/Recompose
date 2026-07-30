@@ -16,7 +16,14 @@ import { cx } from '../widgets/cx';
 
 import styles from './ThemePopup.module.css';
 
-export function ThemePopup({ onClose }: { onClose: () => void }) {
+export function ThemePopup({
+  onClose,
+  onPick,
+}: {
+  onClose: () => void;
+  /** A deliberate choice — the run's refresh loop must stop overriding it. */
+  onPick: () => void;
+}) {
   const { items, isLoading, errored, total, query, setQuery } = useStylesPager({ pageSize: 100 });
   const { id: activeId } = useActiveDesign();
 
@@ -74,6 +81,7 @@ export function ThemePopup({ onClose }: { onClose: () => void }) {
               type="button"
               className={cx(styles.lib, style.id === activeId && styles.on)}
               onClick={() => {
+                onPick();
                 void selectDesign(style.id);
                 onClose();
               }}

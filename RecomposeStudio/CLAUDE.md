@@ -163,6 +163,14 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
   brief that was replaced by a newer one reads as *superseded*, and only the
   newest unaccepted brief offers Accept — two live Accepts would be two answers
   with the second silently overwriting the first.
+- **There is a way back to NO theme**, and it needed a runtime addition:
+  `clearDesign()` in `recompose-react` drops the config, the sticky selection
+  and the last-good copy, so every resolver falls through to its caller's
+  fallback and the bare state survives a reload. A selection is sticky by
+  design, so before this the one state the picker could not reach was the
+  baseline a generated theme is worth judging against. Clearing, reverting and
+  picking all report up to `GenerateView`, because the refresh loop below would
+  otherwise re-apply the generated theme two seconds later and undo the choice.
 - **The canvas keeps re-reading the theme for the whole run.** `selectDesign`
   fetches once and caches, and nothing in `recompose-react` re-fetches on its
   own — so the loop in `GenerateView` is the only thing that makes the phone

@@ -78,6 +78,12 @@ export function GenerateView({ sessionId, onDone }: GenerateViewProps) {
   // The pane a person picked, and which proposal they picked it against.
   const [picked, setPicked] = useState<{ at: string; pane: Pane } | null>(null);
   const [library, setLibrary] = useState(false);
+  // WHETHER THE PERSON HAS TAKEN THE WHEEL. The refresh loop below re-selects
+  // the generated theme every couple of seconds so the canvas repaints as the
+  // run produces it — which would also undo any choice made while the run is
+  // going, yanking someone back two seconds after they cleared the theme or
+  // picked another. This is the one bit of state that tells the two apart.
+  const [chosen, setChosen] = useState(false);
   const [mockups, setMockups] = useState(false);
   // The MOCKUP axis, independent of the theme. It follows a layout generation
   // when one appears, because that is the thing the agent just made — but a
@@ -132,7 +138,7 @@ export function GenerateView({ sessionId, onDone }: GenerateViewProps) {
   const themeId = view.themeId;
   const assetsRunning = view.assetsRunning;
   useEffect(() => {
-    if (themeId === null) return;
+    if (themeId === null || chosen) return;
     let stopped = false;
     // Serialised rather than an interval: a slow fetch must not stack up
     // another behind it, and each tick is scheduled only after the last lands.
@@ -163,7 +169,7 @@ export function GenerateView({ sessionId, onDone }: GenerateViewProps) {
       stopped = true;
       if (timer !== undefined) window.clearTimeout(timer);
     };
-  }, [themeId, assetsRunning]);
+  }, [themeId, assetsRunning, chosen]);
 
   // A PROPOSAL OPENS ITSELF. The agent writes a document — five fields of
   // prose for the brand half — and the transcript card is only a notice that
@@ -282,7 +288,12 @@ export function GenerateView({ sessionId, onDone }: GenerateViewProps) {
               <Seg now={pane} me="brief" set={setPane} label="Brief" />
             </div>
             <MockupChip app={app} onOpen={() => setMockups(true)} />
-            <ThemeChip onOpen={() => setLibrary(true)} generatedId={themeId} />
+            <ThemeChip
+              onOpen={() => setLibrary(true)}
+              generatedId={themeId}
+              onClear={() => setChosen(true)}
+              onRevert={() => setChosen(false)}
+            />
             <span className={styles.push} />
             <SpendMeter view={view} />
             <RunMeter runId={view.runId} />
@@ -326,7 +337,12 @@ export function GenerateView({ sessionId, onDone }: GenerateViewProps) {
         </main>
       </div>
 
-      {library && <ThemePopup onClose={() => setLibrary(false)} />}
+      {library && (
+        <ThemePopup
+          onClose={() => setLibrary(false)}
+          onPick={() => setChosen(true)}
+        />
+      )}
       {mockups && (
         <MockupPopup
           activeId={app.id}

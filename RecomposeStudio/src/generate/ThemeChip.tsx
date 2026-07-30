@@ -5,7 +5,14 @@
 // theme rather than describing it, and it repaints mid-run as the palette
 // lands like everything else on this page.
 
-import { rgba, selectDesign, toCss, useActiveDesign, useThemeColor } from 'recompose-react';
+import {
+  clearDesign,
+  rgba,
+  selectDesign,
+  toCss,
+  useActiveDesign,
+  useThemeColor,
+} from 'recompose-react';
 
 import styles from './ThemeChip.module.css';
 
@@ -15,10 +22,16 @@ const SLOT_PRIMARY = 'primary';
 export function ThemeChip({
   onOpen,
   generatedId,
+  onClear,
+  onRevert,
 }: {
   onOpen: () => void;
   /** The design this session's run is producing, once it has one. */
   generatedId?: string | null;
+  /** The person dropped the theme — the run's refresh loop must not undo it. */
+  onClear: () => void;
+  /** The person asked for the generated theme back; the loop may drive again. */
+  onRevert: () => void;
 }) {
   const { id, name } = useActiveDesign();
   // A fully TRANSPARENT fallback, not a grey: before a palette resolves there
@@ -44,9 +57,33 @@ export function ThemeChip({
           type="button"
           className={styles.revert}
           title={`Back to ${generatedId}, the design this run is making`}
-          onClick={() => void selectDesign(generatedId)}
+          onClick={() => {
+            onRevert();
+            void selectDesign(generatedId);
+          }}
         >
           ↩ generated
+        </button>
+      )}
+      {/* THE WAY BACK TO NOTHING. A selection is sticky — persisted and
+          preferred on boot — so once any design had been applied there was no
+          way to see the screens bare again. Bare is the baseline a generated
+          theme is worth judging against, and it is the one state the picker
+          could not reach.
+
+          Shown only when there IS a theme to drop, for the same reason the
+          revert button is conditional: an offer to clear nothing is noise. */}
+      {id !== null && (
+        <button
+          type="button"
+          className={styles.revert}
+          title="Drop the theme and show the screens unthemed"
+          onClick={() => {
+            onClear();
+            clearDesign();
+          }}
+        >
+          ✕ theme
         </button>
       )}
     </span>

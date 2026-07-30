@@ -25,6 +25,7 @@ export {
   themeIsReady,
   activeDesignId,
   selectDesign,
+  clearDesign,
   fetchStylesPage,
   resolveImageUrl,
 } from './runtime';

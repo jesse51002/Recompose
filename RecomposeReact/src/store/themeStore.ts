@@ -13,6 +13,7 @@ import { computeAssetTargets, warmThemeAssets } from '../theme/assetWarmer';
 import {
   readLastGood,
   readSelectedDesignId,
+  clearStoredDesign,
   writeLastGood,
   writeSelectedDesignId,
 } from './persistence';
@@ -186,6 +187,25 @@ export class ThemeStore {
       console.warn('[theme] selectDesign failed, keeping current theme:', error);
       return false;
     }
+  };
+
+  /**
+   * Drops the theme entirely: no config, no selection, no last-good.
+   *
+   * The counterpart of `selectDesign`, and it exists because there was no way
+   * back. Every resolver falls through to its caller's own fallback with no
+   * config loaded, which is what an app looks like BEFORE a design is applied —
+   * the honest baseline to compare a generated theme against, and impossible to
+   * see once a selection had been made sticky.
+   *
+   * It forgets the persisted copies too, so the bare state survives a reload
+   * rather than lasting until the next boot re-adopts the last-good JSON.
+   */
+  clearDesign = (): void => {
+    this.config = null;
+    this.designId = null;
+    clearStoredDesign();
+    this.notify();
   };
 
   /** One page of the app's selectable styles. */
