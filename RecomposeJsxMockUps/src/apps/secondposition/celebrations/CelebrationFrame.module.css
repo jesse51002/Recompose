@@ -1,0 +1,108 @@
+/*
+ * Styles for ./CelebrationFrame.tsx (ports MobileApp's
+ * `shared/widgets/post_class/layouts/celebration_*.dart` — the five
+ * arrangements `celebration_format` chooses between).
+ *
+ * `--sc-*` for the design tokens (see ../ShowcaseThemeVars.tsx); `--cf-*` for
+ * this frame's own geometry, which the component derives from the ported
+ * arithmetic and writes inline, so no measurement is restated as a literal here.
+ *
+ * EACH ARRANGEMENT IS THREE VARIABLES AND, AT MOST, ONE SURFACE. The frame, the
+ * surface and the stage carry the same declarations in every value; a value
+ * only re-points `--cf-frame-inset-*`, `--cf-stage-inset-*` and
+ * `--cf-stage-anchor`, and paints the surface where it has one. That is what
+ * keeps "an arrangement is a rearrangement" true in the stylesheet and not only
+ * in prose — there is no value-specific rule that could add or drop a part.
+ *
+ * NOTHING IN HERE MAY CLIP. `overflow: visible` is spelled out on all three
+ * boxes: ../RewardsCarousel.tsx's cover flow is wider than its slot on purpose
+ * and ../SparkleBurst.tsx spills past the surface's rounded corners, which is
+ * the only surviving echo of `cardReveal`'s "illustration breaking over the
+ * card's top edge". A scrolling axis anywhere here would compute the other one
+ * to `auto` and crop both (../../../CLAUDE.md, "Things that will bite").
+ */
+
+/*
+ * The layout root — what `AppScreenScaffold(horizontalPadding: none)` hands the
+ * chosen layout. `position: relative` is the `Stack` `fullBleed` floats its
+ * scrim in.
+ */
+.frame {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-inline: var(--cf-frame-inset-x, 0);
+  padding-top: var(--cf-frame-inset-top, 0);
+  padding-bottom: var(--cf-frame-inset-bottom, 0);
+  overflow: visible;
+}
+
+/*
+ * The raised object `cardReveal` and `splitBand` paint, and nothing at all in
+ * the other three. Deliberately never a clipping box — Flutter reaches for a
+ * `DecoratedBox` here rather than a `Container` for exactly that reason.
+ *
+ * `min-height: 0` is what lets it shrink below its content instead of pushing
+ * the reserved lower zone off the screen.
+ */
+.surface {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: visible;
+}
+
+/*
+ * `CelebrationStage` — `Align(alignment, child: body)`. A column so a body that
+ * sizes itself settles at the anchor, while a body that asks for `height: 100%`
+ * (the three `SizedBox.expand` intros) fills the box instead.
+ */
+.stage {
+  display: flex;
+  flex-direction: column;
+  justify-content: var(--cf-stage-anchor, center);
+  height: 100%;
+  padding-block: var(--cf-stage-inset-top, 0px) var(--cf-stage-inset-bottom, 0px);
+  overflow: visible;
+}
+
+/*
+ * `bleed` — the body takes the stage whole. Written as variables ON the stage
+ * rather than as a competing declaration, so it wins over whatever the
+ * arrangement inherited without depending on rule order or specificity.
+ */
+.bleed {
+  --cf-stage-inset-top: 0px;
+  --cf-stage-inset-bottom: 0px;
+}
+
+/*
+ * `CelebrationFormat.centerHero` — the arrangement that ships today.
+ *
+ * The body centred in everything there is, at the standard screen inset. These
+ * three declarations ARE the shipped rendering: the `padStandard` the scaffold
+ * used to apply, plus each card's own `Padding(vertical: spacingBig) > Center`.
+ * ../__tests__/celebrationFormats.test.tsx pins them, because "unchanged" is
+ * the one claim a screenshot of a looping animation cannot settle.
+ */
+.centerHero {
+  --cf-frame-inset-x: var(--sc-screen-padding-x);
+  --cf-stage-inset-top: var(--sc-spacing-big);
+  --cf-stage-inset-bottom: var(--sc-spacing-big);
+}
+
+/*
+ * THE FIVE ARRANGEMENT CLASSES THAT USED TO LIVE HERE ARE GONE.
+ *
+ * `.figureTop`, `.cardReveal`, `.splitBand`, `.fullBleed` and `.scrim` were
+ * the `celebration_format` vocabulary — a bounded option set the package
+ * built, tested and REJECTED, because a bounded option set reproduces the
+ * platform's own design language, which is a reskin. The machinery went with
+ * `formats.ts`; this stylesheet is where its residue survived, unreachable,
+ * because `CelebrationFrame` has only ever rendered `.centerHero`.
+ *
+ * Two of them also carried a real defect: `padding: var(--a) var(--b)` is a
+ * multi-value shorthand, and one unresolvable var in a shorthand makes the
+ * browser drop the WHOLE declaration (Guardrail 3). Dead code cannot be seen
+ * to be wrong, which is most of the reason to delete it rather than fix it.
+ */

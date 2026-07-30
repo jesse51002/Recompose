@@ -1,0 +1,143 @@
+/*
+ * Styles for ./RatingGraph.tsx.
+ * `--sc-*` only — see ../showcaseTokens.ts.
+ */
+
+/*
+ * THE DRAWING, THE AXIS FIGURES BESIDE IT AND THE RANGE SCALE BENEATH IT, ON
+ * ONE GRID — and sharing the grid is what makes the scale the CHART's axis
+ * rather than the section's.
+ *
+ * Stacked as three separate blocks first, and it was visibly wrong: the figures
+ * take a column of their own at the right, so the plot stops ~24px short of the
+ * section's right edge while a scale laid across the whole section does not.
+ * The brass mark under ALL then ran past the end of the very line it names,
+ * which reads as a misalignment rather than as a control. One grid makes the
+ * two the same width by construction instead of by an arithmetic the next
+ * person to touch either would have to redo.
+ *
+ * THE FIGURES GET A COLUMN RATHER THAN BEING PINNED OVER THE PLOT: a number
+ * sitting on the line it names is the one arrangement where neither can be read
+ * cleanly.
+ *
+ * GAPS. Everything inside this region is `medium` and the boundary to the next
+ * region is the shell section's own `big`. One value inside, a bigger one at the
+ * edge, which is what does the grouping (Guardrail 13) — the failure it avoids
+ * is not one gap being wrong but every gap being equal, which groups nothing.
+ * There is deliberately no leading padding here: the shell section already puts
+ * `medium` between the label and this body and twice that above the label, so
+ * the label reads as belonging to the plot it names rather than sitting
+ * equidistant between two brass rules with no way to tell which it opens.
+ */
+.body {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: var(--sc-spacing-medium);
+  row-gap: var(--sc-spacing-medium);
+}
+
+/*
+ * The plot box, at the nominal proportion written inline by the component.
+ * `position: relative` carries the two brass rules and the drawing.
+ */
+.plot {
+  grid-column: 1;
+  position: relative;
+}
+
+/*
+ * The two ends of the axis, drawn as rules. Brass, which is what brass is for:
+ * at 3.25:1 on the cream it carries a line honestly and fails text at every
+ * size, so the figures naming these are charcoal and sit outside the box.
+ */
+.ruleTop,
+.ruleBottom {
+  position: absolute;
+  inset-inline: 0;
+  height: var(--sc-rule-thickness);
+  background: var(--sc-rule);
+}
+
+.ruleTop {
+  inset-block-start: 0;
+}
+
+.ruleBottom {
+  inset-block-end: 0;
+}
+
+/*
+ * The line itself, in the satin blush — the brand's committed colour, 4.31:1 on
+ * the cream, which is legible as a mark and would not be as type. It is the one
+ * drawn thing on this ground, so it takes the colour that means "this studio"
+ * rather than the ink everything else is written in.
+ *
+ * `overflow: visible` because a sample pinned at 1.0 sits exactly on the top
+ * rule and its round cap would otherwise be clipped in half.
+ */
+.svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  color: var(--sc-satin);
+}
+
+/*
+ * The axis figures. `space-between` puts one at each end of the plot's own
+ * height; the auto top margin on the floor label keeps it at the foot even when
+ * the threshold above it is absent (the top of the ladder).
+ */
+.axis {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+/*
+ * The range scale, in the PLOT's column and therefore at the plot's exact
+ * width. It is the chart's own axis, so it ends where the line ends.
+ */
+.ranges {
+  grid-column: 1;
+}
+
+/*
+ * Each figure is centred on the rule it names — the column's ends line up with
+ * the plot's ends, and half a line height back off each puts the figure's
+ * middle on the rule rather than under it.
+ */
+.thresholdTop,
+.thresholdBottom {
+  font: var(--sc-type-meta);
+  letter-spacing: var(--sc-type-meta-ls);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-text-2nd);
+}
+
+.thresholdTop {
+  transform: translateY(-50%);
+}
+
+.thresholdBottom {
+  margin-block-start: auto;
+  transform: translateY(50%);
+}
+
+/*
+ * `_GraphEmpty` — the state, in the plot's own place on the reading ground. It
+ * spans both columns because there are no axis figures to sit beside: two rules
+ * bracketing nothing would state a threshold this member has no history against.
+ */
+.empty {
+  grid-column: 1 / -1;
+  margin: 0;
+  font: var(--sc-type-prose);
+  letter-spacing: var(--sc-type-prose-ls);
+  color: var(--sc-text-2nd);
+  text-align: start;
+}

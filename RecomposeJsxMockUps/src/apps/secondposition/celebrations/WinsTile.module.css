@@ -1,0 +1,135 @@
+/*
+ * Styles for ./WinsTile.tsx — one ruled entry of the wins card's tally.
+ *
+ * `--sc-*` are the design tokens (../showcaseTokens.ts), `--sp-*` the motion
+ * clock (../shell/phrase.ts) and `--wt-delay` is the one value the component
+ * writes inline, because a column's place in the cascade is arithmetic over the
+ * row's length and cannot be a constant here.
+ */
+
+/*
+ * The column. LEFT ALIGNED, because everything below a rule in this app is
+ * scanned and a member reads three entries by returning to one left edge —
+ * centring them would also force the longest label to wrap around its own
+ * centre, which is a legibility defect rather than a style (Guardrail 15).
+ *
+ * The mark, the figure and the label are ONE object, so the gap between them is
+ * the smallest on the card: smaller than the column's own block padding, which
+ * is smaller again than the satin parting the whole band from the plinth above.
+ */
+.entry {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sc-spacing-small);
+  padding-block: var(--sc-spacing-large);
+  animation: winsEntryArrive var(--sp-arrive) var(--sp-phrase) var(--wt-delay, 0ms) both;
+}
+
+/*
+ * The mark, held back. It is the ONE element in this column allowed to be,
+ * because an icon is not text and answers to 3:1 rather than 4.5:1 — the same
+ * licence the foot navigation's inactive destinations take, and for the same
+ * measured reason. Cream at 72% over the satin blush lands at 3.56:1, which
+ * clears the non-text threshold while leaving the 10px label louder than the
+ * glyph above it. Every other mark on this card is at full strength.
+ */
+.mark {
+  flex: 0 0 auto;
+  color: var(--sc-on-satin);
+  opacity: 0.72;
+}
+
+/*
+ * RANK 2 — the value, AND IT IS DELIBERATELY NOT ALLOWED TO WIN.
+ *
+ * `--sc-type-h1-regular` is the largest rung the body sans carries, at the
+ * weight that loses cleanly. The BOLD cut of the same rung was here first and
+ * is what this pass corrects: at 24px/700, three of them across the foot tie
+ * with the 30px display serif on the plinth above, and Guardrail 14 is explicit
+ * that a tie means rank 1 is not winning. The regular cut keeps the tally
+ * unmistakably first inside its own column and unmistakably second to the
+ * announcement.
+ *
+ * ../RankShowcase.module.css sets its tally figure on this exact rung for this
+ * exact reason. Two cards, one answer to "what does a supporting figure look
+ * like", so the flow does not read as five designers.
+ *
+ * `display: flex` rather than a line box, and it is ../RankShowcase's fix for
+ * ../RankShowcase's bug: ./CountUpText.module.css's root is an `inline-flex`
+ * whose first item clips, so it baselines on its own bottom edge and sits a few
+ * pixels high against plain text. Left as a line box, columns one and two would
+ * ride above column three's "3 weeks" for the whole roll and then drop onto it
+ * when the reel is swapped for its answer. Centring both in a flex box means
+ * the odometer and the settled value occupy the same height as well as the same
+ * width.
+ */
+.value {
+  display: flex;
+  align-items: center;
+  font: var(--sc-type-h1-regular);
+  letter-spacing: var(--sc-type-h1-regular-ls);
+  color: var(--sc-on-satin);
+}
+
+/*
+ * Digits only. Tabular so nothing shifts sideways while the reel runs and so
+ * the printed answer the reel is swapped for occupies the same cell — that swap
+ * is what "a tap finishes the card" means for a per-frame driver.
+ *
+ * NO numeric `line-height` anywhere near this: a line box shorter than the
+ * font's own makes adjacent digit cells overlap through ./CountUpText.tsx's
+ * clip, which `apps/romanahouse/` shipped once.
+ */
+.figure {
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * RANK 3 — what the figure counts. The tracked label rung, uppercase, which is
+ * how every region in this app is captioned. Cream at full strength on the
+ * satin (5.47:1); it is never brass, which reads 1.33:1 on this field and would
+ * simply be absent.
+ *
+ * `overflow-wrap` because a column is a third of the card and the longest label
+ * here is already two words wider than that: "Classes this week" wraps inside
+ * its third, and a single unbroken word would otherwise widen the column and
+ * push the parting lines off their equal thirds.
+ */
+.label {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-on-satin);
+  overflow-wrap: anywhere;
+}
+
+/*
+ * The column arrives and comes to rest. One curve, one direction, no bounce and
+ * no scale-up-and-settle — and the travel is a spacing-scale value rather than
+ * a one-off, for the same reason every gap here is.
+ */
+@keyframes winsEntryArrive {
+  from {
+    opacity: 0;
+    transform: translateY(var(--sc-spacing-medium));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/*
+ * A member who asked for less motion still gets the whole tally, just not the
+ * travel. The figure lands on its value through ./WinsTile.tsx's own branch,
+ * which prints the answer rather than rolling to it.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .entry {
+    animation: none;
+  }
+}

@@ -1,0 +1,95 @@
+/*
+ * Styles for ./Insignia.tsx — how this app presents the objects it strikes.
+ */
+
+/*
+ * An insignia is MOUNTED: centred on its field, with clear air around it and
+ * its name beneath. Never framed, never bordered, never inset into a container,
+ * never laid under text.
+ */
+.mount {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sc-spacing-medium);
+}
+
+.onSatin {
+  background-color: var(--sc-satin);
+  color: var(--sc-on-satin);
+  padding-block: var(--sc-spacing-big);
+  padding-inline: var(--sc-spacing-large);
+}
+
+/*
+ * CONTAINED, NEVER CROPPED. Every one of these marks is a cut-out on
+ * transparency, and they are NOT all square — the satin chevrons measure 0.60
+ * and the coin scatter 0.84. Containment scales the art to fit inside its box
+ * and leaves the remainder empty, which is invisible because there is no opaque
+ * edge to show a letterbox. Cropping to a shared square would behead the
+ * chevrons. This is the opposite of the rule for a photograph, and the two are
+ * not interchangeable — see ./Panel.tsx.
+ */
+.art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The name of what was awarded, directly beneath it — one object. */
+.caption {
+  font: var(--sc-type-name-title);
+  letter-spacing: var(--sc-type-name-title-ls);
+  text-align: center;
+}
+
+.captionOnGround {
+  color: var(--sc-text);
+}
+
+.captionOnSatin {
+  color: var(--sc-on-satin);
+}
+
+.sub {
+  font: var(--sc-type-meta);
+  letter-spacing: var(--sc-type-meta-ls);
+  text-align: center;
+}
+
+.subOnGround {
+  color: var(--sc-text-2nd);
+}
+
+.subOnSatin {
+  color: var(--sc-on-satin);
+}
+
+/* The arrival: it settles into place and comes to rest. Nothing bounces. */
+.settling {
+  animation: settle var(--sp-settle) var(--sp-phrase) both;
+}
+
+@keyframes settle {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settling {
+    animation: none;
+  }
+}

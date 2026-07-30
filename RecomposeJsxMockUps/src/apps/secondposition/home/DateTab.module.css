@@ -1,0 +1,54 @@
+/*
+ * Styles for ./DateTab.tsx.
+ *
+ * Everything here reads `--sc-*` (../showcaseTokens.ts) and nothing else.
+ */
+
+.day {
+  display: flex;
+  justify-content: center;
+  padding-block: var(--sc-spacing-large);
+}
+
+/*
+ * THE SAME VOICE AS A DAY HEADING. Both are set in `--sc-type-label`, the
+ * tracked 10px sans, because the index and the headings it indexes are one
+ * system: read the row, find the heading, and the type says they belong
+ * together. It is also the quietest rung the app has, which is what the
+ * emphasis ranking asks for — the day selector merely supports.
+ */
+.label {
+  position: relative;
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-2nd);
+  white-space: nowrap;
+}
+
+/*
+ * THE MARK IS BRASS AND THE LABEL IS CHARCOAL, never the other way round.
+ * Brass measures 3.25:1 on the cream ground: honest as a line, and a failure as
+ * a word at every size this row would set one (../showcaseTokens.ts records the
+ * measurement). So the state is carried by the rule, and the type is carried by
+ * the ink.
+ */
+.active .label {
+  color: var(--sc-text);
+}
+
+/*
+ * Four pixels under the word, twelve above the row's own hairline: the mark and
+ * what it marks are ONE object, and the gap inside an object is smaller than
+ * the gap to the next one (Guardrail 13).
+ */
+.active .label::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: calc(var(--sc-spacing-small) * -1);
+  height: var(--sc-rule-strong-thickness);
+  /* `background-color`, not the shorthand — Guardrail 3. The mark IS the state,
+   * so a dropped declaration here would silently unmark the day in view. */
+  background-color: var(--sc-rule);
+}

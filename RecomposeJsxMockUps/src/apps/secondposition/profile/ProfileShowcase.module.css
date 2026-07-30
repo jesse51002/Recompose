@@ -1,0 +1,32 @@
+/*
+ * Styles for ./ProfileShowcase.tsx — the frame only.
+ * `--sc-*` only — see ../showcaseTokens.ts.
+ */
+
+/*
+ * The scrolled column. The regions are stacked with no gap of their own: the
+ * satin plate ends where it ends, and every region under it is a shell section
+ * carrying its own block padding, which is what keeps the rhythm between them
+ * the same rhythm every other screen in this app has.
+ */
+.body {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  /*
+   * Room at the end of the scroll. The foot is a solid satin band and the last
+   * thing above it is a satin film plinth, so without this the two fields would
+   * meet and read as one — the nav would look like part of the shelf.
+   */
+  padding-block-end: var(--sc-spacing-large);
+}
+
+/*
+ * THE READING INSET, and the reason it is here rather than on the body. This
+ * design's primary unit runs edge to edge — the plate, the shelf — and a gutter
+ * around the whole body would inset those too. So the inset belongs to the
+ * regions that are READ, and the ones that are announced sit outside it.
+ */
+.reading {
+  padding-inline: var(--sc-screen-padding-x);
+}

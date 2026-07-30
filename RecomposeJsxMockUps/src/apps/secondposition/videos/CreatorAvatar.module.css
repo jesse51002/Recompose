@@ -1,0 +1,26 @@
+/*
+ * Styles for ./CreatorAvatar.tsx
+ * (ports MobileApp/lib/shared/widgets/video_recc_card/creator_avatar.dart).
+ * `--sc-*` only — see ../showcaseTokens.ts.
+ */
+
+/*
+ * A DISC IS HONEST HERE AND NOWHERE ELSE ON THIS SCREEN. A channel avatar is a
+ * near-square portrait, so a circle costs it nothing; the STILL beside it is
+ * 1.78 and a disc would throw away more than half of it. That is Guardrail 10b
+ * in one row, and it is why this design's only round corner is this one.
+ *
+ * The size is set inline by the caller — an asset dimension, not a token.
+ */
+.avatar {
+  flex: 0 0 auto;
+  display: block;
+  border-radius: var(--sc-radius-circle);
+  object-fit: cover;
+  /*
+   * Shows through while the avatar is in flight, so the satin field never
+   * flashes a hole. The cream at low alpha rather than `--sc-card`: this circle
+   * only ever sits on satin, and the card tone is tuned for the cream ground.
+   */
+  background-color: var(--sc-satin-hair);
+}

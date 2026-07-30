@@ -1,0 +1,216 @@
+# The brief this layout was produced from — the LAYOUT half of a design.
+#
+# Its counterpart is the ASSET half's brief, the run's `customization.yaml`
+# at apps/combatden/AdultBallet/ (a `design_direction` plus a
+# `colors_direction`). Same shape on purpose: a name, and one direction per
+# thing being directed.
+#
+# Contract: ThemeTree/studio/schema/layout_brief.py (`LayoutBrief`).
+
+name: Second Position Ballet
+
+layout_direction:
+  short_desc: >-
+    A company's season, billed. Every class, reward and film is a work on the
+    bill — its picture and its name given equal half of one satin panel — and
+    the objects this studio strikes in brass are presented as insignia, never
+    as decoration.
+  long_desc: >-
+    Second Position teaches real ballet to adults who came back to it. The
+    artifact that world runs on is not a timetable and not a workout log: it
+    is the BILL — the printed sheet that says which works are being given,
+    in what order, danced by whom. A bill treats each work as worth
+    announcing. It does not rank them into rows of equal grey. That is the
+    app: a studio announcing what it is giving today, to people who are a
+    little tender about walking back in, in a voice that credits the line
+    and invites the next small step.
+
+    THE PANEL IS THE UNIT, AND IT IS HALF PICTURE AND HALF NAME. Everything
+    the app lists — a class, a reward, a film — is one full-bleed panel
+    running edge to edge with no gutter, no radius, no shadow and no card.
+    The left of that panel is the photograph. The right is a field of satin
+    blush carrying the name, set in the display serif and knocked out in
+    light cream. Neither half is the other's decoration: the picture and the
+    name are one claim about one thing, they occupy comparable area, and
+    they are read as a single object. Panels stack directly against one
+    another, parted only by a hairline, so a screen of them reads as a
+    continuous printed column rather than a tray of tiles. This is the
+    answer to the schedule row with a stamp-sized thumbnail beside small
+    grey text, which is the shape every booking app in the world already
+    has.
+
+    THE FIRST WORK ON A BILL IS BILLED LARGER, and that is the only
+    concession to hierarchy the list makes. The opening class of the day,
+    the featured reward, the hero film: each gets its photograph full width
+    at the photograph's own proportion, with the satin field carried
+    underneath it as a plinth rather than beside it, the name larger there
+    than anywhere else on the screen. Everything after it takes the split
+    panel. Two registers of one unit, never a third.
+
+    A PHOTOGRAPH IS GIVEN A BOX OF ITS OWN PROPORTION, ALWAYS, AND THE
+    LAYOUT IS SOLVED AROUND THAT. This governs both registers and it
+    outranks every shape preference stated anywhere in this brief. A class
+    photograph is 3:2 and gets a 3:2 box, billed or split. A film still is
+    16:9 and gets a 16:9 box. The panel's height is whatever its picture's
+    true proportion makes it at the width it was given; the satin field
+    stretches to match the picture, never the other way round. Where a
+    denser screen is wanted, the picture is given LESS WIDTH at the same
+    proportion — it is never given a shorter box at the same width, because
+    that is not a smaller picture, it is a different one with its top and
+    bottom thrown away.
+
+    THE STRUCK OBJECTS ARE INSIGNIA AND ARE PRESENTED AS SUCH. This brand's
+    generated marks are not illustrations: they are a brass roundel, two
+    medallions, satin chevrons, a struck star tile, a scatter of coins, a
+    sheet-music box, and two composed still lifes, every one of them cut out
+    on transparency. An insignia is presented centred on a field of satin
+    with clear air around it and its name beneath it — the way a company
+    mounts what it awards. It is never framed, never given a border, never
+    inset into a container and never laid under text. On a celebration card
+    it is the largest thing on the screen after that card's own figure. In
+    the header line it is small, exact and unaccompanied.
+
+    AN INSIGNIA IS FITTED BY CONTAINMENT, A PHOTOGRAPH BY ITS OWN BOX, AND
+    THE TWO RULES ARE NOT INTERCHANGEABLE. A cut-out carries its own
+    transparent margin, so it is scaled to fit INSIDE whatever square or
+    disc it is given and the leftover space simply stays empty — nothing is
+    cropped and no letterbox is visible, because there is no opaque edge to
+    show one. That is why an insignia may sit in a disc and a photograph may
+    not. And it is why the shapes of these particular marks do not constrain
+    the layout: they are not all square. The satin chevrons are 0.60 and the
+    scatter of coins 0.84, so a treatment that CROPPED to a square would
+    behead the one and clip the other. Containment is what makes one rule
+    hold for all of them.
+
+    TYPOGRAPHY: THE SERIF IS FOR NAMES AND THE SANS IS FOR EVERYTHING ELSE,
+    INCLUDING EVERY FIGURE. The display serif names things — the class, the
+    reward, the film, the rank, the studio, the headline of a card. That is
+    its entire job, and it holds the largest rung on every browsing screen.
+    The body sans carries times, durations, instructors, counts, costs,
+    balances, labels, descriptions and bios, with tabular figures wherever a
+    number sits next to another number. A FIGURE IS NEVER SET LARGER THAN
+    THE NAME IT DESCRIBES on any screen a member browses. A start time is
+    how a member chooses between classes once a class has caught their eye;
+    it is not what catches it, and a clock set larger than the class answers
+    a question nobody asked. The one place a figure may lead is a
+    celebration card whose whole subject IS the figure — the week count, the
+    points gained, the three win totals — and there it is set in the serif,
+    because there the number is the name of what happened.
+
+    COLOUR IS COMMITTED, NOT SPRINKLED. The satin blush is a FIELD: it owns
+    the panel halves, the plinths, the single primary action on a screen,
+    the navigation at the foot and the ground of every celebration card,
+    and across a typical screen it holds something between a third and half
+    of the surface. Sheet-music cream is the reading ground and carries all
+    prose. The two alternate in whole regions, so the eye moves between
+    announced things and read things. There is no third fill.
+
+    BRASS IS A LINE AND A MARK, NEVER A LABEL AND NEVER A FILL. This is a
+    contrast law before it is a taste, and it was measured rather than
+    assumed: the antique brass lands at 3.25:1 on the cream ground, which
+    carries a rule and a border honestly but fails AA for text at any size
+    the app would actually set a label at; against the satin blush it is
+    1.33:1, which is invisible. So brass draws the hairline that opens a
+    section, the rule beneath the masthead, the frame around a thumbnail too
+    small to hold its own edge, and the mark of the active destination — and
+    it never spells a word. Two further laws come out of the same
+    measurement and bind every screen: type on a satin field is the light
+    cream, never the charcoal, which reaches only 2.70:1 there; and the
+    blush may be set as TYPE on cream only at the display sizes, since at
+    4.31:1 it is legible large and not legible small.
+
+    THE MASTHEAD IS AN IDENTITY, THE FOOT IS A DESTINATION. The studio's
+    brass roundel and its name sit together at the top of every app screen,
+    centred, with a brass rule under them — an identity, which is the one
+    thing on a phone that earns being centred. Directly beneath that rule
+    the four facts the member carries with them — rank, streak, points, and
+    the pass — sit on one ruled line, distributed evenly across the full
+    width rather than bunched at its left, each an icon with its value as a
+    single object. Everything below the rule is left aligned, because
+    everything below the rule is scanned. Navigation is a solid satin band
+    across the foot carrying the four destinations. A control looks like
+    what it is: a tab switches, a row opens, back is top left, the primary
+    action is a full-width band directly above the foot.
+
+    THE ACTIVE DESTINATION IS MARKED IN CREAM, NOT IN BRASS, AND EVERY
+    LABEL IN THAT BAND IS SET AT FULL STRENGTH. Two measurements force this
+    and both contradict the obvious answer. Brass on the satin field is
+    1.33:1, so the brass rule that opens a section everywhere else in this
+    app would be invisible in the one place the eye most needs a marker;
+    the marker there is a CREAM rule instead. And holding the other three
+    destinations back by fading their ink does not survive a contrast
+    checker either — even at 85% strength the label lands at 4.46:1, under
+    AA, and every value below that is worse. So all four labels are set in
+    full cream and the state is carried by three redundant channels that
+    cost no legibility: the cream rule over the active cell, the weight of
+    its label, and the strength of its ICON, which is the one element there
+    that MAY be held back, because an icon is not text and answers to 3:1.
+
+    THREE THINGS THIS DESIGN REFUSES. It refuses the cream sheet ruled with
+    hairlines and captioned in tracked small capitals — that is the
+    reflexive rendition of a heritage brief and it is already what a sibling
+    fork here is. It refuses the inset rounded card with a shadow: nothing
+    in this app floats above anything, separation is a change of field and
+    a hairline, and corners are square throughout. And it refuses to let a
+    number lead a browsing screen, however well the serif sets it.
+
+motion_direction:
+  short_desc: >-
+    A phrase resolving. Everything arrives, decelerates and comes to rest;
+    nothing bounces, nothing springs back, and the satin arrives before the
+    name it carries.
+  long_desc: >-
+    Ballet's unit of motion is the phrase, and a phrase RESOLVES: it travels,
+    it slows, it arrives, it holds. It does not overshoot and correct, and it
+    does not spring. So every motion in this app runs on one curve — a plain
+    deceleration, fast at the start and easing to a complete stop — and there
+    is no bounce, no rubber band, no scale-up-and-settle and no elastic
+    anywhere in the app. One curve and one set of durations live in a single
+    motion file, written onto the asset root beside the token surface, so a
+    stylesheet and a driver sample the same clock. Eleven screens built to
+    eleven curves read as eleven designers, and motion is judged across a
+    whole asset rather than a screen at a time.
+
+    THE SATIN ARRIVES FIRST AND THE NAME IS REVEALED BY IT. A panel does not
+    fade in as a block. Its satin field opens from its own leading edge,
+    wiping across or down to its full extent, and the name is already in
+    place beneath it — so the field passing over the type is what puts the
+    type on screen. One gesture, one element, no per-word delay to keep in
+    sync. Panels down a column open in sequence at an even interval, the
+    same interval every time, so a screenful reads as a steady count rather
+    than a flourish. The photograph does not move: it is simply there when
+    its half of the panel is.
+
+    NOTHING THAT CAN BE TAPPED IS EVER HIDDEN WHILE IT MOVES. A wipe is a
+    covering, not a clip — every target is live and hit-testable from the
+    first frame, because a member standing in a doorway with the app open is
+    never made to wait for a nicety. That rule outranks the motion.
+
+    A CELEBRATION IS SLOW ENOUGH TO TAKE IN, AND ITS IMPACT IS NOT. The
+    arrival of a card and the reveal of what was earned are unhurried: the
+    insignia settles over the better part of a second and its figure counts
+    up over longer than that, tabular so nothing shifts sideways while it
+    runs, landing exactly on its value with no final tick. But a hit is
+    felt, not read — the box flying open, the coins thrown outward, the
+    burst behind the trophy — and a slow impact is not a generous one, it is
+    a weak one. Every impact is pinned to its own short duration and never
+    derived from the celebration clock, so that slowing the flow later
+    cannot stretch an explosion into a waft.
+
+    A CARD SETTLES WHEN ITS FIGURE LANDS AND ITS OBJECT STOPS, NEVER WHEN A
+    TIMER EXPIRES. The action appears at the moment the card has finished
+    saying what it came to say — the same moment on all five cards, because
+    five cards that look alike and reveal their action at five different
+    times read as five broken cards. The hold before a replay is a separate
+    concern that exists only when a card is running on its own. A tap
+    anywhere on a card still in motion finishes it outright: the figure
+    lands on its value, the object reaches its resting place, the action
+    appears — the card completes rather than merely revealing its button.
+
+    COUNTS AND PROGRESS RESOLVE, THEY DO NOT TICK. A count-up decelerates
+    into its value the way everything else here does. A progress arc fills
+    at a slowing rate and stops flat on its mark. Under a reduced-motion
+    preference every card arrives already settled with its action present —
+    settled is a state the app can render directly, and a member who has
+    asked for less motion still gets the whole celebration, just not the
+    travel.

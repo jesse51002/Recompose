@@ -1,0 +1,89 @@
+/*
+ * Styles for ./RewardsCarousel.tsx — the cover-flow shelf of reward
+ * photographs.
+ *
+ * `--sc-*` for the design tokens (../showcaseTokens.ts) and `--sp-*` for the
+ * clock (../shell/phrase.ts); `--rc-*` for the carousel's own geometry, which
+ * the component writes inline from ./rewardsCoverFlow.ts. NO TRANSFORM IS
+ * DECLARED HERE — the driver owns every one of them, because each is a live
+ * function of the fractional page and of the bloom.
+ */
+
+/*
+ * The strip. A page is wider than its slot on purpose — that overlap IS the
+ * cover flow — and the pages at the rim are meant to run off the screen, so
+ * nothing here may clip.
+ *
+ * `overflow: visible` is spelled out rather than left to the default because
+ * one non-visible axis computes the other to `auto` (../../../CLAUDE.md), and
+ * this is one of the surfaces that paints outside its box on purpose.
+ */
+.carousel {
+  position: relative;
+  height: var(--rc-height);
+  overflow: visible;
+}
+
+/*
+ * One page slot: `VIEWPORT_FRACTION` of the carousel's width, centred, with the
+ * page centred inside it. Flex centring (not a block) is what lets an oversized
+ * page overflow EQUALLY on both sides rather than only to the right.
+ *
+ * The driver writes both `transform` and `z-index` here: pages of this width
+ * overlap, and without the depth the page sliding in would paint over the one
+ * it is sliding behind.
+ */
+.page {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--rc-slot);
+  height: 100%;
+  will-change: transform;
+}
+
+/*
+ * THE PHOTOGRAPH'S BOX, AT THE PHOTOGRAPH'S OWN PROPORTION. Square: this design
+ * has no radius, no border and no shadow anywhere, and a reward is announced
+ * exactly the way a class and a film are. The background is what shows through
+ * while a photo is loading or when one is dead — the same empty field
+ * ../shell/Panel.tsx's media box degrades to.
+ */
+.frame {
+  position: relative;
+  flex: 0 0 auto;
+  width: var(--rc-width);
+  height: var(--rc-height);
+  overflow: hidden;
+  /* `background-color`, never the `background` shorthand: one unresolvable
+     var() invalidates a shorthand at computed-value time and the browser drops
+     the whole declaration, so a mistyped token would take the loading field
+     with it. */
+  background-color: var(--sc-popup);
+  will-change: transform;
+}
+
+.photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/*
+ * HOW A PAGE RECEDES. The featured page is this card's rank 1 and the shelf is
+ * rank 3, so a neighbour loses scale, turns away AND loses contrast. The veil
+ * is a sheet of the CREAM GROUND rather than a shadow, because nothing in this
+ * app floats above anything — recession is a wash of the ground, never a
+ * shadow under an edge. Its opacity is a live function of the page offset, so
+ * the driver writes it.
+ */
+.veil {
+  position: absolute;
+  inset: 0;
+  background-color: var(--sc-background);
+  pointer-events: none;
+}

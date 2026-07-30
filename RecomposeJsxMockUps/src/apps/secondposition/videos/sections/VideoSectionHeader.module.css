@@ -1,0 +1,73 @@
+/*
+ * Styles for ./VideoSectionHeader.tsx (ports MobileApp/lib/features/videos/
+ * presentation/widgets/sections/video_section_header.dart).
+ *
+ * `--sc-*` for the design tokens (see ../../showcaseTokens.ts); `--vc-inset` is
+ * the one geometry value the placing section writes inline
+ * (../VideoCarouselSection.tsx), because the rule is full bleed and only the
+ * words under it are inset. The fallback is what makes an unset `--vc-inset`
+ * mean "my owner already padded me" rather than an invalid declaration.
+ */
+
+/*
+ * THE LABEL BELONGS TO THE FILMS, NOT TO THE HAIRLINE ABOVE IT, and this gap is
+ * the whole mechanism that says so.
+ *
+ * It was the other way round and that was Guardrail 13's exact failure: the
+ * genre sat `medium` under the rule and `large` above the strip it names, so it
+ * bound upward to a line whose job is to CLOSE the region before it. A rule
+ * parts two regions; the words under it belong to the one that follows. So the
+ * distance runs the other way now — `large` down from the rule, `medium` on to
+ * the strip (../VideoCarouselSection.module.css) — which is also exactly the
+ * proportion ../../shell/Section.module.css sets for the identical arrangement
+ * of rule, label and body. The two region-openers sit on the same screen (the
+ * profile's two ruled sections above its level-up shelf), so a disagreement
+ * between them is visible rather than theoretical.
+ */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-large);
+}
+
+/*
+ * THE BRASS HAIRLINE THAT OPENS A SECTION, edge to edge like everything else in
+ * this design's printed column. Brass is a LINE and a MARK and never a word: it
+ * measures 3.25:1 on the cream ground, which carries a border honestly and
+ * fails AA for text at every size this app would set a label at. That is why
+ * the label under it is charcoal.
+ */
+.rule {
+  height: var(--sc-rule-thickness);
+  background-color: var(--sc-rule);
+}
+
+/*
+ * The genre and its action are two distinct things sharing a line, so they take
+ * the two ends of it rather than bunching behind one gap at the left
+ * (Guardrail 15). Everything below the masthead's rule is left aligned, which
+ * is where the genre starts.
+ */
+.row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sc-spacing-medium);
+  padding-inline: var(--vc-inset, 0px);
+}
+
+/*
+ * `margin: 0` because this is an <h2> and the UA sheet would otherwise add a
+ * gap the Dart Row does not have.
+ */
+.title {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-text-2nd);
+}

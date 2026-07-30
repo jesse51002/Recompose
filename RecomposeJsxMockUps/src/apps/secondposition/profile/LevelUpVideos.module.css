@@ -1,0 +1,17 @@
+/*
+ * Styles for ./LevelUpVideos.tsx.
+ *
+ * The shelf itself is styled by ../videos/VideoCarouselSection.module.css,
+ * which is the point of rendering that section rather than a second one: this
+ * file has no opinion about how a film is drawn.
+ */
+
+/*
+ * The inventory marker (./rankParts.ts). `display: contents` removes the
+ * element from the box tree entirely while leaving it in the DOM, so the
+ * section lays out as a direct child of the screen's column and the marker can
+ * never move a pixel of the arrangement it exists to describe.
+ */
+.marker {
+  display: contents;
+}
