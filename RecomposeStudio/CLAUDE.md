@@ -170,6 +170,14 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
   post-class celebration; the canvas drew only the first, so half of what a
   redesign changed was unreachable. The flow switch renders only when there is
   more than one.
+- **A settled session is not necessarily an approved one.** A session is settled
+  by a person pressing Approve — except when the studio's process restarted
+  while the design was in flight, where the stream SYNTHESISES a terminal
+  record carrying an error so a client stops reconnecting to something dead.
+  Reading `view.settled` alone rendered that crash marker as the approval
+  celebration, so a design announced itself approved with nobody having pressed
+  anything, every time the API was restarted mid-run. `view.settledError`
+  separates them and `SessionLost` says what happened.
 - **Fail visible.** A missing artifact, a failed run, an empty catalog: show the
   state. A blank pane that could mean "loading" or "broken" is the one failure
   mode that wastes the most time here.

@@ -146,3 +146,36 @@
   min-height: 0;
   overflow-y: auto;
 }
+
+/* A session that ended without anybody approving it — the studio restarting
+   mid-design. It used to render as the approval celebration, because the page
+   only asked WHETHER it had settled and not why. */
+.lost {
+  max-width: 56ch;
+  padding: 26px 28px;
+  border: 1px solid var(--st-bad-l);
+  border-radius: 12px;
+  background: var(--st-bad-w);
+  text-align: center;
+}
+
+.lost h2 {
+  margin: 0 0 10px;
+  font: 600 var(--fs-lg) / 1.2 var(--sans);
+  letter-spacing: var(--tr-title);
+  color: var(--ink);
+}
+
+.lost p {
+  margin: 0 0 8px;
+  font: 400 var(--fs-sm) / 1.55 var(--sans);
+  color: var(--ink-2);
+}
+
+.lostNote {
+  color: var(--ink-3) !important;
+}
+
+.lost button {
+  margin-top: 12px;
+}

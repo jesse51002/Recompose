@@ -235,6 +235,30 @@ describe('foldSession', () => {
     expect(failed.assetsSettled).toBe(false);
   });
 
+  it('tells an approval apart from a session that died', () => {
+    // A session is settled by a PERSON approving it — except when the studio's
+    // process restarted mid-design, where the stream SYNTHESISES a settled
+    // record carrying an error so the client stops reconnecting to something
+    // dead. Reading `settled` alone turned that crash marker into the approval
+    // celebration: the design announced itself approved, with nobody having
+    // pressed anything, every time the API was restarted mid-run.
+    reset();
+    const approved = foldSession([OPENED(), rec({ kind: 'settled' })]);
+    expect(approved.settled).toBe(true);
+    expect(approved.settledError).toBeNull();
+
+    reset();
+    const died = foldSession([
+      OPENED(),
+      rec({
+        kind: 'settled',
+        error: 'the studio process died while this design was in flight',
+      }),
+    ]);
+    expect(died.settled).toBe(true);
+    expect(died.settledError).toContain('died');
+  });
+
   it('knows whether a layout agent is running, so Stop can be offered', () => {
     // The agent is the most expensive thing the page starts and closing the
     // tab does not stop it — but an offer to stop something that is not

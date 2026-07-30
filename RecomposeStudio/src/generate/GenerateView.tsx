@@ -222,6 +222,20 @@ export function GenerateView({ sessionId, onDone }: GenerateViewProps) {
     act(() => acceptProposal(sessionId, proposal));
   };
 
+  // A SETTLED SESSION IS NOT NECESSARILY AN APPROVED ONE, and conflating the
+  // two is why a design announced itself approved with nobody having pressed
+  // anything. A session is settled by a person approving it — except when the
+  // studio's process restarted while the design was in flight, in which case
+  // the stream yields a synthetic settled record carrying an error so the
+  // client stops reconnecting to a dead session. That crash marker was being
+  // rendered as the approval celebration.
+  //
+  // Fail visible: say the session died and offer the way out, rather than
+  // congratulate someone on a design nobody approved.
+  if (view.settled && view.settledError !== null) {
+    return <SessionLost error={view.settledError} onDone={onDone} />;
+  }
+
   // The approved screen takes the WHOLE surface, in the generated theme. It is
   // the tenant's last screen and the one moment the tool gets out of the way —
   // so it is not a pane inside the canvas, it replaces the page.
@@ -344,6 +358,38 @@ function Seg({
     >
       {label}
     </button>
+  );
+}
+
+/**
+ * A session that ended without anybody approving it.
+ *
+ * The one case is the studio restarting mid-design: the transcript's last line
+ * is not terminal, so the stream synthesises one rather than let a client
+ * reconnect forever. That is a crash and reads as one here — it used to read
+ * as approval, because the page only asked WHETHER it had settled.
+ */
+function SessionLost({
+  error,
+  onDone,
+}: {
+  error: string;
+  onDone: () => void;
+}) {
+  return (
+    <div className={cx(styles.shell, SHELL_CLASS, styles.attaching)}>
+      <div className={styles.lost}>
+        <h2>This design was interrupted</h2>
+        <p>{error}</p>
+        <p className={styles.lostNote}>
+          Nothing was approved and nothing was deployed. Whatever the run had
+          already produced is still on disk under its own name.
+        </p>
+        <button type="button" className={styles.approve} onClick={onDone}>
+          Back to the fleet
+        </button>
+      </div>
+    </div>
   );
 }
 

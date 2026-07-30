@@ -127,6 +127,21 @@ export interface SessionView {
    */
   readonly assetsSettled: boolean;
   readonly settled: boolean;
+  /**
+   * WHY it settled, when it did not settle well.
+   *
+   * A session is settled by a PERSON approving the design — except for one
+   * case, and that case is why this field exists. When a session is not in the
+   * server's memory (its process restarted while the design was in flight),
+   * the stream yields a SYNTHETIC settled record carrying an error, so a
+   * client terminates instead of reconnecting forever against a dead session.
+   * Reading `settled` alone turned that crash marker into the approval
+   * celebration: the design announced itself approved, with nobody having
+   * pressed anything, every time the studio was restarted mid-run.
+   *
+   * Null means it settled the way it is supposed to.
+   */
+  readonly settledError: string | null;
 }
 
 /**
@@ -159,6 +174,7 @@ export function foldSession(records: readonly SessionRecord[]): SessionView {
   let agentCostUsd = 0;
   let assetsCostUsd = 0;
   let settled = false;
+  let settledError: string | null = null;
 
   // Index of the still-open ask, or -1. Cleared by anything the owner says,
   // because that IS the answer. A PROPOSAL has no equivalent: it stays
@@ -262,6 +278,7 @@ export function foldSession(records: readonly SessionRecord[]): SessionView {
         break;
       case 'settled':
         settled = true;
+        settledError = record.error ?? null;
         break;
       default:
         break;
@@ -323,6 +340,7 @@ export function foldSession(records: readonly SessionRecord[]): SessionView {
         ? lastBriefEntry.brief
         : null,
     settled,
+    settledError,
   };
 }
 
