@@ -18,9 +18,16 @@ ever true of this subsystem:
 | `mockup-redesign-general` | editing any mock — the app-agnostic guardrails |
 | `mockup-redesign-combatden` | editing CombatDen's — its inventory and gotchas |
 | `mockup-qa` | the exhaustive live sweep, after any change |
+| `failure_modes_list` | what has ACTUALLY gone wrong here — read before a build, append after one |
 
 Load the general one plus the app's own whenever you touch a screen. They carry
 the failure modes `make check` cannot see.
+
+`failure_modes_list` is the odd one out: it is an **evidence log, not a rule
+set**. It records what has really gone wrong building screens here, with a
+count of how many independent agents hit each thing, and tracks which entries
+have been promoted into a real guardrail. Read it before a build; append to it
+after one.
 
 **Creating a new design fork starts with `mockup-redesign-start`**, paired with
 the `impeccable` skill — the direction is decided and written to

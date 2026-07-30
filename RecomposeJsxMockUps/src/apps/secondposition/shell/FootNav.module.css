@@ -13,7 +13,7 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   height: 64px;
-  background: var(--sc-satin);
+  background-color: var(--sc-satin);
 }
 
 /*
@@ -48,7 +48,7 @@
   inset-block-start: 0;
   inset-inline: 0;
   height: var(--sc-rule-strong-thickness);
-  background: var(--sc-on-satin);
+  background-color: var(--sc-on-satin);
 }
 
 .icon {

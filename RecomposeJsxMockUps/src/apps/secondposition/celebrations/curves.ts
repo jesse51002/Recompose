@@ -92,6 +92,19 @@ export const Curves = Object.freeze({
   easeInQuart: cubic(0.895, 0.03, 0.685, 0.22),
   /** `Curves.easeOutExpo`. */
   easeOutExpo: cubic(0.19, 1, 0.22, 1),
+  /**
+   * `Curves.easeOutCubic` — THE JS TWIN OF THIS FORK'S ONE CURVE.
+   *
+   * These are the same four control points ../shell/phrase.ts publishes to CSS
+   * as `--sp-phrase`, and that is the entire reason this entry exists: a
+   * stylesheet and a per-frame driver animating the same beat have to sample
+   * the same curve, or the fork has two motions that merely claim to be one.
+   * `phrase.ts` named this twin before it existed here, so every count-up ran
+   * on `easeOutExpo` instead — the one shape that file explicitly rules out,
+   * because it covers 90% in the first third and then visibly crawls into the
+   * stop, which reads as a tick rather than as a phrase resolving.
+   */
+  easeOutCubic: cubic(0.22, 0.61, 0.36, 1),
   /** `Curves.easeOutBack` — the only one that overshoots 1. */
   easeOutBack: cubic(0.175, 0.885, 0.32, 1.275),
   /** `Curves.easeInOutCubic`. */

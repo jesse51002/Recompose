@@ -27,7 +27,7 @@
  */
 .rule {
   height: var(--sc-rule-thickness);
-  background: var(--sc-rule);
+  background-color: var(--sc-rule);
   margin-bottom: var(--sc-spacing-medium);
 }
 

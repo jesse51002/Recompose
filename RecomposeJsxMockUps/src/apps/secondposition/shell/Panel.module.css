@@ -97,7 +97,7 @@
   position: relative;
   width: 100%;
   overflow: hidden;
-  background: var(--sc-popup);
+  background-color: var(--sc-popup);
 }
 
 .mediaImg {
@@ -115,7 +115,7 @@
   flex-direction: column;
   justify-content: center;
   gap: var(--sc-spacing-small);
-  background: var(--sc-satin);
+  background-color: var(--sc-satin);
   color: var(--sc-on-satin);
   padding-block: var(--sc-spacing-large);
   padding-inline: var(--sc-spacing-large);
@@ -199,7 +199,7 @@
 .veil {
   position: absolute;
   inset: 0;
-  background: var(--sc-background);
+  background-color: var(--sc-background);
   pointer-events: none;
   transform-origin: right center;
   animation: veilOffX var(--sp-wipe) var(--sp-phrase) both;

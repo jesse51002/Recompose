@@ -116,7 +116,13 @@ export function CountUpText({
     const frame = (now: number): void => {
       if (startMs === 0) startMs = now;
       const t = Math.min((now - startMs) / durationMs, 1);
-      apply(Curves.easeOutExpo(t));
+      // THE FORK'S ONE CURVE, not the Dart's. ../shell/phrase.ts is the motion
+      // law here and it rules `easeOutExpo` out by name: it covers 90% of the
+      // roll in the first third and then crawls into the stop, which reads as a
+      // final tick. A count in this app resolves the way everything else does —
+      // and this is the same curve the stylesheets get as `--sp-phrase`, so the
+      // digits and the field they sit on are genuinely one motion.
+      apply(Curves.easeOutCubic(t));
       if (t < 1) raf = requestAnimationFrame(frame);
     };
     // `Future.delayed(delay, () => _ctrl.forward())`.

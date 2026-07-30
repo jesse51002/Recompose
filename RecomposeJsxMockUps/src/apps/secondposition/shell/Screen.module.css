@@ -11,7 +11,7 @@
   flex-direction: column;
   width: 100%;
   height: 100%;
-  background: var(--sc-background);
+  background-color: var(--sc-background);
   color: var(--sc-text);
 }
 

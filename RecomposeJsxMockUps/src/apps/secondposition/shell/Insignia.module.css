@@ -15,7 +15,7 @@
 }
 
 .onSatin {
-  background: var(--sc-satin);
+  background-color: var(--sc-satin);
   color: var(--sc-on-satin);
   padding-block: var(--sc-spacing-big);
   padding-inline: var(--sc-spacing-large);

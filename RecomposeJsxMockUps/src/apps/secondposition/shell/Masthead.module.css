@@ -6,7 +6,7 @@
 .masthead {
   flex: 0 0 auto;
   padding-top: var(--phone-status-inset, 0px);
-  background: var(--sc-background);
+  background-color: var(--sc-background);
 }
 
 /*
@@ -72,7 +72,7 @@
  */
 .rule {
   height: var(--sc-rule-thickness);
-  background: var(--sc-rule);
+  background-color: var(--sc-rule);
 }
 
 /*

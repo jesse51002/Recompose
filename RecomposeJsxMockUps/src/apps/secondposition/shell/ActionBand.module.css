@@ -18,7 +18,7 @@
   border: 0;
   padding-block: var(--sc-spacing-large);
   padding-inline: var(--sc-spacing-large);
-  background: var(--sc-satin);
+  background-color: var(--sc-satin);
   color: var(--sc-on-satin);
   cursor: pointer;
   transition: transform var(--sp-arrive) var(--sp-phrase);
