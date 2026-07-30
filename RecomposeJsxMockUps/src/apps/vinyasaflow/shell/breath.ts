@@ -57,18 +57,22 @@ export const BREATH_OUT = 'cubic-bezier(0.61, 1, 0.88, 1)';
 /**
  * A celebration's main movement — the hero arriving and resolving.
  *
- * SLOW ON PURPOSE. Guardrail 16: a celebration exists to be ENJOYED, and it has
- * to be slow enough for a member to register what they earned. Every one of
- * these cards previously resolved in UNDER A SECOND, which is quick enough that
- * the thing being celebrated was over before it was read — the animation cost
- * the member time and delivered nothing.
+ * SLOWER THAN CONTENT, BUT NOT DOUBLE. Guardrail 16: a celebration exists to be
+ * ENJOYED and has to be slow enough for a member to register what they earned.
+ * These cards once resolved in UNDER A SECOND, which is quick enough that the
+ * thing being celebrated was over before it was read.
+ *
+ * Doubling them was the correction and it overshot — a card that takes four
+ * seconds to finish stops reading as generous and starts reading as a wait.
+ * These are about 1.4x the original: enough to follow, short enough that the
+ * flow still moves.
  *
  * These durations are CELEBRATION-ONLY. Ordinary content movement is
  * `ARRIVE_MS` and is deliberately left brisk; slowing that would make the whole
  * app sluggish to fix a problem that only exists where something is being shown
  * off.
  */
-export const DRAW_MS = 1500;
+export const DRAW_MS = 1080;
 
 /**
  * A celebration's hero settling into its finished state — the moment the card
@@ -78,14 +82,14 @@ export const DRAW_MS = 1500;
  * for. It stays skippable: a tap resolves the card immediately
  * (./useTapToSettle.ts), which is what makes a duration this long acceptable.
  */
-export const CLOSE_MS = 1600;
+export const CLOSE_MS = 1120;
 
 /**
  * A row of things arriving one after another — the week strip, the stat tiles,
  * the reward shelf. Long enough that a member sees them ARRIVE rather than
  * finding them already there.
  */
-export const BOW_MS = 950;
+export const BOW_MS = 700;
 
 /**
  * One thing opening where the line has just reached it.
@@ -104,7 +108,7 @@ export const ARRIVE_MS = 320;
  * roll in the first third and a visible crawl into the stop — so the roll is on
  * the breath like everything else.
  */
-export const COUNT_MS = 1500;
+export const COUNT_MS = 1040;
 
 /** One thing being replaced by another in the same box: a caption, a page. */
 export const SWITCH_MS = 320;
@@ -118,7 +122,7 @@ export const SWITCH_MS = 320;
  * that is what kept the flow's action hidden for up to nine seconds before this
  * pass. See each card's `onCycleComplete`.
  */
-export const HOLD_MS = 3600;
+export const HOLD_MS = 3000;
 
 /**
  * Where the stroke comes FROM: the brand mark's lower edge, in the phone's
