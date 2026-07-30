@@ -567,6 +567,19 @@ distinct entities roughly equal? Is there a void at one end that nothing claims?
 If a row's entities occupy two thirds of the width and the last third is empty,
 either distribute them or give the row a reason to stop where it stops.
 
+## GUARDRAIL 16 — a celebration has to be slow enough to take in
+
+**Celebration moments only** — the post-class cards, a reward opening, a rank
+promotion. Ordinary content animation is not this; brisk is right there.
+
+A celebration exists to be ENJOYED. Play it faster than a member can register
+what they earned and it has delivered nothing while still costing them the time.
+When in doubt, slower.
+
+It stays skippable, and that is what makes slow acceptable: a tap on a
+still-playing card resolves it immediately (Guardrails 4 and 5). A celebration
+nobody can get past is not slow, it is a block.
+
 ## GUARDRAIL 12 — invent the look, not the interaction
 
 **Be creative within industry standards.** A member must be able to use the app

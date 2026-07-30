@@ -132,7 +132,9 @@ two people reading your answer would build recognisably the same app:
   abstract. This moves the design further than any spacing decision, and the
   cutout/scene split is what makes a given treatment possible or impossible.
 - **Motion.** Its character in a phrase, and what it does to the user's
-  understanding: reveal, settle, transport, punctuate.
+  understanding: reveal, settle, transport, punctuate. For the CELEBRATION
+  moments, say how long a member is given to take in what they earned —
+  Guardrail 16.
 - **Three things you will deliberately NOT do**, because they are the defaults
   everyone reaches for.
 

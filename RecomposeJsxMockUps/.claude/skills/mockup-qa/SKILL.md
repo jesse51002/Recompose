@@ -675,6 +675,11 @@ exactly that shape.
 
 ## Pass 5 — states and edges
 
+- **Celebration tempo.** Guardrail 16: a celebration has to be slow enough to
+  take in what was earned. Watch each card play at full speed and ask whether
+  you could register it. Then confirm a tap still resolves it immediately — slow
+  is only acceptable because it can be skipped.
+
 - **Reduced motion.** Entrances must not be the only thing that makes content
   appear. `$B js "matchMedia('(prefers-reduced-motion: reduce)')"` will not
   change the setting; check the CSS has a `prefers-reduced-motion` branch and
