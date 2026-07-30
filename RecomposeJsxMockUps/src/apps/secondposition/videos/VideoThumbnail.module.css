@@ -1,0 +1,19 @@
+/*
+ * Styles for ./VideoThumbnail.tsx.
+ * `--sc-*` only — see ../showcaseTokens.ts.
+ */
+
+/*
+ * Fills whatever box ./FilmPanel.module.css sized, and that box is always the
+ * still's own 16:9 — so `cover` has nothing to crop. The fit is `cover` rather
+ * than `contain` because these are PHOTOGRAPHS, not cut-outs: a contained
+ * photograph letterboxes against an opaque edge, where a contained insignia
+ * shows nothing at all (../shell/Insignia.module.css). The two rules are not
+ * interchangeable.
+ */
+.thumb {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

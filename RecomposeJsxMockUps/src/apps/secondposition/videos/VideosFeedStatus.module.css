@@ -1,0 +1,24 @@
+/*
+ * Styles for ./VideosFeedStatus.tsx (ports MobileApp/lib/features/videos/
+ * presentation/widgets/videos_feed_status.dart).
+ * `--sc-*` only — see ../showcaseTokens.ts.
+ */
+
+/*
+ * One line with nothing to scan, so it is centred — the one arrangement
+ * Guardrail 15 reserves for a single focal object and its caption. Everything
+ * else on this screen is left aligned because everything else is scanned.
+ *
+ * It sits on the cream reading ground rather than a satin panel: a panel
+ * announces a work, and the whole point of this line is that there is no work
+ * to announce.
+ */
+.empty {
+  margin: 0;
+  padding-block: var(--sc-spacing-big);
+  padding-inline: var(--sc-screen-padding-x);
+  text-align: center;
+  font: var(--sc-type-prose);
+  letter-spacing: var(--sc-type-prose-ls);
+  color: var(--sc-text-2nd);
+}

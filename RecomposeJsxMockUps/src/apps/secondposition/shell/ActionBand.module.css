@@ -1,0 +1,64 @@
+/*
+ * Styles for ./ActionBand.tsx. Replaces the base's
+ * `support/ShowcasePrimaryButton.module.css`, which is deleted from this
+ * folder.
+ */
+
+/*
+ * Exactly ONE region per screen is filled this way. A full-width satin band at
+ * the foot: square, edge to edge, no radius, no shadow, nothing floating.
+ */
+.band {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 58px;
+  border: 0;
+  padding-block: var(--sc-spacing-large);
+  padding-inline: var(--sc-spacing-large);
+  background-color: var(--sc-satin);
+  color: var(--sc-on-satin);
+  cursor: pointer;
+  transition: transform var(--sp-arrive) var(--sp-phrase);
+}
+
+/* A tap depresses. It does not bounce back past its resting place. */
+.band:active {
+  transform: translateY(2px);
+}
+
+.label {
+  font: var(--sc-type-name-panel);
+  letter-spacing: var(--sc-type-name-panel-ls);
+  color: var(--sc-on-satin);
+}
+
+/*
+ * THE CTA ZONE IS LAID OUT FROM THE FIRST FRAME, so its arrival never reflows
+ * the card beneath it. `hidden` takes away the ink and the tap, never the box.
+ */
+.hidden {
+  visibility: hidden;
+}
+
+/* The reveal, once a celebration card has settled. */
+.appearing {
+  animation: appear var(--sp-arrive) var(--sp-phrase) both;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .appearing {
+    animation: none;
+  }
+}

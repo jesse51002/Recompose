@@ -1,0 +1,303 @@
+/*
+ * Styles for ./PointsShowcase.tsx — the POINTS celebration card.
+ *
+ * `--sc-*` are the design tokens (./showcaseTokens.ts) and `--sp-*` the motion
+ * clock (./shell/phrase.ts); both land on the asset root and inherit down here.
+ * `--pt-*` is this card's own geometry, written inline by the component from
+ * constants that live in TypeScript so no measurement is restated as a literal
+ * in this file.
+ *
+ * THE SWARM HAS NO MOTION HERE AT ALL. Its transforms, opacities and stacking
+ * order are written per frame by the driver in the component, because fourteen
+ * coins share one spin and one converge factor (./pointSphere.ts). What the
+ * classes below give it is only the box each element sits in — and that box is
+ * the load-bearing part, because where it ENDS is where the coins vanish.
+ *
+ * LONGHANDS THROUGHOUT, including `background-color` in place of `background`
+ * and `margin-block-start`/`-end` in place of a two-value `margin-block`. A
+ * shorthand carrying one unresolvable `var()` is invalid at computed-value time
+ * and the browser drops the WHOLE declaration — and `background` resets seven
+ * other properties on its way out, so it is the most expensive one in the file
+ * to get wrong. The `font:` rungs are the sanctioned exception; they are
+ * authored as shorthands and always come with their paired `-ls`.
+ */
+
+/* --- The field ------------------------------------------------------------ */
+
+/*
+ * The cream ground the action band stands on, and nothing else — 16px of it
+ * shows, along the bottom edge.
+ *
+ * WHY THE FIELD BELOW STOPS SHORT OF IT, WHICH IS THE ONE PLACE THIS CARD IS
+ * NOT EDGE TO EDGE. ./celebrationAsset.tsx's CTA zone is frozen and insets the
+ * action by `--sc-screen-padding-x` on the sides with NO gap above it, and that
+ * action is itself a satin band (./shell/ActionBand.module.css, whose own note
+ * is "two adjacent satin bands would read as one"). Run the field to the card's
+ * bottom edge and the button's top and side boundaries simply vanish into it:
+ * the only evidence a button is there at all would be two 16px cream notches,
+ * which is Guardrail 12's failure — a control has to look like what it is. So
+ * the field ends one `--sc-spacing-large` early and a cream seam runs the FULL
+ * width between the card's satin and the action's own.
+ *
+ * The seam is the whole separation, and it has to be, because the band's flanks
+ * are not inset in practice: ./shell/ActionBand.module.css sets `width: 100%`
+ * and `padding-inline` without `box-sizing: border-box`, and this package
+ * carries no global one — so the band grows back out through the CTA zone's
+ * 16px inset and lands edge to edge, which is what ../layout_brief.yaml asks a
+ * primary action to be anyway ("a full-width band directly above the foot").
+ */
+.card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: var(--sc-background);
+}
+
+/*
+ * A celebration card's ground is the satin blush (../layout_brief.yaml, "COLOUR
+ * IS COMMITTED, NOT SPRINKLED"): a field, not a card — no radius, no shadow,
+ * nothing floating. Everything set on it is the light cream, because the warm
+ * charcoal reaches only 2.70:1 there and the brass 1.33:1, so `--sc-on-satin`
+ * is not a preference on this screen, it is the only legible ink.
+ */
+.field {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: var(--sc-spacing-large);
+  left: 0;
+  background-color: var(--sc-satin);
+  color: var(--sc-on-satin);
+}
+
+/* --- The swarm ------------------------------------------------------------ */
+
+/*
+ * `SizedBox.expand > Stack(alignment: center)` — but NOT the whole card.
+ *
+ * THE BOX IS THE AIM. The coins converge on the centre of whatever box they are
+ * given, so the box stops exactly where the figure block begins and its centre
+ * therefore lands on `--pt-anchor` below: the point the swarm vanishes at is
+ * the point the mark is mounted on, and the two halves of the card read as one
+ * gesture rather than a cut. Given the whole card instead, the coins would
+ * collapse a little under the mark and the hand-over would look like a mistake.
+ */
+.swarm {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: calc(var(--pt-figure) + var(--pt-foot));
+  left: 0;
+}
+
+/*
+ * One coin: `Transform.translate(offset) > Opacity > Transform.scale > Image`.
+ * Centred on the stack, then moved onto the ellipsoid — the driver writes all
+ * three as one transform. The element's own size is written once, from
+ * `starSize`.
+ */
+.coin {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  will-change: transform, opacity;
+}
+
+/*
+ * CONTAINED, like every cut-out in this app. `single_point` measures 0.98 and
+ * would survive a crop, but the rule is one rule: a mark carries its own
+ * transparent margin, so containment shows no letterbox and nothing is ever
+ * thrown away. See ./shell/Insignia.module.css.
+ */
+.coinImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* --- The settled statement ------------------------------------------------ */
+
+.settled {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  /*
+   * THE OPTICAL CENTRE OF THE CARD, and the one measurement the mark and the
+   * swarm both resolve against.
+   *
+   * Not `50%`. The focal object is the mark AND the figure hanging beneath it,
+   * with the small print pinned below that — so centring the mark on the box
+   * would leave a third of the field empty above it and nothing below. Take the
+   * figure's allowance and the foot's off the height first and the group
+   * centres in the field the eye actually reads. The arithmetic falls out of
+   * that: the group runs from `anchor - mark/2 - air` to
+   * `anchor + mark/2 + air + figure`, and setting its midpoint to the midpoint
+   * of `100% - foot` leaves `anchor = (100% - figure - foot) / 2`.
+   */
+  --pt-anchor: calc((100% - var(--pt-figure) - var(--pt-foot)) / 2);
+}
+
+/*
+ * The mount, centred on the anchor. `<Insignia onSatin>` carries symmetric air
+ * of its own, so centring the MOUNT centres the mark inside it.
+ *
+ * This wrapper exists because the arrival is a transform and so is the
+ * centring: `.settling` in ./shell/Insignia.module.css animates `translateY`,
+ * and one element cannot hold both without the animation dropping the centring
+ * and throwing the mark into the corner.
+ */
+.mark {
+  position: absolute;
+  top: var(--pt-anchor);
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/*
+ * The figure, on the mount's bottom edge — the mount already carries
+ * `--sc-spacing-big` of air below the mark (./shell/Insignia.module.css
+ * `.onSatin`), which is the gap that makes the mark and its figure one object
+ * rather than two things that happen to be stacked.
+ */
+.figure {
+  position: absolute;
+  top: calc(var(--pt-anchor) + var(--pt-mark) / 2 + var(--sc-spacing-big));
+  right: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* The figure and its unit are ONE object. Guardrail 13: the gap inside an
+     entity is the small one, and everything around it is larger. */
+  gap: var(--sc-spacing-small);
+  animation: ptArrive var(--sp-arrive) var(--sp-phrase) both;
+}
+
+/*
+ * THE ONE PLACE IN THIS APP A NUMBER IS SET IN THE SERIF AND ALLOWED TO LEAD.
+ * A figure is never larger than the name it describes on a browsing screen; on
+ * a celebration card whose whole subject IS the figure, the number is the name
+ * of what happened.
+ *
+ * `font-variant-numeric` comes AFTER the shorthand on purpose — `font:` resets
+ * `font-variant`, so the order is what makes the digits tabular rather than a
+ * declaration the browser has already thrown away. Tabular matters here because
+ * the count-up rolls one reel per position and a proportional face would shift
+ * the whole figure sideways while it ran.
+ */
+.gained {
+  font: var(--sc-type-figure-hero);
+  letter-spacing: var(--sc-type-figure-hero-ls);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-on-satin);
+  text-align: center;
+}
+
+/* The unit, in the sans. Tracked capitals, at FULL strength: no opacity holds
+   ink above AA on this field, so rank is carried by size and never by fading. */
+.unit {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-on-satin);
+}
+
+/* --- The foot ------------------------------------------------------------- */
+
+/*
+ * The running total, pinned to the bottom of the field behind a hairline — the
+ * small print at the foot of a bill, after it has announced what is given.
+ *
+ * It arrives once the mark has come to rest rather than with it: the card
+ * resolves from the middle outward, and this is the last thing to land, which
+ * is why `SETTLE_AT_MS` in the component waits for it.
+ */
+.foot {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  animation: ptArrive var(--sp-arrive) var(--sp-phrase) var(--sp-settle) both;
+}
+
+/*
+ * A CREAM hairline, not a brass one. Brass is a line everywhere else in this
+ * app and it is 1.33:1 on the satin — drawn here it would simply not exist.
+ * Full bleed, because a rule that stops short reads as an underline.
+ */
+.hair {
+  height: var(--sc-rule-thickness);
+  background-color: var(--sc-satin-hair);
+}
+
+/*
+ * Left aligned. Everything scanned in this app is, and the centring above is
+ * reserved for the single focal object — that difference is what stops the
+ * caption reading as part of the figure.
+ */
+.total {
+  /* A `<p>` carries the UA's own 1em block margins. The end margin has to go —
+     `.foot` is absolutely positioned and so establishes a formatting context,
+     which means a child's bottom margin stays INSIDE its height and would push
+     the foot 16px past the `FOOT_ALLOWANCE_PX` the anchor above is derived
+     from. Two longhands rather than `margin-block: x 0`, so an unresolvable
+     var could only cost the margin it names instead of taking the `0` with it. */
+  margin-block-start: var(--sc-spacing-large);
+  margin-block-end: 0;
+  padding-inline: var(--sc-screen-padding-x);
+  padding-bottom: var(--sc-spacing-big);
+  font: var(--sc-type-meta);
+  letter-spacing: var(--sc-type-meta-ls);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-on-satin);
+  text-align: start;
+}
+
+/* --- Motion --------------------------------------------------------------- */
+
+/*
+ * A phrase resolves: it travels, slows, arrives and holds. One curve, one rise,
+ * no bounce and no overshoot anywhere.
+ */
+@keyframes ptArrive {
+  from {
+    opacity: 0;
+    transform: translateY(var(--pt-rise));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/*
+ * A TAP FINISHES THE CARD. Every CSS animation on this card and in its subtree
+ * runs past its end and holds its own final frame, so no rule here has to
+ * restate what "settled" looks like — including `.settling` inside
+ * ./shell/Insignia.module.css, which this file cannot see. The per-frame
+ * drivers (the swarm, the count-up) have no keyframe to fast-forward and are
+ * handed over by the component's own branch instead.
+ */
+.finished,
+.finished * {
+  animation-delay: -30s !important;
+}
+
+/*
+ * `MediaQuery.disableAnimationsOf` — the card renders already settled, action
+ * present. A member who has asked for less motion still gets the whole
+ * celebration, just not the travel. The base has none of the two elements'
+ * `opacity: 0` in their resting rules, so removing the animation leaves both
+ * visible rather than invisible.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .figure,
+  .foot {
+    animation: none;
+  }
+}

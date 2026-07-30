@@ -1,0 +1,77 @@
+/*
+ * Styles for ./RewardPanel.tsx.
+ *
+ * THE FILE IS SHORT ON PURPOSE: the panel's box, its picture, its name, its
+ * metadata line and its trailing value are all ../shell/Panel.module.css's, so
+ * a reward, a class and a film cannot drift apart. What is here is only what a
+ * reward has and a class does not — a price label, and a named action.
+ *
+ * `--sc-*` only (../showcaseTokens.ts). Longhands throughout: one unresolvable
+ * name inside a shorthand takes the whole declaration with it.
+ */
+
+/*
+ * THE PRICE LABEL, which is what a member pays ON TOP of the points.
+ *
+ * It sits inside the panel's `.meta` line, so it inherits the satin field's
+ * cream ink — the only legible option there; the charcoal measures 2.70:1 on
+ * that field. What it overrides is the rung: the tracked label register rather
+ * than the 13px meta, so it reads as an annotation on the cost beneath it
+ * rather than as a second fact competing with it.
+ *
+ * `font-weight` must follow the `font` shorthand — the shorthand resets it —
+ * but there is nothing to restate here: the label rung already carries 600.
+ */
+.price {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-on-satin);
+}
+
+/*
+ * THE TERMS LINE — the cost and the action, on one baseline.
+ *
+ * It needs its own row because ../shell/Panel.module.css's `.trailing` sets the
+ * SMALL gap, which is the gap that says "these two are one object". A figure
+ * and its unit are; a price and the action you take on it are not, so they get
+ * the medium one and read as two things.
+ *
+ * `flex-wrap` is the overflow behaviour rather than a scrollbar or a clip: on
+ * a split panel the field is 158px of usable width, and a four-digit cost
+ * beside a longer action word ("Redeem", "Use") is close enough to that to be
+ * worth letting the pair drop onto two lines instead of pushing the action out
+ * of the panel. `align-items: baseline` keeps the two sitting on one line when
+ * they do fit, which is the normal case.
+ */
+.terms {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sc-spacing-small) var(--sc-spacing-medium);
+}
+
+/*
+ * THE ACTION'S NAME. Cream on the satin field — the only legible ink there,
+ * and the same reason the price above it is cream.
+ *
+ * A RULE UNDER A WORD, NOT A BUTTON AROUND ONE. The panel already IS the
+ * button; this names what pressing it does. A chip or a fill would be a third
+ * colour on a screen whose only two are the cream and the satin, and a radius
+ * would be the card this design refuses — so the affordance is carried the way
+ * this app carries every other state, by a line. Cream rather than brass
+ * because brass on satin measures 1.33:1 and would simply not be there.
+ *
+ * The label rung is a whole register below the cost beside it, which keeps
+ * rank 2 above the action that acts on it.
+ */
+.redeem {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-on-satin);
+  text-decoration-line: underline;
+  text-decoration-color: var(--sc-on-satin);
+  text-decoration-thickness: var(--sc-rule-thickness);
+  text-underline-offset: var(--sc-spacing-small);
+}

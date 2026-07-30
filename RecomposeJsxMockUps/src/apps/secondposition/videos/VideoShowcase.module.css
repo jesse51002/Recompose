@@ -1,0 +1,33 @@
+/*
+ * Styles for ./VideoShowcase.tsx (ports MobileApp/lib/features/videos/
+ * presentation/screens/videos_screen.dart).
+ * `--sc-*` only — see ../showcaseTokens.ts.
+ */
+
+/*
+ * The bill: the scope, the billed film, then one genre after another.
+ *
+ * NO HORIZONTAL INSET, and that is the design rather than an omission
+ * (../shell/Screen.tsx does not add one either). The hero and every brass rule
+ * run edge to edge, and the two things that ARE inset — the scope tabs and the
+ * genre headers — hold the gutter themselves. Guardrail 13's warning applies
+ * directly: a container given zero padding for one good reason will strand the
+ * next thing put into it, so anything added here has to bring its own inset.
+ *
+ * `gap: big` is the distance between REGIONS, and it is the largest distance on
+ * the screen; inside a region the distances are smaller and get smaller as they
+ * go down — `large` from a genre's rule to its name, `medium` from that name to
+ * its films (./VideoCarouselSection.module.css). That descending ladder is what
+ * does the grouping: a genre's name belongs to the strip under it, not to the
+ * hairline over it and not to the strip above that.
+ *
+ * The bottom padding is the Dart's own `SliverPadding(only(bottom: spacingBig))`
+ * and it is what stops the last strip ending flush against the satin foot.
+ */
+.feed {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--sc-spacing-big);
+  padding-bottom: var(--sc-spacing-big);
+}

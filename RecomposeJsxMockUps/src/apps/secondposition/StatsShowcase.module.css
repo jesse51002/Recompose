@@ -1,0 +1,233 @@
+/*
+ * Styles for ./StatsShowcase.tsx — the streak card.
+ *
+ * `--sc-*` are the design tokens (./showcaseTokens.ts), `--sp-*` the motion
+ * clock (./shell/phrase.ts) and `--st-earned-delay` is the one delay the
+ * component writes inline, so no beat of the phrase is a literal here.
+ *
+ * EVERY COLOUR ON THIS CARD IS FORCED BY A MEASUREMENT. The ground is the satin
+ * blush, which ./layout_brief.yaml gives to every celebration card, and on that
+ * field the warm charcoal reaches only 2.70:1 while the brass reaches 1.33:1 —
+ * so every mark of type here is `--sc-on-satin` (5.47:1). The card draws no
+ * line at all: its one separation, the seam between the announced statement and
+ * the printed week, is a change of FIELD (satin to cream), which is this
+ * design's separator and needs no rule beside it. There is no third fill.
+ */
+
+/*
+ * The card's own box. `position: relative` is what the veil below is absolute
+ * to, and it is on THIS element rather than on the scaffold inside it so the
+ * covering reaches the status inset as well: a tap landing in that strip has to
+ * finish the card like any other.
+ */
+.card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* The composition, filling the scaffold's body. */
+.sheet {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: var(--sc-on-satin);
+}
+
+/*
+ * THE STATEMENT — the mark, the figure and what the class was worth, centred as
+ * one focal object with the printed week held at the foot beneath them.
+ *
+ * Centred, and this is the case centring is FOR: a single focal object with its
+ * one line and nothing to scan (Guardrail 15). Nothing on this card is a list.
+ *
+ * The gap is the big one, so the three parts read as three separate claims
+ * rather than one stack — the figure's own two halves sit at the small gap
+ * below, which is what makes them one object instead.
+ */
+.statement {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sc-spacing-big);
+  padding-inline: var(--sc-screen-padding-x);
+}
+
+/*
+ * The insignia's mount. It carries no caption, so the component's own
+ * caption gap has nothing to space and the flex column above owns the rhythm.
+ */
+.mark {
+  flex: 0 0 auto;
+}
+
+/*
+ * The claim: the figure, its unit, and what the class was worth. One `large`
+ * inside, against the statement's `big` outside — so the three read as two
+ * things (a mark, and a claim) rather than as three stacked lines.
+ */
+.claim {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sc-spacing-large);
+}
+
+/*
+ * The figure and its unit: ONE object, so the gap between them is the smallest
+ * on the card (Guardrail 13). Anything larger and the unit reads as the next
+ * region's heading rather than as this one's footing.
+ */
+.figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sc-spacing-small);
+}
+
+/*
+ * RANK 1, AND THE ONE PLACE IN THIS APP A FIGURE MAY LEAD.
+ *
+ * The display serif is otherwise reserved for names — but on a celebration card
+ * whose whole subject IS the number, the number is the name of what happened,
+ * which is exactly what `--sc-type-figure-hero` was added for. Tabular, so the
+ * odometer's reel and the settled value it is swapped for occupy the same cell
+ * and nothing shifts sideways at the swap or while the roll runs.
+ *
+ * NO `line-height` HERE, EVER. The rung lines at the font's own metrics; a line
+ * box shorter than that makes adjacent digit cells overlap through
+ * ./celebrations/CountUpText.tsx's clip, which is a bug `apps/romanahouse/`
+ * shipped once.
+ */
+.count {
+  display: block;
+  font: var(--sc-type-figure-hero);
+  letter-spacing: var(--sc-type-figure-hero-ls);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-on-satin);
+  text-align: center;
+}
+
+/*
+ * The unit. A tracked label in the sans, not a second name in the serif: the
+ * serif's whole job on this card has already been spent on the figure above,
+ * and setting "Week streak" at a naming size would give the card two rank 1s.
+ */
+.unit {
+  font: var(--sc-type-label);
+  letter-spacing: var(--sc-type-label-ls);
+  text-transform: uppercase;
+  color: var(--sc-on-satin);
+  text-align: center;
+}
+
+/*
+ * RANK 3 — what the class was worth. The sans, because it is a figure this card
+ * is not about.
+ *
+ * IT WAS AT THE h1 RUNG AND THAT INVERTED THE CARD. Eleven glyphs of cream at
+ * 24px carry more ink than one 72px digit does — measured, 499 against 379 —
+ * so rank 3 was beating rank 1 while every rule about which rung is bigger
+ * still read as obeyed. `--sc-type-h2` is 16px at the same 600 weight: it lands
+ * at 252, which loses cleanly to the count and still beats the 13px week
+ * beneath it, so the ladder is 72 / 16 / 13 with nothing tied.
+ */
+.earned {
+  margin: 0;
+  font: var(--sc-type-h2);
+  letter-spacing: var(--sc-type-h2-ls);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-on-satin);
+  text-align: center;
+  animation: earnedArrive var(--sp-arrive) var(--sp-phrase) var(--st-earned-delay, 0ms) both;
+}
+
+@keyframes earnedArrive {
+  from {
+    opacity: 0;
+    transform: translateY(var(--sc-spacing-medium));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --- The entrance --------------------------------------------------------- */
+
+/*
+ * THE SATIN ARRIVES FIRST AND EVERYTHING IS REVEALED BY IT.
+ *
+ * A sheet of the cream ground lying over the whole card, retracting toward the
+ * bottom edge so its own leading edge travels DOWN the card — the mark, then
+ * the figure, then the earned line, then the week. One gesture, one element,
+ * and the stagger is a consequence of one stroke passing each region rather
+ * than four delays to keep in sync.
+ *
+ * A VEIL, NOT A CLIP, for the reason ./shell/Panel.module.css gives: `clip-path`
+ * and `overflow` both remove what they hide from HIT TESTING, and the
+ * scaffold's tap-to-skip target has to be live from the first frame. So this is
+ * a covering with `pointer-events: none`, which can never intercept the tap it
+ * is lying over.
+ */
+.veil {
+  position: absolute;
+  inset: 0;
+  /* The longhand, never the `background` shorthand: one unresolvable var() in a
+     shorthand is invalid at computed-value time and the browser drops the WHOLE
+     declaration, which here would silently delete the entrance rather than
+     mis-colour it. */
+  background-color: var(--sc-background);
+  pointer-events: none;
+  transform-origin: center bottom;
+  animation: fieldOpen var(--sp-wipe) var(--sp-phrase) both;
+}
+
+@keyframes fieldOpen {
+  from {
+    transform: scaleY(1);
+  }
+
+  to {
+    transform: scaleY(0);
+  }
+}
+
+/* --- Settled -------------------------------------------------------------- */
+
+/*
+ * A TAP FINISHES THE CARD RATHER THAN MERELY REVEALING ITS BUTTON.
+ *
+ * One declaration does the whole job: every CSS animation on this card and in
+ * its subtree — the veil, the insignia's settle, the earned line, all seven
+ * cells of the week — is pushed thirty seconds past its own end and holds its
+ * final frame. Nothing here has to restate what "settled" looks like, which is
+ * the point: a second description of the resting state is a second thing to
+ * keep true. ./celebrations/CountUpText.tsx is the exception and is handed over
+ * in the component's own branch, because a per-frame driver has no keyframe to
+ * fast-forward.
+ */
+.finished,
+.finished * {
+  animation-delay: -30s !important;
+}
+
+/*
+ * Under a reduced-motion preference the card renders ALREADY SETTLED and the
+ * component still reports that it settled — a member who asked for less motion
+ * gets the whole celebration, just not the travel.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .earned {
+    animation: none;
+  }
+
+  .veil {
+    animation: none;
+    transform: scaleY(0);
+  }
+}

@@ -1,0 +1,21 @@
+/*
+ * Styles for ./DayClassGroup.tsx.
+ *
+ * Everything here reads `--sc-*` (../showcaseTokens.ts) and nothing else.
+ */
+
+/*
+ * THE ONLY THING THIS FILE OWNS: the gutter the day's rule and label sit in.
+ *
+ * Everything else about the region — the brass rule, the tracked label, the
+ * gap between the label and what it names, and the air between one day and the
+ * next — belongs to ../shell/Section.tsx, and it stays there. The section's
+ * body cancels this inset with the shell's own `bleed`, which is exactly the
+ * value below negated, so the panels reach both edges.
+ *
+ * The screen body deliberately carries NO inset (../shell/Screen.tsx's `prose`
+ * is off here), so this padding is additive rather than doubled.
+ */
+.day {
+  padding-inline: var(--sc-screen-padding-x);
+}

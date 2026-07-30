@@ -1,0 +1,106 @@
+/*
+ * Styles for ./NextRankSection.tsx.
+ * `--sc-*` (../showcaseTokens.ts) and `--sp-*` (../shell/phrase.ts) only.
+ */
+
+/*
+ * The mounted belt and the figure under it. Centred, because this is a single
+ * focal object with nothing to scan — the region's own heading above it is left
+ * aligned, like everything on this app that is read rather than announced.
+ *
+ * NO LEADING PADDING, and that is a correction rather than an omission. There
+ * was `medium` here, added to match the plot below; the shell section already
+ * puts `medium` under the label and twice that above it, so the extra 8 made
+ * the heading sit EXACTLY equidistant between the brass rule that opened the
+ * region and the ring the words name. Guardrail 13's failure is not one gap
+ * being wrong, it is every gap being equal — a label with the same air on both
+ * sides belongs to neither thing. Removed here and in ./RatingGraph.module.css
+ * together, because they were added together.
+ */
+.focus {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sc-spacing-large);
+}
+
+/*
+ * The count, in the sans with tabular figures — the numerator moves every class
+ * and the two numbers sit beside each other, which is exactly when digits have
+ * to be the same width.
+ */
+.label {
+  font: var(--sc-type-value);
+  letter-spacing: var(--sc-type-value-ls);
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-text);
+  text-align: center;
+}
+
+/*
+ * The measure. The medallion centres itself inside it and the SVG is laid over
+ * the whole box, so the air between the two is real space rather than a padding
+ * the mark has to know about.
+ */
+.ring {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--nr-ring-size);
+  height: var(--nr-ring-size);
+}
+
+.arc {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * The strokes name their colours rather than inheriting `currentColor`, because
+ * there are TWO of them and they are two different jobs: brass draws the whole
+ * measure, the satin blush covers the part of it already done.
+ */
+.track {
+  fill: none;
+  stroke: var(--sc-rule);
+}
+
+/*
+ * IT FILLS BY DRAWING AND STOPS FLAT ON ITS MARK. The dash length is the value;
+ * the offset starts at that length (nothing visible) and resolves to zero on
+ * the app's one curve, so the arc sheds speed the whole way and stops dead
+ * rather than ticking into place.
+ */
+.sweep {
+  fill: none;
+  stroke: var(--sc-satin);
+  stroke-linecap: butt;
+  stroke-dashoffset: var(--nr-sweep-dash);
+  animation: sweepIn var(--sp-wipe) var(--sp-phrase) both;
+}
+
+@keyframes sweepIn {
+  from {
+    stroke-dashoffset: var(--nr-sweep-dash);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/*
+ * Settled is a state this app renders directly. The offset has to be reset
+ * explicitly here: the static declaration above hides the arc, and with the
+ * animation gone nothing else would ever draw it.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .sweep {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
