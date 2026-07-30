@@ -55,6 +55,7 @@ from RecomposeAPI.studio.schema.agent_output import (
 from RecomposeAPI.studio.schema.brief_request import BriefRequest
 from RecomposeAPI.studio.schema.launch_request import LaunchRequest
 from RecomposeAPI.studio.schema.session_record import SessionPhase
+from RecomposeAPI.studio.service.agent_cost import turn_cost_usd
 from RecomposeAPI.studio.service.brief_service import BriefService, brief_service
 from RecomposeAPI.studio.service.layout_task import LayoutTask, layout_task
 from RecomposeAPI.studio.service.run_launcher import RunLauncher, run_launcher
@@ -136,6 +137,9 @@ class OrchestratorService:
     ) -> None:
         self._sessions = sessions
         self._briefs = briefs
+        # Kept for PRICING, not for building — the agent is constructed once
+        # below and the id is needed on every turn afterwards.
+        self._model_name = model_name
         self._runs = runs
         self._layout = layout
         self._live: dict[str, _Conversation] = {}
@@ -393,6 +397,14 @@ class OrchestratorService:
                     continue
                 ok = record.status is not None and record.status.value == "succeeded"
                 snapshot = await registry.snapshot(run_id)
+                # The run's own total, onto the SESSION's log — this is the
+                # only moment it is reachable from here, and once the run
+                # registry forgets the run nothing else remembers it.
+                spent = self._run_cost(snapshot)
+                if spent:
+                    await self._sessions.spent(
+                        session_id, cost_usd=spent, spent_on="assets"
+                    )
                 await self.run_settled(
                     session_id,
                     ok=ok,
@@ -401,6 +413,20 @@ class OrchestratorService:
                 return
         except Exception:
             logger.exception("watching run %s failed", run_id)
+
+    @staticmethod
+    def _run_cost(snapshot: object) -> float:
+        """The pipeline's own total for this run, off its terminal event.
+
+        Read rather than recomputed: `PipelineResult.total_cost` is the one
+        place the four paid services are summed, so a second sum here could
+        only disagree with the artifact.
+        """
+        for record in reversed(getattr(snapshot, "records", [])):
+            event = getattr(record, "event", None)
+            if event is not None and event.cost is not None:
+                return float(event.cost)
+        return 0.0
 
     @staticmethod
     def _summarise(snapshot: object, error: str | None) -> str:
@@ -481,7 +507,45 @@ class OrchestratorService:
             )
             return
         convo.history = result.all_messages()
+        await self._record_spend(session_id, result)
         await self._emit(session_id, result.output)
+
+    async def _record_spend(self, session_id: str, result: Any) -> None:
+        """What this turn cost, onto the session's log.
+
+        **Recorded before the turn's output**, so a crash between the two
+        loses a message rather than losing money that was already spent —
+        an unrecorded cost is the one thing here that cannot be recovered
+        later, since nothing on disk remembers the token counts.
+
+        Never raises. A design must not die because its meter broke — but that
+        guard is also how this went unnoticed once already: `usage` is a
+        PROPERTY on Pydantic AI's result, and calling it as `usage()` raised a
+        TypeError that this very `except` swallowed, leaving the meter reading
+        $0 with nothing in the transcript to suggest otherwise. Hence the
+        contract test in tests/test_agent_cost.py, which fails loudly if that
+        attribute ever becomes callable again.
+        """
+        try:
+            usage = result.usage
+            cost = turn_cost_usd(
+                self._model_name,
+                input_tokens=usage.input_tokens or 0,
+                output_tokens=usage.output_tokens or 0,
+                cache_read_tokens=usage.cache_read_tokens or 0,
+                cache_write_tokens=usage.cache_write_tokens or 0,
+            )
+            await self._sessions.spent(
+                session_id,
+                cost_usd=cost,
+                spent_on="agent",
+                input_tokens=usage.input_tokens,
+                output_tokens=usage.output_tokens,
+                cache_read_tokens=usage.cache_read_tokens,
+                cache_write_tokens=usage.cache_write_tokens,
+            )
+        except Exception:
+            logger.exception("could not record spend for session %s", session_id)
 
     async def _emit(self, session_id: str, output: OrchestratorOutput) -> None:
         """One run's output as transcript records.

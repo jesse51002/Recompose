@@ -24,6 +24,7 @@ export type SessionRecordKind =
   | 'asked'
   | 'proposed'
   | 'task'
+  | 'spent'
   | 'settled';
 
 /** `SessionPhase` — the demo's own phase vocabulary, carried as a record. */
@@ -72,6 +73,9 @@ export interface SessionRecord {
   readonly task_state?: 'started' | 'progress' | 'finished' | 'failed' | null;
   /** The pipeline run to attach the RUN stream to. Assets only. */
   readonly run_id?: string | null;
+  /** USD this record spent, and which half spent it. `spent` only. */
+  readonly cost_usd?: number | null;
+  readonly spent_on?: 'agent' | 'assets' | null;
   /** The mock app folder the layout agent is writing to. Layout only. */
   readonly design_id?: string | null;
   /** One line of the layout agent's stdout. */

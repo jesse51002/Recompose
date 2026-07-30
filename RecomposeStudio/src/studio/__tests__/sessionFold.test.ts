@@ -161,6 +161,26 @@ describe('foldSession', () => {
     expect(assets.layoutRunning).toBe(false);
   });
 
+  it('totals what the design has cost, split by which half spent it', () => {
+    // Summed from records rather than held as a total, so a tab that joins in
+    // the fortieth minute reports the same number as one that watched from
+    // the start. Money is also the one thing that cannot be re-derived later:
+    // nothing on disk remembers the token counts once the process is gone.
+    reset();
+    const view = foldSession([
+      OPENED(),
+      rec({ kind: 'spent', spent_on: 'agent', cost_usd: 0.01 }),
+      rec({ kind: 'spent', spent_on: 'agent', cost_usd: 0.02 }),
+      rec({ kind: 'spent', spent_on: 'assets', cost_usd: 1.5 }),
+    ]);
+
+    expect(view.agentCostUsd).toBeCloseTo(0.03);
+    expect(view.assetsCostUsd).toBeCloseTo(1.5);
+    // Money is a running total, not a moment in the conversation — a spend
+    // record must never become a line in the transcript.
+    expect(view.entries).toHaveLength(0);
+  });
+
   it('carries the run id and design id forward for the panes to attach to', () => {
     reset();
     const view = foldSession([

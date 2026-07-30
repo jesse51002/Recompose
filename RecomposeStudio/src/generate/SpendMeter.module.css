@@ -1,0 +1,27 @@
+/* The spend meter. Sits beside the run meter and matches it deliberately:
+   they are two readouts of one job, and a different treatment would imply a
+   different kind of fact. Neutral ink, never a state hue — money is a running
+   total, not a state (../../CLAUDE.md). */
+
+.meter {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex: none;
+  margin-right: 15px;
+  font: 400 var(--fs-xs) / 1 var(--mono);
+  color: var(--ink-3);
+  white-space: nowrap;
+  /* There is a tooltip worth discovering: what the total leaves out. */
+  cursor: help;
+}
+
+.label {
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+}
+
+.total {
+  color: var(--ink);
+  font-weight: 500;
+}

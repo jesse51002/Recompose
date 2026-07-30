@@ -100,6 +100,29 @@ the work runs, not the shape of the request.
   inherits this server's stdin, whichever terminal `make api` was started from.
   Without this an agent stalls before it starts, and two of them would compete
   for the operator's keystrokes.
+- **WHAT A DESIGN COSTS IS RECORDED AS IT IS SPENT**, as `spent` records on
+  the session log, split into `agent` (the interview) and `assets` (the
+  pipeline run). A record and not a running field, because money is the one
+  thing here that cannot be re-derived: a node's state is readable off the
+  artifact and a transcript off the records, but nothing on disk remembers what
+  a conversation cost once the process holding the token counts is gone. Token
+  counts ride along so a wrong price can be recomputed from the log.
+  `SessionSnapshot` sums them on read, so a live session and one rebuilt from
+  its log cannot disagree.
+  - Pricing comes from litellm's own model pricing (`service/agent_cost.py`),
+    never a table in this repo — one here would be wrong the week a price
+    changed, and wrong silently. **Cache reads are priced separately**: the
+    orchestrator replays the whole conversation each turn, so counting cached
+    input at the fresh rate would overstate a long interview several times.
+  - **The layout agent is deliberately not counted.** It runs on the operator's
+    own CLI credentials and reports nothing back, so a figure for it would be
+    invented. The meter says so on its own surface — a total that quietly
+    omitted the longest-running agent would be worse than none, because it
+    would be believed.
+  - `_record_spend` never raises, and that guard once hid a real bug: Pydantic
+    AI's `usage` is a PROPERTY, `result.usage()` raised a TypeError the guard
+    swallowed, and the meter read $0 for every turn. `tests/test_agent_cost.py`
+    now has a contract test that fails if that attribute becomes callable.
 - **Which account pays for it is a decision, not an accident.** A coding-agent
   CLI bills to `ANTHROPIC_API_KEY` when it finds one in its environment and to
   its own logged-in subscription when it does not. `layout_agent_inherit_api_key`

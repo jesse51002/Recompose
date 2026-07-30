@@ -165,6 +165,41 @@ class SessionRegistry:
         if session is not None:
             session.design_name = design_name
 
+    async def spent(
+        self,
+        session_id: str,
+        *,
+        cost_usd: float,
+        spent_on: str,
+        input_tokens: int | None = None,
+        output_tokens: int | None = None,
+        cache_read_tokens: int | None = None,
+        cache_write_tokens: int | None = None,
+    ) -> None:
+        """Money, recorded as it is spent.
+
+        A record rather than a running field, because the JSONL is the durable
+        truth: a session rebuilt from its log must report the same total as one
+        watched live, and an in-memory total would come back as zero after a
+        restart. Cost is also the one thing here that cannot be re-derived — a
+        node's state is readable off the artifact, but nothing on disk
+        remembers what a conversation cost once the process holding the token
+        counts is gone.
+
+        The token counts ride along so a price that turns out to be wrong can
+        be recomputed from the log rather than lost with it.
+        """
+        await self._record(
+            session_id,
+            kind=SessionRecordKind.SPENT,
+            cost_usd=cost_usd,
+            spent_on=spent_on,
+            input_tokens=input_tokens,
+            output_tokens=output_tokens,
+            cache_read_tokens=cache_read_tokens,
+            cache_write_tokens=cache_write_tokens,
+        )
+
     async def proposed(self, session_id: str, *, brief: object) -> None:
         """The brand brief, awaiting the person's Accept.
 
@@ -389,6 +424,19 @@ class SessionRegistry:
         return None
 
     @staticmethod
+    def _spent_on(records: list[SessionRecord], what: str) -> float:
+        """Sum every `spent` record of one kind.
+
+        Derived on read, like `_phase_of` and `_name_of`, so a live session
+        and one rebuilt from its log cannot report different totals.
+        """
+        return sum(
+            r.cost_usd or 0.0
+            for r in records
+            if r.kind is SessionRecordKind.SPENT and r.spent_on == what
+        )
+
+    @staticmethod
     def _name_of(records: list[SessionRecord]) -> str | None:
         """The design's name, read off the last brief it was proposed with.
 
@@ -408,6 +456,8 @@ class SessionRegistry:
             session_id=session.session_id,
             app_id=session.app_id,
             design_name=session.design_name,
+            agent_cost_usd=cls._spent_on(session.records, "agent"),
+            assets_cost_usd=cls._spent_on(session.records, "assets"),
             status=session.status,
             phase=cls._phase_of(session.records),
             started_at=session.started_at,
@@ -435,6 +485,8 @@ class SessionRegistry:
             session_id=session_id,
             app_id=header.app_id or "",
             design_name=cls._name_of(records),
+            agent_cost_usd=cls._spent_on(records, "agent"),
+            assets_cost_usd=cls._spent_on(records, "assets"),
             # Never written, always concluded: a log that stops without a
             # terminal line is a process that died mid-session.
             status=RunStatus.SUCCEEDED if settled else RunStatus.CRASHED,

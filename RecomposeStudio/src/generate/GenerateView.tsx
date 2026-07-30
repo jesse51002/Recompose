@@ -33,6 +33,7 @@ import { Approved } from './Approved';
 import { BriefSheet } from './BriefSheet';
 import { GenerateCanvas } from './GenerateCanvas';
 import { RunMeter } from './RunMeter';
+import { SpendMeter } from './SpendMeter';
 import { SessionChat } from './SessionChat';
 import { MockupChip, MockupPopup } from './MockupPicker';
 import { ThemeChip } from './ThemeChip';
@@ -202,6 +203,7 @@ export function GenerateView({ sessionId, onDone }: GenerateViewProps) {
             <MockupChip app={app} onOpen={() => setMockups(true)} />
             <ThemeChip onOpen={() => setLibrary(true)} generatedId={themeId} />
             <span className={styles.push} />
+            <SpendMeter view={view} />
             <RunMeter runId={view.runId} />
             {/* STOPPING THE LAYOUT AGENT, and only while one is running.
                 It is the most expensive thing this page can start — a coding

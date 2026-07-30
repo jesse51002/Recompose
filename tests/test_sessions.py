@@ -8,6 +8,8 @@ involved in producing one: every failure below would otherwise surface as
 
 from __future__ import annotations
 
+import asyncio
+
 import json
 from pathlib import Path
 from typing import Any
@@ -317,3 +319,61 @@ def test_stopping_the_layout_when_none_runs_reports_zero(studio) -> None:
 
     assert resp.status_code == 200
     assert resp.json() == {"stopped": 0}
+
+
+def test_a_sessions_cost_survives_a_restart(studio) -> None:
+    """MONEY IS THE ONE THING THAT CANNOT BE RE-DERIVED.
+
+    A node's state can be read back off the artifact and a transcript off the
+    records, but nothing on disk remembers what a conversation cost once the
+    process holding the token counts is gone. So spend is a RECORD, and a
+    session rebuilt from its log reports the same total as one watched live.
+    """
+    client, sessions_dir = studio
+    opened = _open(client)
+    session_id = opened["session_id"]
+    # Opening takes the agent's first turn, which records its OWN spend — so
+    # these assert the DELTA. An absolute would make the test a hostage to
+    # what one Opus turn happens to cost today.
+    baseline = client.get(f"/sessions/{session_id}").json()["agent_cost_usd"]
+
+    asyncio.run(
+        session_registry_module.session_registry().spent(
+            session_id, cost_usd=0.25, spent_on="agent", input_tokens=10
+        )
+    )
+    asyncio.run(
+        session_registry_module.session_registry().spent(
+            session_id, cost_usd=1.50, spent_on="assets"
+        )
+    )
+
+    live = client.get(f"/sessions/{session_id}").json()
+    assert live["agent_cost_usd"] == pytest.approx(baseline + 0.25)
+    assert live["assets_cost_usd"] == pytest.approx(1.50)
+
+    # Now forget everything in memory and read the same session off its log.
+    monkeyed = SessionRegistry(sessions_dir)
+    rebuilt = asyncio.run(monkeyed.snapshot(session_id))
+    assert rebuilt.agent_cost_usd == pytest.approx(live["agent_cost_usd"])
+    assert rebuilt.assets_cost_usd == pytest.approx(1.50)
+
+
+def test_the_two_halves_are_totalled_apart(studio) -> None:
+    """The interview and the pipeline bill at wildly different rates, so one
+    undifferentiated total would hide which half to worry about."""
+    client, _ = studio
+    opened = _open(client)
+    registry = session_registry_module.session_registry()
+    baseline = client.get(f"/sessions/{opened['session_id']}").json()
+
+    asyncio.run(registry.spent(opened["session_id"], cost_usd=0.01, spent_on="agent"))
+    asyncio.run(registry.spent(opened["session_id"], cost_usd=0.02, spent_on="agent"))
+
+    snapshot = client.get(f"/sessions/{opened['session_id']}").json()
+    assert snapshot["agent_cost_usd"] == pytest.approx(
+        baseline["agent_cost_usd"] + 0.03
+    )
+    # The interview's spend never leaks into the pipeline's column, which is
+    # the whole point of totalling them apart.
+    assert snapshot["assets_cost_usd"] == 0.0

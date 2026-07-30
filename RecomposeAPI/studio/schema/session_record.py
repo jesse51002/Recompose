@@ -44,6 +44,7 @@ class SessionRecordKind(str, enum.Enum):
     ASKED = "asked"
     PROPOSED = "proposed"
     TASK = "task"
+    SPENT = "spent"
     SETTLED = "settled"
 
 
@@ -79,6 +80,7 @@ class SessionRecord(BaseModel):
     - ``PROPOSED`` — ``brief``, awaiting an Accept
     - ``TASK`` — ``task``, ``task_state``, and then whichever of ``run_id`` /
       ``design_id`` / ``line`` / ``error`` that state carries
+    - ``SPENT`` — ``cost_usd`` and what it was for (``spent_on``)
     - ``SETTLED`` — ``error`` on a failure
 
     ``index`` is the 0-based position in this session's stream, and also the
@@ -118,6 +120,30 @@ class SessionRecord(BaseModel):
     run_id: str | None = None
     # The mock app folder the layout agent is writing to. Layout only.
     design_id: str | None = None
+
+    # --- SPENT -----------------------------------------------------------
+    #
+    # WHAT THIS DESIGN COST, recorded as it is spent rather than totalled at
+    # the end. A record rather than a running field because the JSONL is the
+    # durable truth: a session rebuilt from its log has to report the same
+    # number as one that was watched live, and a total held only in memory
+    # would come back as zero after a restart.
+    #
+    # Money is the one thing here that cannot be re-derived later. A node's
+    # state can be read off the artifact and a transcript off the records,
+    # but nothing on disk remembers what a conversation cost once the
+    # process that had the token counts is gone.
+    cost_usd: float | None = None
+    # Which half of the work spent it. The interview and the pipeline bill
+    # separately and at wildly different rates, so one total that could not
+    # be broken down would hide which half to worry about.
+    spent_on: Literal["agent", "assets"] | None = None
+    # Token counts behind an `agent` cost, kept so a price that turns out to
+    # be wrong can be recomputed from the log instead of being lost with it.
+    input_tokens: int | None = None
+    output_tokens: int | None = None
+    cache_read_tokens: int | None = None
+    cache_write_tokens: int | None = None
     # One line of the layout agent's stdout. Its work is invisible otherwise,
     # so a silent subprocess and a hung one would look identical.
     line: str | None = None

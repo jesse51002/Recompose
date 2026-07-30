@@ -56,6 +56,19 @@ export interface SessionView {
   readonly themeId: string | null;
   /** The open question, if the agent is waiting on a pick. */
   readonly pending: AgentQuestion | null;
+  /**
+   * WHAT THIS DESIGN HAS COST, in USD, split by which half spent it.
+   *
+   * Summed from `spent` records rather than held as a total, so a tab that
+   * joins in the fortieth minute reports the same number as one that watched
+   * from the start — the same property everything else here has.
+   *
+   * Neither figure includes the LAYOUT agent: it runs on the operator's own
+   * CLI credentials and reports nothing back, so counting it would mean
+   * inventing a number.
+   */
+  readonly agentCostUsd: number;
+  readonly assetsCostUsd: number;
   /** The brand brief awaiting an Accept, if one is open. */
   readonly proposal: BriefInput | null;
   /**
@@ -95,6 +108,8 @@ export function foldSession(records: readonly SessionRecord[]): SessionView {
   let themeId: string | null = null;
   let designName: string | null = null;
   let layoutRunning = false;
+  let agentCostUsd = 0;
+  let assetsCostUsd = 0;
   let settled = false;
 
   // Index of the still-open ask / proposal, or -1. At most one is ever set.
@@ -164,6 +179,12 @@ export function foldSession(records: readonly SessionRecord[]): SessionView {
           });
         }
         break;
+      case 'spent':
+        // Accumulated, never rendered as an entry: money is a running total,
+        // not a moment in the conversation.
+        if (record.spent_on === 'agent') agentCostUsd += record.cost_usd ?? 0;
+        else if (record.spent_on === 'assets') assetsCostUsd += record.cost_usd ?? 0;
+        break;
       case 'settled':
         settled = true;
         break;
@@ -191,6 +212,8 @@ export function foldSession(records: readonly SessionRecord[]): SessionView {
     ),
     designName,
     layoutRunning,
+    agentCostUsd,
+    assetsCostUsd,
     phase,
     runId,
     designId,

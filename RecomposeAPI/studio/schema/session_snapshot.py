@@ -22,6 +22,15 @@ class SessionSnapshot(BaseModel):
     session_id: str
     app_id: str
     design_name: str | None = None
+    # WHAT THIS DESIGN HAS COST SO FAR, in USD, split by which half spent it.
+    # The interview and the pipeline bill at wildly different rates, so one
+    # undifferentiated total would hide which half to worry about.
+    #
+    # Neither includes the LAYOUT agent: it runs on the operator's own CLI
+    # credentials and reports nothing back, so counting it would mean
+    # inventing a number. Absent and explained beats confidently wrong.
+    agent_cost_usd: float = 0.0
+    assets_cost_usd: float = 0.0
     # Reused rather than redefined: a session is running, succeeded, failed or
     # crashed on exactly the same terms a run is, and CRASHED is likewise never
     # written — it is what a reader concludes from a log whose last line is not
