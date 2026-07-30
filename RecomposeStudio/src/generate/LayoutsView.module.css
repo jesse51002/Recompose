@@ -51,14 +51,11 @@
 }
 
 .head p {
-  margin: 7px 0 0;
-  max-width: 62ch;
+  margin: 6px 0 0;
   font-size: var(--fs-sm);
-  line-height: 1.6;
+  line-height: 1.5;
   color: var(--ink-3);
 }
-
-.head p b { color: var(--ink-2); font-weight: 500; }
 
 /* ── The cap ──────────────────────────────────────────────────────────────
    A slider rather than a stepper, because the demo is the DRAG: the board

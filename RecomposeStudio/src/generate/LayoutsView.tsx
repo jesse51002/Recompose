@@ -122,12 +122,10 @@ export function LayoutsView({ onBack }: { onBack: () => void }) {
             ← Fleet
           </button>
           <h1>Layouts</h1>
-          <p>
-            A theme is generated per tenant. A layout is <b>code</b>, and code
-            has to be maintained every time the platform ships — so the platform
-            caps how many exist. Tenants share an arrangement and wear their own
-            brand on it.
-          </p>
+          {/* One line. The board underneath is the explanation — a paragraph
+              above it was the same argument made twice, and the longer of the
+              two was the one nobody reads. */}
+          <p>The max number of code design branches to maintain.</p>
         </div>
 
         <div className={styles.cap}>
