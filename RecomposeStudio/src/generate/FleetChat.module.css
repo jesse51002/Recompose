@@ -146,14 +146,45 @@
 .you p { color: var(--ink-2); }
 
 /* ── The dispatch module ───────────────────────────────────────────────────
-   A card rather than a sentence: what a person wants at this moment is the two
-   facts prose is worst at — that it is running, and roughly how long. */
+   A card rather than a sentence: what a person wants here are the two facts
+   prose is worst at — whether it is running, and roughly how long.
+
+   ASKING and RUNNING are the same card in two states, and they are coloured
+   differently on purpose. Asking is neutral chrome: in this shell a hue means
+   a state, and a request is not a state — nothing is happening yet. Running
+   takes the machine-working hue the fleet's live rows already wear. */
 .dispatch {
   margin-top: 3px;
   padding: 13px 14px;
-  border: 1px solid var(--st-run-l);
+  border: 1px solid var(--sh-line-2);
   border-radius: 10px;
+  background: var(--sh-raised);
+}
+
+.dispatchOn {
+  border-color: var(--st-run-l);
   background: var(--st-run-w);
+}
+
+/* What approving it costs, said before it is approved rather than after. */
+.cost {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.cost span {
+  font: 400 var(--fs-micro) / 1 var(--mono);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.cost b {
+  font: 500 var(--fs-xs) / 1 var(--sans);
+  color: var(--ink);
 }
 
 .dispatchHead {

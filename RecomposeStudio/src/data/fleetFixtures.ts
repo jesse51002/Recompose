@@ -629,8 +629,8 @@ function script(app: FleetApp): readonly ChatTurn[] {
           who: 'agent',
           text:
             'Reproduced at 320. The name and the time share a row with no ' +
-            'min-width, so the name is what gives. It is this design only — ' +
-            'the base arrangement wraps there.',
+            'min-width, so the name is what gives. Nothing else on this ' +
+            'branch puts two labels in one row like that.',
         },
         {
           who: 'you',

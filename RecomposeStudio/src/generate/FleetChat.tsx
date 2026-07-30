@@ -12,6 +12,8 @@
 // a conversation about one design sitting BESIDE the fleet — a panel that began
 // halfway down read as a detail of the table it was floating over.
 
+import { useState } from 'react';
+
 import { cx } from '../widgets/cx';
 import { conversationFor, statusMeta, type FleetApp } from '../data/fleetFixtures';
 
@@ -26,6 +28,11 @@ export function FleetChat({
 }) {
   const meta = statusMeta(app.status);
   const { turns, dispatch } = conversationFor(app);
+  // NOTHING IS DISPATCHED UNTIL SOMEBODY SAYS SO. A coding agent bills for as
+  // long as it runs, so it is proposed and waits — the same rule the Generate
+  // page follows for the layout agent, and for the same reason. Cancel returns
+  // here rather than to a dead card, which also makes the demo repeatable.
+  const [running, setRunning] = useState(false);
 
   return (
     <aside className={styles.panel} aria-label={`Conversation about ${app.name}`}>
@@ -60,53 +67,77 @@ export function FleetChat({
         ))}
 
         {/* THE DISPATCH IS A MODULE, NOT A SENTENCE. The agent saying "I have
-            sent someone" in prose is indistinguishable from the agent saying
-            anything else, and what a person wants at that moment is the two
-            facts prose is worst at: that it is running, and roughly how long.
-            So it gets a card, a bar that is moving, and a figure. */}
+            sent someone" in prose is indistinguishable from it saying anything
+            else, and the facts a person wants at that moment are the ones
+            prose is worst at: whether it is running, and roughly how long.
+
+            IT ASKS FIRST. A coding agent is the most expensive thing this
+            product starts and it bills for as long as it runs, so the module
+            opens as a request naming exactly what it would do, and nothing
+            happens until it is approved. Cancel returns it to the request
+            rather than to a dead card. */}
         <div className={styles.msg}>
           <div className={styles.role}>Agent</div>
-          <div className={styles.dispatch}>
+          <div className={cx(styles.dispatch, running && styles.dispatchOn)}>
             <div className={styles.dispatchHead}>
-              <span className={styles.spark} />
-              <b>{dispatch.title}</b>
+              {running && <span className={styles.spark} />}
+              <b>{running ? dispatch.title : 'Permission to dispatch an agent'}</b>
             </div>
             <p>{dispatch.detail}</p>
 
-            {/* INDETERMINATE ON PURPOSE. The bar travels rather than fills,
-                because a filling bar states a percentage — and a dispatched
-                agent reports nothing back until it lands, so any percentage
-                here would be invented. */}
-            <div className={styles.bar}>
-              <i />
-            </div>
+            {running ? (
+              <>
+                {/* INDETERMINATE ON PURPOSE. The bar travels rather than
+                    fills, because a filling bar states a percentage — and a
+                    dispatched agent reports nothing back until it lands, so
+                    any percentage here would be invented. */}
+                <div className={styles.bar}>
+                  <i />
+                </div>
 
-            <div className={styles.eta}>
-              <span>working</span>
-              {/* "about", because it is an estimate and a bare number reads as
-                  a deadline the studio has no way to keep. */}
-              <b>about {dispatch.etaMinutes} minutes</b>
-            </div>
+                <div className={styles.eta}>
+                  <span>working</span>
+                  {/* "about", because it is an estimate and a bare number
+                      reads as a deadline the studio cannot keep. */}
+                  <b>about {dispatch.etaMinutes} minutes</b>
+                </div>
 
-            {/* TWO WAYS OUT OF A RUNNING AGENT, and they are different acts.
-                Cancel stops it — the agent bills for as long as it runs, so a
-                dispatch you did not mean must be reachable without waiting
-                thirty minutes for it. Expand opens the coding agent's own
-                session, because this panel is a summary of it and the moment
-                you disagree with what it is doing you want the thing itself,
-                not a paraphrase.
-
-                Expand is primary: cancelling is the rarer act and the
-                destructive one, and a destructive button should not be the
-                easiest thing to hit. */}
-            <div className={styles.dispatchActs}>
-              <button type="button" className={cx(styles.act, styles.actPri)}>
-                Expand coding agent
-              </button>
-              <button type="button" className={styles.act}>
-                Cancel
-              </button>
-            </div>
+                {/* Two ways out, and they are different acts. Expand is
+                    primary: cancelling is the destructive one, and a
+                    destructive button should not be the easiest to hit. */}
+                <div className={styles.dispatchActs}>
+                  <button type="button" className={cx(styles.act, styles.actPri)}>
+                    Expand coding agent
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.act}
+                    onClick={() => setRunning(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className={styles.cost}>
+                  <span>estimated</span>
+                  <b>about {dispatch.etaMinutes} minutes of agent time</b>
+                </div>
+                <div className={styles.dispatchActs}>
+                  <button
+                    type="button"
+                    className={cx(styles.act, styles.actPri)}
+                    onClick={() => setRunning(true)}
+                  >
+                    Approve &amp; dispatch
+                  </button>
+                  <button type="button" className={styles.act}>
+                    Not now
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
