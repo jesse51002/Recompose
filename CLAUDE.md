@@ -58,6 +58,51 @@ The reason is the product: the mockups are the surface a design agent rewrites
 freely. Every dependency they carry is a thing that can break when an agent
 rearranges a screen.
 
+## Working in a worktree: run `./scripts/setup_worktree` FIRST
+
+**Always, before anything else, in every new worktree.** A worktree gets the
+tracked files and nothing else, and three of the things this repo needs to run
+are deliberately untracked — so a fresh one type-checks, tests and builds
+perfectly while being unable to actually run. Each gap fails late and reads as a
+code fault:
+
+| Missing | How it fails |
+|---|---|
+| `.env` | The API dies **on import** with `google_fonts_api_key Field required`. Looks like a broken settings model. |
+| `apps/*/*/` | 3.3 GB of generated runs. The API starts fine and **404s every design**, so the studio comes up with an empty catalogue and no error anywhere. |
+| `APPS_ROOT` | Not a file — a setting. Unset, a worktree **writes new themes into itself**, where they are gitignored, so removing the worktree destroys them. Old themes survive and new ones vanish. |
+| `node_modules` | Six subsystems, each installing its own. |
+
+The script copies the keys, symlinks the runs from the main checkout (per RUN,
+because `apps/<app>/app.yaml` is tracked and linking the app directory would
+shadow it — the same shape as the ignore rule), and installs every subsystem.
+It is idempotent, so re-run it whenever main generates more themes.
+
+```bash
+./scripts/setup_worktree                # keys + runs + install
+./scripts/setup_worktree --no-install    # keys + runs only
+```
+
+Two of those are shared with the main checkout by design: the runs are large,
+read-only to everything that serves them, and a copy would go stale the moment
+main generated another. `.env` is COPIED rather than linked, because an editor
+writing through a symlink would edit the main checkout's keys.
+
+**`APPS_ROOT` is the one place a worktree gives up its isolation, deliberately.**
+`apps_root` otherwise resolves from the config file's own location, so an API
+served out of a worktree both reads and writes that worktree's `apps/` — and a
+run costs about $1.50 and a few minutes to make, is gitignored, and dies with
+the worktree. The script points it at main so a theme generated from a worktree
+is kept. The cost is that a worktree writes into the main checkout's `apps/`;
+that is the trade, and it is the right way round, because losing a paid artifact
+is worse than sharing a directory that everything else treats as read-only.
+
+The ThemeTree **CLI** is unaffected and still resolves its own `--out-root` from
+the package location, which is why the run symlinks are still made: `make -C
+ThemeTree smoke` and the expand/regen scripts read the worktree's own `apps/`.
+Re-run the script after generating through the UI if you want the new run
+visible to those too.
+
 ## Each subsystem owns its own dependencies
 
 Every subsystem stands alone: it declares what it depends on and installs on its

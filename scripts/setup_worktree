@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+#
+# Make a fresh git worktree actually runnable.
+#
+# A worktree gets the tracked files and nothing else, and three of the things
+# this repo needs to run are deliberately untracked. Each one fails LATE and
+# confusingly rather than at checkout:
+#
+#   .env          Provider keys. Missing, the API dies on import with a pydantic
+#                 "google_fonts_api_key Field required" — which reads as a code
+#                 fault rather than a missing file.
+#   apps/*/*/     Generated runs: 3.3 GB of themes and PNGs. Missing, the API
+#                 starts fine and 404s every design, so the studio comes up with
+#                 an empty catalogue and no error anywhere.
+#   node_modules  Six subsystems, each installing its own.
+#
+# It is idempotent — safe to re-run whenever main gains new runs.
+#
+# Usage:  ./scripts/setup_worktree        (from anywhere inside the worktree)
+
+set -euo pipefail
+
+here=$(git rev-parse --show-toplevel)
+# A worktree's .git is a FILE pointing at the main checkout's .git; the common
+# dir is that shared .git, so its parent is the main checkout.
+common=$(git rev-parse --git-common-dir)
+main=$(cd "$(dirname "$(cd "$common" && pwd)")" && pwd)
+
+if [ "$here" = "$main" ]; then
+  echo "This is the main checkout, not a worktree — nothing to set up."
+  exit 0
+fi
+
+echo "worktree: $here"
+echo "main:     $main"
+
+# --- 1. The keys ------------------------------------------------------------
+# COPIED rather than symlinked: an editor writing to a symlinked .env would
+# write through into the main checkout, and a worktree exists to be isolated.
+if [ -f "$here/.env" ]; then
+  echo "  .env            already here"
+elif [ -f "$main/.env" ]; then
+  cp "$main/.env" "$here/.env"
+  echo "  .env            copied from main"
+else
+  echo "  .env            NOT FOUND in main — the API will not start" >&2
+fi
+
+# --- 1b. Generated themes go to MAIN, not into the worktree ----------------
+# `apps_root` defaults to a path derived from the config file's own location,
+# so an API served out of a worktree writes new runs INTO the worktree — where
+# `apps/*/*/` is gitignored, so removing the worktree destroys them. Old themes
+# survive (they are symlinked below) and new ones vanish, which is the worst
+# shape a surprise can have: a run costs about $1.50 and a few minutes.
+#
+# Pointing it at main means a theme generated from a worktree is kept. The
+# trade is deliberate and worth stating: a worktree now writes into the main
+# checkout's apps/, which is the one place its isolation is given up.
+if [ -f "$here/.env" ] && ! grep -q '^APPS_ROOT=' "$here/.env"; then
+  printf '\n# Added by scripts/setup_worktree: keep generated themes when this\n# worktree is removed. See the root CLAUDE.md.\nAPPS_ROOT=%s/apps\n' \
+    "$main" >> "$here/.env"
+  echo "  APPS_ROOT       -> $main/apps (so new themes survive)"
+elif [ -f "$here/.env" ]; then
+  echo "  APPS_ROOT       already set"
+fi
+
+# --- 2. The generated runs --------------------------------------------------
+# SYMLINKED rather than copied: 3.3 GB, read-only to everything that serves
+# them, and a copy would go stale the moment main generates another.
+#
+# Per RUN rather than per app, because `apps/<app>/app.yaml` is tracked and
+# linking the app directory itself would shadow it. That is exactly the shape
+# of the ignore rule (`apps/*/*/`), which is not a coincidence.
+linked=0
+for app_dir in "$main"/apps/*/; do
+  app=$(basename "$app_dir")
+  [ -d "$here/apps/$app" ] || continue
+  for run_dir in "$app_dir"*/; do
+    run=$(basename "$run_dir")
+    target="$here/apps/$app/$run"
+    # -e follows the link and -L catches a dangling one, so together they mean
+    # "something is already at this path" for both a real dir and a stale link.
+    if [ -e "$target" ] || [ -L "$target" ]; then
+      continue
+    fi
+    ln -s "${run_dir%/}" "$target"
+    linked=$((linked + 1))
+  done
+done
+echo "  apps/*/*/       $linked run(s) linked"
+
+# --- 3. Dependencies --------------------------------------------------------
+if [ "${1:-}" = "--no-install" ]; then
+  echo "  node_modules    skipped (--no-install)"
+else
+  echo "  installing subsystems…"
+  make -C "$here" install
+fi
+
+echo
+echo "Ready. Start it with:"
+echo "  make -C RecomposeAPI dev        # the read API on 8001"
+echo "  make -C RecomposeStudio dev     # the studio on 8080"

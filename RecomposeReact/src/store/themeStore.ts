@@ -50,6 +50,20 @@ export interface ThemeStoreOptions {
    * ../runtime.ts for why it stays on the signature.
    */
   livePreview?: boolean;
+  /**
+   * Whether this store participates in the browser's REMEMBERED selection.
+   *
+   * True (the default) is an app: the visitor's last pick outranks the seed on
+   * boot and every pick is written back, which is what makes a choice survive
+   * a reload.
+   *
+   * False is a PREVIEW — a store whose design is dictated by whoever mounted
+   * it. It ignores the stored selection and never writes one. Without this, two
+   * previews of different designs on one page would both boot into whichever
+   * design the visitor last picked, and each would overwrite the other's
+   * selection as it loaded. The before/after comparison is exactly that case.
+   */
+  sticky?: boolean;
 }
 
 const NO_KEYS: readonly string[] = Object.freeze([]);
@@ -98,6 +112,9 @@ export class ThemeStore {
    */
   readonly livePreview: boolean;
 
+  /** See `ThemeStoreOptions.sticky`. */
+  private readonly sticky: boolean;
+
   constructor(client: ThemeApiClient, options: ThemeStoreOptions = {}) {
     this.client = client;
     this.expectedColors = options.expectedColors ?? NO_KEYS;
@@ -106,6 +123,7 @@ export class ThemeStore {
     this.expectedText = options.expectedText ?? NO_KEYS;
     this.expectedIcons = options.expectedIcons ?? NO_KEYS;
     this.livePreview = options.livePreview ?? false;
+    this.sticky = options.sticky ?? true;
   }
 
   /** The loaded theme, or `null`. */
@@ -146,10 +164,16 @@ export class ThemeStore {
    * Never throws.
    */
   initialize = async (): Promise<void> => {
-    const cached = readLastGood();
-    if (cached !== null) this.tryAdopt(cached);
+    // The last-good copy is a fast first paint for an app. For a preview it is
+    // the wrong design entirely — whatever the visitor last looked at — so a
+    // non-sticky store starts bare and waits for its own fetch.
+    if (this.sticky) {
+      const cached = readLastGood();
+      if (cached !== null) this.tryAdopt(cached);
+    }
 
-    this.designId = readSelectedDesignId() ?? this.client.designId;
+    // A preview is told what to show; only an app inherits a previous pick.
+    this.designId = (this.sticky ? readSelectedDesignId() : null) ?? this.client.designId;
 
     try {
       const json = await this.client.fetchOutput(this.designId);
@@ -177,8 +201,10 @@ export class ThemeStore {
       const raw = JSON.stringify(json);
       if (!this.tryAdopt(raw)) return false;
       this.designId = designId;
-      writeLastGood(raw);
-      writeSelectedDesignId(designId);
+      if (this.sticky) {
+        writeLastGood(raw);
+        writeSelectedDesignId(designId);
+      }
       this.warnMissingSlots();
       this.notify();
       this.warmAssets();

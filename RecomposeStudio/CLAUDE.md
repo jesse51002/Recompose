@@ -8,6 +8,7 @@ The product, as three pages walked in order:
 | `generate` | customer | **Generate** — answer an interview, watch the design get made. Real. |
 | `fleet` | admin | **Fleet** — every customer app and what an agent is doing to it. Demo-ware. |
 | `layouts` | admin | **Layouts** — how few arrangements dress every tenant. Demo-ware. |
+| `stage` | — | **Not a page.** One phone, driven by the URL, loaded per side by the Generate page's Before/after pane. |
 
 **Layouts is not in the switcher.** It is reached from the fleet's header,
 because it answers a question the fleet raises — this many designs, so how many
@@ -239,6 +240,63 @@ problem. Pinning is what keeps this a zero-backend-change frontend.
   comparing two numbers is reading. `minmax(0, 1fr)` on both axes of BOTH grids is
   load-bearing: `1fr` alone floors at content size, which is how a grid that
   should shrink overflows instead.
+- **Before/after is a PANE of Generate, not a page.** It is the same design
+  being looked at next to another one, so it sits in the canvas pane switch
+  beside Mockup, Inspect and Brief rather than in the nav as a fourth peer.
+- **Only theme and layout are per side; everything else is shared.** The flow,
+  the screen and the scroll offset are one value driving both frames, so the
+  only difference on screen is the difference being demonstrated. A comparison
+  whose halves sit on different screens looks exactly like a working one until
+  you read it, which makes it worse than none. The flow switch therefore sits
+  ABOVE both sides, and one **Edit** button per side opens theme and layout
+  together — they are chosen for the same reason, so they are chosen in one
+  place.
+- **The route never goes in the iframe `src`.** React writes `src` whenever the
+  prop changes and writing `src` NAVIGATES the frame, so carrying the screen in
+  the URL reloaded both documents on every tap — the app blinking in and out.
+  The current screen is posted in on `load` instead, and a stage re-mounts only
+  for a route that did NOT come from itself.
+- **The scroll sync re-reads its refs; it must never capture the frames.**
+  Re-keying an iframe makes React discard the element and mount a new one, so a
+  captured frame is a corpse — which is why the sync used to die the first time
+  a layout changed and never come back, switching back included. A 500ms poll
+  re-reads `ref.current`, and a cheap `isConnected` + still-scrollable guard
+  makes the common tick two property reads rather than a DOM scan. It also picks
+  the scroller with the MOST room rather than the first match, so a different
+  app cannot hand back some minor inner scroller instead of the screen body.
+- **`useStylesPager` is capped at `pageSize: 100`** — `limit` above that is a
+  422 from the API, and the pager reports a 422 the same way it reports the API
+  being down, so asking for 200 read on screen as "the catalogue is not
+  reachable" with the catalogue perfectly reachable.
+- **The screen syncs by postMessage in both directions.** A stage reports every
+  move up and accepts one back; `useSyncedRoute` relays it to whichever frame
+  did not send it. Guarding on `event.source` rather than a flag is what stops
+  the echo — a frame is never told to go where it just went, which would remount
+  the screen under the finger that tapped it. The iframe key deliberately
+  excludes the route: theme and layout changes must reload the document, but
+  re-keying on the route would throw it away on every tap and lose the scroll
+  position with it.
+- **The before/after pane renders each side in an IFRAME, and that is forced.**
+  The theme runtime is a module singleton on purpose, and the mockups lean on
+  it deliberately — `showcaseTokens.ts` resolves its colours through the
+  NON-HOOK resolvers (`themeColor`, `themePaletteEntry`, `themeFontFamily`) so a
+  token module can resolve outside React. Those read the singleton and can never
+  see a React context, so a `ThemeScope` provider would have left both halves on
+  one theme with no sign of it. A separate document gets its own module instance
+  and its own store, which makes two live themes a property of the browser. Same
+  origin is also what makes the scroll sync reachable.
+- **A stage is not sticky.** `ThemeProvider` takes `sticky={false}` there, added
+  to the runtime for this: a sticky store prefers the visitor's remembered pick
+  over the design it was told to show and writes its own pick back, so two
+  previews would both boot into whichever theme was last chosen in the studio
+  and would overwrite each other's selection as they loaded.
+- **The scroll sync matches PIXELS, not percentages.** The two screens are rarely
+  the same height, and a proportional sync would mean one gesture showed you
+  different parts of each design — the one thing a comparison must not do. The
+  short side reaches its end and stops, which the page says out loud. The
+  scroller is found by searching for the first element taller than itself with
+  `overflow-y: auto`, because the mockups are an island this package must not
+  reach into and their scroller is a hashed CSS-module class.
 - **Fail visible.** A missing artifact, a failed run, an empty catalog: show the
   state. A blank pane that could mean "loading" or "broken" is the one failure
   mode that wastes the most time here.

@@ -34,6 +34,12 @@ const POV: Readonly<Record<AppView, string>> = Object.freeze({
   // question the fleet raises — but it is still the platform's own view, so
   // the chip has to say so while it is open.
   layouts: 'Admin',
+  // A pane of the Generate page rather than a page (see GenerateView), but the
+  // map is total over AppView so the route still needs a point of view.
+  compare: 'Customer',
+  // Never rendered with the shell — the stage returns before it (see App.tsx)
+  // — but the map is total over AppView, so it needs an entry.
+  stage: 'Admin',
 });
 
 export function TopBar({
