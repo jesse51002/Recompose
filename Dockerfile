@@ -1,4 +1,4 @@
-# ThemeService — read-only theme catalog + asset API (AWS App Runner target).
+# Backend — read-only theme catalog + asset API (AWS App Runner target).
 #
 # Serves the theme catalog + design detail (the per-run output.yaml) over a
 # GET-only FastAPI. Image/icon BYTES are served from S3/CloudFront, NOT here, so

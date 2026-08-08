@@ -36,7 +36,7 @@ class Settings(BaseSettings):
 
     # Curated icon-set catalog: the directory holding one subdir per set
     # (<set_id>/set.yaml + icons/*.svg). Defaults to the repo-shipped
-    # <CustomizationService>/assets/icon_sets/ (resolved relative to this
+    # assets/icon_sets/ at the repo root (resolved relative to this
     # file so cwd doesn't matter); override to point at an alternate library.
     icon_sets_dir: Path = Path(__file__).resolve().parents[2] / "assets" / "icon_sets"
 

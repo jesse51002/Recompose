@@ -214,7 +214,7 @@ built.
 read API, and from a git worktree that takes one setup step first:
 
 ```bash
-/var/home/jm/Documents/Recompose/codebase/setup_worktree_env.sh   # once per worktree
+/var/home/jm/Documents/Recompose/setup_worktree_env.sh   # once per worktree
 make api                                                          # then :8001
 ```
 

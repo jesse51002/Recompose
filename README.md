@@ -565,7 +565,7 @@ App-agnostic by construction: the role list and any per-app overrides live in
 ## Shipped
 
 ```
-codebase/CustomizationService/
+Recompose/
 ├── schema/              # Pydantic contracts for the YAMLs
 │   ├── app_format, customization, primitives, slots,
 │   │     color_role, color_mode, complexity
