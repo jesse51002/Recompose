@@ -51,22 +51,7 @@ This file itself is a living document — keep it in sync with how the vault and
 
 ## Point at where, not at how many
 
-**Never write a pointer that has to be re-counted or re-listed to stay true.** "Read these four", "the two pivots", "19 concept files", a hand-copied tree of what a folder contains, a parenthetical listing five of the strategy docs — each is wrong the moment something is added, and nothing forces a reader to notice. This is how docs go stale even when nobody writes anything false.
-
-Write the location and the rule for finding the thing instead:
-
-- ✅ "Work backwards from the newest doc in `pivots/`."
-- ❌ "Read these four first," followed by a numbered list.
-- ✅ "`docs/Concepts/_Index.md` is the authoritative listing."
-- ❌ a copy of the concept tree living inside another file.
-- ✅ "the strategy docs in `docs/Strategy/`"
-- ❌ "`Strategy/Recompose_Summary.md`, `Strategy/Product_Boundaries.md`, `Strategy/Customer_ICP.md`, …"
-
-**One canonical location may hold the full list; every other doc points at it rather than copying it.** Name a specific only when the specific is the point — a genuinely load-bearing doc that must be read first, a filename-format example, the single file that owns a rule.
-
-This does not apply to counts inside a doc's own argument ("two things this boundary costs," followed by the two things) or to cited figures in research notes. Those are content, not navigation: they are edited alongside the thing they describe, so they cannot silently drift away from it.
-
-Applies to every doc in the vault, to every `CLAUDE.md`, to every skill, and to `PRODUCT.md`.
+**Never write a pointer that has to be re-counted or re-listed to stay true** — "read these four", "the two pivots", a hand-copied tree of what a folder contains. Write the location and the rule for finding the thing instead. The full rule, with examples and the exceptions, is in `docs/CLAUDE.md`; it binds this file, every subsystem `CLAUDE.md`, every skill, and `PRODUCT.md` — not just the vault.
 
 ## Context (EXTREMELY IMPORTANT)
 
