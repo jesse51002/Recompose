@@ -85,6 +85,10 @@ What to know about the state of the vault:
 
 A local [gbrain](https://github.com/garrytan/gbrain) brain indexes the vault so a question can be asked by meaning rather than by exact string. PGLite at `~/.gbrain/`, embeddings `voyage:voyage-3-large` at 1024 dimensions, local to this machine — nothing is uploaded. One source, `default`, holding `docs/` — 89 pages.
 
+**Reach for `gbrain think` whenever you are trying to work something out about this project** — what was decided and why, whether a claim is supported, what a doc means, where a position came from, what is still open. Do it *before* reading a pile of docs by hand: it reads across ~40 pages at once, cites every claim, and names what the vault does not answer. Reading five documents to reconstruct an argument it will hand you in one call is wasted effort.
+
+It is especially worth a call before writing anything durable — a pivot, an office hours doc, a strategy edit — because the **Conflicts** section is the only thing here that catches the vault contradicting itself, and that is exactly the failure a new doc entrenches.
+
 **Use the right command — they are three different systems, and gstack's own docs get this wrong.**
 
 ```bash
@@ -105,6 +109,29 @@ Two things `think` does that retrieval structurally cannot:
 Roughly $0.15 per call on Opus 5 and ~30s. Use `query` when a ranked list of passages is genuinely all you want.
 
 **Phrase questions the way the docs argue, not as labels.** "What happens when an agent cannot satisfy the accept condition" returns the error-budget paragraph at 1.36; "what is the error budget" does not retrieve it at all, though it is the same paragraph. The vault argues in prose and rarely uses its own terms as headings.
+
+### Keeping the brain current
+
+The vault is registered as the **`vault`** source with a local path, so it syncs incrementally:
+
+```bash
+gbrain sync --source vault        # ~3s when nothing changed
+gbrain extract links --source db  # rebuild edges after content changes
+```
+
+**Sync follows git commits, not the working tree.** Its checkpoint is a commit SHA, so an uncommitted edit is invisible to it — commit first, then sync. That falls out of the commit-every-change rule above rather than fighting it.
+
+It previews cost before spending and refuses to surprise you: *"~4,268 new tokens … est. $0.00 on voyage-3-large. Below cost gate floor ($0.5), proceeding."*
+
+For hands-off operation, `gbrain sync --watch [--interval N]` loops, and `gbrain autopilot --install` runs it as a daemon. `gbrain sources status` is the health dashboard — sync lag, embed coverage, failures, queue depth.
+
+**The `default` source is deliberately isolated and must stay that way.** It holds 89 stale pages from before the vault was path-registered, it cannot be given a path, and it cannot be removed (*"it backs the pre-v0.17 brain"*). Isolating it excludes it from search; federating it again would double every result.
+
+**Keeping gbrain itself current** is one command, since the skills are symlinked out of the clone rather than copied:
+
+```bash
+git -C ~/gbrain pull && gbrain-skills-sync
+```
 
 ### Which model, and who pays
 
