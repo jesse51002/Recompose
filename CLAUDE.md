@@ -83,39 +83,45 @@ What to know about the state of the vault:
 
 ## GBrain: semantic search over the vault
 
-A local [gbrain](https://github.com/garrytan/gbrain) brain indexes the vault, so a question can be asked by meaning rather than by exact string. Engine is PGLite at `~/.gbrain/`, embeddings are `voyage:voyage-3-large` at 1024 dimensions, local to this machine — nothing is uploaded.
-
-**One source, `default`, and it holds prose only:** office hours, pivots, research, the strategy docs at the vault root, and `Industries/`. That is the material this exists for — roughly 155k words that do not fit in a context window, most of it history that conventions forbid rewriting.
+A local [gbrain](https://github.com/garrytan/gbrain) brain indexes the vault so a question can be asked by meaning rather than by exact string. PGLite at `~/.gbrain/`, embeddings `voyage:voyage-3-large` at 1024 dimensions, local to this machine — nothing is uploaded. One source, `default`, holding `docs/` — 89 pages.
 
 ```bash
 gbrain search "<terms>"      # semantic
 gbrain query "<question>"    # question-answering
 ```
 
-**What it is good at is discovery, not lookup.** It reliably tells you *which* documents argue a thing; it does not reliably return *the* passage. Measured on ten questions with known answers, roughly half land on the right document. Phrasing moves results more than it should — "what happens when an agent cannot satisfy the accept condition" returns the error-budget passage, while "what is the error budget" does not. **Treat a hit as a pointer to go read the doc, never as the answer itself.**
+**It is a discovery tool, not a lookup tool.** It reliably names *which* documents argue a thing; it does not reliably return *the* passage. On ten questions with known answers roughly half land on the right document, and phrasing moves results more than it should — "what happens when an agent cannot satisfy the accept condition" returns the error-budget paragraph; "what is the error budget" does not, though it is the same paragraph. **Treat every hit as a pointer to go read the doc.**
 
-**Two things are deliberately NOT indexed.** Both were measured decisions, not oversights:
+**Code is deliberately not indexed.** `code-def` / `code-refs` / `code-callers` cannot work here: the active schema pack `gbrain-base-v2` **dropped the `code` page type** that its predecessor `gbrain-base` declared, so nothing emits code symbols and `resolve_symbol_edges` has nothing to resolve. Without that, indexing code buys semantic search over a tree Grep already searches exactly and never staler than the working copy — while needing a manual re-sync on every commit. Grep is the tool for code here.
 
-- **Code.** The symbol graph that would justify it (`code-def`, `code-refs`, `code-callers`) does not work on this schema pack, so indexing code buys semantic search over a tree that Grep already searches exactly and never staler than the working copy. Code changed on every commit and would have needed a manual re-sync across eight sources. Grep is the tool for code here.
-- **`Concepts/`.** Concept files are short by convention — median 307 words — so their embeddings are dominated by the title and they won any topically adjacent query on the heading alone, crowding out the substantive doc. For a definition, read `docs/Concepts/_Index.md`: 1,143 words, one line per concept, complete. A glossary is a lookup table, not a retrieval target.
+### The link graph does not work, and cannot without a change
 
-**To refresh after meaningful vault changes**, re-import and then strip the concepts again — an import re-adds them, so the deletion is part of the loop, not a one-off:
+gbrain's graph reranking signals are inert on this vault, and the reason is structural rather than a misconfiguration. **Obsidian wikilinks address by basename (`[[Orchestrator]]`); gbrain pages are keyed by full path slug (`concepts/product/mechanisms/orchestrator`).** A bare `orchestrator` resolves to nothing, so link extraction reports:
 
-```bash
-gbrain import docs
-find docs/Concepts -name '*.md' | sed 's|^docs/||; s|\.md$||' \
-  | tr '[:upper:]' '[:lower:]' | xargs -rn1 gbrain delete
+```
+Links: created 4 from 89 pages
+Skipped 567 candidate(s) whose target page doesn't exist
 ```
 
-Five things that are true here and not in gbrain's general documentation. Each one cost a wrong turn to find:
+567 of 571 edges dropped. The `aliases:` in concept frontmatter are semantic phrasings, not basenames, so they do not bridge it. Until slugs and wikilink targets agree, `gbrain extract` is not worth running and the graph signals in search score against an empty edge table.
 
-- **`gbrain import` only ingests markdown.** Pointing it at a code directory silently imports the `.md` files in it and nothing else — it reports `success` while importing zero source files. Code needs `gbrain sync --strategy code`, a different walker entirely.
-- **`--source-id <id>` does not create the source.** Importing into a source that does not exist fails every file with a foreign key violation and still exits `success`. Run `gbrain sources add <id> --path <dir>` first, and check `page_count` rather than trusting the exit status.
-- **You cannot exclude a subdirectory at import time.** `docs/` is inside a git tree, so gbrain enumerates through `git ls-files` and honours `.gitignore` — not `.gbrainignore`. Since `Concepts/` must stay tracked, the only route is import-then-delete.
-- **A new source is `isolated` until you federate it.** `sources add` defaults to isolated, meaning it is only searched when named with `--source`; a plain search silently ignores it and it reads as a missing index. Run `gbrain sources federate <id>`.
-- **The embedding model cannot be changed in place.** `gbrain config set embedding_model` is rejected outright: the field sizes the schema, so writing it to the DB would be a silent no-op. Switching means moving `~/.gbrain/brain.pglite` aside, re-running `gbrain init`, and reimporting.
+This also settles a tempting idea: concepts are the sole legal target of a wikilink, so they *would* be the graph's hub nodes — but they cannot be, for the reason above. Keep or drop them on retrieval grounds alone.
 
-Never point a code source at the repo root and do not run `/sync-gbrain`: the code walk prunes by directory *name* and never consults `.gitignore`, so at the root it descends into `apps/` — 3.4 GB of generated runs. PGLite is also single-process, so a live `gbrain serve` blocks any import.
+### Things that are true here and not in gbrain's general documentation
+
+Each cost a wrong turn to find.
+
+- **`gbrain import` only ingests markdown.** Pointed at a code directory it silently imports the `.md` files and nothing else, reporting `success` while importing zero source files.
+- **`--source-id <id>` does not create the source.** Importing into one that does not exist fails every file on a foreign key violation and still exits `success`. Check `page_count`, never the exit status.
+- **You cannot exclude a subdirectory at import time.** `docs/` is inside a git tree, so gbrain enumerates via `git ls-files` and honours `.gitignore`, not `.gbrainignore`. Excluding anything tracked means import-then-`gbrain delete`.
+- **The embedding model cannot be changed in place.** `gbrain config set embedding_model` is rejected outright — the field sizes the schema, so a DB write would be a silent no-op. Switching means moving `~/.gbrain/brain.pglite` aside, re-running `gbrain init`, and reimporting.
+- **The LLM chunker is not reachable.** `src/core/chunkers/llm.ts` exists and would split on topic shifts via Haiku, but nothing calls it — markdown import always uses the recursive chunker, and there is no flag or config key. Chunking is therefore not a lever available today.
+- **Page types are inferred and frequently wrong.** `Journey.md` carries no `type:` and was typed `concept`; 38 of 89 pages are `concept` and 31 `note`. Do not build anything on `--type` filtering.
+- **A new source is `isolated` until federated.** A plain search silently ignores it, which reads as a missing index. Run `gbrain sources federate <id>`.
+
+Never point a code source at the repo root and do not run `/sync-gbrain`: the code walk prunes by directory *name*, never consults `.gitignore`, and would descend into `apps/` — 3.4 GB of generated runs. PGLite is single-process, so a live `gbrain serve` blocks any import.
+
+**To refresh after meaningful vault changes:** `gbrain import docs` (idempotent — dedupes on content hash).
 
 ## Subdirectory CLAUDE.md files
 
