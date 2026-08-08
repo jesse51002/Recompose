@@ -113,6 +113,25 @@ A concept file is under a screen: frontmatter with `tags` and `aliases`, then a 
 
 **Unresolved links in the carried historical docs are expected.** The gym-era concepts stayed behind in CombatDen — do not recreate them. Read them in `/var/home/jm/Documents/CombatDen/docs` if the gym-era meaning is genuinely needed.
 
+## Skills for vault work
+
+Reach for these rather than doing the work longhand. Each is invoked by name.
+
+- **`office-hours`** — the diagnostic session that produces an `Office_Hours/` doc: forcing questions, options with tradeoffs, what shook, the assignment. Use when a decision is genuinely open. Read the prior sessions first; a session should not relitigate settled ground.
+- **`idea-lineage`** — traces one idea through the vault: first mention, best articulation, reversals, contradictions, abandoned branches, and the current live version. The right tool when a position feels unstable or you suspect it was reversed and the docs never caught up.
+- **`concept-synthesis`** — dedupes and synthesizes concept stubs into a tiered map, tracing how an idea evolved across sources. For when `Concepts/` has drifted into overlapping or half-formed entries.
+- **`strategic-reading`** — reads a book, article or case study *through* a specific problem you are facing and returns an applied playbook. Not a summary tool; give it the problem, not just the source.
+
+Anything that changes the gbrain setup — reindexing, sources, models, the schema pack, a search returning nothing — is **`gbrain-maintenance`**.
+
+## Every folder is a taxonomy entry
+
+**A page must live in a folder, and every folder must map to a page type.** When you add a top-level folder to the vault, add its prefix to the schema pack in the same change — the `gbrain-maintenance` skill has the command. A folder with no prefix gets typed by guesswork, which is how `Journey.md` once came back typed as a concept.
+
+**Never write a page into the brain that has no file in `docs/`.** Several gbrain skills offer to — `capture`, `idea-ingest`, `enrich`, `eiirp` all write pages directly. Here the brain is a mirror of the filesystem, not a store in its own right: a brain-only page is in no folder, in no git history, invisible in Obsidian, and gone on the next reimport. If a skill produces something worth keeping, it lands in `docs/` as a file and gets committed.
+
+The point is that nothing lives somewhere you cannot find it by opening a folder. The brain makes the vault searchable; it never becomes the place things are kept.
+
 ---
 
 # Working with the vault

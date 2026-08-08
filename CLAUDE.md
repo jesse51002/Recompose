@@ -43,6 +43,10 @@ When we do something repeatable that's worth capturing as a skill (a reusable wo
 
 **This file is for how to work here, not what to know.** CLAUDE.md holds working conventions, rules, and behavioral guidance — how to operate in this repo. Deep domain knowledge (frameworks, playbooks, reference material) belongs in a skill, not here. If a section is teaching a body of knowledge rather than telling you how to work, move it to a skill.
 
+## Reviewing a plan before building it
+
+**`plan-eng-review`** locks the execution plan — architecture, data flow, edge cases, test coverage, performance — walking the issues interactively with opinionated recommendations. Use it on anything non-trivial before writing code, not after. `productionalize` is the hard part of this product and the place a bad plan is most expensive.
+
 ## CLAUDE.md is a living document
 
 Every CLAUDE.md in this repo is a living document — exactly like a skill, it must track reality. Whenever code genuinely diverges from what a CLAUDE.md says (a new live backend call, a renamed system, an added dependency, a rule the code has outgrown on purpose, an architecture change), **update that CLAUDE.md in the same change** so the doc and the code never drift apart. Never leave one stale: a stale rule produces false "violation" findings in review and misleads the next contributor. If a documented rule is what diverged, fix the doc to match the new reality; if the divergence is a mistake, fix the code. Either way, doc and code must agree when you are done.
