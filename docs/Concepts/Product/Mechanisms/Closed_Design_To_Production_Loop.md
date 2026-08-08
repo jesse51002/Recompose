@@ -20,7 +20,7 @@ Handoff is the thing being removed, and it is where the cost lives. Every human 
 - `pivots/2026-07-27-11-customization-engine-is-the-company.md`
 - `Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md` (§6, P6, P7)
 - `YC_Application_F26.md` (answers 2 and 3)
-- `codebase/README.md`
+- `README.md`
 
 ## Related concepts
 

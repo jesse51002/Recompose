@@ -25,7 +25,7 @@ The application is frozen; the demo is where the record gets corrected. Each row
 |---|---|---|
 | Code delivery connects to their repo; redesigns arrive as pull requests (answers 2, 5) | **We never write to their code.** They grant read access; we keep our own tokenized fork and derive every design from it. No PR, no write access, no review burden. | The largest adoption objection was an external system operating inside their codebase. The fork model removes the premise instead of answering it. |
 | SDKs across Flutter, React Native, Swift, Kotlin (answer 5) | The multi-language SDK roadmap **is not the plan.** Whether the runtime SDK survives at all is open — if layout is baked into a fork, the assets could be too. | "There is nothing to integrate" satisfies adopt-without-changing-your-architecture more completely than an SDK does. |
-| 80 brand themes (answers 2, 3) | **76.** | 76 app folders on disk, 76 completed `output.yaml`, and `codebase/README.md` says 76. |
+| 80 brand themes (answers 2, 3) | **76.** | 76 app folders on disk, 76 completed `output.yaml`, and `README.md` says 76. |
 | Mighty Pro charges $1,167/month (answer 6) | **"$1,000+/month"** — a range, never the precise figure. | Three conflicting figures across sources, none official. Mighty Pro is sales-led and does not publish, so more searching produces a fourth number rather than an answer. |
 | The founder video's "90% cheaper" | Do not repeat it. Current thinking is **per design, per month** — roughly $400 against ~$150 maintenance. | It contradicted answer 8's own $100/month figure, which that answer's notes call the platform's COGS rather than the end price. |
 

@@ -21,11 +21,11 @@ The split is per-app because the knowledge is: general rules travel to any mock,
 
 ## Shows up in
 
-- `codebase/JsxMockUps/.claude/skills/production-to-mockup/SKILL.md`
-- `codebase/JsxMockUps/.claude/skills/mockup-redesign-general/SKILL.md`
-- `codebase/JsxMockUps/.claude/skills/mockup-redesign-combatden/SKILL.md`
-- `codebase/JsxMockUps/.claude/skills/mockup-qa/SKILL.md`
-- `codebase/JsxMockUps/CLAUDE.md`
+- `JsxMockUps/.claude/skills/production-to-mockup/SKILL.md`
+- `JsxMockUps/.claude/skills/mockup-redesign-general/SKILL.md`
+- `JsxMockUps/.claude/skills/mockup-redesign-combatden/SKILL.md`
+- `JsxMockUps/.claude/skills/mockup-qa/SKILL.md`
+- `JsxMockUps/CLAUDE.md`
 
 ## Related concepts
 

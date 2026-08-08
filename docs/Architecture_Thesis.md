@@ -29,7 +29,7 @@ The gate has never been built or run. See T11 in the office hours doc.
 
 The architecture is explicitly two systems with a boundary between them, and the boundary is where determinism runs out.
 
-**Part one — the asset pipeline.** An app-agnostic dependency DAG resolves palette, typography, copy, icons, and images. Colour resolves four base OKLCH slots in one LLM call with WCAG AA enforced as an accept condition and the rest of the palette derived deterministically in Python; fonts are validated live against the Google Fonts catalogue; copy is length-bounded per slot; icons are matched against a curated set with generation as fallback. Coherence is achieved **structurally** — the shared derived palette feeds every image prompt and `depends_on` edges fold one slot's look into another's — not by a critique loop. The graph is validated before any paid call, cost per run is bounded and known, and a failed node skips only its transitive dependents. See `codebase/README.md`.
+**Part one — the asset pipeline.** An app-agnostic dependency DAG resolves palette, typography, copy, icons, and images. Colour resolves four base OKLCH slots in one LLM call with WCAG AA enforced as an accept condition and the rest of the palette derived deterministically in Python; fonts are validated live against the Google Fonts catalogue; copy is length-bounded per slot; icons are matched against a curated set with generation as fallback. Coherence is achieved **structurally** — the shared derived palette feeds every image prompt and `depends_on` edges fold one slot's look into another's — not by a critique loop. The graph is validated before any paid call, cost per run is bounded and known, and a failed node skips only its transitive dependents. See `README.md`.
 
 **Part two — the layout agent.** Layout is the surface no slot inventory can express, so an agent edits it under the invariant above. As of `pivots/2026-07-28-01-agentic-editing-all-in.md` this half is specified rather than merely named, and it is four steps:
 
@@ -79,7 +79,7 @@ The honest position: never touching their code solved the codebase objection and
 
 ## Vertical-agnostic by intent, not just by construction
 
-The pipeline has always been app-agnostic **by construction**: nothing app-specific lives in Python, the slot inventory and `depends_on` edges live in `apps/<app_id>/` YAML, and a new app is one new folder rather than a code change (`codebase/CLAUDE.md`).
+The pipeline has always been app-agnostic **by construction**: nothing app-specific lives in Python, the slot inventory and `depends_on` edges live in `apps/<app_id>/` YAML, and a new app is one new folder rather than a code change (`CLAUDE.md`).
 
 What changed is that this stopped being a nice property of the implementation and became **the shape of the company**. There is no chosen vertical. The buyer is any multi-tenant white-label platform, in any vertical, where **every tenant already has their own app** — Subsplash, Passion.io, Q2, Banno, Alkami and their peers — because the population a redesign can act on equals their tenant count rather than the 0.1–3% who take a branded-app upgrade on a shared-shell platform (P1a). Vertical is now a **targeting question, not an architectural one**. Where tenant-side willingness to pay concentrates is a separate and inherited hypothesis ([[Brand_Is_Product]]), unvalidated for this ICP and weakened by three independent findings — see below.
 

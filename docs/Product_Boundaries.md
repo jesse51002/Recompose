@@ -9,7 +9,7 @@ date: 2026-07-28
 Concepts touched: [[No_New_Requests_Invariant]], [[Full_Visual_Redesign]], [[Integration_Surface]], [[Closed_Design_To_Production_Loop]], [[Re_Derived_Not_Forked]], [[Orchestrator]], [[Tier_Unlock_ROI]].
 
 > [!info] What this doc is for
-> The lines the product holds. Boundaries are decisions, not status — they should only change when a pivot changes them, and a pivot doc should exist saying so. For how the mechanism works, read `Architecture_Thesis.md`; for what exists in code right now, read `codebase/README.md`.
+> The lines the product holds. Boundaries are decisions, not status — they should only change when a pivot changes them, and a pivot doc should exist saying so. For how the mechanism works, read `Architecture_Thesis.md`; for what exists in code right now, read `README.md`.
 
 ## The two core principles
 

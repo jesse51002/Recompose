@@ -39,7 +39,7 @@ Those three are historical records and are **never edited retroactively**, which
 
 **The narrow exception,** and it has to earn itself: a correction note is justified only when someone acting on the old belief would do damage, and the note is the thing that stops them. A stale figure that is still being quoted in a live pitch, a claim already sent to an outside party, a rule whose old form is still enforced somewhere in code. Even then, write it as a live warning about what to do — *"never quote the precise figure"* — not as a changelog entry about what the doc used to say. If it is only interesting rather than load-bearing, it goes in the pivot doc and nowhere else.
 
-This applies to every doc in the vault, to every `CLAUDE.md`, and to `codebase/PRODUCT.md`.
+This applies to every doc in the vault, to every `CLAUDE.md`, and to `PRODUCT.md`.
 - When creating a new note that should be discoverable, add relevant `tags` and link it from at least one existing note so it isn't orphaned in the graph view.
 
 ## Two doc types: Pivots vs. Office Hours

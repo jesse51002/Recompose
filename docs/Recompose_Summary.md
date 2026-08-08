@@ -12,7 +12,7 @@ Concepts touched: [[Full_Visual_Redesign]], [[Tier_Unlock_ROI]], [[Closed_Design
 > This doc is **what** Recompose does and who it is for. It is kept deliberately light.
 > **How it works:** `Product_Boundaries.md`, then `Architecture_Thesis.md`.
 > **What was decided and when:** `pivots/`. **Why:** `Office_Hours/`. **Where it's been:** `Journey.md`.
-> **What exists in code right now:** `codebase/README.md`.
+> **What exists in code right now:** `README.md`.
 
 ## What it does
 

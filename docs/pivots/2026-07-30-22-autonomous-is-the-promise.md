@@ -60,6 +60,6 @@ Docs asserting the old promise, all requiring update:
 - `docs/Journey.md` — the Phase 6 line *"The promise got smaller and better."*
 - `docs/YC_Application_F26.md` — the corrections table, the demo-script flags, and the "two strongest parts of the pitch" note.
 - `CLAUDE.md` (root) — the promise bullet and its OPEN marker.
-- `codebase/PRODUCT.md` — Positioning, Operating Context, Brand Commitments, Product Principle 4.
+- `PRODUCT.md` — Positioning, Operating Context, Brand Commitments, Product Principle 4.
 
 Not edited, per the never-edit-retroactively rule: `pivots/2026-07-28-01-agentic-editing-all-in.md` and every doc in `Office_Hours/`. The prior pivot's status is set to superseded-in-part and nothing else in it changes.

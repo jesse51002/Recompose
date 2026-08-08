@@ -19,7 +19,7 @@ Today the customized surface is **images, colours, fonts, text, and icons**. Ico
 
 ## Two inputs, one output
 
-The pipeline lives in `codebase/ThemeService/` (this doc's earlier `CustomizationService` name was the system's pre-rename name; the system was renamed to ThemeService, which also grew a read API — `theme.combatden.net` — serving the produced `output.yaml` to every client, see the root `codebase/README.md`). It takes **two YAMLs** and produces **one**:
+The pipeline lives in `ThemeTree/`, and the read API that serves the produced `output.yaml` to every client — `theme.combatden.net` — is `Backend/`. See the root `README.md`. It takes **two YAMLs** and produces **one**:
 
 - **`app.yaml`** — the *app format*. Architect-owned. Declares the slot inventory: every slot name, its description, and the image→image `depends_on` edges. This is what makes the pipeline app-agnostic — the pipeline code knows nothing about any specific app; point it at a different `app.yaml` and it customizes a different app, no code changes.
 - **`customization.yaml`** — the *brand brief*. The only brand-authored surface. Five fields: `design_direction.name`, `short_desc`, `long_desc`, and `colors_direction.description` + `mode` (light/dark). It is *intent*, never *values* — it says what the brand feels like and which way colour should lean; the pipeline decides the exact numbers.
@@ -29,7 +29,7 @@ Both live under `apps/<app_id>/`. Every new app is one new folder.
 
 ### The brand-brief skill
 
-`customization.yaml` is authored by a dedicated Claude skill, **`brand-brief`** (`codebase/ThemeService/.claude/skills/brand-brief/`). It runs a lean, question-driven interview — about ten high-leverage questions, one at a time, every one a multiple-choice `AskUserQuestion` — grounded in the chosen app's real `app.yaml` slots. It weights questions toward brand identity and keeps colour at the mood / hue-family / saturation / mode level (never hex or OKLCH), because the pipeline owns precise colour values under rules a hardcoded colour would fight. It assembles the YAML, round-trips it against the `Customization` Pydantic model, and writes it only after explicit approval. It authors *only* `customization.yaml` — never `app.yaml` or pipeline code.
+`customization.yaml` is authored by a dedicated Claude skill, **`brand-brief`** (`.claude/skills/brand-brief/`). It runs a lean, question-driven interview — about ten high-leverage questions, one at a time, every one a multiple-choice `AskUserQuestion` — grounded in the chosen app's real `app.yaml` slots. It weights questions toward brand identity and keeps colour at the mood / hue-family / saturation / mode level (never hex or OKLCH), because the pipeline owns precise colour values under rules a hardcoded colour would fight. It assembles the YAML, round-trips it against the `Customization` Pydantic model, and writes it only after explicit approval. It authors *only* `customization.yaml` — never `app.yaml` or pipeline code.
 
 ---
 
@@ -113,9 +113,9 @@ The schema (`schema/`, Pydantic v2) is shape-only: no I/O, no network code. It d
 
 ## See also
 
-- `codebase/ThemeService/README.md` — the authoritative pipeline walkthrough with the worked `combatden` run.
-- `codebase/ThemeService/schema/` — the Pydantic contracts for the three YAMLs.
-- `codebase/ThemeService/.claude/skills/brand-brief/` — the skill that authors `customization.yaml`.
-- `codebase/ThemeService/apps/combatden/` — a worked example (`app.yaml`, `customization.yaml`, runs).
-- `codebase/ThemeService/ThemeFlutter/` — the shared Flutter engine that consumes `output.yaml`, imported by both MobileApp and CRM.
+- `README.md` — the authoritative pipeline walkthrough with the worked `combatden` run.
+- `schema/` — the Pydantic contracts for the three YAMLs.
+- `.claude/skills/brand-brief/` — the skill that authors `customization.yaml`.
+- `apps/combatden/` — a worked example (`app.yaml`, `customization.yaml`, runs).
+- `Flutter/` — the shared Flutter engine that consumes `output.yaml`, imported by both the member app and the CRM.
 - `pivots/2026-05-20-23-customization-pipeline-simplified-to-dependency-dag.md` — why the pipeline is this shape and not the six-pillar orchestrator.
