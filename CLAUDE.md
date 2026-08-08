@@ -93,7 +93,18 @@ gbrain query "<question>"    # hybrid retrieval (vector + keyword, RRF-fused) �
 gbrain search "<terms>"      # KEYWORD ONLY (tsvector). Not semantic. Rarely what you want.
 ```
 
-`gbrain search` is plain full-text search and never touches embeddings, despite gstack's `USING_GBRAIN_WITH_GSTACK.md` and its auto-generated `## GBrain Search Guidance` block both describing it as semantic. **Default to `think`.** It retrieves across pages, synthesizes a cited answer, and closes with a *Gaps* section naming what the vault does not answer — which on a strategy vault full of open questions is the most useful part. It costs roughly $0.10 per call (Opus) and takes ~30s, so use `query` when a ranked list of passages is enough.
+`gbrain search` is plain full-text search and never touches embeddings, despite gstack's `USING_GBRAIN_WITH_GSTACK.md` and its auto-generated `## GBrain Search Guidance` block both describing it as semantic.
+
+**Default to `think`, and do not judge the brain by `query`.** Measured on nine questions with known answers, `query` put the right document first six times. On the three it missed, `think` answered all three correctly — because it reads across ~40 pages and synthesises rather than ranking, so the answer surviving in the eighth-ranked passage still reaches you. A `query` miss is not evidence the vault lacks the answer.
+
+Two things `think` does that retrieval structurally cannot:
+
+- **Conflicts.** Asked why structural presets were rejected, it found that the 2026-07-27 office hours argued *for* bounded sets as "the strongest product call in the vault" and the 2026-07-28 session rejected them — and that the reconciliation was never written.
+- **Gaps.** On the error budget it returned 95/4/1, confirmed *never measured* from five separate pages, then named the missing denominator (per screen? per tenant? per sync?) as open question T15.
+
+Roughly $0.15 per call on Opus 5 and ~30s. Use `query` when a ranked list of passages is genuinely all you want.
+
+**Phrase questions the way the docs argue, not as labels.** "What happens when an agent cannot satisfy the accept condition" returns the error-budget paragraph at 1.36; "what is the error budget" does not retrieve it at all, though it is the same paragraph. The vault argues in prose and rarely uses its own terms as headings.
 
 **Code is deliberately not indexed.** `code-def` / `code-refs` / `code-callers` cannot work here: the active schema pack `gbrain-base-v2` **dropped the `code` page type** that its predecessor `gbrain-base` declared, so nothing emits code symbols and `resolve_symbol_edges` has nothing to resolve. Without that, indexing code buys semantic search over a tree Grep already searches exactly and never staler than the working copy — while needing a manual re-sync on every commit. Grep is the tool for code here.
 
