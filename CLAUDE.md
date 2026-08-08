@@ -108,23 +108,22 @@ Roughly $0.15 per call on Opus 5 and ~30s. Use `query` when a ranked list of pas
 
 ### Which model, and who pays
 
-`models.think` is set to **`claude-cli:opus`**, which dispatches through the local `claude` CLI's OAuth session — **your Claude subscription, not API credits.** Runs on that path report no `Cost:` line because there is no per-token charge to report.
+`models.think` is **`claude-cli:claude-opus-5`** — Opus 5, dispatched through the local `claude` CLI's OAuth session, so it bills **your Claude subscription, not API credits.** Calls on that path report no `Cost:` line because there is no per-token charge.
 
-The prefix is what decides billing, not the model:
+**The provider prefix decides billing, not the model:**
 
-| setting | model | billed to |
-|---|---|---|
-| `claude-cli:opus` ← current | Opus 4.7 | **your subscription** |
-| `anthropic:claude-opus-5` | Opus 5 | **API credits**, ~$0.15/call |
-| `anthropic:claude-haiku-4-5-20251001` | Haiku | API credits, ~$0.012/call |
+| prefix | billed to |
+|---|---|
+| `claude-cli:` | your Claude subscription |
+| `anthropic:` | API credits (~$0.15/call on Opus 5) |
 
-`claude-cli` accepts only `claude-opus-4-7`, `claude-sonnet-4-6`, `claude-haiku-4-5-20251001` and the aliases `opus`/`sonnet`/`haiku`. Opus 5 is not in its allowlist in this gbrain version, so subscription billing currently costs you Opus 4.7 rather than 5.
+**Opus 5 is not in the `claude-cli` recipe's allowlist, and it works anyway.** That is deliberate, not a loophole: `model-resolver.ts` skips the allowlist throw when a model is opted into via config (`models.default`, `models.think`, `models.tier.*`). Setting it through config is the supported way to run a model newer than the recipe knows about. If the id ever stops existing you get a clean `model_not_found`, not a silent downgrade. **Do not "fix" a model-not-listed warning by patching the recipe** — `~/gbrain` is a git clone and a local edit conflicts on the next `git pull`.
 
-**gbrain copied your Anthropic API key into `~/.gbrain/config.json` at init**, harvested from the repo `.env`. That file is outside the repo and is how `anthropic:` calls authenticate. Delete the field if you want to guarantee nothing can bill API credits.
+`openai-compat` providers (`openrouter`, `litellm`, `deepseek`, `groq`, …) skip the allowlist unconditionally — only `native` providers enforce it at all.
 
-**Model quality is not uniform on the parts that matter.** Haiku answered all three benchmark questions correctly at a twelfth of the cost but produced **no Conflicts section on any of them**, and skipped Gaps two times in three. Conflicts is the highest-value output — it is what caught that the 2026-07-27 session argued *for* bounded structural sets while 2026-07-28 rejected them, with no reconciliation ever written. Benchmark any cheaper model on that question specifically, not on whether it answers correctly.
+**gbrain copied your Anthropic API key into `~/.gbrain/config.json` at init**, harvested from the repo `.env` and byte-identical to it. That file is outside the repo. It is what any `anthropic:` call would authenticate with; delete the field to guarantee nothing can bill API credits.
 
-Other providers are one env var away — `deepseek`, `openrouter`, `groq`, `together`, `mistral` all ship as recipes and show in `gbrain providers list`. gbrain rates DeepSeek "25-40x cheaper than Anthropic".
+**Cheaper models drop the analysis before they drop the answer.** Haiku answered all three benchmark questions correctly at a twelfth of the cost but produced **no Conflicts section on any of them**, and skipped Gaps twice in three. Conflicts is the highest-value output — it caught that the 2026-07-27 session argued *for* bounded structural sets while 2026-07-28 rejected them, with no reconciliation ever written. Benchmark any cheaper model on that question specifically, not on whether it answers correctly.
 
 **Code is deliberately not indexed.** `code-def` / `code-refs` / `code-callers` cannot work here: the active schema pack `gbrain-base-v2` **dropped the `code` page type** that its predecessor `gbrain-base` declared, so nothing emits code symbols and `resolve_symbol_edges` has nothing to resolve. Without that, indexing code buys semantic search over a tree Grep already searches exactly and never staler than the working copy — while needing a manual re-sync on every commit. Grep is the tool for code here.
 
