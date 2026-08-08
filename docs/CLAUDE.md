@@ -129,9 +129,15 @@ Then work backwards from the newest doc in `pivots/`, as far as the question nee
 
 A local [gbrain](https://github.com/garrytan/gbrain) brain indexes the vault so questions can be asked by meaning. PGLite at `~/.gbrain/`, `voyage-3-large` embeddings, local to this machine — nothing is uploaded. `gbrain sources status` is the live picture: which sources, how many pages, sync lag, embed coverage.
 
-**Reach for `gbrain think` whenever you are working something out about this project** — what was decided and why, whether a claim is supported, where a position came from, what is still open. Do it *before* reading a pile of docs by hand: it reads across ~40 pages at once and cites every claim. Reconstructing an argument from five documents that it will hand you in one call is wasted effort.
+**Ground every answer about this project in the vault before giving it.** Not only when you set out to work something out — before you say anything substantive about what Recompose is, why a decision went the way it did, what a doc claims, or what is still open. Reach for `gbrain think` first, then answer from what it returns.
 
-Especially worth a call **before writing anything durable** — a pivot, an office hours doc, a strategy edit — because the **Conflicts** section is the only thing here that catches the vault contradicting itself, which is exactly the failure a new doc entrenches.
+The failure this prevents is answering from recall or inference. Both feel like knowing. A summary read three hours ago has since been superseded; a position that sounds right is often a premise the vault already reversed; a confident answer assembled from adjacent facts is the specific way a wrong claim gets laundered into a doc. `think` reads across ~40 pages at once and cites every claim, so the answer arrives with its evidence attached and the parts the vault does not cover are named rather than guessed.
+
+It is not overhead to skip when you think you already know — that is exactly the case where it earns the call. Reconstructing an argument out of five documents by hand, when one call returns it cited, is the wasted effort.
+
+**Before writing anything durable** — a pivot, an office hours doc, a strategy edit — treat it as required rather than advisable. The **Conflicts** section is the only thing here that catches the vault contradicting itself, and a new doc written over an unnoticed contradiction entrenches it.
+
+The exceptions are narrow and obvious: a coding task, a mechanical edit, or a question whose answer is a single grep away.
 
 ```bash
 gbrain think "<question>"    # multi-hop synthesis, cited, with Conflicts + Gaps
