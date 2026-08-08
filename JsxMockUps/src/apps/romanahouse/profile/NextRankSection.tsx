@@ -13,7 +13,7 @@
 //
 // THIS IS THE `next_rank_belt_image` SLOT'S ONLY CONSUMER, AND THE REASON THIS
 // SCREEN EXISTS. The pipeline derives it from `rank_belt`
-// (`ThemeService/apps/combatden/app.yaml`, `depends_on: rank_belt`) and has
+// (`apps/combatden/app.yaml`, `depends_on: rank_belt`) and has
 // produced it for all 76 themes; `next_rank_badge.dart` is the one widget in the
 // member app that reads it, and the preview never carried Profile — so a tenth
 // generated image per theme had been shipping to nothing. Every arrangement

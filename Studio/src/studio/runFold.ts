@@ -16,7 +16,7 @@ import type { ProgressEvent, RunRecord, RunSnapshot, RunStatus } from './studioA
 
 /**
  * The executor's five FROZEN root keys (`DependencyKind` in
- * `ThemeService/src/modules/base.py`): the colour, font, text, icon and
+ * `ThemeTree/modules/base.py`): the colour, font, text, icon and
  * classification nodes. Every other node key in a run is an image slot id
  * (`ImageNode` is built with `key=slot.id`).
  *

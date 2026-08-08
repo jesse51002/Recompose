@@ -4,7 +4,7 @@
 // whether a tab watched from the first second or opened after it finished.
 //
 // The records below are shaped exactly as the studio emits them; the stub
-// pipeline in `ThemeService/tests/test_studio.py` writes the same sequence.
+// pipeline in `tests/test_studio.py` writes the same sequence.
 
 import { describe, expect, it } from 'vitest';
 

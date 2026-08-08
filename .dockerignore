@@ -28,6 +28,6 @@ poetry.toml
 
 # Docs / scratch.
 *.md
-ThemeFlutter/
-ThemeReact/
+Flutter/
+React/
 figma/

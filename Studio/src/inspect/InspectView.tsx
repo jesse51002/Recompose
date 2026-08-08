@@ -81,7 +81,7 @@ const MONO_FAMILY = 'Geist Mono';
 
 /**
  * Where each generated string appears in the member app, quoted down from the
- * slot's own brief in `ThemeService/apps/combatden/app.yaml`. The strings are
+ * slot's own brief in `apps/combatden/app.yaml`. The strings are
  * 2–4 words; without the placement a reader cannot tell a button from a
  * headline, and the whole point of the section is that the engine wrote for a
  * specific moment.

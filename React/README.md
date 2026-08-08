@@ -31,12 +31,10 @@ URL (`?view=`, `ThemeTree/app/appUrl.ts`):
 The API must be up first — nothing renders without it:
 
 ```bash
-cd ..                  # ThemeService/
-make api               # :8001
+make -C Backend dev    # :8001, from the repo root
 
-cd ThemeReact
+cd React
 npm install
-npm run dev            # :8080
 ```
 
 `:8080` is pinned deliberately. `FastApiBackend`'s CORS allowlist contains
@@ -44,8 +42,8 @@ npm run dev            # :8080
 (`GET /api/v1/theme/showcase-defaults`, public) would fail CORS on any other
 port. See `vite.config.ts`.
 
-From `ThemeService/` there are Makefile shortcuts: `make react-install`,
-`make react-dev`, `make react-build`, `make react-check`.
+From the repo root the Makefile delegates to every subsystem: `make install`,
+`make check`, `make test`, or `make -C React help` for this one alone.
 
 ### Offline
 

@@ -3,18 +3,18 @@
 // SOURCE OF TRUTH, file by file — every type below is a transcription, not an
 // invention, and a change there is a change here:
 //
-//   ProgressEvent        ThemeService/src/executor/progress_event.py
-//   RunRecord            ThemeService/src/studio/schema/run_record.py
-//   RunStatus            ThemeService/src/studio/schema/run_status.py
-//   RunSnapshot          ThemeService/src/studio/schema/run_snapshot.py
-//   LaunchRequest        ThemeService/src/studio/schema/launch_request.py
-//   Customization        ThemeService/schema/customization.py  (the FIVE fields)
-//   the refusals         ThemeService/src/studio/errors.py + run_router.py
+//   ProgressEvent        ThemeTree/executor/progress_event.py
+//   RunRecord            Backend/studio/schema/run_record.py
+//   RunStatus            Backend/studio/schema/run_status.py
+//   RunSnapshot          Backend/studio/schema/run_snapshot.py
+//   LaunchRequest        Backend/studio/schema/launch_request.py
+//   Customization        schema/customization.py  (the FIVE fields)
+//   the refusals         Backend/studio/errors.py + run_router.py
 //
 // Nothing here talks to the READ API (`src/lib/api/client.ts`, :8001). The two
 // are separate apps on purpose: the read API serves FINISHED runs and boots
 // without any provider keys, and importing the pipeline into it would destroy
-// that property (ThemeService/CLAUDE.md, "Two FastAPI apps").
+// that property (CLAUDE.md, "Two FastAPI apps").
 
 import { resolveStudioBaseUrl } from './studioConfig';
 

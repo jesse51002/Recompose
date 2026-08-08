@@ -77,7 +77,7 @@ territory. The noun list closes that in the first four words. This is the same f
 the office hours session raised against the 50-character YC line.
 
 **The hero visual** is a live rebrand: one phone, a rail of brands, instant reskin.
-Design not started. It runs on `ThemeService/ThemeReact`, which already does live
+Design not started. It runs on `React`, which already does live
 re-theming across the catalog in a browser.
 
 ---
