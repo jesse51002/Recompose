@@ -54,3 +54,7 @@ package-lock.json
 
 # Obsidian per-machine UI state (pane layout, open tabs) — churns constantly
 docs/.obsidian/workspace.json
+
+# Obsidian only ever opens docs/ as a vault. A .obsidian/ at the repo root
+# means something opened the whole repo by mistake -- never commit it.
+/.obsidian/
