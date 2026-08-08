@@ -11,7 +11,7 @@ Concepts touched: [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]],
 Extracted 2026-08-02 from two superseded strategy docs in the pre-Recompose lineage — `Business/Pricing.md` and `Business/Differentiation.md` in the AICustomizableWhiteLabeled vault (both April–May 2026), which are not carried here because their ICP and pricing positions are dead. Two things below survive the change of company: platforms already charge for design delivery, and the ones who charge most cannot build the replacement themselves. Read the prices as **revenue lines, not cost lines** — [[Research/2026-08-02-enterprise-tier-anatomy|Research/2026-08-02-enterprise-tier-anatomy.md]] and [[Research/2026-08-02-attach-rate|Research/2026-08-02-attach-rate.md]] carry the correction.
 
 > [!warning] Do not quote the precise figures
-> Everything in the table is May 2026 and read off public pricing pages, not from anyone inside a platform. At least one figure is already known stale: [[YC_Application_F26|YC_Application_F26.md]] records current sources putting Mighty Pro at **$3,000–5,000+/month**, one citing **$28k/year**, against the $1,167 below. Quote ranges. A precise stale number in front of a buyer is a liability. Same instruction as [[Customer_ICP|Customer_ICP.md]].
+> Everything in the table is May 2026 and read off public pricing pages, not from anyone inside a platform. At least one figure is already known stale: [[Strategy/YC_Application_F26|YC_Application_F26.md]] records current sources putting Mighty Pro at **$3,000–5,000+/month**, one citing **$28k/year**, against the $1,167 below. Quote ranges. A precise stale number in front of a buyer is a liability. Same instruction as [[Strategy/Customer_ICP|Customer_ICP.md]].
 
 ---
 
@@ -59,6 +59,6 @@ Two caveats worth keeping honest. This argument was written in May 2026 by the f
 
 ## Shows up in
 
-- [[Competition|Competition.md]]
-- [[Customer_ICP|Customer_ICP.md]]
-- [[YC_Application_F26|YC_Application_F26.md]]
+- [[Strategy/Competition|Competition.md]]
+- [[Strategy/Customer_ICP|Customer_ICP.md]]
+- [[Strategy/YC_Application_F26|YC_Application_F26.md]]

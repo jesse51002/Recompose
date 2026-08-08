@@ -103,6 +103,6 @@ Against a shell-model platform: Circle's ~5,000 creators at 1–3% is roughly 50
 
 ## Shows up in
 
-- [[Customer_ICP|Customer_ICP.md]]
-- [[Competition|Competition.md]]
+- [[Strategy/Customer_ICP|Customer_ICP.md]]
+- [[Strategy/Competition|Competition.md]]
 - [[Research/2026-08-02-enterprise-tier-anatomy|Research/2026-08-02-enterprise-tier-anatomy.md]]

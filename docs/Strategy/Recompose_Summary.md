@@ -10,8 +10,8 @@ Concepts touched: [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual
 
 > [!info] The two-minute read
 > This doc is **what** Recompose does and who it is for. It is kept deliberately light.
-> **How it works:** [[Product_Boundaries|Product_Boundaries.md]], then [[Architecture_Thesis|Architecture_Thesis.md]].
-> **What was decided and when:** `pivots/`. **Why:** `Office_Hours/`. **Where it's been:** [[Journey|Journey.md]].
+> **How it works:** [[Strategy/Product_Boundaries|Product_Boundaries.md]], then [[Strategy/Architecture_Thesis|Architecture_Thesis.md]].
+> **What was decided and when:** `pivots/`. **Why:** `Office_Hours/`. **Where it's been:** [[Strategy/Journey|Journey.md]].
 > **What exists in code right now:** `README.md`.
 
 ## What it does

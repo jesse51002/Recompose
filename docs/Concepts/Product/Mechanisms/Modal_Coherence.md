@@ -15,9 +15,9 @@ In the shipped pipeline, coherence is pursued **structurally rather than through
 
 ## Shows up in
 
-- [[Architecture_Thesis|Architecture_Thesis.md]]
-- [[Product_Boundaries|Product_Boundaries.md]]
-- [[ThemeTreeArchitecture|ThemeTreeArchitecture.md]]
+- [[Strategy/Architecture_Thesis|Architecture_Thesis.md]]
+- [[Strategy/Product_Boundaries|Product_Boundaries.md]]
+- [[Strategy/ThemeTreeArchitecture|ThemeTreeArchitecture.md]]
 - [[Office_Hours/2026-05-01-15-Office_Hours_Marketplace_Pivot_and_Architecture_Refinement|Office_Hours/2026-05-01-15-Office_Hours_Marketplace_Pivot_and_Architecture_Refinement.md]]
 - [[pivots/2026-05-20-23-customization-pipeline-simplified-to-dependency-dag|pivots/2026-05-20-23-customization-pipeline-simplified-to-dependency-dag.md]]
 

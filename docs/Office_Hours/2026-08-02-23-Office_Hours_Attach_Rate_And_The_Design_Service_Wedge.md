@@ -152,7 +152,7 @@ Target platforms where **every tenant already has their own branded app**, and p
 
 ## Open questions
 
-- **Does the attach-rate finding change the pricing model?** [[YC_Application_F26|YC_Application_F26.md]] computes $4.8M/year from Subsplash at a 20% upgrade rate. For Subsplash specifically that may be conservative — it has no shell tier, so all 20,000 churches already have apps. For any shell-model platform it is off by an order of magnitude. Unresolved.
+- **Does the attach-rate finding change the pricing model?** [[Strategy/YC_Application_F26|YC_Application_F26.md]] computes $4.8M/year from Subsplash at a 20% upgrade rate. For Subsplash specifically that may be conservative — it has no shell tier, so all 20,000 churches already have apps. For any shell-model platform it is off by an order of magnitude. Unresolved.
 - **Which architecture is targeted — per-tenant binary or container app?** Subsplash runs both. Container tenants have no separate binary, which changes the product's shape.
 - **Is there an internal champion at all?** The roles found are Solutions Consultants, Client Implementation Managers, Customer Onboarding Specialists and marketing designers. The feared hostile head-of-design usually doesn't exist. Lower political risk, but nobody whose job improves if the purchase succeeds.
 - **Pricing.** Still undefined. Nothing here settles it.

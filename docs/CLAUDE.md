@@ -6,7 +6,7 @@ The `docs/` folder is an Obsidian vault. All rules below apply whenever reading 
 
 ## Journey.md — keep it updated
 
-`docs/Journey.md` is the high-level at-a-glance record of where the project has been and where it stands now. It is not a detailed log — the pivots and office hours docs hold the detail. Journey.md holds the **summary arc**: what was tried, what the real blocker was, what changed, and current status.
+`docs/Strategy/Journey.md` is the high-level at-a-glance record of where the project has been and where it stands now. It is not a detailed log — the pivots and office hours docs hold the detail. Journey.md holds the **summary arc**: what was tried, what the real blocker was, what changed, and current status.
 
 **Keep it updated whenever a meaningful shift happens:** a new pivot, a first sale, a failed sales attempt that reveals something structural, a significant product or strategy change. The update should be a few sentences per phase entry or a new phase — enough for someone (or an agent) reading cold to understand the current situation in under two minutes. Do not let it drift stale; a stale Journey.md defeats its purpose.
 
@@ -33,7 +33,7 @@ Specifically, **do not add correction notes** — no `> [!warning] Corrected 202
 
 - **`pivots/`** — the decision, what it changed from, and when. This is the record. It is why a correction note in a strategy doc is redundant.
 - **`Office_Hours/`** — the reasoning that produced it.
-- **[[Journey|Journey.md]]** — the summary arc. Recording what was tried and what changed *is* this file's job, so it is the one place a "then this reversed" sentence belongs in normal prose.
+- **[[Strategy/Journey|Journey.md]]** — the summary arc. Recording what was tried and what changed *is* this file's job, so it is the one place a "then this reversed" sentence belongs in normal prose.
 
 Those three are historical records and are **never edited retroactively**, which is exactly what makes it safe to delete the archaeology everywhere else.
 
@@ -57,7 +57,7 @@ When a final decision is made about the product plan, strategy, scope, target cu
 
 ### Why
 
-The strategy docs at the vault root describe what is being built and why. When a decision overturns or modifies what those docs claim, the *fact* of the decision and the *moment* it was made is at risk of disappearing the moment the docs are updated. Pivot docs preserve the decision itself — what changed, when, and why — so future readers can quickly see the lineage of the product without reconstructing it from strategy-doc archaeology.
+The strategy docs in `Strategy/` describe what is being built and why. When a decision overturns or modifies what those docs claim, the *fact* of the decision and the *moment* it was made is at risk of disappearing the moment the docs are updated. Pivot docs preserve the decision itself — what changed, when, and why — so future readers can quickly see the lineage of the product without reconstructing it from strategy-doc archaeology.
 
 The exploration behind the decision (every option, every constraint, every tradeoff considered) lives in the corresponding office hours doc(s) referenced from the pivot. The pivot itself is short and final.
 
@@ -97,7 +97,7 @@ The pivot doc is decisive, not exploratory. It records the decision and the mome
 2. Decision is made.
 3. Pivot doc written in `pivots/YYYY-MM-DD-HH-<slug>.md` recording the decision, what it pivoted from/to, why briefly, and links to the office hours doc(s).
 4. Pivot doc committed to the repo.
-5. THEN update every affected strategy doc at the vault root to reflect the new direction.
+5. THEN update every affected strategy doc in `Strategy/` to reflect the new direction.
 6. THEN update any code or landing-page copy that depended on the previous direction.
 
 The pivot doc is preserved indefinitely. Never delete. Never edit retroactively. If the decision is later reversed or revisited, write a NEW pivot doc with a new date that references the previous one (set the previous one's status to `Superseded by [link]`).

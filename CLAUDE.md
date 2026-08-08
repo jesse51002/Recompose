@@ -17,7 +17,7 @@ The terms used below are defined in `docs/Concepts/`, and `docs/Concepts/_Index.
 - **The safety property** is functional equivalence: a redesign changes **arrangement only**. No screen merged or split, no functionality added, none removed, API surface provably identical. It is customer-verifiable rather than argued.
 - **This repo is the engine** — the Python pipeline that resolves a brief into assets, the Python API that serves it, the Flutter and React theme runtimes, the feature-free mock surfaces the design agent edits, and the studio that browses it all. The second half of this file is the map; `README.md` is the walkthrough. Read both before touching any of it, and the subsystem's own `CLAUDE.md` before editing inside it. One warning worth putting up here: **launching a run from the studio spends real money**, and the studio is deliberately local-only, never deployed.
 - **CombatDen is the reference implementation, demo canvas and eval bed — not the company.** It lives in a separate repo at `/var/home/jm/Documents/CombatDen`. Inside the engine it is one app folder, `apps/combatden/`.
-- **Undefined, and do not invent it:** pricing for this ICP is open (the old $100/$300/$500 ladder was gym-owner pricing and is dead; `YC_Application_F26.md` floats $100/month per branded tenant as a working figure explicitly defended as a range, not a final number). The layout half of the mechanism is specified but not built — **productionalize is the hard part and where the product actually lives.** There are zero customers and no named target platform. The name "Recompose" is provisional — domain and trademark unchecked.
+- **Undefined, and do not invent it:** pricing for this ICP is open (the old $100/$300/$500 ladder was gym-owner pricing and is dead; `Strategy/YC_Application_F26.md` floats $100/month per branded tenant as a working figure explicitly defended as a range, not a final number). The layout half of the mechanism is specified but not built — **productionalize is the hard part and where the product actually lives.** There are zero customers and no named target platform. The name "Recompose" is provisional — domain and trademark unchecked.
 
 ## No assumptions
 
@@ -59,8 +59,8 @@ Write the location and the rule for finding the thing instead:
 - ❌ "Read these four first," followed by a numbered list.
 - ✅ "`docs/Concepts/_Index.md` is the authoritative listing."
 - ❌ a copy of the concept tree living inside another file.
-- ✅ "the strategy docs at the vault root"
-- ❌ "`Recompose_Summary.md`, `Product_Boundaries.md`, `Customer_ICP.md`, …"
+- ✅ "the strategy docs in `docs/Strategy/`"
+- ❌ "`Strategy/Recompose_Summary.md`, `Strategy/Product_Boundaries.md`, `Strategy/Customer_ICP.md`, …"
 
 **One canonical location may hold the full list; every other doc points at it rather than copying it.** Name a specific only when the specific is the point — a genuinely load-bearing doc that must be read first, a filename-format example, the single file that owns a rule.
 
@@ -70,11 +70,11 @@ Applies to every doc in the vault, to every `CLAUDE.md`, to every skill, and to 
 
 ## Context (EXTREMELY IMPORTANT)
 
-Always read `docs/` for in-depth details about the project. First a recursive ls, then read the docs you think are of use. `docs/` is an actively maintained Obsidian vault you will edit often — pivots, office hours, concepts, strategy docs, and Journey.md all live here and get updated as the project moves. The vault root is `docs/` (that is where `.obsidian/` lives), so wikilinks only resolve inside it.
+Always read `docs/` for in-depth details about the project. First a recursive ls, then read the docs you think are of use. `docs/` is an actively maintained Obsidian vault you will edit often — pivots, office hours, concepts and the strategy docs all live here and get updated as the project moves. The vault root is `docs/` (that is where `.obsidian/` lives), so wikilinks only resolve inside it.
 
 **`docs/CLAUDE.md` holds the vault's own conventions and is authoritative for everything under `docs/`.** Read it before writing anything there — it covers how pivots and office hours differ, the concept linking rule, and why a doc states what is true now rather than narrating its own edit history.
 
-**Where to start reading.** `docs/Journey.md` is the fastest orientation — the summary arc, earliest phase to current, with the CombatDen prehistory kept verbatim at the front and the Recompose phases at the end. Read it before the strategy docs. Then work backwards from the newest doc in `pivots/`, taking as many as the question needs; each pivot names the office hours doc that explored it, and that is where the reasoning lives. Two anchors are worth naming because they do not move: `pivots/2026-07-27-11-customization-engine-is-the-company.md` is the founding decision that everything since amends rather than replaces, and `YC_Application_F26.md` is the tightest single statement of the company. The strategy docs at the vault root and the notes in `Research/` fill in whatever is still missing.
+**Where to start reading.** `docs/Strategy/Journey.md` is the fastest orientation — the summary arc, earliest phase to current, with the CombatDen prehistory kept verbatim at the front and the Recompose phases at the end. Read it before the strategy docs. Then work backwards from the newest doc in `pivots/`, taking as many as the question needs; each pivot names the office hours doc that explored it, and that is where the reasoning lives. Two anchors are worth naming because they do not move: `pivots/2026-07-27-11-customization-engine-is-the-company.md` is the founding decision that everything since amends rather than replaces, and `Strategy/YC_Application_F26.md` is the tightest single statement of the company. The strategy docs in `Strategy/` and the notes in `Research/` fill in whatever is still missing.
 
 What to know about the state of the vault:
 
@@ -104,10 +104,10 @@ The active pack is **`recompose`**, forked from `gbrain-base-v2` and mapping the
 | folder | type |
 |---|---|
 | `Concepts/` | `concept` |
-| `Research/`, `Industries/`, `Office_Hours/` | `analysis` |
+| `Research/`, `Industries/`, `Office_Hours/`, `Strategy/` | `analysis` |
 | `pivots/` | `writing` |
 
-Without it every page was typed by guesswork — `Journey.md` came back `concept`, and the real concept files matched nothing, because base-v2's `concept` prefix is `wiki/concepts/` and this vault imports as `concepts/`. The 13 strategy docs at the vault root still default to `concept` since they have no folder to key on; fix that with explicit `type:` frontmatter if it ever matters.
+Without it every page was typed by guesswork — `Strategy/Journey.md` came back `concept`, and the real concept files matched nothing, because base-v2's `concept` prefix is `wiki/concepts/` and this vault imports as `concepts/`. Only `docs/CLAUDE.md` sits at the vault root now; everything else lives in a folder and types correctly.
 
 **The pack lives at `~/.gbrain/schema-packs/recompose/pack.json` — outside this repo, so it does not travel with a clone.** Recreate with `gbrain schema fork gbrain-base-v2 recompose`, `gbrain schema use recompose`, then the `gbrain schema add-prefix` calls above.
 
@@ -120,22 +120,6 @@ Without it every page was typed by guesswork — `Journey.md` came back `concept
 It only works because the vault writes wikilinks as **paths with aliases** — `[[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]]`. gbrain resolves `[[relative/path]]` and nothing else; bare Obsidian basenames silently dropped 567 of 571 edges as *"references to non-pages"*. `docs/CLAUDE.md` carries the rule. **A doc that reverts to `[[Basename]]` disappears from the graph without any error.**
 
 The other two link routes stay unavailable and are not worth retrying: `--by-mention` needs `person`/`company` entity pages, which this vault has none of and base-v2 marks `extractable: false`; `--ner` needs `link_types[].inference.regex`, which no pack here declares.
-
-### Page types come from a custom schema pack
-
-The active pack is **`recompose`**, forked from `gbrain-base-v2` and mapping the vault's folders onto base-v2's canonical types via path prefixes:
-
-| folder | type |
-|---|---|
-| `Concepts/` | `concept` |
-| `Research/`, `Industries/`, `Office_Hours/` | `analysis` |
-| `pivots/` | `writing` |
-
-Without it every page was typed by guesswork — `Journey.md` came back `concept`, and the real concept files matched nothing, because base-v2's `concept` prefix is `wiki/concepts/` and this vault imports as `concepts/`. The 13 strategy docs at the vault root still default to `concept` since they have no folder to key on; fix that with explicit `type:` frontmatter if it ever matters.
-
-**The pack lives at `~/.gbrain/schema-packs/recompose/pack.json` — outside this repo, so it does not travel with a clone.** Recreate with `gbrain schema fork gbrain-base-v2 recompose`, `gbrain schema use recompose`, then the `gbrain schema add-prefix` calls above.
-
-**Retyping existing pages requires a delete-and-reimport.** `gbrain schema sync` only touches *untyped* pages by design, `import --fresh` skips on content hash, and the `default` source cannot be removed. The working sequence is `gbrain delete <slug>` across every page, then `gbrain import docs`.
 
 ### The link graph does not work, and cannot without a change
 
@@ -159,7 +143,7 @@ Each cost a wrong turn to find.
 - **You cannot exclude a subdirectory at import time.** `docs/` is inside a git tree, so gbrain enumerates via `git ls-files` and honours `.gitignore`, not `.gbrainignore`. Excluding anything tracked means import-then-`gbrain delete`.
 - **The embedding model cannot be changed in place.** `gbrain config set embedding_model` is rejected outright — the field sizes the schema, so a DB write would be a silent no-op. Switching means moving `~/.gbrain/brain.pglite` aside, re-running `gbrain init`, and reimporting.
 - **The LLM chunker is not reachable.** `src/core/chunkers/llm.ts` exists and would split on topic shifts via Haiku, but nothing calls it — markdown import always uses the recursive chunker, and there is no flag or config key. Chunking is therefore not a lever available today.
-- **Page types are inferred and frequently wrong.** `Journey.md` carries no `type:` and was typed `concept`; 38 of 89 pages are `concept` and 31 `note`. Do not build anything on `--type` filtering.
+- **Page types are inferred and frequently wrong.** `Strategy/Journey.md` carries no `type:` and was typed `concept`; 38 of 89 pages are `concept` and 31 `note`. Do not build anything on `--type` filtering.
 - **A new source is `isolated` until federated.** A plain search silently ignores it, which reads as a missing index. Run `gbrain sources federate <id>`.
 
 Never point a code source at the repo root and do not run `/sync-gbrain`: the code walk prunes by directory *name*, never consults `.gitignore`, and would descend into `apps/` — 3.4 GB of generated runs. PGLite is single-process, so a live `gbrain serve` blocks any import.

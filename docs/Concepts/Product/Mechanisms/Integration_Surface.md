@@ -25,7 +25,7 @@ The strategic payoff is unchanged and is what makes this infrastructure rather t
 
 - [[pivots/2026-07-28-01-agentic-editing-all-in|pivots/2026-07-28-01-agentic-editing-all-in.md]]
 - [[pivots/2026-07-27-11-customization-engine-is-the-company|pivots/2026-07-27-11-customization-engine-is-the-company.md]]
-- [[Architecture_Thesis|Architecture_Thesis.md]]
+- [[Strategy/Architecture_Thesis|Architecture_Thesis.md]]
 - [[Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company|Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md]] (§4, P3, P14a, T4, T9)
 
 ## Related concepts

@@ -169,7 +169,7 @@ One more constraint the [[Concepts/Business/Strategy/Shopify_Pattern|Shopify_Pat
 
 State these as undefined rather than filling them in.
 
-- **Pricing for this ICP.** Undefined. The old $100/$300/$500 ladder was gym-owner pricing and is dead. [[YC_Application_F26|YC_Application_F26.md]] proposes $100/month per branded tenant as the *platform's COGS* and its own notes hold it as the top of a defensible range rather than a decided number. Per-tenant, per-seat, platform license, revenue share — nothing is decided.
+- **Pricing for this ICP.** Undefined. The old $100/$300/$500 ladder was gym-owner pricing and is dead. [[Strategy/YC_Application_F26|YC_Application_F26.md]] proposes $100/month per branded tenant as the *platform's COGS* and its own notes hold it as the top of a defensible range rather than a decided number. Per-tenant, per-seat, platform license, revenue share — nothing is decided.
 - **The comparison ratio.** Because pricing is undefined, "close enough at a fraction of the price" has no fraction. That makes pricing more load-bearing than it first appeared: the ratio *is* the pitch.
 - **Gigacatalyst's pricing.** Not published, so there is no comparable in the nearest analog.
 - **Mighty Pro's current price.** Three conflicting figures across sources; unverified.

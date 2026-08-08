@@ -31,7 +31,7 @@ Full reasoning, the evidence tables, the discarded alternatives and the two reje
 
 [[Office_Hours/2026-08-02-23-Office_Hours_Attach_Rate_And_The_Design_Service_Wedge|Office_Hours/2026-08-02-23-Office_Hours_Attach_Rate_And_The_Design_Service_Wedge.md]]
 
-Underlying research: [[Research/2026-08-02-features-vs-design|Research/2026-08-02-features-vs-design.md]], [[Research/2026-08-02-why-custom|Research/2026-08-02-why-custom.md]], [[Research/2026-08-02-attach-rate|Research/2026-08-02-attach-rate.md]], [[Research/2026-08-02-enterprise-tier-anatomy|Research/2026-08-02-enterprise-tier-anatomy.md]], [[Research/2026-08-02-incumbent-design-delivery|Research/2026-08-02-incumbent-design-delivery.md]]; synthesised in [[Design_vs_Feature_Work|Design_vs_Feature_Work.md]] and [[Build_vs_Buy|Build_vs_Buy.md]].
+Underlying research: [[Research/2026-08-02-features-vs-design|Research/2026-08-02-features-vs-design.md]], [[Research/2026-08-02-why-custom|Research/2026-08-02-why-custom.md]], [[Research/2026-08-02-attach-rate|Research/2026-08-02-attach-rate.md]], [[Research/2026-08-02-enterprise-tier-anatomy|Research/2026-08-02-enterprise-tier-anatomy.md]], [[Research/2026-08-02-incumbent-design-delivery|Research/2026-08-02-incumbent-design-delivery.md]]; synthesised in [[Strategy/Design_vs_Feature_Work|Design_vs_Feature_Work.md]] and [[Strategy/Build_vs_Buy|Build_vs_Buy.md]].
 
 ## What this does not change
 
@@ -41,10 +41,10 @@ The product is untouched. The mechanism, [[Concepts/Product/Mechanisms/Full_Visu
 
 ## Downstream impact
 
-- [[Customer_ICP|Customer_ICP.md]] — rewrite P1a around delivery time and capacity; re-label the named-examples table as tier prices rather than design-service prices; correct the "gated by how many designers you can hire" claim; reframe "the person whose team is being replaced is usually in the evaluation"; reorder the target list.
-- [[Recompose_Summary|Recompose_Summary.md]] — the "premium tier they cannot staff" and "capped by how many designers can be hired" claims.
-- [[Architecture_Thesis|Architecture_Thesis.md]] — the "in-market prices are visible" passage conflates tier price with design price.
-- [[YC_Application_F26|YC_Application_F26.md]] — the 20% upgrade-rate benchmark, in the working notes only. The submitted answers are historical record and are not edited.
-- [[Open_Questions|Open_Questions.md]] — reframe the hostile-evaluator risk; add T15–T18.
-- [[Journey|Journey.md]] — new Phase 6 addendum. Not a retroactive edit.
-- [[Competition|Competition.md]] — in-platform design services as "the direct alternative" needs the tier-bundle correction.
+- [[Strategy/Customer_ICP|Customer_ICP.md]] — rewrite P1a around delivery time and capacity; re-label the named-examples table as tier prices rather than design-service prices; correct the "gated by how many designers you can hire" claim; reframe "the person whose team is being replaced is usually in the evaluation"; reorder the target list.
+- [[Strategy/Recompose_Summary|Recompose_Summary.md]] — the "premium tier they cannot staff" and "capped by how many designers can be hired" claims.
+- [[Strategy/Architecture_Thesis|Architecture_Thesis.md]] — the "in-market prices are visible" passage conflates tier price with design price.
+- [[Strategy/YC_Application_F26|YC_Application_F26.md]] — the 20% upgrade-rate benchmark, in the working notes only. The submitted answers are historical record and are not edited.
+- [[Strategy/Open_Questions|Open_Questions.md]] — reframe the hostile-evaluator risk; add T15–T18.
+- [[Strategy/Journey|Journey.md]] — new Phase 6 addendum. Not a retroactive edit.
+- [[Strategy/Competition|Competition.md]] — in-platform design services as "the direct alternative" needs the tier-bundle correction.

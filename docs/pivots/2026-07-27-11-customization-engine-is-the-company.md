@@ -89,7 +89,7 @@ The countervailing risk is recorded and accepted, not resolved: this is the sixt
 
 ### Docs that must be updated to reflect the new direction
 
-- `docs/Journey.md` — needs a Phase 6 entry. Phase 5 (autonomous agent layer) needs to be marked withdrawn.
+- `docs/Strategy/Journey.md` — needs a Phase 6 entry. Phase 5 (autonomous agent layer) needs to be marked withdrawn.
 - `Business/CombatDen_Strategy.md`, `Business/CombatDen_Summary.md`, `Business/Product_Model.md` — all describe a gym CRM as the product.
 - `Business/Competition.md`, `Business/Differentiation.md` — the competitive set changes entirely, from class-based-gym CRMs to token tooling, brand-generation APIs, and per-tenant customization infrastructure. Both are also still stale on the AI landscape.
 - `Business/Value_Pricing_Justification.md`, [[Pricing_Tiers]] — the $100/$300/$500 ladder was gym-owner pricing and is now irrelevant. Platform pricing is undefined.

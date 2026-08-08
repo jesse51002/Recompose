@@ -9,7 +9,7 @@ date: 2026-07-28
 Concepts touched: [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]], [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Product/Mechanisms/Closed_Design_To_Production_Loop|Closed_Design_To_Production_Loop]], [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]], [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]], [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]].
 
 > [!info] What this doc is for
-> The lines the product holds. Boundaries are decisions, not status — they should only change when a pivot changes them, and a pivot doc should exist saying so. For how the mechanism works, read [[Architecture_Thesis|Architecture_Thesis.md]]; for what exists in code right now, read `README.md`.
+> The lines the product holds. Boundaries are decisions, not status — they should only change when a pivot changes them, and a pivot doc should exist saying so. For how the mechanism works, read [[Strategy/Architecture_Thesis|Architecture_Thesis.md]]; for what exists in code right now, read `README.md`.
 
 ## The two core principles
 

@@ -12,7 +12,7 @@ Concepts touched: [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]],
 > [!warning] Status
 > Nothing in this document has been validated against a real buyer. No platform has been contacted. See "Validation status" at the end before using any of it as a fact.
 
-Sources: [[pivots/2026-07-27-11-customization-engine-is-the-company|pivots/2026-07-27-11-customization-engine-is-the-company.md]] (P1–P4 as decided), [[pivots/2026-08-02-23-icp-filter-moves-to-tenants-who-already-have-apps|pivots/2026-08-02-23-icp-filter-moves-to-tenants-who-already-have-apps.md]] (P1a), [[Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company|Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md]] (P1, P1b, P2, P3, P4, §11d, T1–T9), [[Office_Hours/2026-08-02-23-Office_Hours_Attach_Rate_And_The_Design_Service_Wedge|Office_Hours/2026-08-02-23-Office_Hours_Attach_Rate_And_The_Design_Service_Wedge.md]] (L1–L6, T19–T22), [[YC_Application_F26|YC_Application_F26.md]], and the August 2026 research: [[Research/2026-08-02-attach-rate|Research/2026-08-02-attach-rate.md]], [[Research/2026-08-02-enterprise-tier-anatomy|Research/2026-08-02-enterprise-tier-anatomy.md]], [[Research/2026-08-02-features-vs-design|Research/2026-08-02-features-vs-design.md]], [[Research/2026-08-02-why-custom|Research/2026-08-02-why-custom.md]].
+Sources: [[pivots/2026-07-27-11-customization-engine-is-the-company|pivots/2026-07-27-11-customization-engine-is-the-company.md]] (P1–P4 as decided), [[pivots/2026-08-02-23-icp-filter-moves-to-tenants-who-already-have-apps|pivots/2026-08-02-23-icp-filter-moves-to-tenants-who-already-have-apps.md]] (P1a), [[Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company|Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md]] (P1, P1b, P2, P3, P4, §11d, T1–T9), [[Office_Hours/2026-08-02-23-Office_Hours_Attach_Rate_And_The_Design_Service_Wedge|Office_Hours/2026-08-02-23-Office_Hours_Attach_Rate_And_The_Design_Service_Wedge.md]] (L1–L6, T19–T22), [[Strategy/YC_Application_F26|YC_Application_F26.md]], and the August 2026 research: [[Research/2026-08-02-attach-rate|Research/2026-08-02-attach-rate.md]], [[Research/2026-08-02-enterprise-tier-anatomy|Research/2026-08-02-enterprise-tier-anatomy.md]], [[Research/2026-08-02-features-vs-design|Research/2026-08-02-features-vs-design.md]], [[Research/2026-08-02-why-custom|Research/2026-08-02-why-custom.md]].
 
 ---
 
@@ -84,7 +84,7 @@ The figures below are **tier prices, not design prices**, and the distinction is
 | Agency custom app build | $10–50k, 4–12 weeks | April 2026 research |
 
 > [!danger] Never quote an enterprise-tier price
-> No platform publishes one. Every figure above is a third-party estimate of a gated number, and the Circle estimates disagree by an order of magnitude. [[YC_Application_F26|YC_Application_F26.md]] already instructs saying "$1,000+/month" rather than a precise figure; extend that to all of them.
+> No platform publishes one. Every figure above is a third-party estimate of a gated number, and the Circle estimates disagree by an order of magnitude. [[Strategy/YC_Application_F26|YC_Application_F26.md]] already instructs saying "$1,000+/month" rather than a precise figure; extend that to all of them.
 
 **The design work priced standalone is cheap.** ABC Trainerize sells its Custom Branded App at a **one-time ~$99–$169**; Vagaro's design package is **$499 one-time**. That is the market pricing the same class of deliverable — splash, icons, store assets, brand kit — that the enterprise tiers list. Do not build a cost-savings pitch on it; there is not enough cost there.
 
@@ -109,7 +109,7 @@ The figures below are **tier prices, not design prices**, and the distinction is
 >
 > Reframing the ROI as tier-unlock makes that finding **irrelevant rather than damaging**. Reintroducing the end-user claim makes it damaging again, in front of the one buyer who can check it.
 
-The retention argument (a tenant who has shaped an app into its own brand does not churn) is the weakest of the three and rests on platform-side switching cost, not on end users caring. [[YC_Application_F26|YC_Application_F26.md]] cut it from the written application and kept it as a verbal point only. Treat it the same way here.
+The retention argument (a tenant who has shaped an app into its own brand does not churn) is the weakest of the three and rests on platform-side switching cost, not on end users caring. [[Strategy/YC_Application_F26|YC_Application_F26.md]] cut it from the written application and kept it as a verbal point only. Treat it the same way here.
 
 ---
 
@@ -162,7 +162,7 @@ The differentiator that survives all of the above is three-legged: cross-modal c
 
 Do not fill these in from memory or from the gym era. They are genuinely open.
 
-- **Pricing for this ICP is undefined.** The old $100/$300/$500 ladder was **gym-owner pricing and is dead** — it does not transfer. The only number written anywhere is [[YC_Application_F26|YC_Application_F26.md]]'s **$100/month per branded tenant**, presented there explicitly as the *platform's COGS, not the end price*, defensible only as "the price at which the platform still keeps 70% on a tier they currently cannot scale," and **never as a final number**. The office hours doc records pricing as completely undefined (T7, Open Question 2). Gigacatalyst publishes no pricing, so the nearest analog gives no comparable.
+- **Pricing for this ICP is undefined.** The old $100/$300/$500 ladder was **gym-owner pricing and is dead** — it does not transfer. The only number written anywhere is [[Strategy/YC_Application_F26|YC_Application_F26.md]]'s **$100/month per branded tenant**, presented there explicitly as the *platform's COGS, not the end price*, defensible only as "the price at which the platform still keeps 70% on a tier they currently cannot scale," and **never as a final number**. The office hours doc records pricing as completely undefined (T7, Open Question 2). Gigacatalyst publishes no pricing, so the nearest analog gives no comparable.
 - **The tenant-count floor for "real volume."** Never picked.
 - **Stack constraint as a qualifying filter.** Flutter/React Native only, or rebuild it for them? Unresolved since 2026-05-25 and now more consequential, because it decides **which platforms are even reachable**.
 - **Whether presets are the platform's product or the platform's tenants' product.** Unexamined (Open Question 7).

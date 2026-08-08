@@ -67,11 +67,11 @@ That session's conclusion — compile the real app to web and push config over `
 
 ### Docs updated in the same change
 
-- [[Product_Boundaries|Product_Boundaries.md]] — the boundary set changes materially: the mirror is in scope and is visual-only; screenshots are the accept condition; UAT is a boundary; the error budget and the human-leverage promise are boundaries.
-- [[Recompose_Summary|Recompose_Summary.md]] — the mechanism and direction sections.
-- [[Architecture_Thesis|Architecture_Thesis.md]] — the layout half is now specified.
-- [[Open_Questions|Open_Questions.md]] — several questions resolved, several added.
-- [[Journey|Journey.md]] — Phase 6 extended.
+- [[Strategy/Product_Boundaries|Product_Boundaries.md]] — the boundary set changes materially: the mirror is in scope and is visual-only; screenshots are the accept condition; UAT is a boundary; the error budget and the human-leverage promise are boundaries.
+- [[Strategy/Recompose_Summary|Recompose_Summary.md]] — the mechanism and direction sections.
+- [[Strategy/Architecture_Thesis|Architecture_Thesis.md]] — the layout half is now specified.
+- [[Strategy/Open_Questions|Open_Questions.md]] — several questions resolved, several added.
+- [[Strategy/Journey|Journey.md]] — Phase 6 extended.
 - root `../CLAUDE.md` (project root, outside the vault) — the "What Recompose is" orientation block.
 
 ### Not yet done

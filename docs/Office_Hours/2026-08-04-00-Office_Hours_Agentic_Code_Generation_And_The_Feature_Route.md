@@ -90,7 +90,7 @@ If the tenant iterates until they approve, then the aesthetic accept condition i
 
 ### 6. The autonomy promise needs one word changed
 
-The tenant iterating on their own mock *is the product* — "customers agentically redesign white-label apps." But [[Recompose_Summary|Recompose_Summary.md]] and the 2026-07-30 pivot describe the trend as toward zero human involvement, which the product contradicts on its face.
+The tenant iterating on their own mock *is the product* — "customers agentically redesign white-label apps." But [[Strategy/Recompose_Summary|Recompose_Summary.md]] and the 2026-07-30 pivot describe the trend as toward zero human involvement, which the product contradicts on its face.
 
 The claim that is both true and defensible is **zero *platform* involvement.** [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]] means no work lands on the buyer's desk, not that no human is in the loop anywhere. Left as written, it is a contradiction a partner or a buyer catches for free.
 
@@ -152,7 +152,7 @@ Three things came out of this and none required a decision:
 
 ## Approaches considered
 
-**Extend the mechanism to per-tenant features.** Rejected for the foreseeable future. Inherits the full security surface it currently avoids — API discovery, approved-API scoping, schema validation, auth passthrough, RBAC inheritance, sandbox boundaries, public-vs-private data classification — and moves the failure mode from *ugly* to *security incident*, which is the asymmetry that makes the visual half tractable for one person. Revisit condition recorded in [[Agentic_Code_Generation|Agentic_Code_Generation.md]].
+**Extend the mechanism to per-tenant features.** Rejected for the foreseeable future. Inherits the full security surface it currently avoids — API discovery, approved-API scoping, schema validation, auth passthrough, RBAC inheritance, sandbox boundaries, public-vs-private data classification — and moves the failure mode from *ugly* to *security incident*, which is the asymmetry that makes the visual half tractable for one person. Revisit condition recorded in [[Strategy/Agentic_Code_Generation|Agentic_Code_Generation.md]].
 
 **Server-driven UI instead of a fork.** Rejected. Technically sound and proven at scale, but it requires writing a layout framework into the platform's app, which is the one thing the GTM depends on not doing.
 

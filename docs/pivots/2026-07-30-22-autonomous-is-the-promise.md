@@ -40,7 +40,7 @@ Recorded so no downstream doc invents an answer.
 1. **Who resolves a halt.** Leaning the platform's own staff; a forward-deployed engineer was considered and the objection named against it is **lack of domain knowledge** about the platform's app. Unresolved.
 2. **That open question contradicts the demo's closing claim.** The recorded pitch ends on *"essentially no manual integration and maintenance for a white-label platform."* If halts are resolved by platform staff, that sentence is false. The two cannot both stand and this pivot does not choose between them.
 3. **How the 4% minor gets swept up.** A scheduled code review is a candidate, not a decision.
-4. **The budget still has no denominator.** Per screen, per tenant-redesign, or per sync operation — carried forward unchanged from [[Architecture_Thesis|Architecture_Thesis.md]] and [[Open_Questions|Open_Questions.md]].
+4. **The budget still has no denominator.** Per screen, per tenant-redesign, or per sync operation — carried forward unchanged from [[Strategy/Architecture_Thesis|Architecture_Thesis.md]] and [[Strategy/Open_Questions|Open_Questions.md]].
 
 ## Office hours doc(s) that explored this
 
@@ -50,15 +50,15 @@ None. The decision came out of reviewing the recorded YC demo (`Recompose-YcDemo
 
 Docs asserting the old promise, all requiring update:
 
-- `docs/Product_Boundaries.md` — the section *"We promise leverage, not autonomy"* and its marketing boundary (*never sell hands-off autonomy, never imply zero review*) invert.
-- `docs/Recompose_Summary.md` — the promise paragraph.
+- `docs/Strategy/Product_Boundaries.md` — the section *"We promise leverage, not autonomy"* and its marketing boundary (*never sell hands-off autonomy, never imply zero review*) invert.
+- `docs/Strategy/Recompose_Summary.md` — the promise paragraph.
 - **The promise concept is renamed to [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]]**, replacing the old strategy concept outright rather than keeping a deprecated one alongside it, and relisted in [[Concepts/_Index|Concepts/_Index.md]]. No historical doc wikilinked the old name, so nothing broke.
 - `docs/Concepts/Product/Mechanisms/Re_Derived_Not_Forked.md` — *"where a human reviews what the agent could not resolve."*
 - `docs/Concepts/Product/Mechanisms/UAT_Sync.md` — already corrected once on 2026-07-30; carries the budget's basis.
-- `docs/Open_Questions.md` — §2.1b closes in part; the denominator and the who-resolves-a-halt questions stay open.
-- `docs/Architecture_Thesis.md` — the error-budget entry.
-- `docs/Journey.md` — the Phase 6 line *"The promise got smaller and better."*
-- `docs/YC_Application_F26.md` — the corrections table, the demo-script flags, and the "two strongest parts of the pitch" note.
+- `docs/Strategy/Open_Questions.md` — §2.1b closes in part; the denominator and the who-resolves-a-halt questions stay open.
+- `docs/Strategy/Architecture_Thesis.md` — the error-budget entry.
+- `docs/Strategy/Journey.md` — the Phase 6 line *"The promise got smaller and better."*
+- `docs/Strategy/YC_Application_F26.md` — the corrections table, the demo-script flags, and the "two strongest parts of the pitch" note.
 - [[CLAUDE|CLAUDE.md]] (root) — the promise bullet and its OPEN marker.
 - `PRODUCT.md` — Positioning, Operating Context, Brand Commitments, Product Principle 4.
 

@@ -35,7 +35,7 @@ The application is frozen; the demo is where the record gets corrected. Each row
 2. **The promise: autonomy.** No PR into their trunk, no review queue, no integration work, no engineering sign-off. The ~95/4/1 error budget is a **target, never measured** — say it as a goal, not a rate. What makes it survivable is that **the pipeline halts rather than ships**: a stage that cannot satisfy its own checks stops and nothing deploys, so a significant failure is a stall, not an incident.
 
 > [!warning] Do not answer this in a room: who resolves a halt
-> The autonomous promise depends on halting, and a halted design still has to be resolved by somebody. Leaning the platform's own staff; an FDE was considered and is blocked on lacking domain knowledge of an app they did not write. **If the answer is platform staff, the demo's "no manual maintenance" close is false.** Undecided — see [[Open_Questions|Open_Questions.md]] §2.1c.
+> The autonomous promise depends on halting, and a halted design still has to be resolved by somebody. Leaning the platform's own staff; an FDE was considered and is blocked on lacking domain knowledge of an app they did not write. **If the answer is platform staff, the demo's "no manual maintenance" close is false.** Undecided — see [[Strategy/Open_Questions|Open_Questions.md]] §2.1c.
 
 ---
 
@@ -322,7 +322,7 @@ Concepts engaged: [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual
 
 ### Open flags — none of these are ruled on
 
-- **The close asserts something undecided.** *"Essentially no manual integration and maintenance for a white-label platform"* holds only if Recompose resolves every halt. Who resolves a halt is open and leaning toward platform staff ([[Open_Questions|Open_Questions.md]] §2.1c). Those two cannot both be true.
+- **The close asserts something undecided.** *"Essentially no manual integration and maintenance for a white-label platform"* holds only if Recompose resolves every halt. Who resolves a halt is open and leaning toward platform staff ([[Strategy/Open_Questions|Open_Questions.md]] §2.1c). Those two cannot both be true.
 - **The scale argument was cut and nothing replaced it.** The bounded-layouts → bounded-branches close is gone. It was the only part of the pitch that explained why this does not collapse under tenant count, and it was the reason the theme/layout split mattered commercially rather than just technically. The demo now shows the split and never says what it buys. *(This also retires the old flag about the fleet page's thirty `design/<name>` branches contradicting the branch-count claim — no claim, no contradiction.)*
 - **22 seconds over, and the states walk is where it went.** The five states take 0:29 — a fifth of the runtime — to narrate a list the page already labels. The customer half, which is the half with real software behind it, gets 0:47. If the target stays 120s, that block is the cut.
 - **Productionalize leads the states walk and is not built.** First of the five named, most attention, least real. Also a terminology drift worth settling: the recording says *"productionization"*, this doc says *"Productionalizing"*, and `fleetFixtures.ts` says *"Productionalizing"*. Pick one.
