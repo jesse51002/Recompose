@@ -1,0 +1,80 @@
+flowchart TB
+  PlatformMain["🗄️ Platform repo · main &amp; uat<br/>READ ACCESS ONLY<br/>Recompose never writes here"]
+
+  subgraph Tokenize["⚙️ Tokenization · forward-deployed at MVP"]
+    direction LR
+    tk_scan["scan screens<br/>extract slot inventory"]
+    tk_assets["tokenize every asset<br/>images · colour · type → slot refs"]
+    tk_scan --> tk_assets
+  end
+
+  Base["🌳 Shared tokenized fork — Recompose's base<br/>one per platform · agent re-derives it as they ship"]
+
+  subgraph Mirror["⚙️ JSX visual mirror — mockware"]
+    direction LR
+    mr_gen["transpile to JSX<br/>no logic · no state · no API calls"]
+    mr_mock["live data → mock<br/>generated placeholder imagery<br/>every state, not just the happy path"]
+    mr_live["live render in a browser<br/>cheap to screenshot"]
+    mr_skill["record the gotchas<br/>what breaks this app's mock"]
+    mr_gen --> mr_mock
+    mr_mock --> mr_live
+    mr_live --> mr_skill
+  end
+
+  Skill["🛠️ Per-app guardrail skill<br/>emitted by the port, loaded by the design agent<br/>the port is not done until this exists"]
+
+  Tenant["👤 Tenant writes the brand brief<br/>and watches the redesign happen live"]
+
+  subgraph ThemeTree["⚙️ ThemeTree · asset pipeline (deterministic)"]
+    direction LR
+    tt_colour["colour · 4 OKLCH slots<br/>WCAG AA as accept condition"]
+    tt_rest["fonts · copy · icons · images<br/>derived, bounded cost per run"]
+    tt_colour --> tt_rest
+  end
+
+  subgraph DesignLoop["⚙️ Design · free agentic editing"]
+    direction LR
+    dl_agent["design agent<br/>full freedom over arrangement"]
+    dl_check["screenshot validator<br/>a VLM judges the render"]
+    dl_agent --> dl_check
+    dl_check -->|"reject · loop until accepted"| dl_agent
+  end
+
+  subgraph Prod["⚙️ Productionalize — the hard part"]
+    direction LR
+    pd_agent["productionalize agent<br/>design intent → production code"]
+    pd_eq["functional-equivalence gate<br/>arrangement only · nothing added or removed"]
+    pd_shot["production screenshot diff<br/>against the approved mock"]
+    pd_agent --> pd_eq
+    pd_eq --> pd_shot
+  end
+
+  Forks["🌿 Design fork — ONE per design<br/>two branches inside it: uat &amp; main<br/>generated off uat (always ahead)<br/>main fast-forwards, it already has the history<br/>cost and price both attach here"]
+
+  UAT["🧪 Platform UAT<br/>a human works only what the agent could not resolve<br/>~95% clean · 4% minor · 1% significant"]
+
+  PlatformMain -->|"read only"| Tokenize
+  Tokenize --> Base
+  Base --> Mirror
+  Mirror --> Tenant
+  Mirror -.->|"emits"| Skill
+  Skill -.->|"loaded before editing"| DesignLoop
+  Tenant -->|"brand brief"| ThemeTree
+  ThemeTree --> DesignLoop
+  DesignLoop -->|"approved mock"| Prod
+  Prod --> Forks
+  Forks --> UAT
+
+  classDef client fill:#e3f0ff,stroke:#2f6fb0,color:#0b2942;
+  classDef ext    fill:#ffd9a8,stroke:#d2691e,color:#4a2c08;
+  classDef artifact fill:#fff2e0,stroke:#c9781f,color:#4a2c08;
+  classDef tool     fill:#fdf6d8,stroke:#caab2f,color:#4a3d08;
+  class Tenant client;
+  class PlatformMain,UAT ext;
+  class Base,Forks artifact;
+  class Skill tool;
+  style Tokenize fill:#dff0e6,stroke:#2f8f53;
+  style ThemeTree fill:#dff0e6,stroke:#2f8f53;
+  style Mirror fill:#eafff2,stroke:#2f8f53;
+  style DesignLoop fill:#e6f7ec,stroke:#2f8f53;
+  style Prod fill:#e6f7ec,stroke:#2f8f53,stroke-width:3px;

@@ -51,3 +51,6 @@ RecomposeJsxMockUps/src/apps/gen-*/
 # wanted, add all three in one change rather than letting an `npm install`
 # commit them one at a time.
 package-lock.json
+
+# Obsidian per-machine UI state (pane layout, open tabs) — churns constantly
+docs/.obsidian/workspace.json
