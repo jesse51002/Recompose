@@ -58,3 +58,6 @@ docs/.obsidian/workspace.json
 # Obsidian only ever opens docs/ as a vault. A .obsidian/ at the repo root
 # means something opened the whole repo by mistake -- never commit it.
 /.obsidian/
+
+# gbrain index — a rebuildable artifact, and hundreds of MB. Never committed.
+.gbrain/

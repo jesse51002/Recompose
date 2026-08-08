@@ -148,6 +148,10 @@ Then work backwards from the newest doc in `pivots/`, as far as the question nee
 
 A local [gbrain](https://github.com/garrytan/gbrain) brain indexes this vault so questions can be asked by meaning. Everything runs on the Claude subscription — there is no per-call cost to weigh.
 
+**The brain lives in this repo, at `.gbrain/`, not in your home directory.** `direnv` sets `GBRAIN_HOME` from the `.envrc` at the repo root, so it resolves the same whether you started from the repo root, from `docs/`, or from a subsystem folder — **it does not matter where you launch Claude from.** Outside the repo the variable is unset and gbrain says `No brain configured` rather than quietly answering out of a different brain.
+
+`.gbrain/` is gitignored — it is a rebuildable index, not source. **A fresh clone has no brain**; see the `gbrain-maintenance` skill to build one.
+
 **Ground every answer about this project in the vault before giving it.** Not only when you set out to work something out — before you say anything substantive about what Recompose is, why a decision went the way it did, what a doc claims, or what is still open. Reach for `gbrain think` first, then answer from what it returns.
 
 The failure this prevents is answering from recall or inference. Both feel like knowing. A summary read three hours ago has since been superseded; a position that sounds right is often a premise the vault already reversed. `think` reads across ~40 pages at once and cites every claim, and names what the vault does not cover rather than guessing it. **It is not overhead to skip when you think you already know — that is exactly when it earns the call.**

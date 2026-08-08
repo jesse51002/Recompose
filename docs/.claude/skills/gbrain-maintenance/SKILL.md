@@ -11,7 +11,7 @@ Everything here was learned by hitting it. Each gotcha cost a wrong turn; severa
 
 | | |
 |---|---|
-| engine | PGLite at `~/.gbrain/`, local, nothing uploaded |
+| engine | PGLite at `<repo>/.gbrain/` — **project-local, not `~/.gbrain`**, nothing uploaded |
 | embeddings | `voyage:voyage-3-large`, 1024 dimensions |
 | think model | `claude-cli:claude-opus-5` (subscription, via the local `claude` CLI) |
 | schema pack | `recompose`, forked from `gbrain-base-v2` |
@@ -19,6 +19,36 @@ Everything here was learned by hitting it. Each gotcha cost a wrong turn; severa
 | dead source | **`default`** — isolated, must stay that way |
 
 `gbrain sources status` is the live picture. Never hardcode page or link counts anywhere; they drift.
+
+## Where the brain lives, and why it matters
+
+The brain is **inside the repo** at `.gbrain/`, not in the home directory. `direnv` reads `.envrc` at the repo root and exports `GBRAIN_HOME`, so every gbrain command resolves the same brain from anywhere in the tree — repo root, `docs/`, a subsystem folder. Outside the repo the variable is unset and there is no `~/.gbrain` to fall back to, so gbrain fails loudly with `No brain configured`. That loudness is deliberate: the alternative is silently answering out of a different brain.
+
+**`GBRAIN_HOME` is a parent directory.** gbrain appends `.gbrain` itself — `GBRAIN_HOME=/x` means `/x/.gbrain`. Setting it to the `.gbrain` directory looks right and fails.
+
+**`config.json` stores an absolute `database_path`.** Moving the brain directory does not update it, and the symptom is `No brain configured` with the config sitting right there. Repoint it by hand after any move.
+
+### Rebuilding on a fresh clone
+
+`.gbrain/` is gitignored — it is a derived index, not source, and it is hundreds of megabytes. A clone therefore has no brain, and neither does a machine that has never run this. The schema pack lives there too, so it does not travel either.
+
+```bash
+gbrain init --pglite --json --embedding-model voyage:voyage-3-large --embedding-dimensions 1024
+gbrain schema fork gbrain-base-v2 recompose && gbrain schema use recompose
+gbrain schema add-prefix concept  concepts/
+gbrain schema add-prefix analysis research/
+gbrain schema add-prefix analysis industries/
+gbrain schema add-prefix analysis office_hours/
+gbrain schema add-prefix analysis strategy/
+gbrain schema add-prefix writing  pivots/
+gbrain sources add vault --path "$PWD/docs" --name "Recompose vault"
+gbrain sources federate vault
+gbrain sync --source vault
+gbrain extract links --source db
+gbrain config set models.think claude-cli:claude-opus-5
+```
+
+Needs `VOYAGE_API_KEY` in the environment for embeddings, and the `claude` CLI logged in for `think`. Verify with `gbrain sources status` and one `think` call — not with exit codes.
 
 ## Routine operations
 
@@ -54,7 +84,7 @@ git -C ~/gbrain pull && gbrain-skills-sync
 
 ### Changing the model or embeddings
 
-- **The embedding model cannot be changed in place.** `gbrain config set embedding_model` is rejected outright, because the field sizes the schema and a DB write would be a silent no-op. The procedure is to move `~/.gbrain/brain.pglite` aside, `gbrain init` with the new model, and reimport.
+- **The embedding model cannot be changed in place.** `gbrain config set embedding_model` is rejected outright, because the field sizes the schema and a DB write would be a silent no-op. The procedure is to move `.gbrain/brain.pglite` aside, `gbrain init` with the new model, and reimport.
 - **Set the think model through config, never by patching the recipe.** `~/gbrain` is a git clone; a local edit to a tracked file conflicts on the next `git pull`.
 - **A model missing from a recipe's allowlist still works if set via config.** `model-resolver.ts` deliberately skips the allowlist throw for models opted into through `models.default` / `models.think`. That is the supported route for anything newer than the recipe knows — `claude-opus-5` runs this way. Passing the same value with `--model` fails as `unknown_model`; config is what unlocks it.
 - `openai-compat` providers (`openrouter`, `litellm`, `deepseek`, …) skip allowlists entirely. Only `native` providers enforce them.
@@ -63,7 +93,7 @@ git -C ~/gbrain pull && gbrain-skills-sync
 
 - **Types are inferred from path prefixes and were wrong by default.** `gbrain-base-v2` keys `concept` off `wiki/concepts/`, which this vault does not use, so real concept files matched nothing and `Journey.md` — a chronological history — came back typed `concept`.
 - The `recompose` pack fixes this: `Concepts/` → `concept`; `Research/`, `Industries/`, `Office_Hours/`, `Strategy/` → `analysis`; `pivots/` → `writing`. **A new top-level folder needs a new prefix or its pages will be typed by guesswork.**
-- **The pack lives at `~/.gbrain/schema-packs/recompose/pack.json`, outside this repo, so it does not travel with a clone.** Recreate with `gbrain schema fork gbrain-base-v2 recompose`, `gbrain schema use recompose`, then `gbrain schema add-prefix <type> <prefix>` for each folder.
+- **The pack lives at `.gbrain/schema-packs/recompose/pack.json`, which is gitignored, so it does not travel with a clone.** Recreate with `gbrain schema fork gbrain-base-v2 recompose`, `gbrain schema use recompose`, then `gbrain schema add-prefix <type> <prefix>` for each folder.
 - **Retyping existing pages needs a delete-and-reimport.** `gbrain schema sync` only touches *untyped* pages by design; `import --fresh` skips on content hash; `default` cannot be removed. The working sequence is `gbrain delete` across every slug, then reimport.
 
 ### The link graph
