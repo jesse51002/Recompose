@@ -97,6 +97,22 @@ gbrain search "<terms>"      # KEYWORD ONLY (tsvector). Not semantic. Rarely wha
 
 **Code is deliberately not indexed.** `code-def` / `code-refs` / `code-callers` cannot work here: the active schema pack `gbrain-base-v2` **dropped the `code` page type** that its predecessor `gbrain-base` declared, so nothing emits code symbols and `resolve_symbol_edges` has nothing to resolve. Without that, indexing code buys semantic search over a tree Grep already searches exactly and never staler than the working copy — while needing a manual re-sync on every commit. Grep is the tool for code here.
 
+### Page types come from a custom schema pack
+
+The active pack is **`recompose`**, forked from `gbrain-base-v2` and mapping the vault's folders onto base-v2's canonical types via path prefixes:
+
+| folder | type |
+|---|---|
+| `Concepts/` | `concept` |
+| `Research/`, `Industries/`, `Office_Hours/` | `analysis` |
+| `pivots/` | `writing` |
+
+Without it every page was typed by guesswork — `Journey.md` came back `concept`, and the real concept files matched nothing, because base-v2's `concept` prefix is `wiki/concepts/` and this vault imports as `concepts/`. The 13 strategy docs at the vault root still default to `concept` since they have no folder to key on; fix that with explicit `type:` frontmatter if it ever matters.
+
+**The pack lives at `~/.gbrain/schema-packs/recompose/pack.json` — outside this repo, so it does not travel with a clone.** Recreate with `gbrain schema fork gbrain-base-v2 recompose`, `gbrain schema use recompose`, then the `gbrain schema add-prefix` calls above.
+
+**Retyping existing pages requires a delete-and-reimport.** `gbrain schema sync` only touches *untyped* pages by design, `import --fresh` skips on content hash, and the `default` source cannot be removed. The working sequence is `gbrain delete <slug>` across every page, then `gbrain import docs`.
+
 ### The link graph does not work, and cannot without a change
 
 gbrain's graph reranking signals are inert on this vault, and the reason is structural rather than a misconfiguration. **Obsidian wikilinks address by basename (`[[Orchestrator]]`); gbrain pages are keyed by full path slug (`concepts/product/mechanisms/orchestrator`).** A bare `orchestrator` resolves to nothing, so link extraction reports:
