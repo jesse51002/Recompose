@@ -127,85 +127,31 @@ Then work backwards from the newest doc in `pivots/`, as far as the question nee
 
 ## GBrain
 
-A local [gbrain](https://github.com/garrytan/gbrain) brain indexes the vault so questions can be asked by meaning. PGLite at `~/.gbrain/`, `voyage-3-large` embeddings, local to this machine — nothing is uploaded. `gbrain sources status` is the live picture: which sources, how many pages, sync lag, embed coverage.
+A local [gbrain](https://github.com/garrytan/gbrain) brain indexes this vault so questions can be asked by meaning. Everything runs on the Claude subscription — there is no per-call cost to weigh.
 
 **Ground every answer about this project in the vault before giving it.** Not only when you set out to work something out — before you say anything substantive about what Recompose is, why a decision went the way it did, what a doc claims, or what is still open. Reach for `gbrain think` first, then answer from what it returns.
 
-The failure this prevents is answering from recall or inference. Both feel like knowing. A summary read three hours ago has since been superseded; a position that sounds right is often a premise the vault already reversed; a confident answer assembled from adjacent facts is the specific way a wrong claim gets laundered into a doc. `think` reads across ~40 pages at once and cites every claim, so the answer arrives with its evidence attached and the parts the vault does not cover are named rather than guessed.
+The failure this prevents is answering from recall or inference. Both feel like knowing. A summary read three hours ago has since been superseded; a position that sounds right is often a premise the vault already reversed. `think` reads across ~40 pages at once and cites every claim, and names what the vault does not cover rather than guessing it. **It is not overhead to skip when you think you already know — that is exactly when it earns the call.**
 
-It is not overhead to skip when you think you already know — that is exactly the case where it earns the call. Reconstructing an argument out of five documents by hand, when one call returns it cited, is the wasted effort.
+**Before writing anything durable** — a pivot, an office hours doc, a strategy edit — treat it as required. The **Conflicts** section is the only thing that catches the vault contradicting itself, and a new doc written over an unnoticed contradiction entrenches it.
 
-**Before writing anything durable** — a pivot, an office hours doc, a strategy edit — treat it as required rather than advisable. The **Conflicts** section is the only thing here that catches the vault contradicting itself, and a new doc written over an unnoticed contradiction entrenches it.
-
-The exceptions are narrow and obvious: a coding task, a mechanical edit, or a question whose answer is a single grep away.
+Narrow exceptions: a coding task, a mechanical edit, or a question one grep answers.
 
 ```bash
-gbrain think "<question>"    # multi-hop synthesis, cited, with Conflicts + Gaps
-gbrain query "<question>"    # hybrid retrieval — ranked passages, free, fast
-gbrain search "<terms>"      # KEYWORD ONLY (tsvector). Not semantic. Rarely what you want.
+gbrain think "<question>"           # synthesis, cited, with Conflicts + Gaps — the default
+gbrain think "<q>" --anchor <slug>  # also traverse the link graph around a page
+gbrain query "<question>"           # ranked passages, free and fast
 ```
 
-`gbrain search` never touches embeddings, despite gstack's `USING_GBRAIN_WITH_GSTACK.md` and its auto-generated `## GBrain Search Guidance` block both calling it semantic.
+`gbrain search` is keyword-only and rarely what you want, despite gstack's docs calling it semantic. **Do not judge the brain by `query`** — on nine questions with known answers `query` put the right doc first six times and `think` answered all three misses correctly. Phrase questions the way the docs argue, not as labels.
 
-**Do not judge the brain by `query`.** On nine questions with known answers `query` put the right doc first six times; `think` answered all three misses correctly, because it synthesises across pages rather than ranking them. A `query` miss is not evidence the vault lacks the answer.
-
-**Phrase questions the way the docs argue, not as labels.** "What happens when an agent cannot satisfy the accept condition" retrieves the error-budget paragraph; "what is the error budget" does not, though it is the same paragraph.
-
-### Keeping it current
-
-The vault is the **`vault`** source, registered with a local path, so it syncs incrementally in seconds:
+**Keeping it current:**
 
 ```bash
-gbrain sync --source vault        # incremental
-gbrain extract links --source db  # rebuild edges after content changes
+gbrain sync --source vault        # incremental, seconds
+gbrain extract links --source db  # rebuild the graph after content changes
 ```
 
-**Sync follows git commits, not the working tree** — its checkpoint is a commit SHA, so uncommitted edits are invisible. Commit, then sync. It previews cost before spending and gates on a floor.
+Sync follows git commits, not the working tree — commit, then sync.
 
-Hands-off: `gbrain sync --watch` loops, `gbrain autopilot --install` daemonizes it.
-
-**The `default` source must stay isolated.** It holds stale pages from before the vault was path-registered, cannot be given a path, and cannot be removed (*"it backs the pre-v0.17 brain"*). Federating it again would double every search result.
-
-Updating gbrain itself is one command, since its skills are symlinked out of the clone rather than copied:
-
-```bash
-git -C ~/gbrain pull && gbrain-skills-sync
-```
-
-### Model
-
-`models.think` is `claude-cli:claude-opus-5`, dispatched through the local `claude` CLI's OAuth session — it runs on the Claude subscription, so there is no per-call cost to weigh. Just use it.
-
-To change it:
-
-```bash
-gbrain config set models.think claude-cli:claude-sonnet-4-6
-```
-
-Always through config, never by patching the recipe: `~/gbrain` is a git clone and a local edit conflicts on the next pull. Config is also what makes a model newer than the recipe's allowlist work at all — `claude-opus-5` is not listed and runs fine because it was set this way.
-
-### Schema pack
-
-The active pack is **`recompose`**, forked from `gbrain-base-v2`, mapping folders onto canonical types by path prefix: `Concepts/` → `concept`; `Research/`, `Industries/`, `Office_Hours/`, `Strategy/` → `analysis`; `pivots/` → `writing`. Without it types were assigned by guesswork — `Journey.md` came back `concept`, and the real concept files matched nothing because base-v2 keys `concept` off `wiki/concepts/`.
-
-**It lives at `~/.gbrain/schema-packs/recompose/pack.json`, outside this repo, so it does not travel with a clone.** Recreate with `gbrain schema fork gbrain-base-v2 recompose`, `gbrain schema use recompose`, then the `add-prefix` calls.
-
-**Retyping existing pages needs a delete-and-reimport.** `schema sync` only touches *untyped* pages, `import --fresh` skips on content hash, and `default` cannot be removed.
-
-### The link graph
-
-Live, and traversed by `gbrain think --anchor <slug>`. It works only because wikilinks are written as paths with aliases — see Linking. Bare basenames dropped 567 of 571 candidate edges.
-
-The other two routes stay unavailable: `--by-mention` needs `person`/`company` entity pages, which this vault has none of; `--ner` needs `link_types[].inference.regex`, which no pack here declares.
-
-### Gotchas, each of which cost a wrong turn
-
-- **`gbrain import` only ingests markdown.** Pointed at code it imports the `.md` files and nothing else, reporting `success` having imported zero source files.
-- **`--source-id` does not create the source.** Importing into one that does not exist fails every file on a foreign key violation and still exits `success`. Check `page_count`, never the exit status.
-- **A new source is `isolated` until federated** — a plain search silently ignores it, which reads as a missing index.
-- **You cannot exclude a subdirectory at import time.** `docs/` is a git tree, so gbrain enumerates via `git ls-files` and honours `.gitignore`, not `.gbrainignore`.
-- **The embedding model cannot be changed in place** — the field sizes the schema, so a DB write is a silent no-op. Move `brain.pglite` aside, re-init, reimport.
-- **The LLM chunker is unreachable.** `chunkers/llm.ts` exists and nothing calls it; markdown import always uses the recursive chunker. Chunking is not a lever today.
-- **Code is deliberately not indexed.** `gbrain-base-v2` dropped the `code` page type its predecessor declared, so `code-def`/`code-refs`/`code-callers` cannot work. Grep is the tool for code.
-- **Never point a code source at the repo root, and do not run `/sync-gbrain`** — the code walk prunes by directory *name*, never reads `.gitignore`, and descends into `apps/` and its 3.4 GB of generated runs.
-- **PGLite is single-process** — a live `gbrain serve` blocks any import.
+**Anything beyond this — reindexing, adding a source, changing the model or schema pack, rebuilding the graph, or a search returning nothing — is the `gbrain-maintenance` skill.** It records every failure mode hit while setting this up, including several gbrain features that do not work on this vault and why. Read it before trying a gbrain feature for the first time; its central warning is that gbrain reports `success` while doing nothing, so changes must be verified by measurement.

@@ -59,7 +59,7 @@ This file itself is a living document — keep it in sync with how the vault and
 
 **Most work in this repo is code and does not need it.** Read the vault when the question is *what* or *why* — what the product is, who buys it, why a decision went the way it did, what is still open. A coding task rarely needs any of that; the subsystem `CLAUDE.md` files carry what the code requires.
 
-When you do go in, **`docs/CLAUDE.md` is authoritative for everything under `docs/`** — read it first. It owns the vault conventions, the reading order, and the gbrain setup. **Answers about the product, the strategy or the reasoning behind a decision get grounded in the vault before they are given, not recalled** — `docs/CLAUDE.md` says how.
+When you do go in, **`docs/CLAUDE.md` is authoritative for everything under `docs/`** — read it first. It owns the vault conventions and the reading order. **Answers about the product, the strategy or the reasoning behind a decision get grounded in the vault before they are given, not recalled** — `docs/CLAUDE.md` says how. Maintaining the gbrain index that makes that possible is the `gbrain-maintenance` skill.
 
 **Do not put vault material in this file.** Anything scoped to `docs/` belongs in `docs/CLAUDE.md`; this file covers how to work in the repo and how the code is organized.
 

@@ -1,0 +1,113 @@
+---
+name: gbrain-maintenance
+description: Set up, change, repair or troubleshoot the gbrain brain that indexes this vault. Use whenever the task touches gbrain's configuration rather than just querying it — reindexing, adding or removing a source, changing the embedding or think model, editing the schema pack or page types, rebuilding the link graph, chasing a search that returns nothing or the wrong thing, or working out why an import "succeeded" but nothing landed. Also use before trying any gbrain feature for the first time, because several of them do not work on this vault and the reasons are recorded here. Not needed to simply ask a question — that is `gbrain think`, documented in docs/CLAUDE.md.
+---
+
+# gbrain maintenance — this vault's brain
+
+Everything here was learned by hitting it. Each gotcha cost a wrong turn; several cost an hour and one produced a committed document that was wrong. Read the relevant section before changing anything, and **verify by measurement rather than by exit status** — gbrain's failure mode is reporting success while doing nothing.
+
+## What is set up
+
+| | |
+|---|---|
+| engine | PGLite at `~/.gbrain/`, local, nothing uploaded |
+| embeddings | `voyage:voyage-3-large`, 1024 dimensions |
+| think model | `claude-cli:claude-opus-5` (subscription, via the local `claude` CLI) |
+| schema pack | `recompose`, forked from `gbrain-base-v2` |
+| live source | **`vault`** — path-registered to `docs/`, federated |
+| dead source | **`default`** — isolated, must stay that way |
+
+`gbrain sources status` is the live picture. Never hardcode page or link counts anywhere; they drift.
+
+## Routine operations
+
+```bash
+gbrain sync --source vault        # incremental, seconds
+gbrain extract links --source db  # rebuild the graph after content changes
+gbrain sources status             # lag, embed coverage, failures, queue
+```
+
+**Sync follows git commits, not the working tree.** Its checkpoint is a commit SHA, so an uncommitted edit is invisible to it. Commit, then sync. A sync that says "Already up to date" right after you edited a file is correct behaviour, not a bug.
+
+Hands-off: `gbrain sync --watch` loops, `gbrain autopilot --install` daemonizes it.
+
+Updating gbrain itself, which also refreshes its skills, since they are symlinked out of the clone rather than copied:
+
+```bash
+git -C ~/gbrain pull && gbrain-skills-sync
+```
+
+## The failure mode to expect
+
+**gbrain reports `"status":"success"` while importing zero pages.** It did this twice in one session, for two different reasons. Never trust the exit status or the word `success` — check `page_count` in `gbrain sources list`, or `gbrain get <slug>`, or a `backlinks` count. Measure the thing you wanted to happen.
+
+## Gotchas
+
+### Import and sources
+
+- **`gbrain import` only ingests markdown.** Pointed at a code directory it quietly imports the `.md` files it finds and nothing else, then reports success. Code needs `gbrain sync --strategy code`, a different walker.
+- **`--source-id <id>` does not create the source.** Importing into one that does not exist fails every single file on a foreign key violation and still exits `success`. Run `gbrain sources add <id> --path <dir>` first.
+- **A new source is `isolated` until federated.** It is only searched when named with `--source`, so a plain search silently ignores it and it reads as a missing index. Run `gbrain sources federate <id>`.
+- **You cannot exclude a subdirectory at import time.** `docs/` is inside a git tree, so gbrain enumerates via `git ls-files` and honours `.gitignore` — not `.gbrainignore`. Excluding anything tracked means importing it and then `gbrain delete <slug>`.
+- **The `default` source cannot be removed** (*"it backs the pre-v0.17 brain"*) and cannot be given a path. It holds stale pages. It is isolated deliberately — **federating it would double every search result.**
+
+### Changing the model or embeddings
+
+- **The embedding model cannot be changed in place.** `gbrain config set embedding_model` is rejected outright, because the field sizes the schema and a DB write would be a silent no-op. The procedure is to move `~/.gbrain/brain.pglite` aside, `gbrain init` with the new model, and reimport.
+- **Set the think model through config, never by patching the recipe.** `~/gbrain` is a git clone; a local edit to a tracked file conflicts on the next `git pull`.
+- **A model missing from a recipe's allowlist still works if set via config.** `model-resolver.ts` deliberately skips the allowlist throw for models opted into through `models.default` / `models.think`. That is the supported route for anything newer than the recipe knows — `claude-opus-5` runs this way. Passing the same value with `--model` fails as `unknown_model`; config is what unlocks it.
+- `openai-compat` providers (`openrouter`, `litellm`, `deepseek`, …) skip allowlists entirely. Only `native` providers enforce them.
+
+### Schema pack and page types
+
+- **Types are inferred from path prefixes and were wrong by default.** `gbrain-base-v2` keys `concept` off `wiki/concepts/`, which this vault does not use, so real concept files matched nothing and `Journey.md` — a chronological history — came back typed `concept`.
+- The `recompose` pack fixes this: `Concepts/` → `concept`; `Research/`, `Industries/`, `Office_Hours/`, `Strategy/` → `analysis`; `pivots/` → `writing`. **A new top-level folder needs a new prefix or its pages will be typed by guesswork.**
+- **The pack lives at `~/.gbrain/schema-packs/recompose/pack.json`, outside this repo, so it does not travel with a clone.** Recreate with `gbrain schema fork gbrain-base-v2 recompose`, `gbrain schema use recompose`, then `gbrain schema add-prefix <type> <prefix>` for each folder.
+- **Retyping existing pages needs a delete-and-reimport.** `gbrain schema sync` only touches *untyped* pages by design; `import --fresh` skips on content hash; `default` cannot be removed. The working sequence is `gbrain delete` across every slug, then reimport.
+
+### The link graph
+
+The graph is what `gbrain think --anchor <slug>` traverses. It exists only because vault wikilinks are written as **paths with aliases** — `[[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]]`.
+
+- **Bare `[[Basename]]` fails silently.** Obsidian resolves it, gbrain does not. Before the conversion, 567 of 571 candidate edges were dropped as *"references to non-pages"* and the graph was empty. A doc that reverts to basename links disappears from the graph with no error.
+- **A doc at the vault root cannot be linked at all** — a link with no slash is indistinguishable from a bare basename. This is why the strategy docs live in `Strategy/` rather than at the root. Anything new at the vault root is invisible to the graph.
+- Resolution is case-insensitive, so `Concepts/...` matches the lowercase slug.
+
+## Dead ends — do not retry these
+
+Each was tried and does not work here. Retrying them costs time and finds the same wall.
+
+- **`gbrain extract links --by-mention`** — needs `person`/`company` entity pages as link targets. This vault has none, and `gbrain-base-v2` marks both `extractable: false`, so they cannot be auto-created.
+- **`gbrain extract links --ner`** — needs `link_types[].inference.regex` in the active pack. No pack here declares any. Reports `0 links`.
+- **The LLM chunker.** `src/core/chunkers/llm.ts` exists and would split on topic shifts via Haiku, but **nothing calls it**. Markdown import always uses the recursive chunker and there is no flag or config key. Chunking is not a tunable today.
+- **Indexing code.** `gbrain-base-v2` dropped the `code` page type its predecessor declared, so `code-def` / `code-refs` / `code-callers` cannot work and a `dream` cycle leaves the graph empty. Grep is the tool for code.
+- **`/sync-gbrain`, and any code source pointed at the repo root.** The code walker prunes by directory *name* and never consults `.gitignore`, so it descends into `apps/` — 3.4 GB of generated runs — and would embed hundreds of produced `output.yaml` files.
+- **litellm for chat.** Configured for expansion only here; `think` cannot route through it without a proxy in front.
+
+## Where gstack's documentation is wrong
+
+`~/.claude/skills/gstack/USING_GBRAIN_WITH_GSTACK.md` and the `## GBrain Search Guidance` block that `/sync-gbrain` auto-writes into a CLAUDE.md both describe **`gbrain search` as semantic**. It is not — `gbrain --help` says `search <query>  Keyword search (tsvector)`. It never touches embeddings.
+
+This mattered: a nine-question evaluation of retrieval quality was run with `search` and its results reported as semantic performance. They measured the wrong system. `query` is hybrid retrieval; `think` is the synthesis layer and the one to use.
+
+## Verifying a change actually landed
+
+After any reindex, retype or graph rebuild:
+
+```bash
+gbrain sources status                      # page counts, lag, failures
+gbrain get <a-known-slug> | head -3        # did the type come out right
+gbrain backlinks <a-well-linked-slug>      # is the graph populated
+gbrain think "<question with a known answer>"
+```
+
+For retrieval quality, ask something whose answer you already know and check the top hit is the document that holds it. Do not benchmark with `search`.
+
+**Phrase test questions the way the docs argue, not as labels.** "What happens when an agent cannot satisfy the accept condition" retrieves the error-budget paragraph; "what is the error budget" does not, though it is the same paragraph.
+
+## Judging a cheaper model
+
+Cheaper models drop the analysis before they drop the answer. Haiku answered three benchmark questions correctly at a twelfth of the cost while producing **no Conflicts section on any of them**.
+
+Benchmark on *"why were structural presets rejected"* — the test is whether it surfaces that the 2026-07-27 session argued **for** bounded sets while 2026-07-28 rejected them, and that the reconciliation was never written. Answering correctly is the easy half.
