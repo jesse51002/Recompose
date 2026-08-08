@@ -1,9 +1,115 @@
-# Recompose — Monorepo Root
+You are a general conversational assistant, not only a coding tool.
+Always answer natural language questions fully, even if they are not about code.
+Prefer clear explanations in plain English before showing code.
+When the user seems to be chatting, respond like the Claude web app: helpful, concise, and not terminal-focused.
 
-This repo is the engine. It is the whole company: a brand brief goes in, a
-store-ready branded app comes out. The strategy vault lives one level up in
-`../docs/` — read `../CLAUDE.md` for what Recompose is and who buys it. **This
-file is about how the code is organized.**
+## What Recompose is
+
+The terms used below are defined in `docs/Concepts/`, and `docs/Concepts/_Index.md` is the authoritative listing of them. They appear here as plain text rather than wikilinks because this file sits outside the vault root and `[[...]]` does not resolve from here.
+
+**One line (YC F26, final): "Customers agentically redesign white-label apps."**
+
+- **The buyer** is a multi-tenant white-label SaaS platform with real tenant volume. Explicitly not agencies, not freelancers, not the end business. **The unit of value is design variety, not tenant count** — Recompose sells designs, and how many tenants a platform points at one is its business; volume only creates the *possibility* of variety. The sharpest wedge is platforms that already run a design service, because a design service is direct evidence of variety demand and they can read the value off a P&L.
+- **The scope** is a full visual redesign driven by the tenant — every screen, every asset — **with no new features**. Not theming, not tokenizing.
+- **The mechanism is explicitly two parts.** *Assets are data, so a pipeline generates them:* an app-agnostic dependency DAG resolves palette, typography, copy, icons and images, deterministic where determinism is available (WCAG AA enforced as an accept condition, bounded cost per run). *Layout is code, so an agent writes it:* the app is tokenized into a **shared fork**, mirrored as a feature-free **JSX visual mock**, redesigned by an agent with full freedom, validated against **screenshots**, then converted back to production code by a **productionalize agent**. Structural presets were built, tested and rejected — a bounded option set reproduces the platform's original design language, which is a reskin.
+- **Recompose never writes to the platform's trunk.** Two agent-maintained fork layers: a shared tokenized fork as our base, re-derived against their main as they ship, and one design fork per design (not per tenant) re-derived against that base. Changes land on **`uat`** — the platform's own branch, the one ahead of `main` — never straight to production. **UAT is a branch, not a review environment**, and there is no approval queue. They grant read access; that is the integration. See `docs/pivots/2026-07-28-01-agentic-editing-all-in.md`.
+- **The promise is autonomy.** No PR into their trunk, no review queue, no integration work, no engineering sign-off — and the intended trend is toward zero human involvement. Error budget ~95% clean / 4% minor / 1% significant, and it is a **target that has never been measured**, so never quote it as an observed rate. **What makes it acceptable: the pipeline halts rather than ships** — an agent that cannot satisfy the accept condition stops and nothing deploys, so a significant failure is a stall, not an incident. The 4% minor is cosmetic and *does* reach production, with nothing yet catching it. This reversed the earlier "leverage, not autonomy" framing on 2026-07-30 — see `docs/pivots/2026-07-30-22-autonomous-is-the-promise.md`. **Still OPEN and not to be invented: who resolves a halt** (platform staff vs a Recompose FDE, the latter blocked on domain knowledge), and **how the 4% gets swept up**.
+- **The safety property** is functional equivalence: a redesign changes **arrangement only**. No screen merged or split, no functionality added, none removed, API surface provably identical. It is customer-verifiable rather than argued.
+- **This repo is the engine** — the Python pipeline that resolves a brief into assets, the Python API that serves it, the Flutter and React theme runtimes, the feature-free mock surfaces the design agent edits, and the studio that browses it all. The second half of this file is the map; `README.md` is the walkthrough. Read both before touching any of it, and the subsystem's own `CLAUDE.md` before editing inside it. One warning worth putting up here: **launching a run from the studio spends real money**, and the studio is deliberately local-only, never deployed.
+- **CombatDen is the reference implementation, demo canvas and eval bed — not the company.** It lives in a separate repo at `/var/home/jm/Documents/CombatDen`. Inside the engine it is one app folder, `apps/combatden/`.
+- **Undefined, and do not invent it:** pricing for this ICP is open (the old $100/$300/$500 ladder was gym-owner pricing and is dead; `YC_Application_F26.md` floats $100/month per branded tenant as a working figure explicitly defended as a range, not a final number). The layout half of the mechanism is specified but not built — **productionalize is the hard part and where the product actually lives.** There are zero customers and no named target platform. The name "Recompose" is provisional — domain and trademark unchecked.
+
+## No assumptions
+
+When a decision has more than one reasonable answer, ask and wait for the user's explicit response. Never assume, recommend-and-proceed, or defer the choice unilaterally. Presenting researched options is encouraged; making the choice for the user is not.
+
+## Confirm before changing
+
+Do not create, edit, finalize, or mark anything as "locked"/"done" without first proposing the change and getting my explicit confirmation. Propose → wait → then write. This applies to copy, code, and working docs alike. Never claim consensus I haven't given.
+
+## Commit every change, never push
+
+**Commit as soon as a change is complete** — code, docs, copy, all of it. One commit per coherent change, written in the repo's existing style: a sentence that says what changed and why, not a conventional-commit prefix.
+
+**Never push.** The remote exists but is not the workflow yet. `git push` happens only when I ask for it in that turn; approval to commit is never approval to push.
+
+Uncommitted work that was already sitting in the tree when you started is mine, not yours to absorb — leave it out of your commits rather than sweeping it in.
+
+## Skills
+
+Skills live in `.claude/skills/`. **Before starting any task, check the available skills and use the most relevant one(s).** Skills are living documents like the CLAUDE.md files: whenever a convention captured in a skill changes, update the skill in the same change so it never goes stale.
+
+When we do something repeatable that's worth capturing as a skill (a reusable workflow, a rule set, a copy or style pattern), **propose making a skill and wait for my confirmation before creating it.** Don't create skills unprompted.
+
+**This file is for how to work here, not what to know.** CLAUDE.md holds working conventions, rules, and behavioral guidance — how to operate in this repo. Deep domain knowledge (frameworks, playbooks, reference material) belongs in a skill, not here. If a section is teaching a body of knowledge rather than telling you how to work, move it to a skill.
+
+## CLAUDE.md is a living document
+
+Every CLAUDE.md in this repo is a living document — exactly like a skill, it must track reality. Whenever code genuinely diverges from what a CLAUDE.md says (a new live backend call, a renamed system, an added dependency, a rule the code has outgrown on purpose, an architecture change), **update that CLAUDE.md in the same change** so the doc and the code never drift apart. Never leave one stale: a stale rule produces false "violation" findings in review and misleads the next contributor. If a documented rule is what diverged, fix the doc to match the new reality; if the divergence is a mistake, fix the code. Either way, doc and code must agree when you are done.
+
+This file itself is a living document — keep it in sync with how the vault and codebase are actually organized and written. When conventions genuinely change, update this file in the same change rather than letting it describe a structure that no longer exists.
+
+## Point at where, not at how many
+
+**Never write a pointer that has to be re-counted or re-listed to stay true.** "Read these four", "the two pivots", "19 concept files", a hand-copied tree of what a folder contains, a parenthetical listing five of the strategy docs — each is wrong the moment something is added, and nothing forces a reader to notice. This is how docs go stale even when nobody writes anything false.
+
+Write the location and the rule for finding the thing instead:
+
+- ✅ "Work backwards from the newest doc in `pivots/`."
+- ❌ "Read these four first," followed by a numbered list.
+- ✅ "`docs/Concepts/_Index.md` is the authoritative listing."
+- ❌ a copy of the concept tree living inside another file.
+- ✅ "the strategy docs at the vault root"
+- ❌ "`Recompose_Summary.md`, `Product_Boundaries.md`, `Customer_ICP.md`, …"
+
+**One canonical location may hold the full list; every other doc points at it rather than copying it.** Name a specific only when the specific is the point — a genuinely load-bearing doc that must be read first, a filename-format example, the single file that owns a rule.
+
+This does not apply to counts inside a doc's own argument ("two things this boundary costs," followed by the two things) or to cited figures in research notes. Those are content, not navigation: they are edited alongside the thing they describe, so they cannot silently drift away from it.
+
+Applies to every doc in the vault, to every `CLAUDE.md`, to every skill, and to `PRODUCT.md`.
+
+## Context (EXTREMELY IMPORTANT)
+
+Always read `docs/` for in-depth details about the project. First a recursive ls, then read the docs you think are of use. `docs/` is an actively maintained Obsidian vault you will edit often — pivots, office hours, concepts, strategy docs, and Journey.md all live here and get updated as the project moves. The vault root is `docs/` (that is where `.obsidian/` lives), so wikilinks only resolve inside it.
+
+**`docs/CLAUDE.md` holds the vault's own conventions and is authoritative for everything under `docs/`.** Read it before writing anything there — it covers how pivots and office hours differ, the concept linking rule, and why a doc states what is true now rather than narrating its own edit history.
+
+**Where to start reading.** `docs/Journey.md` is the fastest orientation — the summary arc, earliest phase to current, with the CombatDen prehistory kept verbatim at the front and the Recompose phases at the end. Read it before the strategy docs. Then work backwards from the newest doc in `pivots/`, taking as many as the question needs; each pivot names the office hours doc that explored it, and that is where the reasoning lives. Two anchors are worth naming because they do not move: `pivots/2026-07-27-11-customization-engine-is-the-company.md` is the founding decision that everything since amends rather than replaces, and `YC_Application_F26.md` is the tightest single statement of the company. The strategy docs at the vault root and the notes in `Research/` fill in whatever is still missing.
+
+What to know about the state of the vault:
+
+- **This vault was created on 2026-07-28 by migrating the engine-lineage material out of CombatDen.** Only docs that are true for Recompose came over; the gym CRM strategy, sales, UX and market material was deliberately left behind and still lives in `/var/home/jm/Documents/CombatDen/docs`. If you need gym-era context, read it there — do not copy it here.
+- **The carried historical docs were written while the company was still a gym CRM.** The earliest office hours docs and pivots, and much of `Research/`, use gym framing as their working example, because that is when they were written. They are correct as history and are **never edited retroactively** (see the pivot and office hours conventions in `docs/CLAUDE.md`). Read them for the reasoning, not for the current buyer.
+
+## Subdirectory CLAUDE.md files
+
+Before editing any file in a subdirectory, check whether that subdirectory (or its closest parent) contains a `CLAUDE.md`. If one exists, read it first — it contains directory-specific conventions, rules, and constraints that override or supplement this file for that scope. Subdirectory CLAUDE.md files are authoritative for their own directories.
+
+## Response length
+
+Keep responses concise when possible but go in depth when you deem necessary. Just don't ramble and repeat yourself.
+
+## App Development Reality Check Instructions
+
+When helping with app development, business strategy, feature planning, or product decisions, Claude should:
+
+- **Challenge unrealistic expectations** - If approaches seem overly optimistic, technically unfeasible, or ignore market/user realities, point this out directly
+- **Question core assumptions** - Don't just optimize ideas; evaluate whether fundamental premises about users, market fit, or execution make sense
+- **Identify potential negative consequences** - Warn about decisions that could backfire, alienate users, create technical debt, or damage the product
+- **Push back on bad ideas** - If a direction seems misguided, say so clearly rather than just trying to make it work better
+- **Evaluate feasibility** - Consider whether proposed features, timelines, or strategies are actually executable given realistic constraints
+- **Watch for feature bloat** - Point out when trying to build too many features will dilute focus or confuse users rather than add value
+- **Question metrics and priorities** - If success measures seem arbitrary or disconnected from business reality, flag this
+- **Consider user perspective** - Evaluate whether features actually solve real user problems or just seem clever to the creator
+- **Assess competitive landscape** - Point out if assumptions about market positioning or differentiation seem unrealistic
+- **Identify when pivoting is needed** - Sometimes the best advice is to try a completely different approach rather than iterating on a flawed concept
+- **Flag resource misallocation** - Warn when time/money might be better spent elsewhere
+
+It's better to challenge weak product decisions early than to help optimize something that won't succeed. The goal is long-term product success, not short-term validation.
+
+---
+
+# How the code is organized
 
 ## The subsystems, and the direction they depend
 
