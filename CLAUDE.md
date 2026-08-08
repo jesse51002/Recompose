@@ -53,11 +53,13 @@ This file itself is a living document — keep it in sync with how the vault and
 
 **Never write a pointer that has to be re-counted or re-listed to stay true** — "read these four", "the two pivots", a hand-copied tree of what a folder contains. Write the location and the rule for finding the thing instead. The full rule, with examples and the exceptions, is in `docs/CLAUDE.md`; it binds this file, every subsystem `CLAUDE.md`, every skill, and `PRODUCT.md` — not just the vault.
 
-## Context (EXTREMELY IMPORTANT)
+## The strategy vault
 
-Always read `docs/` for in-depth details about the project. First a recursive ls, then read the docs you think are of use. `docs/` is an actively maintained Obsidian vault you will edit often — pivots, office hours, concepts and the strategy docs all live here and get updated as the project moves. The vault root is `docs/` (that is where `.obsidian/` lives), so wikilinks only resolve inside it.
+`docs/` is an actively maintained Obsidian vault holding pivots, office hours, concepts and the strategy docs. The vault root is `docs/` (that is where `.obsidian/` lives), so wikilinks only resolve inside it.
 
-**`docs/CLAUDE.md` is authoritative for everything under `docs/`.** Read it before reading or writing anything there. It owns the vault conventions — pivots vs office hours, the linking rule, write-what-is-true-now — the reading order, and the gbrain setup that makes the vault searchable.
+**Most work in this repo is code and does not need it.** Read the vault when the question is *what* or *why* — what the product is, who buys it, why a decision went the way it did, what is still open. A coding task rarely needs any of that; the subsystem `CLAUDE.md` files carry what the code requires.
+
+When you do go in, **`docs/CLAUDE.md` is authoritative for everything under `docs/`** — read it first. It owns the vault conventions, the reading order, and the gbrain setup that makes the vault searchable rather than something you page through by hand.
 
 **Do not put vault material in this file.** Anything scoped to `docs/` belongs in `docs/CLAUDE.md`; this file covers how to work in the repo and how the code is organized.
 
