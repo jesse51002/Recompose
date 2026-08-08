@@ -85,12 +85,15 @@ What to know about the state of the vault:
 
 A local [gbrain](https://github.com/garrytan/gbrain) brain indexes the vault so a question can be asked by meaning rather than by exact string. PGLite at `~/.gbrain/`, embeddings `voyage:voyage-3-large` at 1024 dimensions, local to this machine — nothing is uploaded. One source, `default`, holding `docs/` — 89 pages.
 
+**Use the right command — they are three different systems, and gstack's own docs get this wrong.**
+
 ```bash
-gbrain search "<terms>"      # semantic
-gbrain query "<question>"    # question-answering
+gbrain think "<question>"    # ← the real interface: multi-hop synthesis, cited answer, gap analysis
+gbrain query "<question>"    # hybrid retrieval (vector + keyword, RRF-fused) — ranked passages
+gbrain search "<terms>"      # KEYWORD ONLY (tsvector). Not semantic. Rarely what you want.
 ```
 
-**It is a discovery tool, not a lookup tool.** It reliably names *which* documents argue a thing; it does not reliably return *the* passage. On ten questions with known answers roughly half land on the right document, and phrasing moves results more than it should — "what happens when an agent cannot satisfy the accept condition" returns the error-budget paragraph; "what is the error budget" does not, though it is the same paragraph. **Treat every hit as a pointer to go read the doc.**
+`gbrain search` is plain full-text search and never touches embeddings, despite gstack's `USING_GBRAIN_WITH_GSTACK.md` and its auto-generated `## GBrain Search Guidance` block both describing it as semantic. **Default to `think`.** It retrieves across pages, synthesizes a cited answer, and closes with a *Gaps* section naming what the vault does not answer — which on a strategy vault full of open questions is the most useful part. It costs roughly $0.10 per call (Opus) and takes ~30s, so use `query` when a ranked list of passages is enough.
 
 **Code is deliberately not indexed.** `code-def` / `code-refs` / `code-callers` cannot work here: the active schema pack `gbrain-base-v2` **dropped the `code` page type** that its predecessor `gbrain-base` declared, so nothing emits code symbols and `resolve_symbol_edges` has nothing to resolve. Without that, indexing code buys semantic search over a tree Grep already searches exactly and never staler than the working copy — while needing a manual re-sync on every commit. Grep is the tool for code here.
 
