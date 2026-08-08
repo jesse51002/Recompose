@@ -172,15 +172,17 @@ Updating gbrain itself is one command, since its skills are symlinked out of the
 git -C ~/gbrain pull && gbrain-skills-sync
 ```
 
-### Model and billing
+### Model
 
-`models.think` is **`claude-cli:claude-opus-5`** — dispatched through the local `claude` CLI's OAuth session, so it bills **the Claude subscription, not API credits.** Those calls report no `Cost:` line because there is nothing to charge. **The provider prefix decides billing:** `claude-cli:` is the subscription, `anthropic:` is API credits at roughly $0.15 a call on Opus 5. The subscription path is ~40% slower (57s vs 41s on the same question) because it dispatches through a subprocess rather than a direct HTTPS call.
+`models.think` is `claude-cli:claude-opus-5`, dispatched through the local `claude` CLI's OAuth session — it runs on the Claude subscription, so there is no per-call cost to weigh. Just use it.
 
-Opus 5 is not in the `claude-cli` recipe's allowlist and works anyway — `model-resolver.ts` deliberately skips the allowlist for models opted into via config. That is the supported way to run something newer than the recipe knows. **Do not patch the recipe instead:** `~/gbrain` is a git clone and a local edit conflicts on the next pull.
+To change it:
 
-**gbrain copied the Anthropic API key into `~/.gbrain/config.json` at init**, harvested from the repo `.env` and byte-identical to it — outside the repo, and what any `anthropic:` call authenticates with. Delete the field to guarantee nothing can bill API credits.
+```bash
+gbrain config set models.think claude-cli:claude-sonnet-4-6
+```
 
-**Cheaper models drop the analysis before the answer.** Haiku answered all three benchmark questions correctly at a twelfth of the cost but produced **no Conflicts section on any of them**. Benchmark a cheaper model on *"why were structural presets rejected"* specifically — whether it finds the 2026-07-27 / 2026-07-28 contradiction, not whether it answers.
+Always through config, never by patching the recipe: `~/gbrain` is a git clone and a local edit conflicts on the next pull. Config is also what makes a model newer than the recipe's allowlist work at all — `claude-opus-5` is not listed and runs fine because it was set this way.
 
 ### Schema pack
 
