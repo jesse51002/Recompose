@@ -81,6 +81,35 @@ What to know about the state of the vault:
 - **This vault was created on 2026-07-28 by migrating the engine-lineage material out of CombatDen.** Only docs that are true for Recompose came over; the gym CRM strategy, sales, UX and market material was deliberately left behind and still lives in `/var/home/jm/Documents/CombatDen/docs`. If you need gym-era context, read it there — do not copy it here.
 - **The carried historical docs were written while the company was still a gym CRM.** The earliest office hours docs and pivots, and much of `Research/`, use gym framing as their working example, because that is when they were written. They are correct as history and are **never edited retroactively** (see the pivot and office hours conventions in `docs/CLAUDE.md`). Read them for the reasoning, not for the current buyer.
 
+## GBrain: semantic search over the vault and the code
+
+A local [gbrain](https://github.com/garrytan/gbrain) brain indexes this repo, so a question can be asked by meaning rather than by exact string. Engine is PGLite at `~/.gbrain/`, embeddings are `voyage:voyage-code-3` at 1024 dimensions, and it is local to this machine — nothing is uploaded.
+
+Two sources, queried separately:
+
+- **`default`** — the `docs/` vault. This is the one that earns its keep: the vault is past what fits in a context window, and most of it is `Office_Hours/` and `pivots/` that conventions forbid rewriting. Semantic search is the only cheap way to reach that history.
+- **`recompose-code`** — the tracked source of the subsystems, `schema/` and `tests/`.
+
+```bash
+gbrain search "<terms>"                    # semantic, both sources
+gbrain search "<terms>" --source default   # vault only
+gbrain query "<question>"                  # question-answering
+```
+
+**Reach for it when you don't know the exact string yet** — "what did we decide about pricing", "where is the halt condition argued". Grep is still right for known identifiers, regex, and file globs.
+
+**To refresh after meaningful changes**, re-import the directory that changed. Idempotent: gbrain dedupes on content hash, so re-importing unchanged files is cheap.
+
+```bash
+gbrain import docs --source-id default
+```
+
+Three things that are true here and not in gbrain's general documentation:
+
+- **`code-def` / `code-refs` / `code-callers` do not work.** They need a schema pack that extracts code symbols; this brain runs `gbrain-base-v2`, which does not. A `gbrain dream` cycle would complete and still leave the graph empty. Symbol lookup is Grep's job here.
+- **Do not run `/sync-gbrain`.** Its code walk prunes by directory *name* and never consults `.gitignore`, so it would descend into `apps/` — 3.4 GB of generated runs — and embed hundreds of produced `output.yaml` files. `gbrain import` is used instead precisely because it honours `.gitignore` via `git ls-files`.
+- **PGLite is single-process.** A live `gbrain serve` owns the database, so an import will fail while one is running. Stop the server first.
+
 ## Subdirectory CLAUDE.md files
 
 Before editing any file in a subdirectory, check whether that subdirectory (or its closest parent) contains a `CLAUDE.md`. If one exists, read it first — it contains directory-specific conventions, rules, and constraints that override or supplement this file for that scope. Subdirectory CLAUDE.md files are authoritative for their own directories.
