@@ -11,7 +11,7 @@ from __future__ import annotations
 import litellm
 import pytest
 
-from RecomposeAPI.studio.service.agent_cost import turn_cost_usd
+from Backend.studio.service.agent_cost import turn_cost_usd
 
 # The model the interview actually runs on, so these price what is real.
 MODEL = "claude-sonnet-5"
@@ -99,9 +99,9 @@ def test_a_turn_records_its_spend_against_the_session(tmp_path) -> None:
 
     from pydantic_ai.usage import RunUsage
 
-    from RecomposeAPI.studio.agent.orchestrator_service import OrchestratorService
-    from RecomposeAPI.studio.schema.session_record import SessionRecordKind
-    from RecomposeAPI.studio.service.session_registry import SessionRegistry
+    from Backend.studio.agent.orchestrator_service import OrchestratorService
+    from Backend.studio.schema.session_record import SessionRecordKind
+    from Backend.studio.service.session_registry import SessionRegistry
 
     class _Result:
         """Shaped like Pydantic AI's: `usage` is a PROPERTY."""

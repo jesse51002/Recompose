@@ -1,0 +1,303 @@
+# Studio — the theme browser
+
+The product, as three pages walked in order:
+
+| `?view=` | Who | What |
+|---|---|---|
+| *(default)* | admin | **Onboard** — point us at a platform, get a design fork. Demo-ware. |
+| `generate` | customer | **Generate** — answer an interview, watch the design get made. Real. |
+| `fleet` | admin | **Fleet** — every customer app and what an agent is doing to it. Demo-ware. |
+| `layouts` | admin | **Layouts** — how few arrangements dress every tenant. Demo-ware. |
+| `stage` | — | **Not a page.** One phone, driven by the URL, loaded per side by the Generate page's Before/after pane. |
+
+**Layouts is not in the switcher.** It is reached from the fleet's header,
+because it answers a question the fleet raises — this many designs, so how many
+things are actually maintained? — rather than being a fourth peer. The nav's
+three pages are the demo's spine and stay three. It is addressable all the same
+(`?view=layouts`), so the demo can be handed over pointing at it.
+
+**The pages hand over to each other.** Onboarding ends by opening the customer
+view; a signed-off design ends by returning to the fleet. That handover is the
+product's shape — set a platform up once, generate against it many times — so
+the pages perform it rather than leaving a person to find the right tab.
+
+**Library and Inspect are no longer destinations.** Picking a theme is a popup
+over the canvas (`generate/ThemePopup.tsx`) and inspecting artifacts is a pane
+of it (`inspect/InspectView.tsx`, mounted by the Generate page). A catalogue
+you had to leave the design to visit was a shopping trip in the middle of a
+review, and `browser/` is deleted.
+
+## What it depends on, and what it must not become
+
+It consumes `recompose-react` (the runtime) and `recompose-jsx-mockups` (the
+screens it previews). **Nothing depends on this package** — it is the top of the
+dependency graph, which is what makes it the safe place to iterate.
+
+It imports the mockups **through their package entry**, never by reaching into a
+file inside them. The mockups are an island; see their `CLAUDE.md` for why. If
+the studio needs something the island does not export, add the export there
+rather than deepening the import here.
+
+## The pinned port — do not change it casually
+
+Dev and preview are pinned to **8080** with `strictPort`. The API's CORS
+allowlist contains 8080 and **not** Vite's default 5173, so moving the port
+silently breaks every catalog fetch with a CORS error that looks like a backend
+problem. Pinning is what keeps this a zero-backend-change frontend.
+
+## Structure
+
+- `inspect/` — the artifact sheet and `artifactModel.ts`, which maps a run's output into what it renders. Mounted as the Generate page's Inspect pane, not as a view of its own.
+- `studio/` — the wire contract and the streams: `sessionApi` / `studioApi`,
+  `recordStream` (the replayable-log subscription both streams share),
+  `sessionFold` / `runFold`, and `RunSheet`, which is now the Generate page's
+  Inspect tab rather than a page of its own. Talks to `Backend/studio`.
+- `generate/` — the Generate page itself: the transcript column, the canvas,
+  the brief document, and its own dark token scope. **Nothing is typed before
+  it.** Opening the tab opens the session; the start form that used to stand in
+  front asked a person to name a thing that did not exist yet, for a fact the
+  agent's own first question collects. `StudioDown` is all that remains in
+  front, and only when the API cannot be reached. **This is the one view with
+  a ground of its own** — the rest of the studio is a daylit control desk, and
+  this page was designed dark so the generated theme is the brightest thing on
+  it. The tokens are scoped to `.shell`, so nothing else can read them.
+- `chrome/`, `widgets/`, `tokens/`, `styles/` — the app shell and its own UI vocabulary. **This is the studio's design system, not the product's** — it is admin chrome, deliberately plain, and must never leak into the mockups.
+- `data/` — defaults and fixtures the views fall back to, including
+  `fleetFixtures.ts`. **Everything in that file is invented** — there are no
+  customers and no deployment — and both pages that read it say so on the page
+  itself, which is the only place a viewer would otherwise be misled. **The
+  logos are the one exception and they are real:** every fleet row names a run
+  that exists in `apps/combatden/` and draws its `logo_primary` off the read
+  API at a hardcoded loopback URL. A fleet of grey initials argues nothing; a
+  column of thirty different marks the pipeline actually made is the page's
+  whole point, so it says that on the page too.
+- `public/` — static assets served at the site root: the brand lockup as
+  delivered, plus the R mark and the favicons cropped from it. The header and
+  the browser tab use the **mark**, never the lockup — its wordmark is white on
+  a light outline and vanishes on this chrome, and at 16px a wordmark is a
+  smudge. `public/README.md` records how the derived files were made.
+- `design/` — **a clickable demo of a proposed redesign, not code.** One
+  self-contained `studio-demo.html`: open it, no build, no server. Three pages
+  across two points of view — Onboard and Fleet are admin, Generate is the
+  customer. Everything in it is fake. It sits outside `src/`, so no check
+  touches it and nothing imports it.
+
+## Rules
+
+- **The studio's own look is not a design surface.** It is a tool. Do not theme
+  it with `recompose-react` resolvers, and do not let its widgets drift toward
+  looking like product UI — the whole point is that the previewed screen is the
+  only themed thing on the page.
+- **Imagery leads the Inspect sheet**, above colour, type, copy and icons. It
+  is the only section whose subject is a picture and the thing a person opens
+  the sheet to judge — the plates are what a redesign is most visibly made of,
+  and they used to sit under five sections of swatches and strings. The
+  `IndexRail` order moves with it: the rail is an index of the sheet, and one
+  that disagreed with what it indexes would be worse than none.
+- **The Inspect sheet is the one exception, and it is total.** It is where the
+  artifact is JUDGED, and judging a palette on the tool's ground is how a warm
+  sand reads as grey and a dark theme reads as broken. So `inspect/InspectView`
+  wears the design's own `background` and `text` roles, and **rebinds
+  `--adm-ink` / `--adm-text-2nd` / `--adm-text-3rd` / `--adm-line` /
+  `--adm-line-soft` on its root** so every plate below follows. Setting `color`
+  alone is not enough — the plates state their own `color: var(--adm-ink)`,
+  which beats an inherited value. That rebinding works because **CSS Modules
+  scopes class names but not custom property names**, which is the same fact
+  that makes `animation-name` need `var(--kf-*)` indirection in `styles/base.css`.
+  The secondary inks are alpha ratios off the one `text` role, because
+  `app.yaml` declares no muted role to read.
+- **In `generate/`, colour is functional and nothing else.** A hue in the shell
+  means a state — a phase, a failure, a person is needed. Decorative colour
+  belongs to the generated theme, and the canvas is where it lives. So a hue
+  appearing in the chrome always means something changed.
+- **Demo-ware says so on its own surface.** Onboard and Fleet connect to
+  nothing, and each carries a line naming what is invented. A demo that cannot
+  be told from a product is the one failure this repo cannot afford, and a note
+  in a file nobody opens is not a label.
+- **Phase colour has exactly one source.** `generate/phaseClass.ts` maps a wire
+  phase to the class carrying its `--phase*` properties, and the header tag and
+  the transcript markers both read it. In the demo a single `stamp()` call held
+  that invariant; here the data holds it, and a second mapping would be the way
+  it breaks.
+- **One thing at a time is awaiting the person.** `sessionFold` closes any open
+  question when a proposal lands and any open proposal when a question lands, so
+  live chips can never sit above a live Accept. The agent's output union already
+  makes one TURN produce one arm, but a turn is not the unit that matters: a
+  system note (a run settling) starts a turn with nothing said, so an ask left
+  open before it would still be live underneath.
+- **An answered question shows WHICH option(s) were taken**, in the shell's own
+  colour for "you". Derived by matching the next thing the person said against
+  the options — a chip press posts the option's own text, so the records
+  genuinely cannot tell a pick from typing. Without it a finished interview
+  scrolled back as identical grey rows: every question kept, every answer lost.
+- **`multi_select` is honoured, and it needs a Send.** The flag has been on the
+  agent's own schema all along and the UI ignored it, so a question the model
+  meant as "pick any that apply" answered with exactly one and silently sent a
+  fraction of what was true. Single-select still sends on the press — a confirm
+  on a one-of-six is a click that buys nothing — but multi-select cannot work
+  that way, since the first press would send it, so the chips accumulate in
+  local draft state and one Send posts them joined by `ANSWER_SEPARATOR`. That
+  draft is deliberately NOT folded from the records: it lives only between the
+  first press and the Send, and nothing outside the row can act on a half-made
+  answer. `picked` is a list for the same reason.
+- **The layout agent is started and stopped from the TRANSCRIPT**, as a card in
+  the flow (`SessionChat`), not from the canvas bar. It is the most expensive
+  thing the page can start, and in the bar it sat among the readouts and the
+  pane switches — a row about what you are *looking at* — so the costliest
+  button on the page read as chrome. Starting it is a decision about the
+  design, and every other such decision arrives in that column as something
+  the agent said with a button under it. Stop and Start share the card and only
+  one is ever shown: Stop is gated on `view.layoutRunning`, because an offer to
+  stop something that is not running is worse than no offer, and Start appears
+  only once `view.assetsSettled` is true. **Not `view.themeId`** — the started
+  record already names the theme it is going to make, so gating on the theme
+  existing announced "the theme is ready" a second after launch and offered to
+  lay out a design that was three images deep. Nor `!assetsRunning`, which is
+  equally true of a failed run and of one that never began. The layout agent is
+  built for that palette, those typefaces and those pictures, so only a
+  `finished` state will do. It reads "Run the agent again" once a design folder
+  is there — starting continues that folder rather than discarding it.
+- **Nothing spends money without a press.** The layout used to start itself the
+  moment the asset run settled. A finished run is genuinely its only
+  precondition, and that was still the wrong default — a precondition being met
+  is not the same as a person being ready. The button is the only door now.
+- **Only an `accepted` record accepts a brief.** A proposal stops being the
+  *open* one as soon as the owner says anything, which is how a question knows
+  it was answered — so reading "no longer open" as "accepted" marked a brief
+  accepted the instant someone typed "make it warmer", took its Accept button
+  away, and left the run to start off a brief nobody had approved. Not open and
+  accepted are different facts and the log carries the second one itself. A
+  brief that was replaced by a newer one reads as *superseded*, and only the
+  newest unaccepted brief offers Accept — two live Accepts would be two answers
+  with the second silently overwriting the first.
+- **There is a way back to NO theme**, and it needed a runtime addition:
+  `clearDesign()` in `recompose-react` drops the config, the sticky selection
+  and the last-good copy, so every resolver falls through to its caller's
+  fallback and the bare state survives a reload. A selection is sticky by
+  design, so before this the one state the picker could not reach was the
+  baseline a generated theme is worth judging against. Clearing, reverting and
+  picking all report up to `GenerateView`, because the refresh loop below would
+  otherwise re-apply the generated theme two seconds later and undo the choice.
+- **The canvas keeps re-reading the theme for the whole run.** `selectDesign`
+  fetches once and caches, and nothing in `recompose-react` re-fetches on its
+  own — so the loop in `GenerateView` is the only thing that makes the phone
+  repaint mid-run. It used to stop at the first success, which pinned the
+  canvas to whichever DAG level happened to have landed first; it now refreshes
+  until `view.assetsRunning` goes false.
+- **The whole view survives a mockup switch — flow AND screen.** Comparing two
+  designs means flipping between them on the same screen, so `GenerateView`
+  remembers both the asset id and the route and hands the route back through
+  `MockAssetStage`'s `initialRoute` / `onRouteChange`. Both carry across apps
+  because both id spaces are shared by convention (`app` / `celebration`, and
+  a fork keeps its base's route ids), and both degrade rather than break: the
+  kit falls back to an asset's own root for a route it does not declare, and
+  the canvas falls back to the first asset for an id an app does not have.
+  Resetting either on a switch is what made a design impossible to compare.
+- **An app is more than one flow.** Every app ships the app itself and the
+  post-class celebration; the canvas drew only the first, so half of what a
+  redesign changed was unreachable. The flow switch renders only when there is
+  more than one.
+- **A settled session is not necessarily an approved one.** A session is settled
+  by a person pressing Approve — except when the studio's process restarted
+  while the design was in flight, where the stream SYNTHESISES a terminal
+  record carrying an error so a client stops reconnecting to something dead.
+  Reading `view.settled` alone rendered that crash marker as the approval
+  celebration, so a design announced itself approved with nobody having pressed
+  anything, every time the API was restarted mid-run. `view.settledError`
+  separates them and `SessionLost` says what happened.
+- **The Layouts board is the one admin surface built to be LOOKED at.** Its
+  argument is that layout is code and theme is data, so they scale differently:
+  drag the cap and the same thirty-two marks re-pack into fewer columns. The
+  deal is round-robin rather than chunked precisely so that moving the cap
+  disturbs every column — chunking would leave the first columns untouched and
+  show nothing. The reveal is a pure CSS stagger with a per-cell
+  `animation-delay`, not a timer pushing state: thirty-two `setState` calls to
+  animate a list is work the compositor does for free, and this package treats
+  setting state from an effect as an error. The board is re-keyed on the cap so
+  the marks replay their entrance instead of silently teleporting between
+  columns, and the per-cell delay is CEILINGED — ungoverned, the last of three
+  hundred marks would land half a minute after the first and the board would
+  read as broken rather than as filling. The cap runs to a hundred because the
+  bad end is half the argument, and the roster cycles the fleet's real logos up
+  to a platform-sized count: thirty-two marks across a hundred columns would
+  show empty columns rather than shared ones. The repetition is stated on the
+  page — a board of invented marks would be a bigger lie than a board of
+  repeated real ones. Cells carry no names for the same reason: cycled names
+  would repeat down every column and read as a bug. **The board is a grid that
+  never scrolls**: a board you had to scroll would answer "how many are there?"
+  with "keep going and find out", which is the one question the page exists to
+  answer at a glance, so the cards take the squeeze instead. **The whole geometry
+  is one function used twice** — `fitCols(n, w, h) = ceil(sqrt(n·w/h))`, for the
+  cards in the board and again for the marks in a card — fed by ONE
+  `useElementSize` on the board, because the grid makes every card identical and
+  a hundred observers would report a hundred copies of one number. It replaced
+  two guessed bias factors that were right at one viewport and wrong at every
+  other. The mark mosaic is a filling grid rather than wrapping tiles: wrapping
+  leaves dead space under the last row, and a card two-thirds full reads as a
+  card with something missing. A card's header carries its name and nothing else
+  — the tenant count used to sit under it, and the mosaic below already says it
+  more legibly, because comparing two columns of marks is instant while
+  comparing two numbers is reading. `minmax(0, 1fr)` on both axes of BOTH grids is
+  load-bearing: `1fr` alone floors at content size, which is how a grid that
+  should shrink overflows instead.
+- **Before/after is a PANE of Generate, not a page.** It is the same design
+  being looked at next to another one, so it sits in the canvas pane switch
+  beside Mockup, Inspect and Brief rather than in the nav as a fourth peer.
+- **Only theme and layout are per side; everything else is shared.** The flow,
+  the screen and the scroll offset are one value driving both frames, so the
+  only difference on screen is the difference being demonstrated. A comparison
+  whose halves sit on different screens looks exactly like a working one until
+  you read it, which makes it worse than none. The flow switch therefore sits
+  ABOVE both sides, and one **Edit** button per side opens theme and layout
+  together — they are chosen for the same reason, so they are chosen in one
+  place.
+- **The route never goes in the iframe `src`.** React writes `src` whenever the
+  prop changes and writing `src` NAVIGATES the frame, so carrying the screen in
+  the URL reloaded both documents on every tap — the app blinking in and out.
+  The current screen is posted in on `load` instead, and a stage re-mounts only
+  for a route that did NOT come from itself.
+- **The scroll sync re-reads its refs; it must never capture the frames.**
+  Re-keying an iframe makes React discard the element and mount a new one, so a
+  captured frame is a corpse — which is why the sync used to die the first time
+  a layout changed and never come back, switching back included. A 500ms poll
+  re-reads `ref.current`, and a cheap `isConnected` + still-scrollable guard
+  makes the common tick two property reads rather than a DOM scan. It also picks
+  the scroller with the MOST room rather than the first match, so a different
+  app cannot hand back some minor inner scroller instead of the screen body.
+- **`useStylesPager` is capped at `pageSize: 100`** — `limit` above that is a
+  422 from the API, and the pager reports a 422 the same way it reports the API
+  being down, so asking for 200 read on screen as "the catalogue is not
+  reachable" with the catalogue perfectly reachable.
+- **The screen syncs by postMessage in both directions.** A stage reports every
+  move up and accepts one back; `useSyncedRoute` relays it to whichever frame
+  did not send it. Guarding on `event.source` rather than a flag is what stops
+  the echo — a frame is never told to go where it just went, which would remount
+  the screen under the finger that tapped it. The iframe key deliberately
+  excludes the route: theme and layout changes must reload the document, but
+  re-keying on the route would throw it away on every tap and lose the scroll
+  position with it.
+- **The before/after pane renders each side in an IFRAME, and that is forced.**
+  The theme runtime is a module singleton on purpose, and the mockups lean on
+  it deliberately — `showcaseTokens.ts` resolves its colours through the
+  NON-HOOK resolvers (`themeColor`, `themePaletteEntry`, `themeFontFamily`) so a
+  token module can resolve outside React. Those read the singleton and can never
+  see a React context, so a `ThemeScope` provider would have left both halves on
+  one theme with no sign of it. A separate document gets its own module instance
+  and its own store, which makes two live themes a property of the browser. Same
+  origin is also what makes the scroll sync reachable.
+- **A stage is not sticky.** `ThemeProvider` takes `sticky={false}` there, added
+  to the runtime for this: a sticky store prefers the visitor's remembered pick
+  over the design it was told to show and writes its own pick back, so two
+  previews would both boot into whichever theme was last chosen in the studio
+  and would overwrite each other's selection as they loaded.
+- **The scroll sync matches PIXELS, not percentages.** The two screens are rarely
+  the same height, and a proportional sync would mean one gesture showed you
+  different parts of each design — the one thing a comparison must not do. The
+  short side reaches its end and stops, which the page says out loud. The
+  scroller is found by searching for the first element taller than itself with
+  `overflow-y: auto`, because the mockups are an island this package must not
+  reach into and their scroller is a hashed CSS-module class.
+- **Fail visible.** A missing artifact, a failed run, an empty catalog: show the
+  state. A blank pane that could mean "loading" or "broken" is the one failure
+  mode that wastes the most time here.
+- Tests live in `__tests__/` beside what they test and run with `npm test`.

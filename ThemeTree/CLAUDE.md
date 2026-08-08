@@ -1,6 +1,6 @@
 # ThemeTree — Coding Standards
 
-The Python pipeline: the dependency DAG that turns two YAMLs into a resolved `output.yaml`, the studio API that drives it lives in `../RecomposeAPI/studio/`. See `../README.md` for the monorepo map and `README.md` for what the pipeline does.
+The Python pipeline: the dependency DAG that turns two YAMLs into a resolved `output.yaml`, the studio API that drives it lives in `../Backend/studio/`. See `../README.md` for the monorepo map and `README.md` for what the pipeline does.
 
 ---
 
@@ -176,7 +176,7 @@ only makes sense for one app, push back — it belongs in YAML.
 
 Every service and module method is `async`. The pipeline core is provider- and
 transport-agnostic; the CLI (`ThemeTree/cli.py`) and the studio app
-(`../RecomposeAPI/studio/`) are two entrypoints over the same async core. Do
+(`../Backend/studio/`) are two entrypoints over the same async core. Do
 not introduce blocking I/O — use async clients (`litellm.acompletion` /
 `litellm.aimage_generation`) and `await` everything. Keep modules
 independently awaitable so they can be gathered concurrently later without a
@@ -387,7 +387,7 @@ is a deliberate breaking change that requires migrating every existing
 The rule is about **groups** — a collection of resolved items. A single
 run-wide value is a plain field on `Output`, not a one-field wrapper:
 `category` is a bare `str | None`, which is what every consumer (the styles
-API, `RecomposeFlutter`, `RecomposeReact`, `../FastApiBackend`) reads. Reshaping it
+API, `Flutter`, `React`, `../FastApiBackend`) reads. Reshaping it
 into a group is exactly the breaking change described above, so a new
 run-wide scalar goes on `Output` directly.
 
@@ -400,9 +400,9 @@ that consume the API it serves. Neither is Python; neither is part of the poetry
 project, the test suite, or the Docker image (both are in `.dockerignore`, and
 the `Dockerfile` only `COPY`s `ThemeTree/ schema/ resources/ apps/`).
 
-- **`RecomposeFlutter/`** — the `theme_flutter` Dart package. A path dep of
+- **`Flutter/`** — the `theme_flutter` Dart package. A path dep of
   `../CRM` and `../MobileApp`.
-- **`RecomposeReact/`** — the `recompose-react` npm package: the same runtime for the
+- **`React/`** — the `recompose-react` npm package: the same runtime for the
   web, plus the standalone theme browser app. **npm, not poetry.** Driven by the
   `react-*` Makefile targets (`react-install` / `react-dev` / `react-build` /
   `react-check`); `react-dev` serves on `:8080` and needs `make api` alongside it.
@@ -428,14 +428,14 @@ breakage the `.venv/bin/*` scripts hit when this package was renamed.
 
 ## One FastAPI app, and where it lives
 
-`RecomposeAPI/` serves both halves: the read side over a produced `output.yaml`,
-and `RecomposeAPI/studio/` — author a brief, launch a run, watch it, hold a
+`Backend/` serves both halves: the read side over a produced `output.yaml`,
+and `Backend/studio/` — author a brief, launch a run, watch it, hold a
 design session. **The studio used to live here in `ThemeTree/studio/` and does
 not any more** (moved 2026-07-29): starting a run is an API request like any
 other, so it belongs with the API rather than inside the library it drives.
 
 That move deleted a rule this file used to carry — *never merge the studio into
-`RecomposeAPI/`*, on the argument that a deployed read API must boot without
+`Backend/`*, on the argument that a deployed read API must boot without
 provider keys. The merge was made deliberately, knowing the cost: the API now
 imports the pipeline, so all four provider keys are required at import time.
 
@@ -443,7 +443,7 @@ What still matters **here**, in the pipeline:
 
 - **Nothing wire-shaped leaks down.** The studio owns SSE framing, JSONL and
   HTTP status mapping; the executor owns `ProgressEvent` and `on_partial`.
-  Anything transport-flavoured belongs in `RecomposeAPI/`, never in
+  Anything transport-flavoured belongs in `Backend/`, never in
   `ThemeTree/executor/`. This is the rule the move did NOT change, and the
   reason the executor did not have to be touched to make it.
 - **The studio's state lives in `.studio/`, never in a run directory** — one
@@ -452,7 +452,7 @@ What still matters **here**, in the pipeline:
   Writing into `apps/<app_id>/<run_id>/` would break the iron-clad rule above.
 
 Everything else about the studio — sessions, the single-run gate, the launch
-path's create-only rule — is documented in `../RecomposeAPI/CLAUDE.md`, beside
+path's create-only rule — is documented in `../Backend/CLAUDE.md`, beside
 the code.
 
 - **The launch path only ever CREATES a run directory.** A name collision is
@@ -491,7 +491,7 @@ the code.
 - **Two LLM libraries, one boundary.** litellm drives every *pipeline* call
   (`ThemeTree/modules/`, `ThemeTree/shared/services/`); Pydantic AI drives the studio's
   conversational agent and nothing else. Its model id is a **bare** Anthropic
-  name from `RecomposeAPI/studio/config.py` (`brief_agent_model`) — never a
+  name from `Backend/studio/config.py` (`brief_agent_model`) — never a
   litellm `provider/model` string — because the agent names its provider
   explicitly. It runs on **Sonnet**: a turn of that interview is a long prompt
   in and a question out, which is a cheap shape of work Opus was being paid
@@ -515,7 +515,7 @@ the code.
 
 ## Production deployment (read-only API)
 
-The read-only API (`RecomposeAPI/main.py`, `make api`, port 8001 locally) ships to **AWS App
+The read-only API (`Backend/main.py`, `make api`, port 8001 locally) ships to **AWS App
 Runner** as a Docker image at `https://theme.combatden.net`. See
 `../DEPLOYMENT.md` for the full runbook (ARNs, DNS, redeploy, pause/resume).
 
@@ -524,11 +524,11 @@ Runner** as a Docker image at `https://theme.combatden.net`. See
   `output.yaml` metadata is copied (`.dockerignore` excludes
   `apps/**/{images,final_images,icons}/`; `COPY apps/` then brings just the
   yaml). `ASSETS_CDN_BASE_URL` **defaults to the prod CDN in code**
-  (`RecomposeAPI/config.py`), so the API always emits absolute CDN URLs and the byte
+  (`Backend/config.py`), so the API always emits absolute CDN URLs and the byte
   endpoints 307-redirect there — no App Runner env var required (a relative path
   would 404 now that the bytes are de-baked). Set it empty to serve relative
   paths + local files in the dev loop. See `ThemeTree/core/asset_urls.py` +
-  `RecomposeAPI/schema/output_response.py`.
+  `Backend/schema/output_response.py`.
 - Cache-busting stays `?v=<content-hash>` (already stamped by the Writer);
   CloudFront is configured to include `v` in the cache key, so a regenerated
   asset busts the CDN with no invalidation. **Never serve via the CDN without

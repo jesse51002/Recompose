@@ -1,10 +1,10 @@
-.PHONY: help install check test ThemeTree RecomposeAPI RecomposeFlutter RecomposeReact RecomposeJsxMockUps RecomposeStudio
+.PHONY: help install check test ThemeTree Backend Flutter React JsxMockUps Studio
 
 # Root delegates. Every subsystem owns its own Makefile and its own dependencies;
 # this file only fans out to them. Anything subsystem-specific belongs in that
 # subsystem's Makefile, not here.
 
-SUBSYSTEMS := ThemeTree RecomposeAPI RecomposeFlutter RecomposeReact RecomposeJsxMockUps RecomposeStudio
+SUBSYSTEMS := ThemeTree Backend Flutter React JsxMockUps Studio
 
 help:
 	@echo "make install         install every subsystem"
@@ -15,9 +15,9 @@ help:
 	@echo "Subsystems: $(SUBSYSTEMS)"
 	@echo ""
 	@echo "Common loops:"
-	@echo "  make -C RecomposeJsxMockUps dev  the mock assets, unthemed (no backend)"
-	@echo "  make -C RecomposeAPI dev         the read-only API"
-	@echo "  make -C RecomposeStudio dev      the theme browser (needs the API running)"
+	@echo "  make -C JsxMockUps dev  the mock assets, unthemed (no backend)"
+	@echo "  make -C Backend dev         the read-only API"
+	@echo "  make -C Studio dev      the theme browser (needs the API running)"
 	@echo "  make -C ThemeTree smoke          a cheap end-to-end pipeline run"
 
 install:

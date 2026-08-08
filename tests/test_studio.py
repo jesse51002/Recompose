@@ -21,17 +21,17 @@ from fastapi.testclient import TestClient
 from pydantic import ValidationError
 
 from ThemeTree.executor.progress_event import ProgressEvent, ProgressEventKind
-from RecomposeAPI.studio.config import settings
-from RecomposeAPI.main import app
-from RecomposeAPI.studio.schema.layout_brief import LayoutBrief
-from RecomposeAPI.studio.service import brief_service as brief_service_module
-from RecomposeAPI.studio.service import run_launcher as run_launcher_module
-from RecomposeAPI.studio.service import run_reader as run_reader_module
-from RecomposeAPI.studio.service import run_registry as run_registry_module
-from RecomposeAPI.studio.service.brief_service import BriefService
-from RecomposeAPI.studio.service.run_launcher import RunLauncher
-from RecomposeAPI.studio.service.run_reader import RunReader
-from RecomposeAPI.studio.service.run_registry import RunRegistry
+from Backend.studio.config import settings
+from Backend.main import app
+from Backend.studio.schema.layout_brief import LayoutBrief
+from Backend.studio.service import brief_service as brief_service_module
+from Backend.studio.service import run_launcher as run_launcher_module
+from Backend.studio.service import run_reader as run_reader_module
+from Backend.studio.service import run_registry as run_registry_module
+from Backend.studio.service.brief_service import BriefService
+from Backend.studio.service.run_launcher import RunLauncher
+from Backend.studio.service.run_reader import RunReader
+from Backend.studio.service.run_registry import RunRegistry
 
 FIXTURE_APP_YAML = (
     Path(__file__).resolve().parent / "data" / "apps" / "demo" / "app.yaml"
@@ -666,7 +666,7 @@ def test_a_log_without_a_terminal_record_reads_as_crashed(studio) -> None:
 # `schema/` because nothing in the pipeline ever sees a screen — so its test
 # lives here too, beside the rest of the studio's contracts.
 
-_MOCKUP_APPS = Path(__file__).resolve().parents[1] / "RecomposeJsxMockUps" / "src" / "apps"
+_MOCKUP_APPS = Path(__file__).resolve().parents[1] / "JsxMockUps" / "src" / "apps"
 
 
 @pytest.mark.parametrize(

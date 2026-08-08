@@ -120,26 +120,26 @@ overrides anything general said here.
 | Directory | What it is | Language |
 |---|---|---|
 | `ThemeTree/` | The pipeline. The dependency DAG that resolves colour, typography, copy, icons and images into an `output.yaml`. A library plus a CLI — it serves nothing. | Python |
-| `RecomposeAPI/` | The API. Two halves in one app: **read** over a produced `output.yaml`, and `studio/` — author a brief, launch a run, watch it, hold a design session. The only Python surface that ships. | Python |
-| `RecomposeFlutter/` | The Flutter theme runtime. Fetches a tenant's resolved branding at startup and exposes resolvers that never throw. | Dart |
-| `RecomposeReact/` | The **web** theme runtime — the React mirror of `RecomposeFlutter`. Ships no screens and no assets. | TypeScript |
-| `RecomposeJsxMockUps/` | The feature-free mock **assets** — interactive mocks you click through, on an app-agnostic kit. No logic, no API calls, no fetching. What the design agent edits and the studio nests. | TypeScript |
-| `RecomposeStudio/` | The standalone theme browser: Library, Inspect and Studio views. | TypeScript |
+| `Backend/` | The API. Two halves in one app: **read** over a produced `output.yaml`, and `studio/` — author a brief, launch a run, watch it, hold a design session. The only Python surface that ships. | Python |
+| `Flutter/` | The Flutter theme runtime. Fetches a tenant's resolved branding at startup and exposes resolvers that never throw. | Dart |
+| `React/` | The **web** theme runtime — the React mirror of `Flutter`. Ships no screens and no assets. | TypeScript |
+| `JsxMockUps/` | The feature-free mock **assets** — interactive mocks you click through, on an app-agnostic kit. No logic, no API calls, no fetching. What the design agent edits and the studio nests. | TypeScript |
+| `Studio/` | The standalone theme browser: Library, Inspect and Studio views. | TypeScript |
 
 Dependencies run one way and must keep running one way:
 
 ```
-RecomposeStudio ──> RecomposeJsxMockUps ──> RecomposeReact ──> RecomposeAPI
+Studio ──> JsxMockUps ──> React ──> Backend
                 └────────────────────────────────>┘
 ```
 
-`ThemeTree` produces what `RecomposeAPI` serves. Nothing depends on
-`RecomposeStudio`. **There are no cycles and there must never be one.**
+`ThemeTree` produces what `Backend` serves. Nothing depends on
+`Studio`. **There are no cycles and there must never be one.**
 
 ## The island rule
 
-`RecomposeJsxMockUps` may import from `RecomposeReact` and from itself. **From
-nothing else.** It may not reach into `RecomposeStudio` for a widget, a token or
+`JsxMockUps` may import from `React` and from itself. **From
+nothing else.** It may not reach into `Studio` for a widget, a token or
 a helper — that is why `cx` and `useElementSize` are duplicated in both rather
 than shared.
 
@@ -158,7 +158,7 @@ but deleting one design must never break another.
 The rule predates the package split; it was enforced inside the old single
 package and the split made it structural. If you find yourself wanting to share
 something between the studio and the mockups, duplicate it or push it down into
-`RecomposeReact`. Do not add the edge.
+`React`. Do not add the edge.
 
 The reason is the product: the mockups are the surface a design agent rewrites
 freely. Every dependency they carry is a thing that can break when an agent
@@ -232,11 +232,11 @@ Add a target to the subsystem that owns the work, never to the root.
 
 ## Python: a library and the API over it
 
-`ThemeTree/` and `RecomposeAPI/` are separate top-level packages. Whether they
+`ThemeTree/` and `Backend/` are separate top-level packages. Whether they
 share one project or split into separate distributions is an arrangement rather
 than a principle — read `pyproject.toml` for how it stands today, not this file.
 
-`ThemeTree/` is a **library plus a CLI** and serves nothing. `RecomposeAPI/` is
+`ThemeTree/` is a **library plus a CLI** and serves nothing. `Backend/` is
 the only thing that listens on a port, and it has both halves: reading a produced
 `output.yaml`, and `studio/` — briefs, run launches, sessions.
 

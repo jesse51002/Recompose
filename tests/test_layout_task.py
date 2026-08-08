@@ -19,15 +19,15 @@ from pathlib import Path
 
 import pytest
 
-from RecomposeAPI.studio.config import settings
-from RecomposeAPI.studio.errors import LayoutInFlightError, UnknownAppError
-from RecomposeAPI.studio.service.layout_task import (
+from Backend.studio.config import settings
+from Backend.studio.errors import LayoutInFlightError, UnknownAppError
+from Backend.studio.service.layout_task import (
     ANTHROPIC_KEY_VAR,
     GENERATED_PREFIX,
     StubLayoutTask,
     SubprocessLayoutTask,
 )
-from RecomposeAPI.studio.service.session_registry import SessionRegistry
+from Backend.studio.service.session_registry import SessionRegistry
 
 RUN = "quiet-morning"
 

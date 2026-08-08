@@ -73,7 +73,7 @@ RULE = "=" * 72
 # one is swapped.
 GROUPS_MODULE = (
     _REPO_ROOT
-    / "RecomposeJsxMockUps"
+    / "JsxMockUps"
     / "src"
     / "apps"
     / "combatden"

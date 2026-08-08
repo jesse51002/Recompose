@@ -28,16 +28,16 @@ from pydantic_ai.models.function import AgentInfo, FunctionModel
 from pydantic_ai.models.test import TestModel
 
 from schema import Customization
-from RecomposeAPI.studio.agent import brief_agent_service as agent_module
-from RecomposeAPI.studio.agent.brief_agent_service import (
+from Backend.studio.agent import brief_agent_service as agent_module
+from Backend.studio.agent.brief_agent_service import (
     SAVED_FALLBACK_REPLY,
     SYSTEM_PROMPT_PATH,
     BriefAgentService,
 )
-from RecomposeAPI.main import app
-from RecomposeAPI.studio.schema.agent_output import AgentQuestion
-from RecomposeAPI.studio.schema.agent_turn import AgentTurnRequest
-from RecomposeAPI.studio.service.brief_service import BriefService
+from Backend.main import app
+from Backend.studio.schema.agent_output import AgentQuestion
+from Backend.studio.schema.agent_turn import AgentTurnRequest
+from Backend.studio.service.brief_service import BriefService
 
 # The five-field contract, nested exactly as `Customization` declares it.
 _BRIEF: dict[str, Any] = {

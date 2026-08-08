@@ -16,12 +16,12 @@ import pytest
 import yaml
 from fastapi.testclient import TestClient
 
-from RecomposeAPI.config import Settings, settings
-from RecomposeAPI.errors import NotFoundError
-from RecomposeAPI.main import app
-from RecomposeAPI.service import font_service, output_service
-from RecomposeAPI.service.output_service import OutputService
-from RecomposeAPI.studio.service.slug import slugify
+from Backend.config import Settings, settings
+from Backend.errors import NotFoundError
+from Backend.main import app
+from Backend.service import font_service, output_service
+from Backend.service.output_service import OutputService
+from Backend.studio.service.slug import slugify
 from ThemeTree.shared.interfaces.google_fonts_catalog import GoogleFontMetadata
 
 FIXTURE_APPS = Path(__file__).resolve().parent / "data" / "apps"
@@ -128,7 +128,7 @@ def test_flat_maps_stay_string_valued_for_the_deployed_clients() -> None:
     """``images`` / ``fonts`` / ``icons`` are `dict[str, str]` and must stay
     that way.
 
-    ``RecomposeFlutter``'s ``_parseStringMap`` (and ``ThemeReact``'s
+    ``Flutter``'s ``_parseStringMap`` (and ``ThemeReact``'s
     ``parseStringMap``) SKIP any entry whose value is not a bare string, so
     widening one of these maps would not raise anywhere — it would hand the
     CRM and the member app an empty map behind a 200 and silently strip

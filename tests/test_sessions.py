@@ -17,17 +17,17 @@ from typing import Any
 import pytest
 from fastapi.testclient import TestClient
 
-from RecomposeAPI.studio.config import settings
-from RecomposeAPI.main import app
-from RecomposeAPI.studio.schema.session_record import (
+from Backend.studio.config import settings
+from Backend.main import app
+from Backend.studio.schema.session_record import (
     SessionPhase,
     SessionRecord,
     SessionRecordKind,
 )
-from RecomposeAPI.studio.agent import orchestrator_service as orchestrator_module
-from RecomposeAPI.studio.service import session_registry as session_registry_module
-from RecomposeAPI.studio.service import layout_task as layout_task_module
-from RecomposeAPI.studio.service.session_registry import SessionRegistry
+from Backend.studio.agent import orchestrator_service as orchestrator_module
+from Backend.studio.service import session_registry as session_registry_module
+from Backend.studio.service import layout_task as layout_task_module
+from Backend.studio.service.session_registry import SessionRegistry
 
 APP = "demo"
 DESIGN = "Stillwater Pilates"

@@ -245,7 +245,7 @@ Customers agentically redesign white-label apps.
 
 Concepts engaged: [[Full_Visual_Redesign]], [[Tokenized_Design_System]], [[Never_Touch_Their_Code]], [[Re_Derived_Not_Forked]], [[Integration_Surface]], [[Autonomous_Operation]].
 
-**What it is walked on:** the studio's three pages, now on `main` — Generate (customer, real), Onboard (admin, demo-ware) and Fleet (admin, demo-ware) — plus the before/after compare and the ballet app `secondposition` in `RecomposeJsxMockUps`. The order is **customer first, platform second**: the buyer has to want the outcome before they will listen to how it is delivered.
+**What it is walked on:** the studio's three pages, now on `main` — Generate (customer, real), Onboard (admin, demo-ware) and Fleet (admin, demo-ware) — plus the before/after compare and the ballet app `secondposition` in `JsxMockUps`. The order is **customer first, platform second**: the buyer has to want the outcome before they will listen to how it is delivered.
 
 **The spine is one worked example, not a feature tour.** A single ballet studio is named up front and carried through every screen — brief, generation, layout, animation, themes — and only then does the platform's side appear. That choice is what bought the depth: describing one tenant's app changing is concrete in a way that "the pipeline generates images, palette, typography" is not.
 
@@ -329,5 +329,5 @@ Concepts engaged: [[Full_Visual_Redesign]], [[Tokenized_Design_System]], [[Never
 - **Fleet is labelled a mockup out loud, Onboard is not.** Onboard is still narrated as though the connect and the fork pass are really happening.
 - **A named tenant now carries the whole demo while there are zero customers.** "A ballet studio" is framed as a walkthrough rather than a client, which is honest — but the app folder is `secondposition`, the logos are real pipeline output, and nothing in the recording says nobody has bought this. The omission is louder than it was on the form.
 
-**The animation claim is backed** — `RecomposeJsxMockUps/src/apps/secondposition/` carries 19 distinct `@keyframes` and its own `celebrations/` folder (`SparkleBurst`, `WinsTile`, `CountUpText`, `RewardsCarousel`). Say it without hedging.
+**The animation claim is backed** — `JsxMockUps/src/apps/secondposition/` carries 19 distinct `@keyframes` and its own `celebrations/` folder (`SparkleBurst`, `WinsTile`, `CountUpText`, `RewardsCarousel`). Say it without hedging.
 - **Nothing in the script states zero customers.** Consistent with the application's rule against pre-empting objections, but the fleet page shows thirty synthetic tenants, so the omission is louder here than it is on the form.

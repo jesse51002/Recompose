@@ -44,7 +44,7 @@ assets/**/*
 # that shape needs a new negation for every authored app — combatden, zenbjj,
 # romanahouse and whatever comes next — and its failure mode is a real app
 # silently vanishing from git.
-RecomposeJsxMockUps/src/apps/gen-*/
+JsxMockUps/src/apps/gen-*/
 
 # npm lockfiles. Untracked deliberately, and consistently: two of three
 # packages carrying one reads as a decision nobody made. If lockfiles are

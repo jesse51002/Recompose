@@ -99,5 +99,5 @@ fi
 
 echo
 echo "Ready. Start it with:"
-echo "  make -C RecomposeAPI dev        # the read API on 8001"
-echo "  make -C RecomposeStudio dev     # the studio on 8080"
+echo "  make -C Backend dev        # the read API on 8001"
+echo "  make -C Studio dev     # the studio on 8080"
