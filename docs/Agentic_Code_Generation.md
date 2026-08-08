@@ -9,7 +9,7 @@ source-session: Office_Hours/2026-08-04-00-Office_Hours_Agentic_Code_Generation_
 
 Concepts touched: [[No_New_Requests_Invariant]], [[Full_Visual_Redesign]], [[Never_Touch_Their_Code]], [[Re_Derived_Not_Forked]], [[Screenshot_Oracle]], [[Autonomous_Operation]], [[Visual_Mirror]].
 
-Synthesis of `Research/MobileAppCodeGen.md`, which surveyed AI app builders, brownfield coding agents, automated large-scale code change, fork maintenance, per-tenant customization architecture and visual validation. Detail and sourcing live there; this is the position.
+Synthesis of `Research/2026-08-04-mobile-app-code-gen.md`, which surveyed AI app builders, brownfield coding agents, automated large-scale code change, fork maintenance, per-tenant customization architecture and visual validation. Detail and sourcing live there; this is the position.
 
 ---
 
@@ -43,7 +43,7 @@ Synthesis of `Research/MobileAppCodeGen.md`, which surveyed AI app builders, bro
 - **The ceiling is far below autonomy.** ~67% with a human on every task; under 10% on multi-file changes, which every real feature is.
 - **It would attempt the three hardest axes at once** — brownfield, mobile, net-new functionality — in the lowest-scoring language family.
 - **It inherits a security surface currently avoided entirely:** API discovery, approved-API scoping, schema validation, auth passthrough, RBAC inheritance, sandbox boundaries, public-vs-private data classification. **The failure mode moves from *ugly* to *security incident*,** which is the asymmetry that makes the visual half tractable for one person.
-- **The invariant is not a constraint on the buyer anyway.** Thirteen of nineteen platforms in `Research/FeaturesVSDesign.md` have no path to net-new functionality at any price.
+- **The invariant is not a constraint on the buyer anyway.** Thirteen of nineteen platforms in `Research/2026-08-02-features-vs-design.md` have no path to net-new functionality at any price.
 
 **What reopens it** — thresholds, not a date. Measured brownfield success on multi-file mobile changes clearing ~95%, the range deterministic tools achieve rather than the ~67% free generation achieves. A robust iOS/Swift benchmark existing and React Native scores catching the pack. The functional-equivalence gate built and proven first. And a customer, because extending scope before the narrow version has a buyer is the pattern this vault has run five times.
 
@@ -100,7 +100,7 @@ None solved. All believed solvable. Grouped by where they live.
 ### Commercial
 
 19. **Cost per design must sit far under a price that does not exist.** "Close enough at a fraction of the price" is a ratio and the ratio is the pitch. Meaningless until both numbers exist; challenge 5 sets the floor. → T25.
-20. **Build-versus-buy, gated on extension architecture.** Q2 did not build a coding agent — they wired Claude Code into Bedrock, and could only do it because **Caliper SDK has existed since 2018.** The AI was the cheap part bolted onto an extension architecture they already owned. The real filter is whether a platform already has one: the fintech four do, Subsplash and Passion.io do not, and building one is the 12–18 month rebuild in `Research/Incumbent_Design_Delivery.md`. → standing condition. If two or more targets ship a native AI-extension layer, the external-fork position erodes and the surviving play is being the engine underneath their governed layer.
+20. **Build-versus-buy, gated on extension architecture.** Q2 did not build a coding agent — they wired Claude Code into Bedrock, and could only do it because **Caliper SDK has existed since 2018.** The AI was the cheap part bolted onto an extension architecture they already owned. The real filter is whether a platform already has one: the fintech four do, Subsplash and Passion.io do not, and building one is the 12–18 month rebuild in `Research/2026-08-02-incumbent-design-delivery.md`. → standing condition. If two or more targets ship a native AI-extension layer, the external-fork position erodes and the surviving play is being the engine underneath their governed layer.
 
 ---
 

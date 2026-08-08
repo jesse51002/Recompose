@@ -172,7 +172,7 @@ Customers agentically redesign white-label apps.
 >
 > **Subsplash is not that kind of platform.** It has no shell tier — every one of its 20,000+ churches is provisioned with its own app — so the relevant question is not what fraction *upgrade* but what fraction would pay for a *redesign*, which nobody has measured (T20). The $4.8M figure may therefore be conservative for Subsplash specifically and badly optimistic for a Mighty Networks, Circle or Kajabi.
 >
-> In conversation: name the distinction rather than the number. "It depends whether they sell a shared shell or give every tenant an app, and those are completely different businesses" is a stronger answer than any percentage, and it is true. See `Research/Attach_Rate.md`.
+> In conversation: name the distinction rather than the number. "It depends whether they sell a shared shell or give every tenant an app, and those are completely different businesses" is a stronger answer than any percentage, and it is true. See `Research/2026-08-02-attach-rate.md`.
 
 **Recurring per branded tenant, not per generation — this was decided, and the reason matters.** Metering on generations ties revenue to how often a design is *made*, and a good design is made once. Modelled both ways: per-generation on new signups only (~100–150/month for a platform this size) is a **~$180k/year** customer; converting the existing 20,000 base is ~$2M **one time**; recurring per tenant is **$4.8M every year and grows as they add tenants.** Generations can still be the metering unit — the bill is monthly per tenant carrying a design.
 
@@ -181,7 +181,7 @@ Customers agentically redesign white-label apps.
 - **Subsplash 20,000+ churches**, acquired by Roper for $800M, July 2025. Public.
 - **Passion.io 15,000+ apps launched.** Public.
 - **~100–150 new tenants/month** for a platform this size — *derived*, not published: total base ÷ years shipping apps (Subsplash since 2009). A floor, since growth compounds.
-- **20% premium-tier attach** is a generic white-label SaaS benchmark, **not a design-tier number.** Measured in the one vertical where it can be counted, it is **0.1–1.73%** on shell-model platforms (`Research/Attach_Rate.md`). Do not use 20% for a shell platform. For a no-shell platform like Subsplash the concept does not apply — every tenant already has an app, and the open number is the redesign rate (T20).
+- **20% premium-tier attach** is a generic white-label SaaS benchmark, **not a design-tier number.** Measured in the one vertical where it can be counted, it is **0.1–1.73%** on shell-model platforms (`Research/2026-08-02-attach-rate.md`). Do not use 20% for a shell platform. For a no-shell platform like Subsplash the concept does not apply — every tenant already has an app, and the open number is the redesign rate (T20).
 
 **$100/month is the platform's COGS, not the end price, and it sits at the top of the defensible range.** They mark it up and sell the tier at $300–500, making $100 a 20–33% cost of revenue — software companies get uncomfortable above ~30%. It holds only if they price the tier at $300+. **Defend it as the price at which the platform still keeps 70% on a tier they currently cannot scale**, never as a final number.
 

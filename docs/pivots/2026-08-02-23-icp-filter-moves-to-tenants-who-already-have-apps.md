@@ -31,7 +31,7 @@ Full reasoning, the evidence tables, the discarded alternatives and the two reje
 
 `Office_Hours/2026-08-02-23-Office_Hours_Attach_Rate_And_The_Design_Service_Wedge.md`
 
-Underlying research: `Research/FeaturesVSDesign.md`, `Research/WhyCustom.md`, `Research/Attach_Rate.md`, `Research/Enterprise_Tier_Anatomy.md`, `Research/Incumbent_Design_Delivery.md`; synthesised in `Design_vs_Feature_Work.md` and `Build_vs_Buy.md`.
+Underlying research: `Research/2026-08-02-features-vs-design.md`, `Research/2026-08-02-why-custom.md`, `Research/2026-08-02-attach-rate.md`, `Research/2026-08-02-enterprise-tier-anatomy.md`, `Research/2026-08-02-incumbent-design-delivery.md`; synthesised in `Design_vs_Feature_Work.md` and `Build_vs_Buy.md`.
 
 ## What this does not change
 

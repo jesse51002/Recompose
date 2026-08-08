@@ -12,7 +12,7 @@ Concepts touched: [[Tier_Unlock_ROI]], [[Integration_Surface]], [[Full_Visual_Re
 > [!warning] Status
 > Nothing in this document has been validated against a real buyer. No platform has been contacted. See "Validation status" at the end before using any of it as a fact.
 
-Sources: `pivots/2026-07-27-11-customization-engine-is-the-company.md` (P1–P4 as decided), `pivots/2026-08-02-23-icp-filter-moves-to-tenants-who-already-have-apps.md` (P1a), `Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md` (P1, P1b, P2, P3, P4, §11d, T1–T9), `Office_Hours/2026-08-02-23-Office_Hours_Attach_Rate_And_The_Design_Service_Wedge.md` (L1–L6, T19–T22), `YC_Application_F26.md`, and the August 2026 research: `Research/Attach_Rate.md`, `Research/Enterprise_Tier_Anatomy.md`, `Research/FeaturesVSDesign.md`, `Research/WhyCustom.md`.
+Sources: `pivots/2026-07-27-11-customization-engine-is-the-company.md` (P1–P4 as decided), `pivots/2026-08-02-23-icp-filter-moves-to-tenants-who-already-have-apps.md` (P1a), `Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md` (P1, P1b, P2, P3, P4, §11d, T1–T9), `Office_Hours/2026-08-02-23-Office_Hours_Attach_Rate_And_The_Design_Service_Wedge.md` (L1–L6, T19–T22), `YC_Application_F26.md`, and the August 2026 research: `Research/2026-08-02-attach-rate.md`, `Research/2026-08-02-enterprise-tier-anatomy.md`, `Research/2026-08-02-features-vs-design.md`, `Research/2026-08-02-why-custom.md`.
 
 ---
 
@@ -69,11 +69,11 @@ Platforms divide into two models, and it decides how much there is to sell:
 
 **Subsplash fits best.** Large installed base, no regulatory pressure toward visual sameness, an existing paid design and onboarding function, and a former customer on record leaving over customization limits. The open variable is the Roper acquisition — Roper operates for margin, which reads either as receptiveness to cost structure or as no appetite for new vendors.
 
-The fintech four have the cleanest denominators in the entire research (~4,300 US credit unions per NCUA, ~99% on vendors, a four-name vendor list) and the worst appetite: `Research/AIBrandCompetitiorAnalysis.md:45` documents WCAG enforcement inside Alkami's Theme Builder, SOC 2 review per change, and 240+ Alkami FI apps sharing visual DNA deliberately, because trust signals reward consistency.
+The fintech four have the cleanest denominators in the entire research (~4,300 US credit unions per NCUA, ~99% on vendors, a four-name vendor list) and the worst appetite: `Research/2026-05-01-ai-brand-competitor-analysis.md:45` documents WCAG enforcement inside Alkami's Theme Builder, SOC 2 review per change, and 240+ Alkami FI apps sharing visual DNA deliberately, because trust signals reward consistency.
 
 ### What the premium tier actually costs, and what it buys
 
-The figures below are **tier prices, not design prices**, and the distinction is load-bearing. Mighty Pro's tier lists six deliverables and design is one — migration of members, courses and payments; a Community Design™ Plan; setup; design services; a membership; ongoing reporting. Full anatomy in `Research/Enterprise_Tier_Anatomy.md`.
+The figures below are **tier prices, not design prices**, and the distinction is load-bearing. Mighty Pro's tier lists six deliverables and design is one — migration of members, courses and payments; a Community Design™ Plan; setup; design services; a membership; ongoing reporting. Full anatomy in `Research/2026-08-02-enterprise-tier-anatomy.md`.
 
 | Platform | Tier figure in circulation | Source quality |
 |---|---|---|
@@ -168,7 +168,7 @@ Do not fill these in from memory or from the gym era. They are genuinely open.
 - **Whether presets are the platform's product or the platform's tenants' product.** Unexamined (Open Question 7).
 - **App-agnosticism outside `apps/combatden/` and `apps/smoketest/`.** Unproven (T5). Every claim in this document about adopting a platform's app assumes it.
 - **Whether attach rate responds to design quality at all** (T19). The measured correlation is with tenant *size*, which no design improvement changes. This is the largest unexamined assumption under the whole value argument and no amount of further research can settle it.
-- **Which app architecture is targeted.** Subsplash, Planning Center, Tithe.ly and Pushpay all run container apps that house thousands of tenants under a single App Store listing (`Research/WhyCustom.md:14`). A container tenant has no per-tenant binary, which changes the shape of what ships. Subsplash runs both models simultaneously (T22).
+- **Which app architecture is targeted.** Subsplash, Planning Center, Tithe.ly and Pushpay all run container apps that house thousands of tenants under a single App Store listing (`Research/2026-08-02-why-custom.md:14`). A container tenant has no per-tenant binary, which changes the shape of what ships. Subsplash runs both models simultaneously (T22).
 
 ---
 

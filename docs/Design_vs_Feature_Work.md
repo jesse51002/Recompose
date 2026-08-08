@@ -8,7 +8,7 @@ date: 2026-08-02
 
 Concepts touched: [[No_New_Requests_Invariant]], [[Full_Visual_Redesign]], [[Integration_Surface]], [[Tier_Unlock_ROI]].
 
-Two questions, answered by the August 2026 research in `Research/FeaturesVSDesign.md`: when a platform runs a design service, does that team also build features; and will any of these platforms build net-new functionality for a tenant who pays. Line references below point into that file.
+Two questions, answered by the August 2026 research in `Research/2026-08-02-features-vs-design.md`: when a platform runs a design service, does that team also build features; and will any of these platforms build net-new functionality for a tenant who pays. Line references below point into that file.
 
 ---
 
@@ -82,7 +82,7 @@ This is the financial signature of a function that exists to enable subscription
 
 **"No new features" is already the platform's own answer to its tenants.** At 13 of 19 platforms there is no way for a tenant to get functionality built, at any price. So a tenant who asks Recompose for a feature and is refused gets exactly the answer their platform already gives them. The invariant does not create a new disappointment; it inherits an existing one. Where category (c) *does* exist — Banno, Backbase, Tapcart, GoodBarber, BuildFire, Trainerize Enterprise — those requests have a paid path to be routed to, which makes the line easier to hold rather than harder.
 
-**Fintech is where (c) concentrates, and it is also where visual differentiation is resisted.** `Research/AIBrandCompetitiorAnalysis.md:45` records WCAG enforcement baked into Alkami's Theme Builder, ADA-compliant outputs at Banno, SOC 2 review per change, Alkami's 240+ FI apps sharing visual DNA on purpose, and every banking AI announcement 2024–2026 being end-user AI rather than design AI. Best custom-dev muscle, weakest appetite for the product.
+**Fintech is where (c) concentrates, and it is also where visual differentiation is resisted.** `Research/2026-05-01-ai-brand-competitor-analysis.md:45` records WCAG enforcement baked into Alkami's Theme Builder, ADA-compliant outputs at Banno, SOC 2 review per change, Alkami's 240+ FI apps sharing visual DNA on purpose, and every banking AI announcement 2024–2026 being end-user AI rather than design AI. Best custom-dev muscle, weakest appetite for the product.
 
 **There is rarely a person whose team is being replaced.** `Open_Questions.md:57` anticipated a lukewarm technical review from someone with a reason to find fault. On this evidence that person often does not exist — the roles are Solutions Consultants, Client Implementation Managers, Customer Onboarding Specialists, and marketing designers. Lower political risk, but also no internal owner who wants the purchase to succeed.
 
@@ -94,4 +94,4 @@ This is the financial signature of a function that exists to enable subscription
 - Thirteen platforms went unresearched, including BentoBox, Owner.com, Zenoti, Boulevard, Nudge Coach, Disciple Media, Arketa, Everfit, Tithe.ly and Ministry Brands (97).
 
 > [!note] On the source doc
-> `Research/FeaturesVSDesign.md` ends with a Recommendations section written for a buyer shopping for a platform, not for Recompose. That is an artifact of how the research was commissioned. Do not read it as strategy.
+> `Research/2026-08-02-features-vs-design.md` ends with a Recommendations section written for a buyer shopping for a platform, not for Recompose. That is an artifact of how the research was commissioned. Do not read it as strategy.

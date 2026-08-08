@@ -8,7 +8,7 @@ date: 2026-08-04
 
 Concepts touched: [[Brand_Is_Product]], [[Tier_Unlock_ROI]], [[Full_Visual_Redesign]], [[AI_Design_Compression]], [[Freelance_Conversion_Thesis]].
 
-One file per vertical, numbered by rank so the folder sorts itself. Derived from the 108 platforms in `Research/CompanyListWhiteLabel.csv` (extracted from `Research/CompanyListWhiteLabel.md`), scored against the evidence in `Customer_ICP.md`, `Design_vs_Feature_Work.md` and `Research/AIBrandCompetitiorAnalysis.md`.
+One file per vertical, numbered by rank so the folder sorts itself. Derived from the 108 platforms in `Research/2026-08-04-company-list-white-label.csv` (extracted from `Research/2026-08-04-company-list-white-label.md`), scored against the evidence in `Customer_ICP.md`, `Design_vs_Feature_Work.md` and `Research/2026-05-01-ai-brand-competitor-analysis.md`.
 
 > [!warning] Reasoned, not validated
 > No platform in any of these files has been contacted. The scores are a structured argument about where design demand *should* concentrate, not a measurement of it. The vault's largest open question (T19 — whether attach rate responds to design quality at all) is unresolved and this ranking cannot settle it.

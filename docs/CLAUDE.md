@@ -192,6 +192,20 @@ When an office hours session does NOT lead to a pivot (the exploration ends inco
 
 Same rule as pivots. Office hours docs are preserved indefinitely. If a later session reverses or revises an earlier session, write a new doc with a new date that references the prior one. The historical record is the value.
 
+## Research: dated filenames
+
+Every file in `Research/` starts with the date the research was done, so the folder sorts chronologically and a reader can tell how old a finding is without opening it:
+
+```
+Research/YYYY-MM-DD-short-kebab-slug.md
+```
+
+Date only — no hour. Research is not a chronological narrative the way pivots and office hours are, and several files landing on the same day is normal. A data file that belongs to a research doc takes the same stem so the pair sorts together.
+
+**The date is when the research was done, not when the file was created.** For anything commissioned in this vault those are the same and `stat` is trustworthy. For anything carried in from elsewhere they are not — the birth time is the migration date, and the real date has to come from the original or from the content. Getting this wrong is worse than leaving it off, because a wrong date in a filename is believed.
+
+Why it matters here specifically: a research finding is only as good as the thesis it was written against, and this vault holds research from both sides of a pivot. The date is what tells a reader which one they are looking at.
+
 ## Concepts: the canonical glossary and the linking rule
 
 The `Concepts/` folder is the single source of truth for what each Recompose term *means*. Every other doc in the vault is treated as prose that uses concepts, not as a place where concepts are redefined.

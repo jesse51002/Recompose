@@ -7,7 +7,7 @@
 
 Concepts touched: [[AI_Design_Compression]], [[Tokenized_Design_System]], [[Shopify_Pattern]], [[Brand_Is_Product]], [[Orchestrator]], [[Modal_Coherence]], [[Template_Marketplace]], [[Freelance_Conversion_Thesis]].
 
-> Second office hours session on this idea, building on the initial thesis-and-landscape exploration of 2026-04-30. Triggered by the user adding three deep competitor research docs (Research/AIBrandCompetitiorAnalysis.md, Research/AIBrandCopetitiorAnaylsisv2.md, Research/CoachAndInfluencer.md) and asking for an open-ended re-examination of business viability, vertical choice, and product shape. The session shook several assumptions from the prior session, surfaced a meaningful product-model pivot, and locked in two architectural commitments. Several decisions remain open and are preserved in the open questions register. Nothing here is set in stone.
+> Second office hours session on this idea, building on the initial thesis-and-landscape exploration of 2026-04-30. Triggered by the user adding three deep competitor research docs (Research/2026-05-01-ai-brand-competitor-analysis.md, Research/2026-05-01-ai-brand-competitor-analysis-v2.md, Research/2026-08-02-coach-and-influencer.md) and asking for an open-ended re-examination of business viability, vertical choice, and product shape. The session shook several assumptions from the prior session, surfaced a meaningful product-model pivot, and locked in two architectural commitments. Several decisions remain open and are preserved in the open questions register. Nothing here is set in stone.
 
 ---
 
@@ -66,7 +66,7 @@ Questions 1-5 were addressed substantively. Questions 6-7 reached working answer
 
 ## The binding-constraint reframe
 
-The prior session's core technical premise was: design labor was the binding constraint on white-label apps; AI compresses design labor; therefore the third category becomes viable. Clean and intuitive. The Research/AIBrandCompetitiorAnalysis.md doc disputes the most important sentence in that paragraph and the dispute is correct.
+The prior session's core technical premise was: design labor was the binding constraint on white-label apps; AI compresses design labor; therefore the third category becomes viable. Clean and intuitive. The Research/2026-05-01-ai-brand-competitor-analysis.md doc disputes the most important sentence in that paragraph and the dispute is correct.
 
 Design labor was *not* the most binding constraint historically. Four constraints kept white-label apps at logo+color+font:
 

@@ -33,7 +33,7 @@ The trade is explicit: the maintenance burden moves from the platform to Recompo
 - `pivots/2026-07-27-11-customization-engine-is-the-company.md`
 - `Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture.md`
 - `Product_Boundaries.md`
-- `Research/AIBrandCompetitiorAnalysis.md`
+- `Research/2026-05-01-ai-brand-competitor-analysis.md`
 
 ## Related concepts
 

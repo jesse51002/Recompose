@@ -7,7 +7,7 @@
 
 Concepts touched: [[Orchestrator]], [[Modal_Coherence]], [[Tokenized_Design_System]], [[Shopify_Pattern]], [[AI_Design_Compression]]
 
-> Working session that locked the AI Gen pipeline's shape after several open architectural questions. Triggered by the user adding `Business/Research/design_arch_research.md`, an external competitive-architecture survey that compared the pipeline to ~50 shipped systems and the published research literature. The session resolved four open decisions, demoted one architectural element, and dropped one stage entirely. Not a pivot — the architecture was never set in stone — but several previously open questions converged here.
+> Working session that locked the AI Gen pipeline's shape after several open architectural questions. Triggered by the user adding `Business/Research/2026-05-04-design-architecture-research.md`, an external competitive-architecture survey that compared the pipeline to ~50 shipped systems and the published research literature. The session resolved four open decisions, demoted one architectural element, and dropped one stage entirely. Not a pivot — the architecture was never set in stone — but several previously open questions converged here.
 
 ---
 

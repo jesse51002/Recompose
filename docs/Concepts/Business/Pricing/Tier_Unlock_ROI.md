@@ -23,9 +23,9 @@ Per-tenant theming is already sold as a priced tier: the embedded-analytics whit
 - `pivots/2026-08-02-23-icp-filter-moves-to-tenants-who-already-have-apps.md`
 - `Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md` (§3, §11d, P1a, P2, T7, T8)
 - `YC_Application_F26.md` (answers 6 and 8)
-- `Research/AIBrandCompetitiorAnalysis.md`
-- `Research/Attach_Rate.md`
-- `Research/Enterprise_Tier_Anatomy.md`
+- `Research/2026-05-01-ai-brand-competitor-analysis.md`
+- `Research/2026-08-02-attach-rate.md`
+- `Research/2026-08-02-enterprise-tier-anatomy.md`
 
 ## Related concepts
 

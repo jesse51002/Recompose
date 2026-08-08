@@ -8,7 +8,7 @@ date: 2026-08-02
 
 Concepts touched: [[Tier_Unlock_ROI]], [[AI_Design_Compression]], [[Tokenized_Design_System]], [[Full_Visual_Redesign]], [[Freelance_Conversion_Thesis]].
 
-Extracted 2026-08-02 from two superseded strategy docs in the pre-Recompose lineage — `Business/Pricing.md` and `Business/Differentiation.md` in the AICustomizableWhiteLabeled vault (both April–May 2026), which are not carried here because their ICP and pricing positions are dead. Two things below survive the change of company: platforms already charge for design delivery, and the ones who charge most cannot build the replacement themselves. Read the prices as **revenue lines, not cost lines** — `Research/Enterprise_Tier_Anatomy.md` and `Research/Attach_Rate.md` carry the correction.
+Extracted 2026-08-02 from two superseded strategy docs in the pre-Recompose lineage — `Business/Pricing.md` and `Business/Differentiation.md` in the AICustomizableWhiteLabeled vault (both April–May 2026), which are not carried here because their ICP and pricing positions are dead. Two things below survive the change of company: platforms already charge for design delivery, and the ones who charge most cannot build the replacement themselves. Read the prices as **revenue lines, not cost lines** — `Research/2026-08-02-enterprise-tier-anatomy.md` and `Research/2026-08-02-attach-rate.md` carry the correction.
 
 > [!warning] Do not quote the precise figures
 > Everything in the table is May 2026 and read off public pricing pages, not from anyone inside a platform. At least one figure is already known stale: `YC_Application_F26.md` records current sources putting Mighty Pro at **$3,000–5,000+/month**, one citing **$28k/year**, against the $1,167 below. Quote ranges. A precise stale number in front of a buyer is a liability. Same instruction as `Customer_ICP.md`.
@@ -30,7 +30,7 @@ Extracted 2026-08-02 from two superseded strategy docs in the pre-Recompose line
 | **Hivebrite** | **Custom enterprise (~$30k/yr)** | **Human design studio** |
 | Custom freelance dev | $50k–$250k upfront + 15–25%/yr | Human, from scratch |
 
-The bolded rows are the direct evidence that a design service exists as a **revenue line** — a price a platform charges its tenant, delivered by people the platform employs or contracts. Note what they are not: evidence of platform *cost*. `Research/Enterprise_Tier_Anatomy.md` establishes that these are tier prices covering migration, a named strategist and App Store operations, and that the design work priced standalone runs $99–$499.
+The bolded rows are the direct evidence that a design service exists as a **revenue line** — a price a platform charges its tenant, delivered by people the platform employs or contracts. Note what they are not: evidence of platform *cost*. `Research/2026-08-02-enterprise-tier-anatomy.md` establishes that these are tier prices covering migration, a named strategist and App Store operations, and that the design work priced standalone runs $99–$499.
 
 The unbolded rows are the counter-evidence and should be read as such. Most of the market stops at logo-and-palette and charges nothing extra for it, which means most platforms have no design line item to replace and no internal price to anchor against.
 

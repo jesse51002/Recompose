@@ -67,7 +67,7 @@ At both platforms the design service is enumerated separately from the strategis
 | Mighty Pro | Splash screens, app icons, App Store and Google Play listing screens, community graphics |
 | Circle Plus | Marketing screenshots, splash screens, app icons |
 
-Neither list includes in-app screens, layout, illustration, iconography beyond the app icon, or a typographic system. This is consistent with the cross-platform survey in `Research/AIBrandCopetitiorAnaylsisv2.md:17–23`, which found custom per-customer illustration, iconography and motion at ~0% across ~80 platforms in 14 verticals, and custom typographic systems at <5%.
+Neither list includes in-app screens, layout, illustration, iconography beyond the app icon, or a typographic system. This is consistent with the cross-platform survey in `Research/2026-05-01-ai-brand-competitor-analysis-v2.md:17–23`, which found custom per-customer illustration, iconography and motion at ~0% across ~80 platforms in 14 verticals, and custom typographic systems at <5%.
 
 ## Prices, and how well sourced they are
 
@@ -103,4 +103,4 @@ Both figures are for the same category of deliverable the enterprise tiers list 
 
 - `Competition.md`
 - `Customer_ICP.md`
-- `Research/Incumbent_Design_Delivery.md`
+- `Research/2026-08-02-incumbent-design-delivery.md`

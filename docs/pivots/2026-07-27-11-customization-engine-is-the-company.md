@@ -95,7 +95,7 @@ The countervailing risk is recorded and accepted, not resolved: this is the sixt
 - `Business/Value_Pricing_Justification.md`, [[Pricing_Tiers]] — the $100/$300/$500 ladder was gym-owner pricing and is now irrelevant. Platform pricing is undefined.
 - `Business/Architecture_Thesis.md` — mostly survives, but "the chosen vertical is class-based gyms" is no longer true; the engine is now vertical-agnostic by intent, not just by construction.
 - `Sales_Customer_Acquisition/*` — the entire pitch, ICP, and outreach set targets gym owners.
-- `Codebase/Distribution_Architecture.md` — Apple Rule 4.2.6 and per-customer developer accounts largely stop being this product's problem under the new ICP, since platform customers already ship apps. Needs confirming, then rewriting.
+- `Codebase/2026-08-02-distribution-architecture.md` — Apple Rule 4.2.6 and per-customer developer accounts largely stop being this product's problem under the new ICP, since platform customers already ship apps. Needs confirming, then rewriting.
 - [[Retention_Layer]], [[Layered_Architecture]], [[Class_Based_Gym_Market]], [[Gym_Owner]] — these concepts remain accurate for CombatDen-as-reference-implementation but are no longer load-bearing for the company.
 
 ### Sequencing

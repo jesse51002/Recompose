@@ -41,7 +41,7 @@ Untouched:
 
 ### 1. The feature route closes, and it closes on numbers
 
-`Research/MobileAppCodeGen.md` was commissioned to answer whether the fork mechanism could carry net-new per-tenant features. It answers no, for now, and the margin is not close.
+`Research/2026-08-04-mobile-app-code-gen.md` was commissioned to answer whether the fork mechanism could carry net-new per-tenant features. It answers no, for now, and the margin is not close.
 
 **Nobody has done it.** No documented case exists of an agent autonomously shipping a net-new, user-facing feature into a pre-existing production mobile codebase it did not author. Not vendor-claimed, not measured.
 
@@ -96,7 +96,7 @@ The claim that is both true and defensible is **zero *platform* involvement.** [
 
 ### 7. Build-versus-buy gets a sharper filter than "they lack the talent"
 
-The founder's read — these are business-management companies that happen to have apps, not app-first companies, and certainly not agentic-coding companies — is substantially right and is already the argument in `Research/Incumbent_Design_Delivery.md`.
+The founder's read — these are business-management companies that happen to have apps, not app-first companies, and certainly not agentic-coding companies — is substantially right and is already the argument in `Research/2026-08-02-incumbent-design-delivery.md`.
 
 The research supplies a better version. Q2 did not build a coding agent; they wired Claude Code into Bedrock and shipped **Q2 Code** in April 2026. Low bar. What made it possible is that **Caliper SDK has existed since 2018** — they already owned the extension architecture, and the AI was the cheap part bolted onto the expensive part. Tellingly, what they built generates *SDK-compliant extensions*, not source modifications: even the platform building this in-house respects the additive boundary.
 

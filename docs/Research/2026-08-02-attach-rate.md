@@ -53,7 +53,7 @@ No creator, fitness or wellness platform discloses tier mix. The following are d
 The Mighty Networks derivation is the strongest of the inferences: Mighty Pro is reported to start near **$33,000/year** for the Essential package against a Launch plan under $100/month, and Mighty's marketing puts the typical Launch host at **$14,400/year** in earnings against an average of **$490,000/year** for Pro hosts. A 34× revenue gap between tiers implies Pro draws from a thin top slice of the base.
 
 > [!note] Two claims in this section are unsourced and load-bearing
-> The **$33,000/year Mighty Pro Essential** figure is more specific than anything otherwise verifiable — see `Research/Enterprise_Tier_Anatomy.md`, which records that every Mighty price in circulation is a third-party estimate spanning $1,167/mo to $30k/yr. And the claim that **one-third of Mighty Pro customers tried custom development first and abandoned it** is a strong signal if traceable. Neither arrived with a source. Confirm both before use.
+> The **$33,000/year Mighty Pro Essential** figure is more specific than anything otherwise verifiable — see `Research/2026-08-02-enterprise-tier-anatomy.md`, which records that every Mighty price in circulation is a third-party estimate spanning $1,167/mo to $30k/yr. And the claim that **one-third of Mighty Pro customers tried custom development first and abandoned it** is a strong signal if traceable. Neither arrived with a source. Confirm both before use.
 
 ## The structural finding: two models, similar output
 
@@ -83,13 +83,13 @@ Against a shell-model platform: Circle's ~5,000 creators at 1–3% is roughly 50
 
 **The better ICP filter is "every tenant already has an app," not "the platform runs a design service."** It selects for the platforms where N is actually large and where a redesign has something to act on. It is also better evidenced than the design-service wedge, which rests on public pricing pages rather than counts.
 
-**The tension:** the largest-N targets are concentrated in banking, which `Research/AIBrandCompetitiorAnalysis.md:45` documents as actively resisting visual differentiation — WCAG enforcement inside Alkami's Theme Builder, ADA-compliant outputs at Banno, SOC 2 review per change, Alkami's 240+ FI apps sharing visual DNA deliberately, and every banking AI announcement in 2024–2026 being end-user AI rather than design AI. Highest tenant count, lowest appetite.
+**The tension:** the largest-N targets are concentrated in banking, which `Research/2026-05-01-ai-brand-competitor-analysis.md:45` documents as actively resisting visual differentiation — WCAG enforcement inside Alkami's Theme Builder, ADA-compliant outputs at Banno, SOC 2 review per change, Alkami's 240+ FI apps sharing visual DNA deliberately, and every banking AI announcement in 2024–2026 being end-user AI rather than design AI. Highest tenant count, lowest appetite.
 
-**Subsplash clears both filters.** 20,000+ tenants each with their own app, no regulatory pressure toward visual sameness, an existing paid design and onboarding function, and a churn quote naming customization limits as the reason for leaving (`Research/AIBrandCopetitiorAnaylsisv2.md:29`). The open variable is the July 2025 Roper Technologies acquisition at $800M — Roper operates for margin, which could read either as receptiveness to cost structure or as no appetite for new vendors.
+**Subsplash clears both filters.** 20,000+ tenants each with their own app, no regulatory pressure toward visual sameness, an existing paid design and onboarding function, and a churn quote naming customization limits as the reason for leaving (`Research/2026-05-01-ai-brand-competitor-analysis-v2.md:29`). The open variable is the July 2025 Roper Technologies acquisition at $800M — Roper operates for margin, which could read either as receptiveness to cost structure or as no appetite for new vendors.
 
 ## How to measure this without vendor cooperation
 
-- **SDK fingerprinting.** Appfigures and Sensor Tower maintain SDK-detection indexes across App Store and Play binaries. Querying a platform's SDK returns the numerator directly. This is the technique behind the Shopify figures above, applied to app binaries rather than storefronts. Note the limit recorded in `Research/WhyCustom.md:14`: container apps (Subsplash's "The Church App," Planning Center's Church Center, Tithe.ly, Pushpay) house thousands of tenants under one listing and are invisible to this method.
+- **SDK fingerprinting.** Appfigures and Sensor Tower maintain SDK-detection indexes across App Store and Play binaries. Querying a platform's SDK returns the numerator directly. This is the technique behind the Shopify figures above, applied to app binaries rather than storefronts. Note the limit recorded in `Research/2026-08-02-why-custom.md:14`: container apps (Subsplash's "The Church App," Planning Center's Church Center, Tithe.ly, Pushpay) house thousands of tenants under one listing and are invisible to this method.
 - **Developer-account enumeration.** Where a platform publishes under its own developer account, the App Store and Play developer pages list every app shipped. Free and direct.
 - **Denominator from disclosures.** Customer counts appear in SEC filings, press releases and acquisition announcements.
 - **Sales-call probe.** Ask two questions rather than "how many customers do you have": *how many tenants are live on the branded tier today*, and *how many branded apps did you ship last quarter*. The second is harder to deflect and returns a run rate rather than a stock. Refusal to answer either is itself informative.
@@ -105,4 +105,4 @@ Against a shell-model platform: Circle's ~5,000 creators at 1–3% is roughly 50
 
 - `Customer_ICP.md`
 - `Competition.md`
-- `Research/Enterprise_Tier_Anatomy.md`
+- `Research/2026-08-02-enterprise-tier-anatomy.md`

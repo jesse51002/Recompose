@@ -8,7 +8,7 @@ date: 2026-08-02
 
 Concepts touched: [[Brand_Is_Product]], [[Tier_Unlock_ROI]], [[Full_Visual_Redesign]].
 
-Findings from the August 2026 research in `Research/WhyCustom.md`. Line references point into that file. Two questions: what share of businesses with a mobile app run white-label versus a bespoke build, and why the ones who build, build.
+Findings from the August 2026 research in `Research/2026-08-02-why-custom.md`. Line references point into that file. Two questions: what share of businesses with a mobile app run white-label versus a bespoke build, and why the ones who build, build.
 
 ---
 
@@ -81,7 +81,7 @@ Custom-back-to-platform moves are the strongest evidence that the build case doe
 
 ## What this means for Recompose
 
-**[[Brand_Is_Product]] is under strain, and this is the third independent convergence.** `Research/AIBrandCompetitiorAnalysis.md:3` found design labor was never the most binding constraint. `Research/AIBrandCopetitiorAnaylsisv2.md:47` found app-store reviews complain about bugs and slow loading, never about looking generic. This finds zero design-alone custom builds. Three researchers, three methods, one answer.
+**[[Brand_Is_Product]] is under strain, and this is the third independent convergence.** `Research/2026-05-01-ai-brand-competitor-analysis.md:3` found design labor was never the most binding constraint. `Research/2026-05-01-ai-brand-competitor-analysis-v2.md:47` found app-store reviews complain about bugs and slow loading, never about looking generic. This finds zero design-alone custom builds. Three researchers, three methods, one answer.
 
 **But this research tests a different decision than the one Recompose enables.** Going bespoke is a six-figure commitment; nobody makes it for design alone, and it would be surprising if they did. Recompose's proposition is custom-grade design *without* going custom. The absence of design-driven bespoke builds is weak evidence about design-driven tier upgrades — which is the purchase that actually matters, and which nothing has yet measured.
 
@@ -89,7 +89,7 @@ Custom-back-to-platform moves are the strongest evidence that the build case doe
 
 **The white-label layer is durable, which is good for the addressable market.** Reverse migrations mean the platforms Recompose sells to are not being eroded by in-house builds. Their tenant bases are structurally stable.
 
-**Credit unions have the only hard denominator, and the worst appetite.** ~4,300 institutions, ~99% on vendors, a vendor list four names long. But `Research/AIBrandCompetitiorAnalysis.md:45` documents banking actively resisting visual differentiation — WCAG enforcement in Alkami's Theme Builder, SOC 2 review per change, 240+ Alkami FI apps sharing visual DNA on purpose. Cleanest market, hardest sell.
+**Credit unions have the only hard denominator, and the worst appetite.** ~4,300 institutions, ~99% on vendors, a vendor list four names long. But `Research/2026-05-01-ai-brand-competitor-analysis.md:45` documents banking actively resisting visual differentiation — WCAG enforcement in Alkami's Theme Builder, SOC 2 review per change, 240+ Alkami FI apps sharing visual DNA on purpose. Cleanest market, hardest sell.
 
 ## What is not established
 
@@ -99,4 +99,4 @@ Custom-back-to-platform moves are the strongest evidence that the build case doe
 - The Q2 sample is a dozen cases and selection-biased. The strongest independent sources are the Compass engineering blog, CU Management on MSUFCU, and The Financial Brand on UW Credit Union; the rest is agency and vendor case studies, which systematically overstate design as a motive.
 
 > [!note] On the source doc
-> `Research/WhyCustom.md` closes with a Recommendations section addressed to someone choosing between white-label and custom for their own business, not to Recompose. That is an artifact of how the research was commissioned. Do not read it as strategy.
+> `Research/2026-08-02-why-custom.md` closes with a Recommendations section addressed to someone choosing between white-label and custom for their own business, not to Recompose. That is an artifact of how the research was commissioned. Do not read it as strategy.
