@@ -13,9 +13,9 @@ As shipped, the token surface is **colours, images, fonts, and text**. Icon-set 
 
 ## Shows up in
 
-- `Office_Hours/2026-04-30-14-Office_Hours_Customizable_White_Label_Thesis.md`
-- `ThemeTreeArchitecture.md`
-- `pivots/2026-05-20-23-customization-pipeline-simplified-to-dependency-dag.md`
+- [[Office_Hours/2026-04-30-14-Office_Hours_Customizable_White_Label_Thesis|Office_Hours/2026-04-30-14-Office_Hours_Customizable_White_Label_Thesis.md]]
+- [[ThemeTreeArchitecture|ThemeTreeArchitecture.md]]
+- [[pivots/2026-05-20-23-customization-pipeline-simplified-to-dependency-dag|pivots/2026-05-20-23-customization-pipeline-simplified-to-dependency-dag.md]]
 
 ## Related concepts
 

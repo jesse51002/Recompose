@@ -8,7 +8,7 @@ date: 2026-08-02
 
 Concepts touched: [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]], [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]].
 
-Two questions, answered by the August 2026 research in `Research/2026-08-02-features-vs-design.md`: when a platform runs a design service, does that team also build features; and will any of these platforms build net-new functionality for a tenant who pays. Line references below point into that file.
+Two questions, answered by the August 2026 research in [[Research/2026-08-02-features-vs-design|Research/2026-08-02-features-vs-design.md]]: when a platform runs a design service, does that team also build features; and will any of these platforms build net-new functionality for a tenant who pays. Line references below point into that file.
 
 ---
 
@@ -94,4 +94,4 @@ This is the financial signature of a function that exists to enable subscription
 - Thirteen platforms went unresearched, including BentoBox, Owner.com, Zenoti, Boulevard, Nudge Coach, Disciple Media, Arketa, Everfit, Tithe.ly and Ministry Brands (97).
 
 > [!note] On the source doc
-> `Research/2026-08-02-features-vs-design.md` ends with a Recommendations section written for a buyer shopping for a platform, not for Recompose. That is an artifact of how the research was commissioned. Do not read it as strategy.
+> [[Research/2026-08-02-features-vs-design|Research/2026-08-02-features-vs-design.md]] ends with a Recommendations section written for a buyer shopping for a platform, not for Recompose. That is an artifact of how the research was commissioned. Do not read it as strategy.

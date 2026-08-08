@@ -9,11 +9,11 @@ date: 2026-07-28
 **Date:** 2026-07-28
 **Status:** APPROVED
 **Mode:** Startup, architecture session
-**Builds on:** `Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md`, `Office_Hours/2026-05-25-12-Office_Hours_Live_Preview_Rendering_Architecture.md`, `pivots/2026-07-27-11-customization-engine-is-the-company.md`
+**Builds on:** [[Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company|Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md]], [[Office_Hours/2026-05-25-12-Office_Hours_Live_Preview_Rendering_Architecture|Office_Hours/2026-05-25-12-Office_Hours_Live_Preview_Rendering_Architecture.md]], [[pivots/2026-07-27-11-customization-engine-is-the-company|pivots/2026-07-27-11-customization-engine-is-the-company.md]]
 
 Concepts touched: [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]], [[Concepts/Product/Mechanisms/Closed_Design_To_Production_Loop|Closed_Design_To_Production_Loop]], [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]], [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]], [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], [[Concepts/Product/Mechanisms/Modal_Coherence|Modal_Coherence]].
 
-> The founder arrived with a complete end-to-end architecture and the empirical finding that motivated it. The session pressure-tested it, the founder corrected two of the three objections, and the risk was relocated from where the partner initially placed it to where it actually sits: the productionalize step. This doc records the architecture, the premise it breaks in a prior session, and the open problems. The decision it produced is `pivots/2026-07-28-01-agentic-editing-all-in.md`.
+> The founder arrived with a complete end-to-end architecture and the empirical finding that motivated it. The session pressure-tested it, the founder corrected two of the three objections, and the risk was relocated from where the partner initially placed it to where it actually sits: the productionalize step. This doc records the architecture, the premise it breaks in a prior session, and the open problems. The decision it produced is [[pivots/2026-07-28-01-agentic-editing-all-in|pivots/2026-07-28-01-agentic-editing-all-in.md]].
 
 ---
 

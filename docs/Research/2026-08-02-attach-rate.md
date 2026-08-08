@@ -53,7 +53,7 @@ No creator, fitness or wellness platform discloses tier mix. The following are d
 The Mighty Networks derivation is the strongest of the inferences: Mighty Pro is reported to start near **$33,000/year** for the Essential package against a Launch plan under $100/month, and Mighty's marketing puts the typical Launch host at **$14,400/year** in earnings against an average of **$490,000/year** for Pro hosts. A 34× revenue gap between tiers implies Pro draws from a thin top slice of the base.
 
 > [!note] Two claims in this section are unsourced and load-bearing
-> The **$33,000/year Mighty Pro Essential** figure is more specific than anything otherwise verifiable — see `Research/2026-08-02-enterprise-tier-anatomy.md`, which records that every Mighty price in circulation is a third-party estimate spanning $1,167/mo to $30k/yr. And the claim that **one-third of Mighty Pro customers tried custom development first and abandoned it** is a strong signal if traceable. Neither arrived with a source. Confirm both before use.
+> The **$33,000/year Mighty Pro Essential** figure is more specific than anything otherwise verifiable — see [[Research/2026-08-02-enterprise-tier-anatomy|Research/2026-08-02-enterprise-tier-anatomy.md]], which records that every Mighty price in circulation is a third-party estimate spanning $1,167/mo to $30k/yr. And the claim that **one-third of Mighty Pro customers tried custom development first and abandoned it** is a strong signal if traceable. Neither arrived with a source. Confirm both before use.
 
 ## The structural finding: two models, similar output
 
@@ -103,6 +103,6 @@ Against a shell-model platform: Circle's ~5,000 creators at 1–3% is roughly 50
 
 ## Shows up in
 
-- `Customer_ICP.md`
-- `Competition.md`
-- `Research/2026-08-02-enterprise-tier-anatomy.md`
+- [[Customer_ICP|Customer_ICP.md]]
+- [[Competition|Competition.md]]
+- [[Research/2026-08-02-enterprise-tier-anatomy|Research/2026-08-02-enterprise-tier-anatomy.md]]

@@ -9,7 +9,7 @@ date: 2026-07-28
 Concepts touched: [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]], [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Product/Mechanisms/Closed_Design_To_Production_Loop|Closed_Design_To_Production_Loop]], [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]], [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]], [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]].
 
 > [!info] What this doc is for
-> The lines the product holds. Boundaries are decisions, not status — they should only change when a pivot changes them, and a pivot doc should exist saying so. For how the mechanism works, read `Architecture_Thesis.md`; for what exists in code right now, read `README.md`.
+> The lines the product holds. Boundaries are decisions, not status — they should only change when a pivot changes them, and a pivot doc should exist saying so. For how the mechanism works, read [[Architecture_Thesis|Architecture_Thesis.md]]; for what exists in code right now, read `README.md`.
 
 ## The two core principles
 
@@ -64,7 +64,7 @@ Anything expressible as a slot resolves deterministically through the [[Concepts
 
 ## Within layout, the agent is free — bounded by the invariant, never by an enum
 
-Structural presets are out of bounds, and this was **tested, not assumed**. A bounded set of structural options reproduces the platform's original design language however many options it exposes, because the options are drawn from that language. That is a reskin, which is the exact dismissal this product exists to escape. Recorded in `pivots/2026-07-28-01-agentic-editing-all-in.md`.
+Structural presets are out of bounds, and this was **tested, not assumed**. A bounded set of structural options reproduces the platform's original design language however many options it exposes, because the options are drawn from that language. That is a reskin, which is the exact dismissal this product exists to escape. Recorded in [[pivots/2026-07-28-01-agentic-editing-all-in|pivots/2026-07-28-01-agentic-editing-all-in.md]].
 
 So the agent gets full freedom over arrangement. The only constraint is the invariant at the top of this doc. Any future proposal to constrain layout by classification, enumeration, or a template set is re-opening a closed question and needs to beat that test result.
 

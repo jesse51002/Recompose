@@ -9,7 +9,7 @@ Every upstream change re-derives through the design forks and lands on **`uat`**
 
 **`uat` is a branch, not a review environment, and there is no approval queue.**
 
-**Nothing lands on `uat` unverified.** A sync the agent cannot complete **halts** — it does not push a partial re-derive and wait for someone to notice. That is what makes the error budget defensible without a reviewer: the significant failures never reach the branch at all (`pivots/2026-07-30-22-autonomous-is-the-promise.md`).
+**Nothing lands on `uat` unverified.** A sync the agent cannot complete **halts** — it does not push a partial re-derive and wait for someone to notice. That is what makes the error budget defensible without a reviewer: the significant failures never reach the branch at all ([[pivots/2026-07-30-22-autonomous-is-the-promise|pivots/2026-07-30-22-autonomous-is-the-promise.md]]).
 
 A design is **one fork carrying two branches**, `uat` and `main`, mirroring the platform's own. Generation always runs against `uat`, because uat is the branch that is ahead; `main` then fast-forwards, since it already has the commit history. Two branches, but not two units of work — the promotion is free.
 
@@ -17,9 +17,9 @@ That free promotion rests on uat being strictly ahead of main, which holds under
 
 ## Shows up in
 
-- `pivots/2026-07-28-01-agentic-editing-all-in.md`
-- `Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture.md`
-- `Product_Boundaries.md`
+- [[pivots/2026-07-28-01-agentic-editing-all-in|pivots/2026-07-28-01-agentic-editing-all-in.md]]
+- [[Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture|Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture.md]]
+- [[Product_Boundaries|Product_Boundaries.md]]
 - `Recompose_Flow.mermaid`
 
 ## Related concepts

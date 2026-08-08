@@ -17,10 +17,10 @@ The same oracle applies on the production side: build to web and diff screenshot
 
 ## Shows up in
 
-- `pivots/2026-07-28-01-agentic-editing-all-in.md`
-- `Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture.md`
-- `Product_Boundaries.md`
-- `Open_Questions.md`
+- [[pivots/2026-07-28-01-agentic-editing-all-in|pivots/2026-07-28-01-agentic-editing-all-in.md]]
+- [[Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture|Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture.md]]
+- [[Product_Boundaries|Product_Boundaries.md]]
+- [[Open_Questions|Open_Questions.md]]
 
 ## Related concepts
 

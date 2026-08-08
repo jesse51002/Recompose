@@ -5,7 +5,7 @@ How CombatDen turns a brand brief into a customized mobile app.
 Concepts touched: [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]], [[Concepts/Product/Mechanisms/Modal_Coherence|Modal_Coherence]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]]
 
 > [!note] This describes the pipeline as shipped
-> An earlier version of this doc described a much larger design: a five-stage sequential pipeline producing a `TenantCustomization` document with six override pillars resolved through a page → flow → tenant cascade. That *resolution architecture* was ambitious — and likely overengineered. The pipeline that actually shipped is far simpler and works fine as it is. The decision is recorded in `pivots/2026-05-20-23-customization-pipeline-simplified-to-dependency-dag.md`. Governing principle for the architecture: **add complexity only as it is required.** Note this applies to the machinery, not the surfaces — **animation and icon-set modification stay in the modification pipeline**; they are committed and scheduled for after validation (see Next on the timeline).
+> An earlier version of this doc described a much larger design: a five-stage sequential pipeline producing a `TenantCustomization` document with six override pillars resolved through a page → flow → tenant cascade. That *resolution architecture* was ambitious — and likely overengineered. The pipeline that actually shipped is far simpler and works fine as it is. The decision is recorded in [[pivots/2026-05-20-23-customization-pipeline-simplified-to-dependency-dag|pivots/2026-05-20-23-customization-pipeline-simplified-to-dependency-dag.md]]. Governing principle for the architecture: **add complexity only as it is required.** Note this applies to the machinery, not the surfaces — **animation and icon-set modification stay in the modification pipeline**; they are committed and scheduled for after validation (see Next on the timeline).
 
 ---
 
@@ -118,4 +118,4 @@ The schema (`schema/`, Pydantic v2) is shape-only: no I/O, no network code. It d
 - `.claude/skills/brand-brief/` — the skill that authors `customization.yaml`.
 - `apps/combatden/` — a worked example (`app.yaml`, `customization.yaml`, runs).
 - `Flutter/` — the shared Flutter engine that consumes `output.yaml`, imported by both the member app and the CRM.
-- `pivots/2026-05-20-23-customization-pipeline-simplified-to-dependency-dag.md` — why the pipeline is this shape and not the six-pillar orchestrator.
+- [[pivots/2026-05-20-23-customization-pipeline-simplified-to-dependency-dag|pivots/2026-05-20-23-customization-pipeline-simplified-to-dependency-dag.md]] — why the pipeline is this shape and not the six-pillar orchestrator.

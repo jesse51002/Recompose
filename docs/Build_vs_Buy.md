@@ -8,7 +8,7 @@ date: 2026-08-02
 
 Concepts touched: [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]], [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]].
 
-Findings from the August 2026 research in `Research/2026-08-02-why-custom.md`. Line references point into that file. Two questions: what share of businesses with a mobile app run white-label versus a bespoke build, and why the ones who build, build.
+Findings from the August 2026 research in [[Research/2026-08-02-why-custom|Research/2026-08-02-why-custom.md]]. Line references point into that file. Two questions: what share of businesses with a mobile app run white-label versus a bespoke build, and why the ones who build, build.
 
 ---
 
@@ -99,4 +99,4 @@ Custom-back-to-platform moves are the strongest evidence that the build case doe
 - The Q2 sample is a dozen cases and selection-biased. The strongest independent sources are the Compass engineering blog, CU Management on MSUFCU, and The Financial Brand on UW Credit Union; the rest is agency and vendor case studies, which systematically overstate design as a motive.
 
 > [!note] On the source doc
-> `Research/2026-08-02-why-custom.md` closes with a Recommendations section addressed to someone choosing between white-label and custom for their own business, not to Recompose. That is an artifact of how the research was commissioned. Do not read it as strategy.
+> [[Research/2026-08-02-why-custom|Research/2026-08-02-why-custom.md]] closes with a Recommendations section addressed to someone choosing between white-label and custom for their own business, not to Recompose. That is an artifact of how the research was commissioned. Do not read it as strategy.

@@ -7,7 +7,7 @@ date: 2026-07-28
 # Pivot: All-In on Agentic Editing — The Visual Mirror, the Productionalize Agent, and Human Leverage as the Promise
 
 **Date:** 2026-07-28
-**Status:** Decided — **superseded in part by `pivots/2026-07-30-22-autonomous-is-the-promise.md`**
+**Status:** Decided — **superseded in part by [[pivots/2026-07-30-22-autonomous-is-the-promise|pivots/2026-07-30-22-autonomous-is-the-promise.md]]**
 
 > [!warning] The promise stated here was reversed on 2026-07-30
 > The architecture below stands unchanged. What no longer holds is the **promise sold alongside it** — human leverage, "one person can manage a hundred at a time", and the error budget justified by *UAT and a human reviewer being the designed architecture*. UAT was corrected to a branch with no queue and no reviewer, and the promise is now autonomous operation with halting as what makes the budget survivable. Read the sentences about human review, UAT review and the error budget below as history. Per the never-edit-retroactively rule, nothing in this doc has been altered.
@@ -25,7 +25,7 @@ The promise sold alongside it is deliberately deflationary: **not that agents ar
 Two things.
 
 1. **From structural presets and enum classification.** The prior working assumption was that layout variation could be expressed as a bounded set of structural options the customer selects among. The founder built and tested it.
-2. **From a layout half that was named but unspecified.** `pivots/2026-07-27-11-customization-engine-is-the-company.md` committed to "layout is code, so an agent writes it" and left everything past that sentence open, naming the absence of a layout accept condition as the remaining engineering risk.
+2. **From a layout half that was named but unspecified.** [[pivots/2026-07-27-11-customization-engine-is-the-company|pivots/2026-07-27-11-customization-engine-is-the-company.md]] committed to "layout is code, so an agent writes it" and left everything past that sentence open, naming the absence of a layout accept condition as the remaining engineering risk.
 
 ## What it pivots to
 
@@ -53,13 +53,13 @@ The **layout enum** — enumerating each generated layout on the customer's own 
 
 ## Office hours doc(s) that explored this
 
-- `Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture.md` — the session that produced this decision.
-- `Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md` — the founding session this refines.
-- `Office_Hours/2026-05-25-12-Office_Hours_Live_Preview_Rendering_Architecture.md` — whose locked premise this breaks, and whose Flutter-Web finding it repurposes.
+- [[Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture|Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture.md]] — the session that produced this decision.
+- [[Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company|Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md]] — the founding session this refines.
+- [[Office_Hours/2026-05-25-12-Office_Hours_Live_Preview_Rendering_Architecture|Office_Hours/2026-05-25-12-Office_Hours_Live_Preview_Rendering_Architecture.md]] — whose locked premise this breaks, and whose Flutter-Web finding it repurposes.
 
 ## Premise superseded
 
-`Office_Hours/2026-05-25-12-Office_Hours_Live_Preview_Rendering_Architecture.md` locked: *"the customization the product sells is token/asset-level... not layout or structural redesign."* That premise is dead as of `pivots/2026-07-27-11-customization-engine-is-the-company.md`; this pivot records the architectural consequences that were never worked through at the time.
+[[Office_Hours/2026-05-25-12-Office_Hours_Live_Preview_Rendering_Architecture|Office_Hours/2026-05-25-12-Office_Hours_Live_Preview_Rendering_Architecture.md]] locked: *"the customization the product sells is token/asset-level... not layout or structural redesign."* That premise is dead as of [[pivots/2026-07-27-11-customization-engine-is-the-company|pivots/2026-07-27-11-customization-engine-is-the-company.md]]; this pivot records the architectural consequences that were never worked through at the time.
 
 That session's conclusion — compile the real app to web and push config over `postMessage` — was correct for a token-only product and is **not** the architecture here. Its underlying finding, that **Flutter Web is canvas-painted and therefore pixel-identical to mobile**, survives and is repurposed: it becomes the production-side screenshot oracle.
 
@@ -67,11 +67,11 @@ That session's conclusion — compile the real app to web and push config over `
 
 ### Docs updated in the same change
 
-- `Product_Boundaries.md` — the boundary set changes materially: the mirror is in scope and is visual-only; screenshots are the accept condition; UAT is a boundary; the error budget and the human-leverage promise are boundaries.
-- `Recompose_Summary.md` — the mechanism and direction sections.
-- `Architecture_Thesis.md` — the layout half is now specified.
-- `Open_Questions.md` — several questions resolved, several added.
-- `Journey.md` — Phase 6 extended.
+- [[Product_Boundaries|Product_Boundaries.md]] — the boundary set changes materially: the mirror is in scope and is visual-only; screenshots are the accept condition; UAT is a boundary; the error budget and the human-leverage promise are boundaries.
+- [[Recompose_Summary|Recompose_Summary.md]] — the mechanism and direction sections.
+- [[Architecture_Thesis|Architecture_Thesis.md]] — the layout half is now specified.
+- [[Open_Questions|Open_Questions.md]] — several questions resolved, several added.
+- [[Journey|Journey.md]] — Phase 6 extended.
 - root `../CLAUDE.md` (project root, outside the vault) — the "What Recompose is" orientation block.
 
 ### Not yet done

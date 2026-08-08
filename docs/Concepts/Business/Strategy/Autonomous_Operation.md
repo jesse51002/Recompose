@@ -25,11 +25,11 @@ This is the one question that can falsify the promise. If halts land on the plat
 
 ## Shows up in
 
-- `pivots/2026-07-30-22-autonomous-is-the-promise.md`
-- `Product_Boundaries.md`
-- `Recompose_Summary.md`
-- `Open_Questions.md`
-- `YC_Application_F26.md`
+- [[pivots/2026-07-30-22-autonomous-is-the-promise|pivots/2026-07-30-22-autonomous-is-the-promise.md]]
+- [[Product_Boundaries|Product_Boundaries.md]]
+- [[Recompose_Summary|Recompose_Summary.md]]
+- [[Open_Questions|Open_Questions.md]]
+- [[YC_Application_F26|YC_Application_F26.md]]
 
 ## Related concepts
 

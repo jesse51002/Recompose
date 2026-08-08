@@ -11,7 +11,7 @@ For these customers, brand-coherence in every digital surface is a primary comme
 
 ## Shows up in
 
-- `Office_Hours/2026-04-30-14-Office_Hours_Customizable_White_Label_Thesis.md`
+- [[Office_Hours/2026-04-30-14-Office_Hours_Customizable_White_Label_Thesis|Office_Hours/2026-04-30-14-Office_Hours_Customizable_White_Label_Thesis.md]]
 
 ## Related concepts
 

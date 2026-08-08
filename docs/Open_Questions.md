@@ -8,7 +8,7 @@ updated: 2026-07-28
 
 Concepts touched: [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]], [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]], [[Concepts/Product/Mechanisms/Closed_Design_To_Production_Loop|Closed_Design_To_Production_Loop]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], Template_Marketplace, [[Concepts/Business/Strategy/Shopify_Pattern|Shopify_Pattern]].
 
-Everything Recompose has not answered, carried forward from the open questions and named risks in `Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md` and `pivots/2026-07-27-11-customization-engine-is-the-company.md`. Gym-specific questions from the CombatDen prehistory are not carried; see the last section for what was dropped and why.
+Everything Recompose has not answered, carried forward from the open questions and named risks in [[Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company|Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md]] and [[pivots/2026-07-27-11-customization-engine-is-the-company|pivots/2026-07-27-11-customization-engine-is-the-company.md]]. Gym-specific questions from the CombatDen prehistory are not carried; see the last section for what was dropped and why.
 
 Every entry states the question, why it matters, and what evidence would close it. Source tags in brackets (`T*`, `P*`, `OQ*`) point at the premise, test, or open question in the office hours doc.
 
@@ -88,7 +88,7 @@ The measured numbers are for tenants buying their first branded app. Recompose's
 
 The lost-deals half of the value argument needs design to influence which platform a tenant picks. Across a dozen documented custom-build cases, design was **never the sole driver** and appears only as a co-driver. The two closest cases — Circle's *"how the platform looks and feels is really important to me"* and Mariana Tek's *"never puts its own branding in front of your clients"* — are vendor testimonials, and both are platform-to-platform switches rather than bespoke builds. That is the only evidence pointing at the mechanism.
 
-**Why it matters:** [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]] has now taken three independent hits (`Research/2026-05-01-ai-brand-competitor-analysis.md:3`, `Research/2026-05-01-ai-brand-competitor-analysis-v2.md:47`, `Build_vs_Buy.md`). Lost deals is the half that survives, and it rests on two testimonials.
+**Why it matters:** [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]] has now taken three independent hits (`Research/2026-05-01-ai-brand-competitor-analysis.md:3`, `Research/2026-05-01-ai-brand-competitor-analysis-v2.md:47`, [[Build_vs_Buy|Build_vs_Buy.md]]). Lost deals is the half that survives, and it rests on two testimonials.
 
 **What closes it:** a platform naming a deal it lost on brand, or win/loss notes.
 
@@ -148,7 +148,7 @@ Screenshots give an **accept condition** where there previously was none — thi
 
 The stated bar is roughly **95% clean, 4% minor error, 1% significant failure** — a **target, not a measurement.** But 95/4/1 per screen, per tenant-redesign, or per sync operation differ by orders of magnitude in resulting workload.
 
-What makes the budget acceptable is settled and is not this question: the pipeline **halts rather than ships**, so a significant failure is a stall and never reaches the branch (`pivots/2026-07-30-22-autonomous-is-the-promise.md`). The denominator is what remains open.
+What makes the budget acceptable is settled and is not this question: the pipeline **halts rather than ships**, so a significant failure is a stall and never reaches the branch ([[pivots/2026-07-30-22-autonomous-is-the-promise|pivots/2026-07-30-22-autonomous-is-the-promise.md]]). The denominator is what remains open.
 
 **Why it matters:** the denominator sets how often the halt path fires, and the halt path is the whole basis of the budget. A rate that is fine per screen is unworkable per sync operation.
 
@@ -198,7 +198,7 @@ The [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]] 
 
 **Rejected in the same decision: the layout enum** — the option the founder rated highest as recently as 2026-07-27. It requires writing generated layout code into their trunk, which is incompatible with never touching it. Founder: *"just touching and maintaining their production code sounds like a mess. Agentic separate forks you essentially don't have to think about unless there is an error is better."*
 
-See `pivots/2026-07-28-01-agentic-editing-all-in.md`.
+See [[pivots/2026-07-28-01-agentic-editing-all-in|pivots/2026-07-28-01-agentic-editing-all-in.md]].
 
 ### 2.5 How does a branded build reach the platform's release train? [new, 2026-07-28]
 
@@ -263,7 +263,7 @@ What is known rather than decided:
 
 ### 3.2 The $100/tenant figure in the YC application is a working number, not a decision
 
-`YC_Application_F26.md` answer 8 states a plan to charge platforms $100/month per customer running one of our designs, and sizes the market off it. The doc's own notes are explicit about the status: $100 is the **platform's COGS, not the end price**, positioned at the top of the defensible range, holding only if they price the tier at $300+; it is to be defended as *"the price at which the platform still keeps 70% on a tier they currently cannot scale,"* **never as a final number**. The 20% premium-tier attach rate underneath it is a generic white-label SaaS benchmark. Measured, it is **0.1–1.73%** on shell-model platforms (`Research/2026-08-02-attach-rate.md`), so the market size computed from it is wrong for any platform that sells a shared shell — and does not apply at all to a no-shell platform like Subsplash, where the open number is the redesign rate (T20).
+[[YC_Application_F26|YC_Application_F26.md]] answer 8 states a plan to charge platforms $100/month per customer running one of our designs, and sizes the market off it. The doc's own notes are explicit about the status: $100 is the **platform's COGS, not the end price**, positioned at the top of the defensible range, holding only if they price the tier at $300+; it is to be defended as *"the price at which the platform still keeps 70% on a tier they currently cannot scale,"* **never as a final number**. The 20% premium-tier attach rate underneath it is a generic white-label SaaS benchmark. Measured, it is **0.1–1.73%** on shell-model platforms ([[Research/2026-08-02-attach-rate|Research/2026-08-02-attach-rate.md]]), so the market size computed from it is wrong for any platform that sells a shared shell — and does not apply at all to a no-shell platform like Subsplash, where the open number is the redesign rate (T20).
 
 **What closes it:** a platform giving its real attach rate and its real tier price. Both numbers exist inside these companies; neither is public.
 

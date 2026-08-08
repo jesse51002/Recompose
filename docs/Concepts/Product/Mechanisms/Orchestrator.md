@@ -13,11 +13,11 @@ The earlier, more ambitious framing imagined the orchestrator enforcing cross-mo
 
 ## Shows up in
 
-- `Architecture_Thesis.md`
-- `Product_Boundaries.md`
-- `ThemeTreeArchitecture.md`
-- `Office_Hours/2026-05-01-15-Office_Hours_Marketplace_Pivot_and_Architecture_Refinement.md`
-- `pivots/2026-05-20-23-customization-pipeline-simplified-to-dependency-dag.md`
+- [[Architecture_Thesis|Architecture_Thesis.md]]
+- [[Product_Boundaries|Product_Boundaries.md]]
+- [[ThemeTreeArchitecture|ThemeTreeArchitecture.md]]
+- [[Office_Hours/2026-05-01-15-Office_Hours_Marketplace_Pivot_and_Architecture_Refinement|Office_Hours/2026-05-01-15-Office_Hours_Marketplace_Pivot_and_Architecture_Refinement.md]]
+- [[pivots/2026-05-20-23-customization-pipeline-simplified-to-dependency-dag|pivots/2026-05-20-23-customization-pipeline-simplified-to-dependency-dag.md]]
 
 ## Related concepts
 

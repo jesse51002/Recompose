@@ -33,7 +33,7 @@ None. This was a build-time decision — the simpler architecture emerged from i
 
 - `Codebase/AI Gen Architecture.md` — rewritten to describe the dependency DAG, the two input YAMLs, the brand-brief skill, deterministic colour derivation, fault tolerance, the four customized surfaces, and the add-complexity-only-as-needed philosophy. Stale `See also` paths corrected from `codebase/AICustomizationPipeline/` to `codebase/CustomizationService/`.
 - `Codebase/MobileApp/README.md` — customization surface corrected to images/colours/fonts/text, and the client-as-consumer story updated (pipeline now owns surface derivation; the client no longer carries elevation/divider/popup math).
-- `Concepts/Product/Mechanisms/Orchestrator.md`, `Tokenized_Design_System.md`, `Modal_Coherence.md` — definitions updated to match the shipped DAG. These are concept files (current-usage records, not historical), so they describe the pipeline as it is now, with the broader vision noted as trajectory.
+- [[Concepts/Product/Mechanisms/Orchestrator|Concepts/Product/Mechanisms/Orchestrator.md]], `Tokenized_Design_System.md`, `Modal_Coherence.md` — definitions updated to match the shipped DAG. These are concept files (current-usage records, not historical), so they describe the pipeline as it is now, with the broader vision noted as trajectory.
 
 ### Engine behavior worth recording
 

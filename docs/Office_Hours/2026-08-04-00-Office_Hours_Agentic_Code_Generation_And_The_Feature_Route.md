@@ -3,7 +3,7 @@
 **Date:** 2026-08-03 → 2026-08-04
 **Status:** APPROVED
 **Mode:** Startup — doubt review, then a commissioned research pass, then an architecture decision
-**Builds on:** `Office_Hours/2026-08-02-23-Office_Hours_Attach_Rate_And_The_Design_Service_Wedge.md`, `Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture.md`
+**Builds on:** [[Office_Hours/2026-08-02-23-Office_Hours_Attach_Rate_And_The_Design_Service_Wedge|Office_Hours/2026-08-02-23-Office_Hours_Attach_Rate_And_The_Design_Service_Wedge.md]], [[Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture|Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture.md]]
 
 Concepts touched: [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]], [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]], [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]], [[Concepts/Product/Mechanisms/Screenshot_Oracle|Screenshot_Oracle]], [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]], [[Concepts/Product/Mechanisms/Closed_Design_To_Production_Loop|Closed_Design_To_Production_Loop]], [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]].
 
@@ -41,7 +41,7 @@ Untouched:
 
 ### 1. The feature route closes, and it closes on numbers
 
-`Research/2026-08-04-mobile-app-code-gen.md` was commissioned to answer whether the fork mechanism could carry net-new per-tenant features. It answers no, for now, and the margin is not close.
+[[Research/2026-08-04-mobile-app-code-gen|Research/2026-08-04-mobile-app-code-gen.md]] was commissioned to answer whether the fork mechanism could carry net-new per-tenant features. It answers no, for now, and the margin is not close.
 
 **Nobody has done it.** No documented case exists of an agent autonomously shipping a net-new, user-facing feature into a pre-existing production mobile codebase it did not author. Not vendor-claimed, not measured.
 
@@ -90,13 +90,13 @@ If the tenant iterates until they approve, then the aesthetic accept condition i
 
 ### 6. The autonomy promise needs one word changed
 
-The tenant iterating on their own mock *is the product* — "customers agentically redesign white-label apps." But `Recompose_Summary.md` and the 2026-07-30 pivot describe the trend as toward zero human involvement, which the product contradicts on its face.
+The tenant iterating on their own mock *is the product* — "customers agentically redesign white-label apps." But [[Recompose_Summary|Recompose_Summary.md]] and the 2026-07-30 pivot describe the trend as toward zero human involvement, which the product contradicts on its face.
 
 The claim that is both true and defensible is **zero *platform* involvement.** [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]] means no work lands on the buyer's desk, not that no human is in the loop anywhere. Left as written, it is a contradiction a partner or a buyer catches for free.
 
 ### 7. Build-versus-buy gets a sharper filter than "they lack the talent"
 
-The founder's read — these are business-management companies that happen to have apps, not app-first companies, and certainly not agentic-coding companies — is substantially right and is already the argument in `Research/2026-08-02-incumbent-design-delivery.md`.
+The founder's read — these are business-management companies that happen to have apps, not app-first companies, and certainly not agentic-coding companies — is substantially right and is already the argument in [[Research/2026-08-02-incumbent-design-delivery|Research/2026-08-02-incumbent-design-delivery.md]].
 
 The research supplies a better version. Q2 did not build a coding agent; they wired Claude Code into Bedrock and shipped **Q2 Code** in April 2026. Low bar. What made it possible is that **Caliper SDK has existed since 2018** — they already owned the extension architecture, and the AI was the cheap part bolted onto the expensive part. Tellingly, what they built generates *SDK-compliant extensions*, not source modifications: even the platform building this in-house respects the additive boundary.
 
@@ -152,7 +152,7 @@ Three things came out of this and none required a decision:
 
 ## Approaches considered
 
-**Extend the mechanism to per-tenant features.** Rejected for the foreseeable future. Inherits the full security surface it currently avoids — API discovery, approved-API scoping, schema validation, auth passthrough, RBAC inheritance, sandbox boundaries, public-vs-private data classification — and moves the failure mode from *ugly* to *security incident*, which is the asymmetry that makes the visual half tractable for one person. Revisit condition recorded in `Agentic_Code_Generation.md`.
+**Extend the mechanism to per-tenant features.** Rejected for the foreseeable future. Inherits the full security surface it currently avoids — API discovery, approved-API scoping, schema validation, auth passthrough, RBAC inheritance, sandbox boundaries, public-vs-private data classification — and moves the failure mode from *ugly* to *security incident*, which is the asymmetry that makes the visual half tractable for one person. Revisit condition recorded in [[Agentic_Code_Generation|Agentic_Code_Generation.md]].
 
 **Server-driven UI instead of a fork.** Rejected. Technically sound and proven at scale, but it requires writing a layout framework into the platform's app, which is the one thing the GTM depends on not doing.
 

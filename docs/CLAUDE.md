@@ -1,4 +1,4 @@
-Conventions for the Obsidian vault in this directory. Authoritative for everything under `docs/`; the repo root `CLAUDE.md` covers how to work here generally and how the code is organized.
+Conventions for the Obsidian vault in this directory. Authoritative for everything under `docs/`; the repo root [[CLAUDE|CLAUDE.md]] covers how to work here generally and how the code is organized.
 
 # Docs Vault Conventions
 
@@ -33,13 +33,13 @@ Specifically, **do not add correction notes** — no `> [!warning] Corrected 202
 
 - **`pivots/`** — the decision, what it changed from, and when. This is the record. It is why a correction note in a strategy doc is redundant.
 - **`Office_Hours/`** — the reasoning that produced it.
-- **`Journey.md`** — the summary arc. Recording what was tried and what changed *is* this file's job, so it is the one place a "then this reversed" sentence belongs in normal prose.
+- **[[Journey|Journey.md]]** — the summary arc. Recording what was tried and what changed *is* this file's job, so it is the one place a "then this reversed" sentence belongs in normal prose.
 
 Those three are historical records and are **never edited retroactively**, which is exactly what makes it safe to delete the archaeology everywhere else.
 
 **The narrow exception,** and it has to earn itself: a correction note is justified only when someone acting on the old belief would do damage, and the note is the thing that stops them. A stale figure that is still being quoted in a live pitch, a claim already sent to an outside party, a rule whose old form is still enforced somewhere in code. Even then, write it as a live warning about what to do — *"never quote the precise figure"* — not as a changelog entry about what the doc used to say. If it is only interesting rather than load-bearing, it goes in the pivot doc and nowhere else.
 
-This applies to every doc in the vault, to every `CLAUDE.md`, and to `PRODUCT.md`.
+This applies to every doc in the vault, to every [[CLAUDE|CLAUDE.md]], and to `PRODUCT.md`.
 - When creating a new note that should be discoverable, add relevant `tags` and link it from at least one existing note so it isn't orphaned in the graph view.
 
 ## Two doc types: Pivots vs. Office Hours
@@ -70,8 +70,8 @@ pivots/YYYY-MM-DD-HH-short-descriptive-slug.md
 ```
 
 Examples:
-- `pivots/2026-05-20-23-customization-pipeline-simplified-to-dependency-dag.md`
-- `pivots/2026-07-27-11-customization-engine-is-the-company.md`
+- [[pivots/2026-05-20-23-customization-pipeline-simplified-to-dependency-dag|pivots/2026-05-20-23-customization-pipeline-simplified-to-dependency-dag.md]]
+- [[pivots/2026-07-27-11-customization-engine-is-the-company|pivots/2026-07-27-11-customization-engine-is-the-company.md]]
 
 The date and hour come from the file's birth time (run `stat <file>` to see Birth field) so the filename reflects when the doc was actually written on disk. The semantic date of the decision (when it was opened or made) lives inside the doc body, not in the filename, so the two can diverge if a decision opened earlier is captured later.
 
@@ -140,8 +140,8 @@ Office_Hours/YYYY-MM-DD-HH-Office_Hours_<topic>.md
 ```
 
 Examples:
-- `Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md` (broad strategic session, started ~11am)
-- `Office_Hours/2026-04-26-01-Office_Hours_Personalization_Architecture.md` (focused sub-decision, ~1am)
+- [[Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company|Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md]] (broad strategic session, started ~11am)
+- [[Office_Hours/2026-04-26-01-Office_Hours_Personalization_Architecture|Office_Hours/2026-04-26-01-Office_Hours_Personalization_Architecture.md]] (focused sub-decision, ~1am)
 
 The date and hour come from the file's birth time on disk (run `stat <file>` to see Birth field), not from the semantic date of the session. This means filenames sort by when the doc was actually written, even when sessions about an earlier date get captured later. The semantic date (when the session ran) lives inside the doc body in the `Date` field.
 
@@ -154,7 +154,7 @@ Office_Hours/YYYY-MM-DD-HH-<descriptive-name>.md
 ```
 
 Example:
-- `Office_Hours/2026-04-26-00-Personalization_Architecture_Options.md` (options exploration, not a session)
+- [[Office_Hours/2026-04-26-00-Personalization_Architecture_Options|Office_Hours/2026-04-26-00-Personalization_Architecture_Options.md]] (options exploration, not a session)
 
 ### Reading prior sessions before running a new one
 
@@ -206,17 +206,11 @@ Date only — no hour. Research is not a chronological narrative the way pivots 
 
 Why it matters here specifically: a research finding is only as good as the thesis it was written against, and this vault holds research from both sides of a pivot. The date is what tells a reader which one they are looking at.
 
-## Concepts: the canonical glossary and the linking rule
+## Linking
 
-The `Concepts/` folder is the single source of truth for what each Recompose term *means*. Every other doc in the vault is treated as prose that uses concepts, not as a place where concepts are redefined.
+**Link a doc whenever you reference it.** If you name another vault doc in prose, make it a link. Every link is an edge the retrieval graph traverses, and edges are what make the vault answerable rather than merely searchable.
 
-The folder nests by domain first, then type: `Concepts/<Domain>/<Type>/<Concept_Name>.md`. **`Concepts/_Index.md` is the authoritative listing and the only place the full set is written down** — it groups every concept by folder with a one-line definition, and holds the proposals that have not been approved yet. Read it rather than any copy of it, and add every new concept to it. Some domain folders exist but are still empty; they are placeholders for domains not yet needed, not omissions.
-
-**Unresolved wikilinks in the carried historical docs are expected.** The gym-era concepts were deliberately left behind in CombatDen and do not exist in this vault, but links to them still appear in the migrated docs; the cleanup item at the bottom of `Concepts/_Index.md` lists the ones that resolve to nothing. **Do not "fix" them by recreating the concepts** — read them in `/var/home/jm/Documents/CombatDen/docs` if the gym-era meaning is actually needed.
-
-### The linking rule (this is the load-bearing rule)
-
-**Every wikilink is a vault-root-relative path with a display alias**, and it may point at **any** doc in the vault — concept, pivot, office hours, research, strategy note.
+One form, always — a vault-root-relative path with a display alias:
 
 ```
 [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]]
@@ -224,52 +218,16 @@ The folder nests by domain first, then type: `Concepts/<Domain>/<Type>/<Concept_
 [[pivots/2026-07-30-22-autonomous-is-the-promise|the autonomy pivot]]
 ```
 
-- ✅ path + alias — resolves in Obsidian *and* in gbrain, reads as the alias
-- ❌ `[[Orchestrator]]` — bare basename. Obsidian resolves it; **gbrain does not.**
+Any doc is a legal target. The reader sees the alias; the tools see the path.
 
-**Why the path form is mandatory.** gbrain keys every page by its full path slug and resolves `[[relative/path]]` only. Bare basenames silently fail: 567 of 571 candidate edges were dropped as *"references to non-pages"*, leaving the retrieval graph empty. Converting to path form took that to **290 live links**, and an anchored query now traverses a 51-node subgraph. The alias is what keeps prose readable — the reader sees `Orchestrator`, the tools see the path.
+**Bare `[[Basename]]` fails silently.** Obsidian resolves it, gbrain does not — it drops the edge as a "reference to a non-page" with no error, and the doc quietly leaves the graph. This is the one linking mistake that costs something, and nothing will warn you.
 
-**Why any doc, not just concepts.** The old rule restricted wikilinks to concepts so Obsidian's graph view stayed legible. That traded a real retrieval structure for a visual one. The graph is now what gbrain traverses to answer questions, so a pivot superseding a pivot, or a strategy doc derived from a research note, is exactly the edge worth recording. Link them.
+## Concepts
 
-Obsidian's graph view gets busier as a result. That is the accepted cost.
+`Concepts/` is the glossary: the canonical short definition of each recurring term. [[Concepts/_Index|Concepts/_Index.md]] is the authoritative listing and holds proposals not yet approved. Add every new concept to it.
 
-### Going-forward rules
+The folder nests by domain then type — `Concepts/<Domain>/<Type>/<Concept_Name>.md`. Some domain folders are empty placeholders, not omissions. New concepts need the founder's explicit approval; propose rather than create.
 
-When writing or editing **any** doc in the vault:
+**Unresolved links in the carried historical docs are expected.** The gym-era concepts stayed behind in CombatDen. Do not recreate them — read them in `/var/home/jm/Documents/CombatDen/docs` if the gym-era meaning is genuinely needed.
 
-1. **Link concepts on first canonical mention.** When a concept term first appears in a doc (or first appears in a section where it's load-bearing), wikilink it. Don't over-link the same concept multiple times in the same doc — once or twice is enough; let prose flow after that.
-2. **Add a "Concepts touched" line near the top** of any new strategic doc (office hours, pivot, research note, future-ideas exploration) listing the wikilinks for the concepts the doc most heavily engages. This makes the doc discoverable from the concept side and makes the graph useful.
-3. **Link a doc the moment you reference it.** If you find yourself naming another vault doc in prose, make it a wikilink in path+alias form rather than a bare filename. Each one is an edge the retrieval graph can traverse, and edges are the thing that compounds as the vault grows.
-4. **If a new significant term keeps coming up across multiple docs, promote it to a concept.** Create a new file in the appropriate `Concepts/<Domain>/<Type>/` folder, give it YAML frontmatter with `tags` and `aliases`, write the short definition (1–3 sentences), list "Shows up in" and "Related concepts" as wikilinks in path+alias form. Then add it to `Concepts/_Index.md` and link it from the docs that use it. Don't ship a concept that nothing links to.
-5. **Don't mass-rewrite existing docs to add concept links retroactively.** Add links opportunistically as docs are edited for other reasons. The vault is converged, not perfect.
-
-### Concept doc shape (template)
-
-A concept file is short. Aim for under a screen.
-
-```markdown
----
-tags: [concept, <domain>, <type>, <topic>]
-aliases: [the term, alt phrasing, common shorthand]
----
-
-# <Concept Name>
-
-<1–3 sentence definition. The thing the term means.>
-
-<Optional 1–2 paragraphs of nuance: why this concept exists, where the
-load-bearing implication is, what consequence it has for the product or
-strategy.>
-
-## Shows up in
-
-- `Path/To/Strategy_Doc.md`
-- `Office_Hours/2026-XX-XX-...md`
-
-## Related concepts
-
-- [[Other_Concept]]
-- [[Another_Concept]]
-```
-
-Concept files are revisable as the product evolves. Unlike pivots and office hours, they are **not** historical records — they describe the term as it is currently used. If a concept's meaning materially shifts, update the concept file *and* write the pivot doc that captures the change.
+A concept file is short — under a screen. Frontmatter carries `tags` and `aliases`; the body is a 1–3 sentence definition, optional nuance, and links to related docs. Concept files are revisable as the product evolves; unlike pivots and office hours they are not historical records.

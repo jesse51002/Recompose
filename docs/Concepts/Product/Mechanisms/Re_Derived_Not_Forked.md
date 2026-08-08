@@ -21,7 +21,7 @@ Recompose **never writes to the platform's trunk.** Two fork layers, both kept c
 
 Changes surface on **`uat`**, never straight to production. A re-derive that the agent cannot complete **halts** rather than landing something unverified — which is what makes divergence a scheduling problem rather than a quality one.
 
-The trade is explicit: the maintenance burden moves from the platform to Recompose, permanently. Absorbing it agentically, with no queue handed back to the platform, is what the autonomous promise means (`pivots/2026-07-30-22-autonomous-is-the-promise.md`). **Who resolves a halt is undecided** — see `Open_Questions.md`.
+The trade is explicit: the maintenance burden moves from the platform to Recompose, permanently. Absorbing it agentically, with no queue handed back to the platform, is what the autonomous promise means ([[pivots/2026-07-30-22-autonomous-is-the-promise|pivots/2026-07-30-22-autonomous-is-the-promise.md]]). **Who resolves a halt is undecided** — see [[Open_Questions|Open_Questions.md]].
 
 **Rejected in the same decision:** a *layout enum on the customer's main*, where each generated layout is enumerated as a variant in the customer's own trunk so nothing forks. It was the founder's preferred option as recently as 2026-07-27 and is now dead — it requires writing generated layout code into their trunk, which is incompatible with never touching it. Founder: *"just touching and maintaining their production code sounds like a mess. Agentic separate forks you essentially don't have to think about unless there is an error is better."*
 
@@ -29,11 +29,11 @@ The trade is explicit: the maintenance burden moves from the platform to Recompo
 
 ## Shows up in
 
-- `pivots/2026-07-28-01-agentic-editing-all-in.md`
-- `pivots/2026-07-27-11-customization-engine-is-the-company.md`
-- `Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture.md`
-- `Product_Boundaries.md`
-- `Research/2026-05-01-ai-brand-competitor-analysis.md`
+- [[pivots/2026-07-28-01-agentic-editing-all-in|pivots/2026-07-28-01-agentic-editing-all-in.md]]
+- [[pivots/2026-07-27-11-customization-engine-is-the-company|pivots/2026-07-27-11-customization-engine-is-the-company.md]]
+- [[Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture|Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture.md]]
+- [[Product_Boundaries|Product_Boundaries.md]]
+- [[Research/2026-05-01-ai-brand-competitor-analysis|Research/2026-05-01-ai-brand-competitor-analysis.md]]
 
 ## Related concepts
 

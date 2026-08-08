@@ -81,7 +81,7 @@ Neither platform publishes enterprise-tier pricing. [Circle's pricing page](http
 | Mighty Pro | **$3,000–5,000+/month** | Third-party estimate |
 | Mighty Pro | **$28,000–30,000/year** | Third-party estimate |
 
-No customer statement, quote document or invoice appears in any source. `YC_Application_F26.md` already instructs using "$1,000+/month" rather than a precise figure; the same caution applies to every row above.
+No customer statement, quote document or invoice appears in any source. [[YC_Application_F26|YC_Application_F26.md]] already instructs using "$1,000+/month" rather than a precise figure; the same caution applies to every row above.
 
 ## The standalone price of branded-app design
 
@@ -101,6 +101,6 @@ Both figures are for the same category of deliverable the enterprise tiers list 
 
 ## Shows up in
 
-- `Competition.md`
-- `Customer_ICP.md`
-- `Research/2026-08-02-incumbent-design-delivery.md`
+- [[Competition|Competition.md]]
+- [[Customer_ICP|Customer_ICP.md]]
+- [[Research/2026-08-02-incumbent-design-delivery|Research/2026-08-02-incumbent-design-delivery.md]]

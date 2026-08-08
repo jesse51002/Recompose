@@ -15,17 +15,17 @@ Per-tenant theming is already sold as a priced tier: the embedded-analytics whit
 
 **The sharpest wedge is platforms where every tenant already has their own app** — Subsplash, Passion.io, Q2, Banno, Alkami. On a platform that sells a shared shell with a branded app as an upgrade, only 0.1–3% of tenants take it, and that rate tracks tenant size rather than price, so the tenant count and the addressable app count differ by roughly a hundredfold. Because the product changes structure and not only assets, the budget being attacked is the **custom-build** budget ($10–50k, 4–12 weeks in the agency market), not the theming budget.
 
-**Recompose's own pricing is undefined.** T7 and Open Question 2 of the office hours doc record it as entirely open for this ICP — per-tenant, per-seat, platform license, or revenue share on the tier are all unresolved, and Gigacatalyst publishes no pricing, so the nearest analog gives no comparable. The one figure ever written down is $100/month per branded tenant in `YC_Application_F26.md`, and that doc itself labels it as the platform's COGS to defend as a range, never as a final number. The old $100/$300/$500 gym-owner ladder does not transfer and is dead. This concept is the *shape* of the ROI argument, not a price.
+**Recompose's own pricing is undefined.** T7 and Open Question 2 of the office hours doc record it as entirely open for this ICP — per-tenant, per-seat, platform license, or revenue share on the tier are all unresolved, and Gigacatalyst publishes no pricing, so the nearest analog gives no comparable. The one figure ever written down is $100/month per branded tenant in [[YC_Application_F26|YC_Application_F26.md]], and that doc itself labels it as the platform's COGS to defend as a range, never as a final number. The old $100/$300/$500 gym-owner ladder does not transfer and is dead. This concept is the *shape* of the ROI argument, not a price.
 
 ## Shows up in
 
-- `pivots/2026-07-27-11-customization-engine-is-the-company.md`
-- `pivots/2026-08-02-23-icp-filter-moves-to-tenants-who-already-have-apps.md`
-- `Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md` (§3, §11d, P1a, P2, T7, T8)
-- `YC_Application_F26.md` (answers 6 and 8)
-- `Research/2026-05-01-ai-brand-competitor-analysis.md`
-- `Research/2026-08-02-attach-rate.md`
-- `Research/2026-08-02-enterprise-tier-anatomy.md`
+- [[pivots/2026-07-27-11-customization-engine-is-the-company|pivots/2026-07-27-11-customization-engine-is-the-company.md]]
+- [[pivots/2026-08-02-23-icp-filter-moves-to-tenants-who-already-have-apps|pivots/2026-08-02-23-icp-filter-moves-to-tenants-who-already-have-apps.md]]
+- [[Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company|Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md]] (§3, §11d, P1a, P2, T7, T8)
+- [[YC_Application_F26|YC_Application_F26.md]] (answers 6 and 8)
+- [[Research/2026-05-01-ai-brand-competitor-analysis|Research/2026-05-01-ai-brand-competitor-analysis.md]]
+- [[Research/2026-08-02-attach-rate|Research/2026-08-02-attach-rate.md]]
+- [[Research/2026-08-02-enterprise-tier-anatomy|Research/2026-08-02-enterprise-tier-anatomy.md]]
 
 ## Related concepts
 

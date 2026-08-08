@@ -2,8 +2,8 @@
 
 **Status:** SUBMITTED 2026-07-27 — **the answers below are frozen and are not edited.** They are the record of what was actually sent. Where an answer now disagrees with the architecture, the correction is stated in the demo rather than retrofitted here. See "Corrections to state in the demo" below.
 **Deadline:** 2026-07-27 (met)
-**Source session:** `Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md`
-**Decision it reflects:** `pivots/2026-07-27-11-customization-engine-is-the-company.md`
+**Source session:** [[Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company|Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md]]
+**Decision it reflects:** [[pivots/2026-07-27-11-customization-engine-is-the-company|pivots/2026-07-27-11-customization-engine-is-the-company.md]]
 
 Concepts touched: [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]], [[Concepts/Product/Mechanisms/Modal_Coherence|Modal_Coherence]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]], Switching_Cost_Moat, [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]].
 
@@ -19,7 +19,7 @@ Concepts touched: [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]], [[C
 
 ## Corrections to state in the demo
 
-The application is frozen; the demo is where the record gets corrected. Each row is a place a submitted answer no longer matches the architecture as of `pivots/2026-07-28-01-agentic-editing-all-in.md`. Say the right thing out loud rather than hoping nobody reads closely.
+The application is frozen; the demo is where the record gets corrected. Each row is a place a submitted answer no longer matches the architecture as of [[pivots/2026-07-28-01-agentic-editing-all-in|pivots/2026-07-28-01-agentic-editing-all-in.md]]. Say the right thing out loud rather than hoping nobody reads closely.
 
 | The submitted answer says | Say this instead | Why it changed |
 |---|---|---|
@@ -35,7 +35,7 @@ The application is frozen; the demo is where the record gets corrected. Each row
 2. **The promise: autonomy.** No PR into their trunk, no review queue, no integration work, no engineering sign-off. The ~95/4/1 error budget is a **target, never measured** — say it as a goal, not a rate. What makes it survivable is that **the pipeline halts rather than ships**: a stage that cannot satisfy its own checks stops and nothing deploys, so a significant failure is a stall, not an incident.
 
 > [!warning] Do not answer this in a room: who resolves a halt
-> The autonomous promise depends on halting, and a halted design still has to be resolved by somebody. Leaning the platform's own staff; an FDE was considered and is blocked on lacking domain knowledge of an app they did not write. **If the answer is platform staff, the demo's "no manual maintenance" close is false.** Undecided — see `Open_Questions.md` §2.1c.
+> The autonomous promise depends on halting, and a halted design still has to be resolved by somebody. Leaning the platform's own staff; an FDE was considered and is blocked on lacking domain knowledge of an app they did not write. **If the answer is platform staff, the demo's "no manual maintenance" close is false.** Undecided — see [[Open_Questions|Open_Questions.md]] §2.1c.
 
 ---
 
@@ -172,7 +172,7 @@ Customers agentically redesign white-label apps.
 >
 > **Subsplash is not that kind of platform.** It has no shell tier — every one of its 20,000+ churches is provisioned with its own app — so the relevant question is not what fraction *upgrade* but what fraction would pay for a *redesign*, which nobody has measured (T20). The $4.8M figure may therefore be conservative for Subsplash specifically and badly optimistic for a Mighty Networks, Circle or Kajabi.
 >
-> In conversation: name the distinction rather than the number. "It depends whether they sell a shared shell or give every tenant an app, and those are completely different businesses" is a stronger answer than any percentage, and it is true. See `Research/2026-08-02-attach-rate.md`.
+> In conversation: name the distinction rather than the number. "It depends whether they sell a shared shell or give every tenant an app, and those are completely different businesses" is a stronger answer than any percentage, and it is true. See [[Research/2026-08-02-attach-rate|Research/2026-08-02-attach-rate.md]].
 
 **Recurring per branded tenant, not per generation — this was decided, and the reason matters.** Metering on generations ties revenue to how often a design is *made*, and a good design is made once. Modelled both ways: per-generation on new signups only (~100–150/month for a platform this size) is a **~$180k/year** customer; converting the existing 20,000 base is ~$2M **one time**; recurring per tenant is **$4.8M every year and grows as they add tenants.** Generations can still be the metering unit — the bill is monthly per tenant carrying a design.
 
@@ -181,7 +181,7 @@ Customers agentically redesign white-label apps.
 - **Subsplash 20,000+ churches**, acquired by Roper for $800M, July 2025. Public.
 - **Passion.io 15,000+ apps launched.** Public.
 - **~100–150 new tenants/month** for a platform this size — *derived*, not published: total base ÷ years shipping apps (Subsplash since 2009). A floor, since growth compounds.
-- **20% premium-tier attach** is a generic white-label SaaS benchmark, **not a design-tier number.** Measured in the one vertical where it can be counted, it is **0.1–1.73%** on shell-model platforms (`Research/2026-08-02-attach-rate.md`). Do not use 20% for a shell platform. For a no-shell platform like Subsplash the concept does not apply — every tenant already has an app, and the open number is the redesign rate (T20).
+- **20% premium-tier attach** is a generic white-label SaaS benchmark, **not a design-tier number.** Measured in the one vertical where it can be counted, it is **0.1–1.73%** on shell-model platforms ([[Research/2026-08-02-attach-rate|Research/2026-08-02-attach-rate.md]]). Do not use 20% for a shell platform. For a no-shell platform like Subsplash the concept does not apply — every tenant already has an app, and the open number is the redesign rate (T20).
 
 **$100/month is the platform's COGS, not the end price, and it sits at the top of the defensible range.** They mark it up and sell the tier at $300–500, making $100 a 20–33% cost of revenue — software companies get uncomfortable above ~30%. It holds only if they price the tier at $300+. **Defend it as the price at which the platform still keeps 70% on a tier they currently cannot scale**, never as a final number.
 
@@ -322,7 +322,7 @@ Concepts engaged: [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual
 
 ### Open flags — none of these are ruled on
 
-- **The close asserts something undecided.** *"Essentially no manual integration and maintenance for a white-label platform"* holds only if Recompose resolves every halt. Who resolves a halt is open and leaning toward platform staff (`Open_Questions.md` §2.1c). Those two cannot both be true.
+- **The close asserts something undecided.** *"Essentially no manual integration and maintenance for a white-label platform"* holds only if Recompose resolves every halt. Who resolves a halt is open and leaning toward platform staff ([[Open_Questions|Open_Questions.md]] §2.1c). Those two cannot both be true.
 - **The scale argument was cut and nothing replaced it.** The bounded-layouts → bounded-branches close is gone. It was the only part of the pitch that explained why this does not collapse under tenant count, and it was the reason the theme/layout split mattered commercially rather than just technically. The demo now shows the split and never says what it buys. *(This also retires the old flag about the fleet page's thirty `design/<name>` branches contradicting the branch-count claim — no claim, no contradiction.)*
 - **22 seconds over, and the states walk is where it went.** The five states take 0:29 — a fifth of the runtime — to narrate a list the page already labels. The customer half, which is the half with real software behind it, gets 0:47. If the target stays 120s, that block is the cut.
 - **Productionalize leads the states walk and is not built.** First of the five named, most attention, least real. Also a terminology drift worth settling: the recording says *"productionization"*, this doc says *"Productionalizing"*, and `fleetFixtures.ts` says *"Productionalizing"*. Pick one.

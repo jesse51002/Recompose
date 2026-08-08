@@ -21,10 +21,10 @@ Its economics are the inverse of how they first appear: generation happens once 
 
 ## Shows up in
 
-- `pivots/2026-07-28-01-agentic-editing-all-in.md`
-- `Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture.md`
-- `Product_Boundaries.md`
-- `Architecture_Thesis.md`
+- [[pivots/2026-07-28-01-agentic-editing-all-in|pivots/2026-07-28-01-agentic-editing-all-in.md]]
+- [[Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture|Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture.md]]
+- [[Product_Boundaries|Product_Boundaries.md]]
+- [[Architecture_Thesis|Architecture_Thesis.md]]
 
 ## Related concepts
 

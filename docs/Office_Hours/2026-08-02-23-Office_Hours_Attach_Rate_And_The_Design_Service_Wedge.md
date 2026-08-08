@@ -3,11 +3,11 @@
 **Date:** 2026-08-02
 **Status:** APPROVED
 **Mode:** Startup, evidence review — three commissioned research passes plus live web verification
-**Builds on:** `Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md`, `Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture.md`
+**Builds on:** [[Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company|Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md]], [[Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture|Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture.md]]
 
 Concepts touched: [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]], [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]], [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]], [[Concepts/Business/Strategy/Shopify_Pattern|Shopify_Pattern]].
 
-> Session opened as a research-migration task — pull the useful lineage research out of the CombatDen and AICustomizableWhiteLabeled vaults ahead of a possible YC interview — and turned into an evidence review that broke three claims the vault had been treating as settled. The founder commissioned three research passes over the session (design vs. feature work, build vs. buy, attach rate) and repeatedly refused explanations that did not cohere, which is what surfaced the errors. The product did not change. The evidence under the value argument did, and so did the ICP filter. Produced one pivot: `pivots/2026-08-02-23-icp-filter-moves-to-tenants-who-already-have-apps.md`.
+> Session opened as a research-migration task — pull the useful lineage research out of the CombatDen and AICustomizableWhiteLabeled vaults ahead of a possible YC interview — and turned into an evidence review that broke three claims the vault had been treating as settled. The founder commissioned three research passes over the session (design vs. feature work, build vs. buy, attach rate) and repeatedly refused explanations that did not cohere, which is what surfaced the errors. The product did not change. The evidence under the value argument did, and so did the ICP filter. Produced one pivot: [[pivots/2026-08-02-23-icp-filter-moves-to-tenants-who-already-have-apps|pivots/2026-08-02-23-icp-filter-moves-to-tenants-who-already-have-apps.md]].
 
 ---
 
@@ -152,7 +152,7 @@ Target platforms where **every tenant already has their own branded app**, and p
 
 ## Open questions
 
-- **Does the attach-rate finding change the pricing model?** `YC_Application_F26.md` computes $4.8M/year from Subsplash at a 20% upgrade rate. For Subsplash specifically that may be conservative — it has no shell tier, so all 20,000 churches already have apps. For any shell-model platform it is off by an order of magnitude. Unresolved.
+- **Does the attach-rate finding change the pricing model?** [[YC_Application_F26|YC_Application_F26.md]] computes $4.8M/year from Subsplash at a 20% upgrade rate. For Subsplash specifically that may be conservative — it has no shell tier, so all 20,000 churches already have apps. For any shell-model platform it is off by an order of magnitude. Unresolved.
 - **Which architecture is targeted — per-tenant binary or container app?** Subsplash runs both. Container tenants have no separate binary, which changes the product's shape.
 - **Is there an internal champion at all?** The roles found are Solutions Consultants, Client Implementation Managers, Customer Onboarding Specialists and marketing designers. The feared hostile head-of-design usually doesn't exist. Lower political risk, but nobody whose job improves if the purchase succeeds.
 - **Pricing.** Still undefined. Nothing here settles it.
