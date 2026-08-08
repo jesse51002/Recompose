@@ -7,7 +7,7 @@ aliases: [integration surface, low-friction integration, adoption without archit
 
 The claim that a platform must be able to adopt the engine **without changing its architecture**. Integrating into a customer's existing setup was named as the biggest expected blocker to adoption, so whatever removes that blocker is as much the product as the generation pipeline is.
 
-**The answer is "there is nothing to integrate."** Recompose keeps its own tokenized fork and derives every design from it; the platform grants read access and adopts no library, no API and no version to track. Its architecture is not merely unchanged, it is untouched — see [[Never_Touch_Their_Code]].
+**The answer is "there is nothing to integrate."** Recompose keeps its own tokenized fork and derives every design from it; the platform grants read access and adopts no library, no API and no version to track. Its architecture is not merely unchanged, it is untouched — see [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]].
 
 The premise was reversed twice inside the 2026-07-27 session and the final position is stronger than either earlier one. The founder first argued tokenization is not hard, only unpackaged; after an independent cold read raised the objection from an organizational angle (QA ownership, security review, reluctance to hand production UI to an external system), he reversed to *"tokenizaion is going to be a blocker because i havwe to integrate into their architecture, and this might be the biggest blocker."* Naming integration as the blocker is what promoted the surface to product.
 
@@ -30,8 +30,8 @@ The strategic payoff is unchanged and is what makes this infrastructure rather t
 
 ## Related concepts
 
-- [[Never_Touch_Their_Code]]
-- [[Tokenized_Design_System]]
-- [[Closed_Design_To_Production_Loop]]
-- [[Re_Derived_Not_Forked]]
-- [[Orchestrator]]
+- [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]]
+- [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]]
+- [[Concepts/Product/Mechanisms/Closed_Design_To_Production_Loop|Closed_Design_To_Production_Loop]]
+- [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]]
+- [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]]

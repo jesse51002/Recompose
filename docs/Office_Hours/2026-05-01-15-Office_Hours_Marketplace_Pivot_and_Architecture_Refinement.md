@@ -5,7 +5,7 @@
 **Mode:** Startup, idea-refinement and prototype-readiness session
 **Builds on:** Business/Office_Hours/2026-04-30-14-Office_Hours_Customizable_White_Label_Thesis.md
 
-Concepts touched: [[AI_Design_Compression]], [[Tokenized_Design_System]], [[Shopify_Pattern]], [[Brand_Is_Product]], [[Orchestrator]], [[Modal_Coherence]], [[Template_Marketplace]], [[Freelance_Conversion_Thesis]].
+Concepts touched: [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], [[Concepts/Business/Strategy/Shopify_Pattern|Shopify_Pattern]], [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]], [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]], [[Concepts/Product/Mechanisms/Modal_Coherence|Modal_Coherence]], [[Template_Marketplace]], [[Concepts/Business/Strategy/Freelance_Conversion_Thesis|Freelance_Conversion_Thesis]].
 
 > Second office hours session on this idea, building on the initial thesis-and-landscape exploration of 2026-04-30. Triggered by the user adding three deep competitor research docs (Research/2026-05-01-ai-brand-competitor-analysis.md, Research/2026-05-01-ai-brand-competitor-analysis-v2.md, Research/2026-08-02-coach-and-influencer.md) and asking for an open-ended re-examination of business viability, vertical choice, and product shape. The session shook several assumptions from the prior session, surfaced a meaningful product-model pivot, and locked in two architectural commitments. Several decisions remain open and are preserved in the open questions register. Nothing here is set in stone.
 
@@ -16,8 +16,8 @@ Concepts touched: [[AI_Design_Compression]], [[Tokenized_Design_System]], [[Shop
 These premises and framings survived this session intact and should be treated as locked unless explicitly reopened:
 
 - The architectural thesis: fixed structure plus deep AI-driven design customization, delivered at SaaS pricing, is a real strategic position currently underbuilt in white-label B2B2C apps.
-- The [[Shopify_Pattern]] as the historical analog (the *form* of the bet, with caveats discussed below).
-- The [[Freelance_Conversion_Thesis]] as a useful filter for vertical selection (the verticals where SMBs/individuals currently pay $10k-$50k+ for custom freelance app builds are the candidate verticals).
+- The [[Concepts/Business/Strategy/Shopify_Pattern|Shopify_Pattern]] as the historical analog (the *form* of the bet, with caveats discussed below).
+- The [[Concepts/Business/Strategy/Freelance_Conversion_Thesis|Freelance_Conversion_Thesis]] as a useful filter for vertical selection (the verticals where SMBs/individuals currently pay $10k-$50k+ for custom freelance app builds are the candidate verticals).
 - The decision to rule out restaurants as the inception vertical (converged on white-label, not a freelance-conversion market, entrenched competitive field).
 - The lean toward direct-to-end-user single vertical over agency-reseller, with agency-reseller held open for future expansion.
 - The coach-vs-influencer distinction (different products, must not conflate).
@@ -27,7 +27,7 @@ These premises and framings survived this session intact and should be treated a
 
 The session shook five assumptions from the prior session and added two new commitments. These are the load-bearing changes:
 
-1. **The binding-constraint reframe.** Prior session treated [[AI_Design_Compression|AI design generation]] as the binding constraint that, once relaxed, unlocks the third category. The competitor research disputes this directly. Design labor was *one* constraint, not the most binding. The other constraints (Apple Rule 4.2.6 distribution architecture, regression-test combinatorics, integration/onboarding labor, weak end-user willingness-to-pay for brand depth) were and are equally or more binding. AI cleanly compresses one of those four. The product implication: the actual product is the [[Orchestrator|orchestration layer]] that produces coherent brand-applied output, not the underlying generation models, which are commoditizing. Generation is table stakes; orchestration is the moat.
+1. **The binding-constraint reframe.** Prior session treated [[Concepts/Business/Strategy/AI_Design_Compression|AI design generation]] as the binding constraint that, once relaxed, unlocks the third category. The competitor research disputes this directly. Design labor was *one* constraint, not the most binding. The other constraints (Apple Rule 4.2.6 distribution architecture, regression-test combinatorics, integration/onboarding labor, weak end-user willingness-to-pay for brand depth) were and are equally or more binding. AI cleanly compresses one of those four. The product implication: the actual product is the [[Concepts/Product/Mechanisms/Orchestrator|orchestration layer]] that produces coherent brand-applied output, not the underlying generation models, which are commoditizing. Generation is table stakes; orchestration is the moat.
 
 2. **The Shopify analogy is doing more work than it should.** Prior session used Shopify as proof-of-thesis (structure plus style separation, $200B company). The deflationary fact from the deeper research: 98.5% of Shopify merchants use stock themes; only ~1.5% run truly custom themes. The pattern Shopify proves is *not* "merchants demand deep custom design," it is "merchants want good-enough design with low friction, and a small premium tier wants custom." This shifts the bet from "everyone wants this" to "the brand-conscious tail wants this, and the tail is large enough to fund a real business." It also primes the marketplace pivot in this session.
 
@@ -75,7 +75,7 @@ Design labor was *not* the most binding constraint historically. Four constraint
 - **Integration/onboarding labor dominated unit economics.** The Bigtincan/Showpad/Twilio/Mendix cohort all show the same pattern: design labor was a small fraction of the cost; integration and customer engineering was the dominant cost driver. AI compresses some of this (auto-mapping schemas, AI-driven onboarding agents) but leaves much of it untouched.
 - **Weak end-user willingness-to-pay for brand depth.** The strongest peer-reviewed evidence (Springer 2022) finds usefulness, ease of use, and enjoyment dominate continuance intention for branded apps. Rigorous studies isolating "deep visual brand depth vs. logo-swap" effects on end-user behavior are essentially absent. App-store reviews of Subsplash, Mindbody, and Olo apps overwhelmingly complain about bugs and slow loading, not about feeling generic. **End-users do not pay for brand depth.** B2B buyers do, for vanity and competitive differentiation.
 
-AI cleanly compresses one of these four. The product implication: the actual product is the [[Orchestrator|orchestration layer]] (anti-sameness across tenants, [[Modal_Coherence|modal coherence]] across illustration/icon/motion/copy/typography, accessibility under arbitrary brand inputs, multi-screen consistency). Generation models (Recraft, Firefly, FLUX, nano-banana, Lottie themers) are commoditizing. Orchestration is the actual product. Anyone with API access can call the generators. Nobody has built the layer that makes their outputs cohere.
+AI cleanly compresses one of these four. The product implication: the actual product is the [[Concepts/Product/Mechanisms/Orchestrator|orchestration layer]] (anti-sameness across tenants, [[Concepts/Product/Mechanisms/Modal_Coherence|modal coherence]] across illustration/icon/motion/copy/typography, accessibility under arbitrary brand inputs, multi-screen consistency). Generation models (Recraft, Firefly, FLUX, nano-banana, Lottie themers) are commoditizing. Orchestration is the actual product. Anyone with API access can call the generators. Nobody has built the layer that makes their outputs cohere.
 
 This reframe has compounding effects through the rest of the session. It informs the marketplace pivot (curation enforces coherence in a way blank-slate generation can't), the build philosophy (the hard problems are coordination problems, not generation problems), and the pricing strategy (orchestration quality is what justifies the $300+ floor).
 
@@ -198,7 +198,7 @@ Why fitness creators (specifically, Instagram-and-YouTube fitness influencers ru
 - **Instagram targeting is dead-simple.** Ad targeting "interested in: fitness training" + "follows: [list of fitness influencers with paid programs]" works better for this segment than for any other creator segment. Fitness influencers literally live on Instagram.
 - **Real engagement loop.** End-user (the client) is in the app daily, doing workouts, logging meals, tracking progress. Design quality has a real feedback loop into client retention, which gives the influencer a revenue reason to care about app design quality, not just vanity. This is the only sub-vertical where end-user engagement creates a compounding economic incentive for brand-depth investment.
 - **Trainerize and Passion.io prove WTP.** Trainerize at 400K+ trainers, Passion.io at $99-599/mo SaaS plus $10-20k DFY tiers, both show the white-label-app-for-fitness-creators model has product-market fit at scale. The "we are better at brand" wedge has a clean comparison.
-- **Brand-obsession is extreme.** Fitness aesthetics ARE visual identity (color systems, illustration style, photography mood, motion energy). [[Brand_Is_Product]] applies most cleanly to this segment.
+- **Brand-obsession is extreme.** Fitness aesthetics ARE visual identity (color systems, illustration style, photography mood, motion energy). [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]] applies most cleanly to this segment.
 
 Risks:
 
@@ -259,7 +259,7 @@ The "I have done this manually for my own business" asset is undervalued and sho
 
 User position: *"I really believe that if I get one of them to work I'll get all of them to work. It's really about just making a really good modular structure."*
 
-Mostly true at the module level, materially false at the [[Modal_Coherence|coherence]] level, and the difference is the actual hard problem.
+Mostly true at the module level, materially false at the [[Concepts/Product/Mechanisms/Modal_Coherence|coherence]] level, and the difference is the actual hard problem.
 
 Module-by-module honest read:
 
@@ -278,7 +278,7 @@ If the prototype requires all eight at production quality, the founder is bettin
 
 Recommendation (not yet committed): MVP scope ships full per-tenant generation for illustrations, palette, typography, copy, and layout. Curated-preset selection (from a hand-built library scoped to the chosen sub-vertical) for motion and dense iconography. v2 swaps in real generation for those two when models permit.
 
-The hardest problem the orchestrator solves is not coordinating module calls. It is enforcing [[Modal_Coherence|coherence]] across modules so that the illustration's energy matches the typography's energy matches the copy's voice matches the motion's pace. Per-module rules are easier. Cross-module coherence rules (the illustration character archetype determines the copy register and the motion personality and the typographic rhythm) are the actual product moat. If the orchestrator produces "all modules technically correct but the apps feel like AI made them," the product collapses to the same surface as Galileo/Stitch/Lovable.
+The hardest problem the orchestrator solves is not coordinating module calls. It is enforcing [[Concepts/Product/Mechanisms/Modal_Coherence|coherence]] across modules so that the illustration's energy matches the typography's energy matches the copy's voice matches the motion's pace. Per-module rules are easier. Cross-module coherence rules (the illustration character archetype determines the copy register and the motion personality and the typographic rhythm) are the actual product moat. If the orchestrator produces "all modules technically correct but the apps feel like AI made them," the product collapses to the same surface as Galileo/Stitch/Lovable.
 
 ---
 
@@ -316,7 +316,7 @@ The marketplace tier should be designed assuming most customers stay there forev
 
 P1: Design labor was not the most binding constraint historically. Apple Rule 4.2.6, regression-test combinatorics, integration/onboarding labor, and weak end-user WTP for brand depth were equally or more binding. **High confidence; well-supported by competitor research; load-bearing.**
 
-P2: The actual product is the [[Orchestrator|orchestration layer]], not the underlying generation models. Generation is commoditizing. **High confidence; consistent with research findings; load-bearing.**
+P2: The actual product is the [[Concepts/Product/Mechanisms/Orchestrator|orchestration layer]], not the underlying generation models. Generation is commoditizing. **High confidence; consistent with research findings; load-bearing.**
 
 P3: The marketplace-of-templates product model is structurally stronger than blank-slate per-tenant generation for the broad-tier customer. **High confidence as a directional bet; to validate via prototype + interviews.**
 

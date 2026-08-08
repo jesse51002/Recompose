@@ -11,7 +11,7 @@ date: 2026-07-28
 **Mode:** Startup, architecture session
 **Builds on:** `Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md`, `Office_Hours/2026-05-25-12-Office_Hours_Live_Preview_Rendering_Architecture.md`, `pivots/2026-07-27-11-customization-engine-is-the-company.md`
 
-Concepts touched: [[Full_Visual_Redesign]], [[No_New_Requests_Invariant]], [[Closed_Design_To_Production_Loop]], [[Re_Derived_Not_Forked]], [[Orchestrator]], [[Integration_Surface]], [[Tokenized_Design_System]], [[Modal_Coherence]].
+Concepts touched: [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]], [[Concepts/Product/Mechanisms/Closed_Design_To_Production_Loop|Closed_Design_To_Production_Loop]], [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]], [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]], [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], [[Concepts/Product/Mechanisms/Modal_Coherence|Modal_Coherence]].
 
 > The founder arrived with a complete end-to-end architecture and the empirical finding that motivated it. The session pressure-tested it, the founder corrected two of the three objections, and the risk was relocated from where the partner initially placed it to where it actually sits: the productionalize step. This doc records the architecture, the premise it breaks in a prior session, and the open problems. The decision it produced is `pivots/2026-07-28-01-agentic-editing-all-in.md`.
 
@@ -19,7 +19,7 @@ Concepts touched: [[Full_Visual_Redesign]], [[No_New_Requests_Invariant]], [[Clo
 
 ## Problem statement
 
-The 2026-07-27 pivot committed to a [[Full_Visual_Redesign|full visual redesign]] with a two-part mechanism: assets are data so a pipeline generates them, layout is code so an agent writes it. It left the layout half almost entirely unspecified and named its hardest problem openly — *"layout has no deterministic accept condition the way colour has WCAG and OKLCH."*
+The 2026-07-27 pivot committed to a [[Concepts/Product/Mechanisms/Full_Visual_Redesign|full visual redesign]] with a two-part mechanism: assets are data so a pipeline generates them, layout is code so an agent writes it. It left the layout half almost entirely unspecified and named its hardest problem openly — *"layout has no deterministic accept condition the way colour has WCAG and OKLCH."*
 
 This session answers: **what is the actual architecture of the layout half, and where does the risk really live?**
 
@@ -43,8 +43,8 @@ That reframes the entire layout half from *classification* to *free agency under
 
 ## What carries from prior sessions
 
-- The product is the [[Orchestrator|orchestration layer]], not the generation models. (2026-05-01)
-- [[No_New_Requests_Invariant|Arrangement only]] — nothing added, nothing removed, API surface provably identical, verifiable by the customer's own engineers. (2026-07-27)
+- The product is the [[Concepts/Product/Mechanisms/Orchestrator|orchestration layer]], not the generation models. (2026-05-01)
+- [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|Arrangement only]] — nothing added, nothing removed, API surface provably identical, verifiable by the customer's own engineers. (2026-07-27)
 - ~~Delivery is a git branch on the customer's repo, merged on their manual acceptance. (2026-07-27)~~ — **overturned later in this same session**, see "We never touch their trunk" below.
 - The redesign agent and the tokenization agent are one capability; integration and product collapse into a single problem. (P14a, 2026-07-27)
 - Pre-generated presets are the **demo** surface, not the architecture. (2026-07-27) — now reinforced by the enum finding above.
@@ -103,7 +103,7 @@ End user has a fully custom app
 
 The mirror is **mockware**. It has no features, no business logic, no API calls, no state management. It exists to be looked at and edited.
 
-This single property answers the strongest objection raised in the session. If the mirror were a *functional* mirror, the [[No_New_Requests_Invariant|arrangement-only invariant]] would have to survive a translation in both directions, and the customer's ability to verify it by diffing a branch — the thing that makes the invariant saleable rather than merely claimed — would be lost. Because the mirror is visual only, **the invariant never crosses the translation boundary.** It lives entirely in the productionalize step, on real production code, where it remains a diff the platform's own engineers can read.
+This single property answers the strongest objection raised in the session. If the mirror were a *functional* mirror, the [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|arrangement-only invariant]] would have to survive a translation in both directions, and the customer's ability to verify it by diffing a branch — the thing that makes the invariant saleable rather than merely claimed — would be lost. Because the mirror is visual only, **the invariant never crosses the translation boundary.** It lives entirely in the productionalize step, on real production code, where it remains a diff the platform's own engineers can read.
 
 ### Three reasons the mirror earns its cost
 
@@ -133,7 +133,7 @@ Both parties converged here. Founder: *"absolutely the productionalize part is w
 
 It is also the step where every difficulty initially misattributed to the mirror actually lives:
 
-- It is the only step that must preserve the [[No_New_Requests_Invariant|arrangement-only invariant]].
+- It is the only step that must preserve the [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|arrangement-only invariant]].
 - It is the translation that actually matters, because its output ships.
 - It has no cheap oracle — screenshots validate the mock trivially, but validating production requires building and running the real app.
 
@@ -217,7 +217,7 @@ This is the strongest positioning line the project has produced. It is honest, i
 
 **B — No mirror; design agent edits real source, preview via the real app compiled to web.** This was the 2026-05-25 conclusion and it is correct *for a token-only product*. Rejected for three reasons that only became true after the layout pivot: no cheap screenshot oracle, worse model fluency in Flutter, and no fluid real-time visual feedback for the end user. Founder: *"the end user can't see anything happen."*
 
-**C — Per-screen ephemeral mirroring.** Proposed by the partner and **withdrawn in session as poorly reasoned.** It was premised on the mirror being expensive to maintain. Once the mirror is understood as cheap visual mockware regenerated once per release, per-screen scoping buys nothing and costs cross-screen [[Modal_Coherence|coherence]].
+**C — Per-screen ephemeral mirroring.** Proposed by the partner and **withdrawn in session as poorly reasoned.** It was premised on the mirror being expensive to maintain. Once the mirror is understood as cheap visual mockware regenerated once per release, per-screen scoping buys nothing and costs cross-screen [[Concepts/Product/Mechanisms/Modal_Coherence|coherence]].
 
 ---
 

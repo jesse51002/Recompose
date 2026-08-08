@@ -6,7 +6,7 @@ date: 2026-08-02
 
 # Build vs. buy: who runs white-label, and why the few who leave go custom
 
-Concepts touched: [[Brand_Is_Product]], [[Tier_Unlock_ROI]], [[Full_Visual_Redesign]].
+Concepts touched: [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]], [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]].
 
 Findings from the August 2026 research in `Research/2026-08-02-why-custom.md`. Line references point into that file. Two questions: what share of businesses with a mobile app run white-label versus a bespoke build, and why the ones who build, build.
 
@@ -81,7 +81,7 @@ Custom-back-to-platform moves are the strongest evidence that the build case doe
 
 ## What this means for Recompose
 
-**[[Brand_Is_Product]] is under strain, and this is the third independent convergence.** `Research/2026-05-01-ai-brand-competitor-analysis.md:3` found design labor was never the most binding constraint. `Research/2026-05-01-ai-brand-competitor-analysis-v2.md:47` found app-store reviews complain about bugs and slow loading, never about looking generic. This finds zero design-alone custom builds. Three researchers, three methods, one answer.
+**[[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]] is under strain, and this is the third independent convergence.** `Research/2026-05-01-ai-brand-competitor-analysis.md:3` found design labor was never the most binding constraint. `Research/2026-05-01-ai-brand-competitor-analysis-v2.md:47` found app-store reviews complain about bugs and slow loading, never about looking generic. This finds zero design-alone custom builds. Three researchers, three methods, one answer.
 
 **But this research tests a different decision than the one Recompose enables.** Going bespoke is a six-figure commitment; nobody makes it for design alone, and it would be surprising if they did. Recompose's proposition is custom-grade design *without* going custom. The absence of design-driven bespoke builds is weak evidence about design-driven tier upgrades — which is the purchase that actually matters, and which nothing has yet measured.
 

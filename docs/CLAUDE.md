@@ -216,15 +216,22 @@ The folder nests by domain first, then type: `Concepts/<Domain>/<Type>/<Concept_
 
 ### The linking rule (this is the load-bearing rule)
 
-**Wikilinks in this vault always point to a concept file.** Never to a strategy doc, an office hours doc, a pivot doc, or anything else. If a doc needs to reference another non-concept doc, write the path as plain text or in inline code (e.g., `YC_Application_F26.md`), not as a wikilink.
+**Every wikilink is a vault-root-relative path with a display alias**, and it may point at **any** doc in the vault — concept, pivot, office hours, research, strategy note.
 
-- ✅ `[[Orchestrator]]` — wikilink to a concept
-- ✅ `[[Tokenized_Design_System|design tokens]]` — wikilink to a concept with display text
-- ✅ `YC_Application_F26.md` — plain text reference to a non-concept doc
-- ❌ `[[YC_Application_F26]]` — wikilink to a non-concept (forbidden)
-- ❌ `[[2026-07-27-11-customization-engine-is-the-company]]` — wikilink to a pivot/office hours doc (forbidden)
+```
+[[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]]
+[[Research/2026-08-02-why-custom|the August build-vs-buy research]]
+[[pivots/2026-07-30-22-autonomous-is-the-promise|the autonomy pivot]]
+```
 
-The reason: wikilinks build the graph view, which is meant to surface conceptual relationships, not document cross-references. Strategy docs, pivots, and office hours docs already reference each other by filename in their bodies — that's the document-level layer. The wikilink layer is reserved for the concept layer so the graph remains legible.
+- ✅ path + alias — resolves in Obsidian *and* in gbrain, reads as the alias
+- ❌ `[[Orchestrator]]` — bare basename. Obsidian resolves it; **gbrain does not.**
+
+**Why the path form is mandatory.** gbrain keys every page by its full path slug and resolves `[[relative/path]]` only. Bare basenames silently fail: 567 of 571 candidate edges were dropped as *"references to non-pages"*, leaving the retrieval graph empty. Converting to path form took that to **290 live links**, and an anchored query now traverses a 51-node subgraph. The alias is what keeps prose readable — the reader sees `Orchestrator`, the tools see the path.
+
+**Why any doc, not just concepts.** The old rule restricted wikilinks to concepts so Obsidian's graph view stayed legible. That traded a real retrieval structure for a visual one. The graph is now what gbrain traverses to answer questions, so a pivot superseding a pivot, or a strategy doc derived from a research note, is exactly the edge worth recording. Link them.
+
+Obsidian's graph view gets busier as a result. That is the accepted cost.
 
 ### Going-forward rules
 
@@ -232,8 +239,8 @@ When writing or editing **any** doc in the vault:
 
 1. **Link concepts on first canonical mention.** When a concept term first appears in a doc (or first appears in a section where it's load-bearing), wikilink it. Don't over-link the same concept multiple times in the same doc — once or twice is enough; let prose flow after that.
 2. **Add a "Concepts touched" line near the top** of any new strategic doc (office hours, pivot, research note, future-ideas exploration) listing the wikilinks for the concepts the doc most heavily engages. This makes the doc discoverable from the concept side and makes the graph useful.
-3. **If you find yourself wanting to wikilink a non-concept doc, stop.** Either (a) the term you're linking is actually a concept and a concept file should exist for it — create one in `Concepts/` first — or (b) reference the doc by its filename in plain text.
-4. **If a new significant term keeps coming up across multiple docs, promote it to a concept.** Create a new file in the appropriate `Concepts/<Domain>/<Type>/` folder, give it YAML frontmatter with `tags` and `aliases`, write the short definition (1–3 sentences), list "Shows up in" (plain-text doc filenames) and "Related concepts" (wikilinks). Then add it to `Concepts/_Index.md` and link it from the docs that use it. Don't ship a concept that nothing links to.
+3. **Link a doc the moment you reference it.** If you find yourself naming another vault doc in prose, make it a wikilink in path+alias form rather than a bare filename. Each one is an edge the retrieval graph can traverse, and edges are the thing that compounds as the vault grows.
+4. **If a new significant term keeps coming up across multiple docs, promote it to a concept.** Create a new file in the appropriate `Concepts/<Domain>/<Type>/` folder, give it YAML frontmatter with `tags` and `aliases`, write the short definition (1–3 sentences), list "Shows up in" and "Related concepts" as wikilinks in path+alias form. Then add it to `Concepts/_Index.md` and link it from the docs that use it. Don't ship a concept that nothing links to.
 5. **Don't mass-rewrite existing docs to add concept links retroactively.** Add links opportunistically as docs are edited for other reasons. The vault is converged, not perfect.
 
 ### Concept doc shape (template)

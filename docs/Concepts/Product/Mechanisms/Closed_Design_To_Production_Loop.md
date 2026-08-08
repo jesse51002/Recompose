@@ -9,7 +9,7 @@ A brand brief goes in; a store-ready branded production app comes out, with **no
 
 Everyone adjacent stops one step short, and the stops are the definition. **Token tooling stops at tokens** — Tokens Studio, Token Designer, UXPin Merge; no app ever ships from any of them. **Brand data and brand generation stop before the app** — Brand API 2.0 and Brand.dev serve logos, colours and fonts; BrandForge is the closest business-model analog but produces brand kits and websites, never native apps. **Design tools stop at a mockup** a human still has to implement. No verified player closes brief → coherent multi-modal asset set → store-ready production app across a fleet of tenants on a shared shell. Gigacatalyst closes an equivalent loop on the *functional* axis (generated working software embedded in a host SaaS), which validates the shape without occupying the visual half.
 
-Handoff is the thing being removed, and it is where the cost lives. Every human step in the middle — a designer applying the brand, a front-end engineer implementing it — is what caps a platform's per-tenant customization at whatever it can staff. Closing the loop is therefore the mechanism behind [[Tier_Unlock_ROI]], and it only holds if the output arrives in the customer's actual production app rather than as an artifact someone then has to build from.
+Handoff is the thing being removed, and it is where the cost lives. Every human step in the middle — a designer applying the brand, a front-end engineer implementing it — is what caps a platform's per-tenant customization at whatever it can staff. Closing the loop is therefore the mechanism behind [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], and it only holds if the output arrives in the customer's actual production app rather than as an artifact someone then has to build from.
 
 **Where the loop actually is today, stated plainly.** The asset half is closed: the dependency DAG resolves palette, typography, copy, icons and images into an `output.yaml` that two shipped runtimes consume — `ThemeFlutter` (the member app and the CRM) and `ThemeReact` (the web library and theme browser). The layout half is not — the YC F26 draft states layout and animation are in progress through an autonomous coding agent. Until layout closes, the loop is closed for assets and open for structure, which is the honest current state.
 
@@ -24,8 +24,8 @@ Handoff is the thing being removed, and it is where the cost lives. Every human 
 
 ## Related concepts
 
-- [[Modal_Coherence]]
-- [[Full_Visual_Redesign]]
-- [[Integration_Surface]]
-- [[Orchestrator]]
-- [[AI_Design_Compression]]
+- [[Concepts/Product/Mechanisms/Modal_Coherence|Modal_Coherence]]
+- [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]]
+- [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]]
+- [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]]
+- [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]]

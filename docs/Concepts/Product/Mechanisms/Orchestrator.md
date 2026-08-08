@@ -9,7 +9,7 @@ The coordination layer that turns commodity AI generation primitives (text-to-im
 
 As shipped, the orchestrator is a small **dependency DAG** (`ThemeTree/executor/orchestrator.py`). A registry turns two YAMLs (`app.yaml` + `customization.yaml`) into a node set — one colour node, one font node, one text node, and one image node per image slot — and the executor levels the graph topologically and resolves each level concurrently and fault-tolerantly. It currently coordinates four surfaces: **images, colours, fonts, and text**. Coherence is achieved structurally (a shared derived palette feeds every image prompt; `depends_on` edges fold one slot's look into another's prompt as a style reference; colour derivation is deterministic), not by a separate cross-modality review stage.
 
-The earlier, more ambitious framing imagined the orchestrator enforcing cross-module coherence across illustration, iconography, motion, copy, typography, and layout — see [[Modal_Coherence]]. That remains the trajectory. The shipped engine is deliberately simpler in its *resolution architecture* (no six-pillar per-page cascade), but the surfaces are not abandoned: **icon-set and animation modification stay in the modification pipeline, scheduled for after validation**, joining the DAG as new node types the way fonts and text did. The orchestrator is still the actual product — generation is table stakes — but its current job is leveling and resolving a small typed graph. This is the opposite design philosophy from general AI app builders (Lovable, Bolt) which optimize for breadth of expression with maximum agent latitude; the orchestrator optimizes for depth of constraint.
+The earlier, more ambitious framing imagined the orchestrator enforcing cross-module coherence across illustration, iconography, motion, copy, typography, and layout — see [[Concepts/Product/Mechanisms/Modal_Coherence|Modal_Coherence]]. That remains the trajectory. The shipped engine is deliberately simpler in its *resolution architecture* (no six-pillar per-page cascade), but the surfaces are not abandoned: **icon-set and animation modification stay in the modification pipeline, scheduled for after validation**, joining the DAG as new node types the way fonts and text did. The orchestrator is still the actual product — generation is table stakes — but its current job is leveling and resolving a small typed graph. This is the opposite design philosophy from general AI app builders (Lovable, Bolt) which optimize for breadth of expression with maximum agent latitude; the orchestrator optimizes for depth of constraint.
 
 ## Shows up in
 
@@ -21,6 +21,6 @@ The earlier, more ambitious framing imagined the orchestrator enforcing cross-mo
 
 ## Related concepts
 
-- [[Modal_Coherence]]
-- [[AI_Design_Compression]]
-- [[Tokenized_Design_System]]
+- [[Concepts/Product/Mechanisms/Modal_Coherence|Modal_Coherence]]
+- [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]]
+- [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]]

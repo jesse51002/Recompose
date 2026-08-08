@@ -113,6 +113,30 @@ Without it every page was typed by guesswork — `Journey.md` came back `concept
 
 **Retyping existing pages requires a delete-and-reimport.** `gbrain schema sync` only touches *untyped* pages by design, `import --fresh` skips on content hash, and the `default` source cannot be removed. The working sequence is `gbrain delete <slug>` across every page, then `gbrain import docs`.
 
+### The link graph
+
+**290 links across 89 pages.** Live, and traversed by `gbrain think --anchor <slug>` (51-node subgraph on a concept anchor).
+
+It only works because the vault writes wikilinks as **paths with aliases** — `[[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]]`. gbrain resolves `[[relative/path]]` and nothing else; bare Obsidian basenames silently dropped 567 of 571 edges as *"references to non-pages"*. `docs/CLAUDE.md` carries the rule. **A doc that reverts to `[[Basename]]` disappears from the graph without any error.**
+
+The other two link routes stay unavailable and are not worth retrying: `--by-mention` needs `person`/`company` entity pages, which this vault has none of and base-v2 marks `extractable: false`; `--ner` needs `link_types[].inference.regex`, which no pack here declares.
+
+### Page types come from a custom schema pack
+
+The active pack is **`recompose`**, forked from `gbrain-base-v2` and mapping the vault's folders onto base-v2's canonical types via path prefixes:
+
+| folder | type |
+|---|---|
+| `Concepts/` | `concept` |
+| `Research/`, `Industries/`, `Office_Hours/` | `analysis` |
+| `pivots/` | `writing` |
+
+Without it every page was typed by guesswork — `Journey.md` came back `concept`, and the real concept files matched nothing, because base-v2's `concept` prefix is `wiki/concepts/` and this vault imports as `concepts/`. The 13 strategy docs at the vault root still default to `concept` since they have no folder to key on; fix that with explicit `type:` frontmatter if it ever matters.
+
+**The pack lives at `~/.gbrain/schema-packs/recompose/pack.json` — outside this repo, so it does not travel with a clone.** Recreate with `gbrain schema fork gbrain-base-v2 recompose`, `gbrain schema use recompose`, then the `gbrain schema add-prefix` calls above.
+
+**Retyping existing pages requires a delete-and-reimport.** `gbrain schema sync` only touches *untyped* pages by design, `import --fresh` skips on content hash, and the `default` source cannot be removed. The working sequence is `gbrain delete <slug>` across every page, then `gbrain import docs`.
+
 ### The link graph does not work, and cannot without a change
 
 gbrain's graph reranking signals are inert on this vault, and the reason is structural rather than a misconfiguration. **Obsidian wikilinks address by basename (`[[Orchestrator]]`); gbrain pages are keyed by full path slug (`concepts/product/mechanisms/orchestrator`).** A bare `orchestrator` resolves to nothing, so link extraction reports:

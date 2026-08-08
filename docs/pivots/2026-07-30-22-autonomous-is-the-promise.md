@@ -9,7 +9,7 @@ date: 2026-07-30
 **Date:** 2026-07-30
 **Status:** Decided
 
-Concepts touched: [[Autonomous_Operation]], [[Never_Touch_Their_Code]], [[Re_Derived_Not_Forked]], [[UAT_Sync]], [[Integration_Surface]], [[Closed_Design_To_Production_Loop]], [[Screenshot_Oracle]].
+Concepts touched: [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]], [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]], [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]], [[Concepts/Product/Mechanisms/UAT_Sync|UAT_Sync]], [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Product/Mechanisms/Closed_Design_To_Production_Loop|Closed_Design_To_Production_Loop]], [[Concepts/Product/Mechanisms/Screenshot_Oracle|Screenshot_Oracle]].
 
 ## The decision
 
@@ -52,7 +52,7 @@ Docs asserting the old promise, all requiring update:
 
 - `docs/Product_Boundaries.md` — the section *"We promise leverage, not autonomy"* and its marketing boundary (*never sell hands-off autonomy, never imply zero review*) invert.
 - `docs/Recompose_Summary.md` — the promise paragraph.
-- **The promise concept is renamed to [[Autonomous_Operation]]**, replacing the old strategy concept outright rather than keeping a deprecated one alongside it, and relisted in `Concepts/_Index.md`. No historical doc wikilinked the old name, so nothing broke.
+- **The promise concept is renamed to [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]]**, replacing the old strategy concept outright rather than keeping a deprecated one alongside it, and relisted in `Concepts/_Index.md`. No historical doc wikilinked the old name, so nothing broke.
 - `docs/Concepts/Product/Mechanisms/Re_Derived_Not_Forked.md` — *"where a human reviews what the agent could not resolve."*
 - `docs/Concepts/Product/Mechanisms/UAT_Sync.md` — already corrected once on 2026-07-30; carries the budget's basis.
 - `docs/Open_Questions.md` — §2.1b closes in part; the denominator and the who-resolves-a-halt questions stay open.

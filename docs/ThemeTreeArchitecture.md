@@ -2,7 +2,7 @@
 
 How CombatDen turns a brand brief into a customized mobile app.
 
-Concepts touched: [[Orchestrator]], [[Modal_Coherence]], [[Tokenized_Design_System]]
+Concepts touched: [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]], [[Concepts/Product/Mechanisms/Modal_Coherence|Modal_Coherence]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]]
 
 > [!note] This describes the pipeline as shipped
 > An earlier version of this doc described a much larger design: a five-stage sequential pipeline producing a `TenantCustomization` document with six override pillars resolved through a page → flow → tenant cascade. That *resolution architecture* was ambitious — and likely overengineered. The pipeline that actually shipped is far simpler and works fine as it is. The decision is recorded in `pivots/2026-05-20-23-customization-pipeline-simplified-to-dependency-dag.md`. Governing principle for the architecture: **add complexity only as it is required.** Note this applies to the machinery, not the surfaces — **animation and icon-set modification stay in the modification pipeline**; they are committed and scheduled for after validation (see Next on the timeline).
@@ -82,7 +82,7 @@ The graph is validated (acyclic, every dependency satisfied) **before any paid c
 
 ## Correction loop
 
-Coherence is achieved **structurally**, not by a separate review stage — the shared derived palette feeds every image prompt, `depends_on` edges fold one slot's look into another's prompt, and colour derivation is deterministic. See [[Modal_Coherence]]. There is no VLM self-critique pass; it can worsen already-good output and isn't needed at the current surface.
+Coherence is achieved **structurally**, not by a separate review stage — the shared derived palette feeds every image prompt, `depends_on` edges fold one slot's look into another's prompt, and colour derivation is deterministic. See [[Concepts/Product/Mechanisms/Modal_Coherence|Modal_Coherence]]. There is no VLM self-critique pass; it can worsen already-good output and isn't needed at the current surface.
 
 When something does need correcting, the user re-runs the relevant node(s). The user is a better judge of brand fit than a model — this matches how every shipped competitor (Gamma, Beautiful.ai, Synthesia, Webflow AI) handles correction.
 

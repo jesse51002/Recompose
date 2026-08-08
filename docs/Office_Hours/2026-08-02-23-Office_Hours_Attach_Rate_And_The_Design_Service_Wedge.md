@@ -5,7 +5,7 @@
 **Mode:** Startup, evidence review — three commissioned research passes plus live web verification
 **Builds on:** `Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md`, `Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture.md`
 
-Concepts touched: [[Tier_Unlock_ROI]], [[Brand_Is_Product]], [[Full_Visual_Redesign]], [[No_New_Requests_Invariant]], [[AI_Design_Compression]], [[Shopify_Pattern]].
+Concepts touched: [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]], [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]], [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]], [[Concepts/Business/Strategy/Shopify_Pattern|Shopify_Pattern]].
 
 > Session opened as a research-migration task — pull the useful lineage research out of the CombatDen and AICustomizableWhiteLabeled vaults ahead of a possible YC interview — and turned into an evidence review that broke three claims the vault had been treating as settled. The founder commissioned three research passes over the session (design vs. feature work, build vs. buy, attach rate) and repeatedly refused explanations that did not cohere, which is what surfaced the errors. The product did not change. The evidence under the value argument did, and so did the ICP filter. Produced one pivot: `pivots/2026-08-02-23-icp-filter-moves-to-tenants-who-already-have-apps.md`.
 
@@ -28,8 +28,8 @@ Question 4 was the one the vault most needed and had never asked.
 
 Untouched by anything found here:
 
-- The mechanism. Assets by pipeline, layout by agent, [[Full_Visual_Redesign]] in scope, no new features.
-- [[No_New_Requests_Invariant]] as the safety property. **Strengthened, not weakened** — see below.
+- The mechanism. Assets by pipeline, layout by agent, [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]] in scope, no new features.
+- [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]] as the safety property. **Strengthened, not weakened** — see below.
 - Never touching the platform's trunk; read access as the whole integration; UAT as the landing branch.
 - The autonomy promise and the halt-rather-than-ship property.
 - "Close enough at a fraction of the price," explicitly not parity.
@@ -88,7 +88,7 @@ If what you want is N — tenants with a branded app today that could be redesig
 
 Against Circle's ~5,000 creators at 1–3%: roughly 50–150 apps.
 
-### 5. [[Brand_Is_Product]] takes its third independent hit
+### 5. [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]] takes its third independent hit
 
 Across a dozen documented custom-build cases, **design has never been the sole reason** anyone built bespoke. It appears four times, always alongside a functional, cost or control driver. That joins two prior findings: design labor was never the most binding constraint (v1, May 2026), and app-store reviews complain about bugs and slow loading, never about looking generic (v2, May 2026). Three researchers, three methods, one answer.
 
@@ -96,7 +96,7 @@ The honest counter, and the session held it: going bespoke is a six-figure decis
 
 The most valuable single artifact found all session is the Lumino Studios operator quote: *"we're not copy-cats… every app ends up looking identical… I can open any boutique fitness app and immediately know which software it's running on" — "generic gym app #37."* The sharpest articulation of the problem that exists anywhere in the research, from a real operator. **And they still needed a functional wall — multi-zone access control — to actually move.** So: design is a real, articulated, felt pain that is never sufficient on its own to trigger a purchase.
 
-### 6. [[No_New_Requests_Invariant]] got stronger
+### 6. [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]] got stronger
 
 Of 19 platforms researched, **13 have no path by which a tenant gets net-new functionality built, at any price.** Kajabi says it outright. The only unambiguous exceptions are two fintech platforms — Jack Henry's Banno ("we build custom features, too") and Backbase's Services organization — and even within fintech, Q2 and Alkami deliberately refuse, pushing work to SDKs and partners.
 

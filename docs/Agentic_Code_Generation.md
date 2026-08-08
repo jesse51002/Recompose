@@ -7,7 +7,7 @@ source-session: Office_Hours/2026-08-04-00-Office_Hours_Agentic_Code_Generation_
 
 # Agentic code generation: the state of the field, and what Recompose has to solve
 
-Concepts touched: [[No_New_Requests_Invariant]], [[Full_Visual_Redesign]], [[Never_Touch_Their_Code]], [[Re_Derived_Not_Forked]], [[Screenshot_Oracle]], [[Autonomous_Operation]], [[Visual_Mirror]].
+Concepts touched: [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]], [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]], [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]], [[Concepts/Product/Mechanisms/Screenshot_Oracle|Screenshot_Oracle]], [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]], [[Concepts/Product/Mechanisms/Visual_Mirror|Visual_Mirror]].
 
 Synthesis of `Research/2026-08-04-mobile-app-code-gen.md`, which surveyed AI app builders, brownfield coding agents, automated large-scale code change, fork maintenance, per-tenant customization architecture and visual validation. Detail and sourcing live there; this is the position.
 
@@ -37,7 +37,7 @@ Synthesis of `Research/2026-08-04-mobile-app-code-gen.md`, which surveyed AI app
 
 ## Why Recompose does not generate features
 
-[[No_New_Requests_Invariant]] has several independent justifications. This research supplies the technical one, and it is now the strongest.
+[[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]] has several independent justifications. This research supplies the technical one, and it is now the strongest.
 
 - **Nobody has done it.** No documented case of an agent autonomously shipping a net-new feature into a pre-existing production mobile codebase it did not author. Not vendor-claimed, not measured.
 - **The ceiling is far below autonomy.** ~67% with a human on every task; under 10% on multi-file changes, which every real feature is.
@@ -57,9 +57,9 @@ Note that METR's doubling trend applies to the *50%* reliability horizon; the 80
 
 **Verification is a code diff, not a judgement.** Same set of API calls, same widgets and handlers present, every screen still reachable. Deterministic, and the platform's own engineers can run it.
 
-**The aesthetic accept condition is a human, and that is the product.** The tenant iterates on the [[Visual_Mirror|mock]] until they approve. The model only ever ranks candidates — the reliable mode — and the validator loop terminates on approval rather than on a model's confidence. [[Autonomous_Operation]] therefore means zero *platform* involvement, not zero humans.
+**The aesthetic accept condition is a human, and that is the product.** The tenant iterates on the [[Concepts/Product/Mechanisms/Visual_Mirror|mock]] until they approve. The model only ever ranks candidates — the reliable mode — and the validator loop terminates on approval rather than on a model's confidence. [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]] therefore means zero *platform* involvement, not zero humans.
 
-**The fork is the only path given no write access.** Server-driven UI is the genuine alternative — the app ships a renderer, the server sends layout as data, proven at Airbnb, Lyft, Spotify and DoorDash — and it is excluded by [[Never_Touch_Their_Code]] rather than by feasibility. The answer when a platform engineer raises it: *you could build that yourselves, it would take 12–18 months, and you would own it forever.* It is also the escape hatch if the fork model does not scale.
+**The fork is the only path given no write access.** Server-driven UI is the genuine alternative — the app ships a renderer, the server sends layout as data, proven at Airbnb, Lyft, Spotify and DoorDash — and it is excluded by [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]] rather than by feasibility. The answer when a platform engineer raises it: *you could build that yourselves, it would take 12–18 months, and you would own it forever.* It is also the escape hatch if the fork model does not scale.
 
 ---
 
@@ -72,7 +72,7 @@ None solved. All believed solvable. Grouped by where they live.
 1. **No precedent, no data.** Nobody has run an autonomously maintained long-lived fork. No drift rate, no failure taxonomy to borrow. Largest technical unknown in the company. → T23.
 2. **Semantic conflicts.** Clean merge, broken behaviour. Unsolved generally; here it breaks *visually*, which is the bounded blast radius. Rate unmeasured. → T23.
 3. **Undesigned surfaces — git will never flag it.** Upstream ships a new screen; nothing conflicts because there is nothing to conflict with, so it appears in the platform's default styling inside a redesigned app. A coverage problem, not a merge problem, scaling with release cadence × fork count. → T23, then a decision on whether new surfaces trigger an automatic design pass or a queue.
-4. **The divergence tax.** Chromium and AOSP show rebase cost scales with divergence, and a [[Full_Visual_Redesign]] is maximal divergence. → T23's minutes-per-re-derive against upstream velocity.
+4. **The divergence tax.** Chromium and AOSP show rebase cost scales with divergence, and a [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]] is maximal divergence. → T23's minutes-per-re-derive against upstream velocity.
 5. **Cost that scales with success.** Inference gets cheaper; re-derivation frequency is set by their release train and fork count grows with sales. → T25.
 
 ### Productionalize

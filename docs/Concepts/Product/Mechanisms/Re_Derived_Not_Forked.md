@@ -7,7 +7,7 @@ aliases: [re-derived not forked, repeatable transformation, agent-maintained for
 
 A tenant's redesign is a **continuously re-derived transformation, never a hand-maintained divergence**. Divergence in the git sense does exist — the design lives on a fork — but nothing in that fork is maintained by a person, so per-tenant divergence never accumulates as human work.
 
-This is the answer to the structural objection any technical buyer raises: if each tenant's app is code-diverged, the platform can no longer ship one update to all tenants and upgrades become N merges against N forks. That is the **regression-test combinatorics** constraint named in the April 2026 competitor research as one of the four reasons white-label customization stalled at logo-and-colour, and it is the economic reason the category converged on tokens rather than forks. The principle exists to keep [[Full_Visual_Redesign|full visual redesign]] compatible with a platform still shipping upgrades once.
+This is the answer to the structural objection any technical buyer raises: if each tenant's app is code-diverged, the platform can no longer ship one update to all tenants and upgrades become N merges against N forks. That is the **regression-test combinatorics** constraint named in the April 2026 competitor research as one of the four reasons white-label customization stalled at logo-and-colour, and it is the economic reason the category converged on tokens rather than forks. The principle exists to keep [[Concepts/Product/Mechanisms/Full_Visual_Redesign|full visual redesign]] compatible with a platform still shipping upgrades once.
 
 > [!note] Term note
 > The name reads misleadingly and is retained for link stability: the mechanism **is** forks. What it asserts is that a fork's *contents* are re-derived by an agent rather than maintained by hand. "Re-derived, not hand-maintained" would be the accurate phrasing.
@@ -37,7 +37,7 @@ The trade is explicit: the maintenance burden moves from the platform to Recompo
 
 ## Related concepts
 
-- [[Full_Visual_Redesign]]
-- [[No_New_Requests_Invariant]]
-- [[Integration_Surface]]
-- [[Tokenized_Design_System]]
+- [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]]
+- [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]]
+- [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]]
+- [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]]

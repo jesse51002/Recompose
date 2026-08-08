@@ -5,7 +5,7 @@
 **Mode:** Startup — doubt review, then a commissioned research pass, then an architecture decision
 **Builds on:** `Office_Hours/2026-08-02-23-Office_Hours_Attach_Rate_And_The_Design_Service_Wedge.md`, `Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture.md`
 
-Concepts touched: [[No_New_Requests_Invariant]], [[Full_Visual_Redesign]], [[Never_Touch_Their_Code]], [[Re_Derived_Not_Forked]], [[Screenshot_Oracle]], [[Autonomous_Operation]], [[Closed_Design_To_Production_Loop]], [[Integration_Surface]].
+Concepts touched: [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]], [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]], [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]], [[Concepts/Product/Mechanisms/Screenshot_Oracle|Screenshot_Oracle]], [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]], [[Concepts/Product/Mechanisms/Closed_Design_To_Production_Loop|Closed_Design_To_Production_Loop]], [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]].
 
 > The session opened with the founder's own doubt — that design is not a budget line anyone currently pays for, which makes this category creation rather than replacement — and ended by closing the feature route on evidence. In between it produced two research briefs and a concrete outreach mechanism. The product did not change. What changed is that the boundary around it is now argued from measurement rather than from instinct, and the safety property was found to have been named wrongly for a month. No pivot doc: nothing reversed direction.
 
@@ -28,8 +28,8 @@ Question 3 is the one this session answers. Questions 1 and 2 produced positions
 
 Untouched:
 
-- The mechanism. Assets by pipeline, layout by agent, [[Full_Visual_Redesign]] in scope, no new features.
-- [[Never_Touch_Their_Code]], read access as the whole integration, UAT as the landing branch.
+- The mechanism. Assets by pipeline, layout by agent, [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]] in scope, no new features.
+- [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]], read access as the whole integration, UAT as the landing branch.
 - The August 2 ICP filter: platforms where every tenant already has an app.
 - "Close enough at a fraction of the price," explicitly not parity.
 - Pricing undefined. Zero customers. No outside party has responded to anything.
@@ -67,7 +67,7 @@ Founder, and the research agrees: *"the fork mechanism is unprecedented... but t
 
 The founder's position — a fork is the only realistic way to do customizable white-label apps — survives with one correction that matters on a sales call. **There is one other technical path: server-driven UI.** The app ships a renderer and the server sends layout as data, which makes per-tenant layout data rather than code. Airbnb, Lyft, Spotify and DoorDash all run this in production at scale.
 
-It is excluded here not by physics but by [[Never_Touch_Their_Code]] — it requires the platform to rewrite their app around a layout framework. So the accurate claim is **"a fork is the only path given no write access,"** and no write access is the thing that makes the sale possible. That is a stronger sentence than "there is no other way," and it comes with a good answer attached when a platform engineer raises it: *you could build server-driven UI yourselves, it would take 12–18 months, and you would own it forever.*
+It is excluded here not by physics but by [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]] — it requires the platform to rewrite their app around a layout framework. So the accurate claim is **"a fork is the only path given no write access,"** and no write access is the thing that makes the sale possible. That is a stronger sentence than "there is no other way," and it comes with a good answer attached when a platform engineer raises it: *you could build server-driven UI yourselves, it would take 12–18 months, and you would own it forever.*
 
 It also names an escape hatch that did not previously exist on paper. If fork drift proves unmanageable, the fallback is not abandonment — it is a one-time write into their trunk, rejected on 2026-07-28 for GTM reasons rather than technical ones.
 
@@ -86,13 +86,13 @@ This is correct and does more than it appears to. The research's finding on VLM 
 If the tenant iterates until they approve, then the aesthetic accept condition is a human, not a model. Two consequences:
 
 - **The unbounded validator loop (T14) largely dissolves.** The loop terminates on approval.
-- **[[Screenshot_Oracle]] moves to the mode that works.** Generate N candidates, rank pairwise, present the best; do not generate one and ask a model whether it is good enough. This is a cheap architecture change and is unambiguously correct.
+- **[[Concepts/Product/Mechanisms/Screenshot_Oracle|Screenshot_Oracle]] moves to the mode that works.** Generate N candidates, rank pairwise, present the best; do not generate one and ask a model whether it is good enough. This is a cheap architecture change and is unambiguously correct.
 
 ### 6. The autonomy promise needs one word changed
 
 The tenant iterating on their own mock *is the product* — "customers agentically redesign white-label apps." But `Recompose_Summary.md` and the 2026-07-30 pivot describe the trend as toward zero human involvement, which the product contradicts on its face.
 
-The claim that is both true and defensible is **zero *platform* involvement.** [[Autonomous_Operation]] means no work lands on the buyer's desk, not that no human is in the loop anywhere. Left as written, it is a contradiction a partner or a buyer catches for free.
+The claim that is both true and defensible is **zero *platform* involvement.** [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]] means no work lands on the buyer's desk, not that no human is in the loop anywhere. Left as written, it is a contradiction a partner or a buyer catches for free.
 
 ### 7. Build-versus-buy gets a sharper filter than "they lack the talent"
 
@@ -124,7 +124,7 @@ The August 2 filter selected for N — tenants with their own app — and N corr
 
 Three things came out of this and none required a decision:
 
-- **The demo does not require their code.** The [[Visual_Mirror|visual mirror]] is feature-free, so it can be built from public material and a redesign produced for any platform on earth without permission.
+- **The demo does not require their code.** The [[Concepts/Product/Mechanisms/Visual_Mirror|visual mirror]] is feature-free, so it can be built from public material and a redesign produced for any platform on earth without permission.
 - **Better than screenshots: their tenants' apps are publicly downloadable.** These are white-label platforms; the product is publicly distributed by definition. Hundreds of Subsplash church apps are installable right now, and church content is the least login-gated in any vertical — which makes Subsplash the most *inspectable* platform in the market, a reason to sort it first that has nothing to do with tenant count.
 - **Booking a sales demo under false pretences is a bad trade**, specifically because the plan is to return to that company as a founder within weeks.
 
@@ -136,9 +136,9 @@ Three things came out of this and none required a decision:
 
 - **L7.** Net-new feature generation is out of scope. The field's measured brownfield rate is ~65–70% with a human requesting and reviewing every task, and it collapses below 10% on the multi-file changes a real feature requires.
 - **L8.** The safety property is **bounded blast radius by output type** — a bad output is ugly, not broken. It is not separability, which Recompose structurally cannot have.
-- **L9.** A fork is the only path **given no write access**. Server-driven UI is the alternative and is excluded by [[Never_Touch_Their_Code]], not by feasibility.
+- **L9.** A fork is the only path **given no write access**. Server-driven UI is the alternative and is excluded by [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]], not by feasibility.
 - **L10.** The aesthetic accept condition is the tenant iterating on the mock. The VLM ranks candidates and catches gross defects; it never scores.
-- **L11.** [[Autonomous_Operation]] means zero *platform* involvement, not zero human involvement.
+- **L11.** [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]] means zero *platform* involvement, not zero human involvement.
 - **L12.** The build-vs-buy threat is gated on whether a platform already owns a mature extension SDK, not on whether it can afford an AI budget.
 
 **To test:**
@@ -172,7 +172,7 @@ Build order, and only one of these is code:
 
 1. **The functional-equivalence diff gate.** Roughly an afternoon against CombatDen. It converts the strongest claim in the pitch from an assertion into a property a buyer's own security reviewer can check.
 2. **Start T23 in the background.** Mostly wall-clock rather than effort, and it runs concurrently with outreach. At the end there is either the strongest technical claim available or the knowledge that the fork model does not scale — which is better learned now than in month six of a customer.
-3. **Switch [[Screenshot_Oracle]] to pairwise ranking** next time the pipeline is open.
+3. **Switch [[Concepts/Product/Mechanisms/Screenshot_Oracle|Screenshot_Oracle]] to pairwise ranking** next time the pipeline is open.
 
 None of it precedes the outreach.
 

@@ -15,5 +15,5 @@ This compression is the load-bearing technical premise behind the architecture t
 
 ## Related concepts
 
-- [[Tokenized_Design_System]]
-- [[Shopify_Pattern]]
+- [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]]
+- [[Concepts/Business/Strategy/Shopify_Pattern|Shopify_Pattern]]

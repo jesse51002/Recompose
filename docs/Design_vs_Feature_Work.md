@@ -6,7 +6,7 @@ date: 2026-08-02
 
 # Design work vs. feature work at white-label platforms
 
-Concepts touched: [[No_New_Requests_Invariant]], [[Full_Visual_Redesign]], [[Integration_Surface]], [[Tier_Unlock_ROI]].
+Concepts touched: [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]], [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]].
 
 Two questions, answered by the August 2026 research in `Research/2026-08-02-features-vs-design.md`: when a platform runs a design service, does that team also build features; and will any of these platforms build net-new functionality for a tenant who pays. Line references below point into that file.
 
@@ -78,7 +78,7 @@ This is the financial signature of a function that exists to enable subscription
 
 ## What this means for Recompose
 
-**The no-new-features invariant matches a line these organizations already draw.** [[No_New_Requests_Invariant]] is not a constraint being imposed on the buyer — design and feature work are already separate teams, separate SKUs and separate budgets almost everywhere. A platform adopting [[Full_Visual_Redesign]] does not have to reorganize anything, and the deliverable slots into a boundary that already exists. That removes an objection at the [[Integration_Surface]].
+**The no-new-features invariant matches a line these organizations already draw.** [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]] is not a constraint being imposed on the buyer — design and feature work are already separate teams, separate SKUs and separate budgets almost everywhere. A platform adopting [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]] does not have to reorganize anything, and the deliverable slots into a boundary that already exists. That removes an objection at the [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]].
 
 **"No new features" is already the platform's own answer to its tenants.** At 13 of 19 platforms there is no way for a tenant to get functionality built, at any price. So a tenant who asks Recompose for a feature and is refused gets exactly the answer their platform already gives them. The invariant does not create a new disappointment; it inherits an existing one. Where category (c) *does* exist — Banno, Backbase, Tapcart, GoodBarber, BuildFire, Trainerize Enterprise — those requests have a paid path to be routed to, which makes the line easier to hold rather than harder.
 

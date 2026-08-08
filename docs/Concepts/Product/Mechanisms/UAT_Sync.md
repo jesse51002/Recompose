@@ -24,6 +24,6 @@ That free promotion rests on uat being strictly ahead of main, which holds under
 
 ## Related concepts
 
-- [[Autonomous_Operation]]
-- [[Never_Touch_Their_Code]]
-- [[Re_Derived_Not_Forked]]
+- [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]]
+- [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]]
+- [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]]

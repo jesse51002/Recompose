@@ -6,7 +6,7 @@ date: 2026-07-28
 
 # Product Boundaries
 
-Concepts touched: [[No_New_Requests_Invariant]], [[Full_Visual_Redesign]], [[Integration_Surface]], [[Closed_Design_To_Production_Loop]], [[Re_Derived_Not_Forked]], [[Orchestrator]], [[Tier_Unlock_ROI]].
+Concepts touched: [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]], [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Product/Mechanisms/Closed_Design_To_Production_Loop|Closed_Design_To_Production_Loop]], [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]], [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]], [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]].
 
 > [!info] What this doc is for
 > The lines the product holds. Boundaries are decisions, not status — they should only change when a pivot changes them, and a pivot doc should exist saying so. For how the mechanism works, read `Architecture_Thesis.md`; for what exists in code right now, read `README.md`.
@@ -22,7 +22,7 @@ The first is what makes the product *safe to accept*. The second is what makes i
 
 ## Arrangement only
 
-**A redesign changes arrangement. It never changes behaviour.** No screen is merged or split, no functionality is added, none is removed. Every screen does what it did before and needs the data it needed before, so the API surface is provably identical ([[No_New_Requests_Invariant]]).
+**A redesign changes arrangement. It never changes behaviour.** No screen is merged or split, no functionality is added, none is removed. Every screen does what it did before and needs the data it needed before, so the API surface is provably identical ([[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]]).
 
 This is stronger than a sandbox because it is *verifiable rather than argued* — the platform's own engineers can confirm nothing was added or removed. Give it up and the product becomes an unbounded code generator operating on someone else's app, which is a category no platform will let near production.
 
@@ -34,7 +34,7 @@ The functional half of per-tenant customization is a real and larger product —
 
 ## The platform's architecture is not ours to change
 
-A platform must be able to adopt the engine **without changing its architecture**. As of 2026-07-28 this is satisfied by there being nothing to adopt: they grant read access, and Recompose forks ([[Never_Touch_Their_Code]]). No SDK to install, no API to wire, no version to track.
+A platform must be able to adopt the engine **without changing its architecture**. As of 2026-07-28 this is satisfied by there being nothing to adopt: they grant read access, and Recompose forks ([[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]]). No SDK to install, no API to wire, no version to track.
 
 The consequence is a rule about whose problem an integration failure is: if adoption requires the customer to restructure, that is a **product defect**, not a customer objection to be argued past. The one live instance is distribution — a platform shipping a single shared shell rather than per-tenant binaries cannot take per-design layout without changing how it releases, which makes it the wrong customer rather than a hard sale.
 
@@ -53,14 +53,14 @@ Two things this boundary costs, both accepted:
 - **The maintenance burden moves to us, permanently.** Their devs are not maintaining tokens inside code they understand; our agent is re-reconciling an external fork against every structural change they make, forever. There are consequently **two sync layers**: their main into our tokenized base, and our base into each tenant's design fork.
 - **Re-tokenization recurs.** New screens and visual expansion need the base re-tokenized. Under this model that is entirely our side of the line — no PR to them at all — so it is a cost, not a friction point.
 
-> [!note] On the name [[Re_Derived_Not_Forked]]
+> [!note] On the name [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]]
 > These *are* forks, so the name reads misleadingly. What it asserts is that a fork's **contents** are re-derived by an agent rather than maintained by hand — **divergence must never accumulate unmanaged.** The name is kept for link stability.
 
 ## Assets go through the pipeline; only layout goes through the agent
 
 **Assets are data, so a pipeline generates them. Layout is code, so an agent writes it.** That split is a boundary, not just an implementation choice.
 
-Anything expressible as a slot resolves deterministically through the [[Orchestrator|orchestration layer]], where cost is bounded, coherence is structural, and accept conditions exist. The agent is reached for **only** where no slot inventory can express the change. Widening agent scope past layout collapses the distinction that stops this being filed under "another coding agent" — one agent doing everything reads as a wrapper over a model; two systems with a clear boundary reads as architecture.
+Anything expressible as a slot resolves deterministically through the [[Concepts/Product/Mechanisms/Orchestrator|orchestration layer]], where cost is bounded, coherence is structural, and accept conditions exist. The agent is reached for **only** where no slot inventory can express the change. Widening agent scope past layout collapses the distinction that stops this being filed under "another coding agent" — one agent doing everything reads as a wrapper over a model; two systems with a clear boundary reads as architecture.
 
 ## Within layout, the agent is free — bounded by the invariant, never by an enum
 
@@ -100,7 +100,7 @@ The boundary this sets on marketing: **never quote the budget as an observed rat
 
 Sold to multi-tenant white-label SaaS platforms with real tenant volume. Not to agencies, not to freelancers, not to the end business, and never direct to the end user.
 
-The value argument is throughput — [[Tier_Unlock_ROI|a tier they cannot scale]] and the deals they lose on brand. **Tenant satisfaction is not the pitch** and must not become one: the research found end users complain about bugs, not about looking generic. "Your tenants will love it" is out of bounds as a sales line.
+The value argument is throughput — [[Concepts/Business/Pricing/Tier_Unlock_ROI|a tier they cannot scale]] and the deals they lose on brand. **Tenant satisfaction is not the pitch** and must not become one: the research found end users complain about bugs, not about looking generic. "Your tenants will love it" is out of bounds as a sales line.
 
 ## The unit is a design, and allocation is not our business
 
@@ -123,7 +123,7 @@ Chasing parity with a human designer is out of bounds. It is unwinnable, and win
 ## What Recompose is not
 
 - **Not a coding agent.** It edits the view layer under a fixed invariant. It does not take open-ended engineering work.
-- **Not a design tool.** Design tools stop at a mockup a human still implements. This closes the loop to a running app ([[Closed_Design_To_Production_Loop]]).
+- **Not a design tool.** Design tools stop at a mockup a human still implements. This closes the loop to a running app ([[Concepts/Product/Mechanisms/Closed_Design_To_Production_Loop|Closed_Design_To_Production_Loop]]).
 - **Not token tooling.** Token tooling stops at tokens and leaves the hard part — coherent assets and layout — to a person.
 - **Not a template marketplace.** The output is derived from a brief, not selected from a set. Presets are a *demo* surface, not the architecture.
 - **Not an app builder.** It redesigns an app that already exists and already works.

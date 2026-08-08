@@ -7,7 +7,7 @@ aliases: [autonomous operation, autonomy, the promise, nothing waits to be appro
 
 The promise Recompose sells is that **a redesign runs to production without anyone being asked about it.** No PR into the platform's trunk, no review queue, no integration work, no engineering sign-off. The intended trend is toward zero human involvement as agent capability and the review scaffolding around it improve.
 
-This is possible only because of [[Never_Touch_Their_Code|the fork model]]. While Recompose was going to edit the platform's own repository, every change created review work for their engineers. On a Recompose-managed fork there is no PR and no queue on their side, so nothing about the architecture requires a person in the normal path.
+This is possible only because of [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|the fork model]]. While Recompose was going to edit the platform's own repository, every change created review work for their engineers. On a Recompose-managed fork there is no PR and no queue on their side, so nothing about the architecture requires a person in the normal path.
 
 ## What makes it defensible: halting, not reviewing
 
@@ -33,7 +33,7 @@ This is the one question that can falsify the promise. If halts land on the plat
 
 ## Related concepts
 
-- [[Never_Touch_Their_Code]]
-- [[Re_Derived_Not_Forked]]
-- [[UAT_Sync]]
-- [[Screenshot_Oracle]]
+- [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]]
+- [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]]
+- [[Concepts/Product/Mechanisms/UAT_Sync|UAT_Sync]]
+- [[Concepts/Product/Mechanisms/Screenshot_Oracle|Screenshot_Oracle]]

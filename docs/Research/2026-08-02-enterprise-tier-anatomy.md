@@ -6,7 +6,7 @@ date: 2026-08-02
 
 # What white-label enterprise tiers actually sell
 
-Concepts touched: [[Tier_Unlock_ROI]], [[Full_Visual_Redesign]], [[AI_Design_Compression]].
+Concepts touched: [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]].
 
 A record of what is included in the premium "branded app" tier at the two platforms that document it most fully — Mighty Pro and Circle Plus — what the dedicated human attached to that tier does, and where the design work sits inside it. Compiled 2026-08-02 from vendor pages, a live job posting, and third-party pricing write-ups. Sources are linked inline.
 

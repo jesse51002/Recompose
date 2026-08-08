@@ -6,7 +6,7 @@ updated: 2026-07-28
 
 # Open Questions
 
-Concepts touched: [[Integration_Surface]], [[Tier_Unlock_ROI]], [[Full_Visual_Redesign]], [[No_New_Requests_Invariant]], [[Re_Derived_Not_Forked]], [[Closed_Design_To_Production_Loop]], [[Tokenized_Design_System]], Template_Marketplace, [[Shopify_Pattern]].
+Concepts touched: [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]], [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]], [[Concepts/Product/Mechanisms/Closed_Design_To_Production_Loop|Closed_Design_To_Production_Loop]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], Template_Marketplace, [[Concepts/Business/Strategy/Shopify_Pattern|Shopify_Pattern]].
 
 Everything Recompose has not answered, carried forward from the open questions and named risks in `Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md` and `pivots/2026-07-27-11-customization-engine-is-the-company.md`. Gym-specific questions from the CombatDen prehistory are not carried; see the last section for what was dropped and why.
 
@@ -28,7 +28,7 @@ No platform has been asked. The origin is a realization while building a white-l
 
 ### 1.2 Can a named target platform and a named human at it be produced at all? [T2, assignment #2]
 
-The single biggest hole the founding session found, and it is unclosed. A category is not a target. Assignment item 2 is ten named platforms where **every tenant already has their own app**, with a named human at each — Subsplash, Passion.io, then the fintech four (Q2, Banno, Alkami, Backbase). On those the addressable app count equals the tenant count; on a shared-shell platform it is roughly a hundredth of it ([[Tier_Unlock_ROI]]).
+The single biggest hole the founding session found, and it is unclosed. A category is not a target. Assignment item 2 is ten named platforms where **every tenant already has their own app**, with a named human at each — Subsplash, Passion.io, then the fintech four (Q2, Banno, Alkami, Backbase). On those the addressable app count equals the tenant count; on a shared-shell platform it is roughly a hundredth of it ([[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]]).
 
 **Why it matters:** nothing else in the company moves until this list exists. It is also cheap — this is a research afternoon, not a project.
 
@@ -88,7 +88,7 @@ The measured numbers are for tenants buying their first branded app. Recompose's
 
 The lost-deals half of the value argument needs design to influence which platform a tenant picks. Across a dozen documented custom-build cases, design was **never the sole driver** and appears only as a co-driver. The two closest cases — Circle's *"how the platform looks and feels is really important to me"* and Mariana Tek's *"never puts its own branding in front of your clients"* — are vendor testimonials, and both are platform-to-platform switches rather than bespoke builds. That is the only evidence pointing at the mechanism.
 
-**Why it matters:** [[Brand_Is_Product]] has now taken three independent hits (`Research/2026-05-01-ai-brand-competitor-analysis.md:3`, `Research/2026-05-01-ai-brand-competitor-analysis-v2.md:47`, `Build_vs_Buy.md`). Lost deals is the half that survives, and it rests on two testimonials.
+**Why it matters:** [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]] has now taken three independent hits (`Research/2026-05-01-ai-brand-competitor-analysis.md:3`, `Research/2026-05-01-ai-brand-competitor-analysis-v2.md:47`, `Build_vs_Buy.md`). Lost deals is the half that survives, and it rests on two testimonials.
 
 **What closes it:** a platform naming a deal it lost on brand, or win/loss notes.
 
@@ -128,7 +128,7 @@ Offered in the founding session and not ruled on. `P5` makes CombatDen the refer
 
 ### 2.1 Does productionalize work? [T13] — the load-bearing one
 
-**This is where the product lives.** Approved visual mock in, production code out, [[No_New_Requests_Invariant|invariant]] preserved. It is the only step that must carry the invariant, the only translation whose output ships, and the one with no free oracle.
+**This is where the product lives.** Approved visual mock in, production code out, [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|invariant]] preserved. It is the only step that must carry the invariant, the only translation whose output ships, and the one with no free oracle.
 
 The specific hazard is that **the mock has no edge cases.** By design it has no features, no logic, no state — which is exactly what makes it cheap to generate and cheap to iterate on. It also means it does not know a list is paginated, a name can be 47 characters, or a screen has loading, empty, error and overflow states. The design agent therefore produces layouts that are correct against *ideal* data, and productionalize has to reconcile that against production code which is mostly edge cases.
 
@@ -174,7 +174,7 @@ The minor band is cosmetic by definition — annoying rather than breaking — a
 
 ### 2.2 Does the functional-equivalence gate actually pass on real variants? [T11]
 
-[[No_New_Requests_Invariant]] is the safety architecture: a redesign changes **arrangement only** — no screen merged or split, no functionality added or removed, the API surface provably identical. It is a strong claim *because* it is checkable by the customer's own engineers. **It has never been checked.**
+[[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]] is the safety architecture: a redesign changes **arrangement only** — no screen merged or split, no functionality added or removed, the API surface provably identical. It is a strong claim *because* it is checkable by the customer's own engineers. **It has never been checked.**
 
 **Why it matters:** it is the answer to "we don't want an external system driving our production UI," and it is a strictly tighter constraint than Gigacatalyst operates under. Promising it before building the gate would make it an assertion rather than a property.
 
@@ -184,7 +184,7 @@ The minor band is cosmetic by definition — annoying rather than breaking — a
 
 The engine is app-agnostic by construction: every app is one `apps/<app_id>/` folder and the pipeline knows nothing about any specific app. That has only ever been exercised on `apps/combatden/` and `apps/smoketest/` — both written by the founder, both ends of the contract included.
 
-**Why it matters:** the core claim of the [[Closed_Design_To_Production_Loop]] is "point it at a different app and it customizes that app." Two self-authored apps do not prove it. This is also why the Theme Factory demo, however good, proves nothing new — it renders an app whose [[Tokenized_Design_System|tokenization]] was written by the same person who wrote the pipeline.
+**Why it matters:** the core claim of the [[Concepts/Product/Mechanisms/Closed_Design_To_Production_Loop|Closed_Design_To_Production_Loop]] is "point it at a different app and it customizes that app." Two self-authored apps do not prove it. This is also why the Theme Factory demo, however good, proves nothing new — it renders an app whose [[Concepts/Product/Mechanisms/Tokenized_Design_System|tokenization]] was written by the same person who wrote the pipeline.
 
 **What closes it:** the Second Shell — tokenize a structurally foreign app end to end. Deliberately sequenced *after* a real call, aimed at whatever stack an interested party actually runs.
 
@@ -194,7 +194,7 @@ Both of these — the old 2.4 and 2.5 — collapsed into one answer: **Recompose
 
 Two fork layers, both kept current by an agent. A **shared tokenized fork** of the platform's app is Recompose's base, re-derived against their main as they ship. Each **design fork** — one per design, not per tenant — is re-derived against that base. Changes land on **`uat`**, the platform's own branch that is ahead of `main`, never straight to production. A re-derive the agent cannot complete halts rather than landing unverified. The platform grants read access; that is the entire integration.
 
-The [[Re_Derived_Not_Forked]] principle is satisfied in a way its name does not describe — divergence exists in the git sense, but nothing in it is hand-maintained, so it never accumulates as human work. The trade is that the maintenance burden moves to Recompose permanently, and absorbing it agentically is what [[Autonomous_Operation|the autonomous promise]] claims.
+The [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]] principle is satisfied in a way its name does not describe — divergence exists in the git sense, but nothing in it is hand-maintained, so it never accumulates as human work. The trade is that the maintenance burden moves to Recompose permanently, and absorbing it agentically is what [[Concepts/Business/Strategy/Autonomous_Operation|the autonomous promise]] claims.
 
 **Rejected in the same decision: the layout enum** — the option the founder rated highest as recently as 2026-07-27. It requires writing generated layout code into their trunk, which is incompatible with never touching it. Founder: *"just touching and maintaining their production code sounds like a mess. Agentic separate forks you essentially don't have to think about unless there is an error is better."*
 
@@ -212,7 +212,7 @@ Created by the resolution above. If the source of truth for a tenant's design is
 
 ### 2.6 What does "nested html" mean concretely? [OQ1, assignment #4]
 
-Raised by the founder as a candidate [[Integration_Surface]] alongside the SDK and API. Read provisionally as embeddable web surfaces a platform drops in — an iframe-able theme picker or editor, webview components — **but that is inference, not a statement.** It is a materially different engineering commitment from an SDK plus an API.
+Raised by the founder as a candidate [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]] alongside the SDK and API. Read provisionally as embeddable web surfaces a platform drops in — an iframe-able theme picker or editor, webview components — **but that is inference, not a statement.** It is a materially different engineering commitment from an SDK plus an API.
 
 **What closes it:** one paragraph naming the surface, who embeds it, and what it replaces. Needs to exist before the phrase enters any roadmap.
 
@@ -254,7 +254,7 @@ What is known rather than decided:
 
 - **The old $100/$300/$500 ladder is dead.** It was gym-owner pricing from the CRM prehistory and does not transfer to a platform buyer.
 - **The anchor moved.** Because the product now replaces a designer *and* the front-end engineer who implements the design, the reference is a **services** line item — the $10–50k / 4–12 week custom build — not a software line item. That is roughly an order of magnitude higher than the theming budget it used to be compared against.
-- **The metering unit is undecided**: per branded tenant, per seat, platform licence, or revenue share on the premium tier the platform unlocks. The [[Tier_Unlock_ROI]] framing suggests pricing tied to what the tier earns them, but nothing is decided.
+- **The metering unit is undecided**: per branded tenant, per seat, platform licence, or revenue share on the premium tier the platform unlocks. The [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]] framing suggests pricing tied to what the tier earns them, but nothing is decided.
 - **No comparable exists in the nearest analog.** Gigacatalyst publishes no pricing.
 
 **Why it matters more than it first appeared:** the pitch is *"close enough at a fraction of the price."* **The ratio is the pitch, and it is meaningless until the fraction has a number.** Pricing is not a later problem; it is part of the value claim.
@@ -285,13 +285,13 @@ Codex's challenge, raised independently of Claude's and stronger than it: adopti
 
 Its own falsification test, kept verbatim because it is the sharpest one in the vault: *"5 real white-label SaaS platforms agree the value prop, but the first integration takes weeks, touches many screens, needs engineering refactors, or stalls in security/QA/app-store/build-process concerns. If that happens, tokenization was the product, not just onboarding."*
 
-**Why it matters:** the answer to the technical half is [[Integration_Surface]] — adopt the engine without changing your architecture. The organizational half is not answered by architecture and remains live.
+**Why it matters:** the answer to the technical half is [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]] — adopt the engine without changing your architecture. The organizational half is not answered by architecture and remains live.
 
 **What closes it:** five platforms agreeing on value, then watching what happens to the first integration.
 
 ### 4.2 How long does the tokenization pass take? [T9, restated 2026-07-28]
 
-**The original question is moot.** It asked whether integration could beat Gigacatalyst's public ~2 days to install and ~2 weeks to full platform integration. There is no longer an installation step to measure — the platform grants read access and Recompose forks ([[Never_Touch_Their_Code]]), so their benchmark measures something this product does not do.
+**The original question is moot.** It asked whether integration could beat Gigacatalyst's public ~2 days to install and ~2 weeks to full platform integration. There is no longer an installation step to measure — the platform grants read access and Recompose forks ([[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]]), so their benchmark measures something this product does not do.
 
 What survives is narrower and entirely on our side of the line: **how long the forward-deployed tokenization pass takes, and how fast it compresses.** That is the only labor left in onboarding, it is paid work rather than friction the customer absorbs, and compressing it is the stated roadmap priority.
 
@@ -309,7 +309,7 @@ Approval states, run history, QA, per-tenant status. This is the build-sequencin
 
 The founder named *"a very broad preset themes"* as part of the value, and pre-generated presets and mix-and-match theme sets are now the **demo surface** rather than the architecture. What is unexamined: whether presets are the **platform's** product (a library the platform curates and sells) or the **tenants'** product (a starting point each tenant picks from). Those are different products with different owners.
 
-**Why it matters:** the [[Shopify_Pattern]] read — ~98.5% of merchants use stock themes — says curated-set-plus-brand-overlay is the shape buyers actually want. Which side of the platform boundary that set lives on decides who reviews it and who is accountable for it.
+**Why it matters:** the [[Concepts/Business/Strategy/Shopify_Pattern|Shopify_Pattern]] read — ~98.5% of merchants use stock themes — says curated-set-plus-brand-overlay is the shape buyers actually want. Which side of the platform boundary that set lives on decides who reviews it and who is accountable for it.
 
 **What closes it:** asking a platform whether they would want to own the preset library or hand it to tenants.
 

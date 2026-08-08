@@ -29,7 +29,7 @@ Per-tenant theming is already sold as a priced tier: the embedded-analytics whit
 
 ## Related concepts
 
-- [[Freelance_Conversion_Thesis]]
-- [[AI_Design_Compression]]
-- [[Full_Visual_Redesign]]
-- [[Brand_Is_Product]]
+- [[Concepts/Business/Strategy/Freelance_Conversion_Thesis|Freelance_Conversion_Thesis]]
+- [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]]
+- [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]]
+- [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]]

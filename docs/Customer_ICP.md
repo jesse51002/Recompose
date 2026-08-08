@@ -7,7 +7,7 @@ source-pivot: pivots/2026-08-02-23-icp-filter-moves-to-tenants-who-already-have-
 
 # Customer ICP
 
-Concepts touched: [[Tier_Unlock_ROI]], [[Integration_Surface]], [[Full_Visual_Redesign]], [[Freelance_Conversion_Thesis]], [[Closed_Design_To_Production_Loop]], [[No_New_Requests_Invariant]], [[Re_Derived_Not_Forked]], [[Brand_Is_Product]], [[Tokenized_Design_System]], [[AI_Design_Compression]].
+Concepts touched: [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Business/Strategy/Freelance_Conversion_Thesis|Freelance_Conversion_Thesis]], [[Concepts/Product/Mechanisms/Closed_Design_To_Production_Loop|Closed_Design_To_Production_Loop]], [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]], [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]], [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]].
 
 > [!warning] Status
 > Nothing in this document has been validated against a real buyer. No platform has been contacted. See "Validation status" at the end before using any of it as a fact.
@@ -99,13 +99,13 @@ The figures below are **tier prices, not design prices**, and the distinction is
 
 **Two halves. Neither is tenant satisfaction.**
 
-**1. Tier-unlock ([[Tier_Unlock_ROI]]).** A premium tier bounded by people rather than by demand — 3–6 weeks of human time per tenant, everywhere it is offered. Embedded-analytics vendors publish a formal level 1–4 white-label ladder in which **level 3 is explicitly "per-tenant theming for reseller scenarios"** — per-tenant theming is not sold to make end users happy, it is **priced as a tier**. The pitch is *"a price tier you can't currently sell."*
+**1. Tier-unlock ([[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]]).** A premium tier bounded by people rather than by demand — 3–6 weeks of human time per tenant, everywhere it is offered. Embedded-analytics vendors publish a formal level 1–4 white-label ladder in which **level 3 is explicitly "per-tenant theming for reseller scenarios"** — per-tenant theming is not sold to make end users happy, it is **priced as a tier**. The pitch is *"a price tier you can't currently sell."*
 
 **2. Lost deals.** Platforms lose competitive deals to whoever's app can actually look like the prospect's brand. This is the loss-framed half, adapted directly from Gigacatalyst's own problem statement — *"you lose competitive deals — customers choose vendors that have the exact workflow they operate on"* — with workflow swapped for brand. It lands with a sales leader where the margin argument only lands with a CFO. The pitch is *"the deals you lose on brand."*
 
 > [!danger] The rule
 > **Never sell "your tenants will love it."**
-> The vault's own competitor research proves it false: app-store reviews of Subsplash-, Mindbody-, and Olo-powered apps overwhelmingly complain about bugs, booking failures, and slow loading — **almost never about looking generic**. End consumers have no comparison set; they see their gym's app, not all gym apps. The pain of templating is felt by the B2B buyer, not the end user ([[Brand_Is_Product]]).
+> The vault's own competitor research proves it false: app-store reviews of Subsplash-, Mindbody-, and Olo-powered apps overwhelmingly complain about bugs, booking failures, and slow loading — **almost never about looking generic**. End consumers have no comparison set; they see their gym's app, not all gym apps. The pain of templating is felt by the B2B buyer, not the end user ([[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]]).
 >
 > Reframing the ROI as tier-unlock makes that finding **irrelevant rather than damaging**. Reintroducing the end-user claim makes it damaging again, in front of the one buyer who can check it.
 
@@ -118,7 +118,7 @@ The retention argument (a tenant who has shaped an app into its own brand does n
 This moved, and the move is the largest strategic consequence of the July 2026 pivot (§11d).
 
 - **When the product was assets only**, it replaced a **designer applying a brand** — a few days per tenant, a theming budget.
-- **Now that the product changes structure too** ([[Full_Visual_Redesign]]), it replaces the designer **and the front-end engineer who implements the design**. That is the **whole custom-build line item: $10–50k and 4–12 weeks** in the agency market.
+- **Now that the product changes structure too** ([[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]]), it replaces the designer **and the front-end engineer who implements the design**. That is the **whole custom-build line item: $10–50k and 4–12 weeks** in the agency market.
 
 Consequences for who we are actually up against:
 
@@ -126,9 +126,9 @@ Consequences for who we are actually up against:
 - **Promoted to direct:** in-platform design services — Mighty Pro's Design Lab, Passion.io's DFY tier, BentoBox under Clover — but only the design line item inside them. The rest of the tier is untouched: migration, the named strategist, App Store operations, seat and member limits, SSO. At Mighty Pro that is one of six deliverables, and it is not the one the price is set by.
 - **Promoted to direct:** agency and freelance custom app builds.
 
-**The [[Freelance_Conversion_Thesis]] returns inverted.** Agencies are not the buyer; agency-grade work is what the product sells. The budget being attacked is the **custom-build budget, not the theming budget** — which moves the pricing anchor from a software line item to a services line item, an order of magnitude higher.
+**The [[Concepts/Business/Strategy/Freelance_Conversion_Thesis|Freelance_Conversion_Thesis]] returns inverted.** Agencies are not the buyer; agency-grade work is what the product sells. The budget being attacked is the **custom-build budget, not the theming budget** — which moves the pricing anchor from a software line item to a services line item, an order of magnitude higher.
 
-**The bar is not parity.** Founder, correcting an overstatement in-session: *"it deosnt have to clear it, and it likely never will but it has to be clsoe enough to it, wher eit can give very close to the quailty at a fraction of the price, we are not trying to beat actual designers here."* Close enough at a fraction of the price — the standard disruption shape ([[AI_Design_Compression]]). What changed with the added structure is the **comparison target** (a custom build rather than a generic template), not the requirement.
+**The bar is not parity.** Founder, correcting an overstatement in-session: *"it deosnt have to clear it, and it likely never will but it has to be clsoe enough to it, wher eit can give very close to the quailty at a fraction of the price, we are not trying to beat actual designers here."* Close enough at a fraction of the price — the standard disruption shape ([[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]]). What changed with the added structure is the **comparison target** (a custom build rather than a generic template), not the requirement.
 
 ---
 
@@ -140,7 +140,7 @@ The feared hostile evaluator — a head of tenant design who sees the gap betwee
 
 That cuts both ways and the second half is worse. Political risk is low: nobody's team is visibly on the line, so there is little reason for a lukewarm technical review (T8). But there is also **no internal owner whose job improves if the purchase succeeds** — no champion carrying it through procurement. A deal with no opponent and no advocate stalls rather than losing.
 
-Codex's separate objection is the organizational twin of this and is still live (T4): adoption stalls not on engineering but on *"messy design systems, hardcoded one-off screens, asset assumptions, native build quirks, QA ownership, and internal resistance to giving an external system control over production UI."* Two answers exist and both are architectural rather than rhetorical — [[No_New_Requests_Invariant]] (arrangement only; the API surface is provably identical, so their QA surface is unchanged by construction and their own engineers can verify it) and [[Re_Derived_Not_Forked]] (the redesign is a repeatable transformation re-applied per release, not a permanent fork, so upgrades still ship once). Neither has been tested on a real customer.
+Codex's separate objection is the organizational twin of this and is still live (T4): adoption stalls not on engineering but on *"messy design systems, hardcoded one-off screens, asset assumptions, native build quirks, QA ownership, and internal resistance to giving an external system control over production UI."* Two answers exist and both are architectural rather than rhetorical — [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]] (arrangement only; the API surface is provably identical, so their QA surface is unchanged by construction and their own engineers can verify it) and [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]] (the redesign is a repeatable transformation re-applied per release, not a permanent fork, so upgrades still ship once). Neither has been tested on a real customer.
 
 ---
 
@@ -148,13 +148,13 @@ Codex's separate objection is the organizational twin of this and is still live 
 
 **Forward-deployed.** The founder does the integration as paid onboarding; per-tenant generation is near-zero marginal cost afterward (P4).
 
-**What the platform has to do to adopt it: grant read access.** Nothing else. Recompose keeps its own tokenized fork and derives every design from it, so there is no library to adopt, no API to wire, no version to track and no pull request to review ([[Never_Touch_Their_Code]]). The [[Integration_Surface]] principle — a platform adopts the engine without changing its architecture — is satisfied more completely by having nothing to integrate than any SDK would have satisfied it.
+**What the platform has to do to adopt it: grant read access.** Nothing else. Recompose keeps its own tokenized fork and derives every design from it, so there is no library to adopt, no API to wire, no version to track and no pull request to review ([[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]]). The [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]] principle — a platform adopts the engine without changing its architecture — is satisfied more completely by having nothing to integrate than any SDK would have satisfied it.
 
 That changes the comparison. Gigacatalyst's public ~2 days to install and ~2 weeks to full integration was the bar to beat when there *was* an installation step; there is not one now, and the remaining time cost is the forward-deployed tokenization pass, which is our work rather than theirs. The roadmap priority is compressing that pass — **not** adding generation modalities, and no longer multi-language SDK breadth.
 
-The reason this is infrastructure rather than a pipeline with a services team attached: an agent that can write view code for a redesign is the same capability as an agent that can do the initial [[Tokenized_Design_System|tokenization]] pass. The blocker and the product collapse into one thing (P14a).
+The reason this is infrastructure rather than a pipeline with a services team attached: an agent that can write view code for a redesign is the same capability as an agent that can do the initial [[Concepts/Product/Mechanisms/Tokenized_Design_System|tokenization]] pass. The blocker and the product collapse into one thing (P14a).
 
-The differentiator that survives all of the above is three-legged: cross-modal coherence, the [[Closed_Design_To_Production_Loop|closed design→production loop]], and low-friction integration. Everyone else stops at tokens, brand kits, or a mockup a human still has to implement.
+The differentiator that survives all of the above is three-legged: cross-modal coherence, the [[Concepts/Product/Mechanisms/Closed_Design_To_Production_Loop|closed design→production loop]], and low-friction integration. Everyone else stops at tokens, brand kits, or a mockup a human still has to implement.
 
 ---
 

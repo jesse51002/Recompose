@@ -5,7 +5,7 @@
 **Source session:** `Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md`
 **Decision it reflects:** `pivots/2026-07-27-11-customization-engine-is-the-company.md`
 
-Concepts touched: [[Orchestrator]], [[Modal_Coherence]], [[Tokenized_Design_System]], [[Brand_Is_Product]], Switching_Cost_Moat, [[AI_Design_Compression]].
+Concepts touched: [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]], [[Concepts/Product/Mechanisms/Modal_Coherence|Modal_Coherence]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]], Switching_Cost_Moat, [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]].
 
 > **Company name (2026-07-28, founder): Recompose.** Provisional — chosen to have *something* sayable in the founder video, explicitly changeable. *Composition* is the design term for how elements are arranged on a screen, so re-compose names the arrangement-only invariant (P14) directly. Rejected: **Overhaul** + second word (the word's default association is car repair, and every second word either fought it or doubled it), **Repackage** (the everyday meaning is "changed the wrapper, nothing else" — the exact dismissal the pivot doc spends a page rejecting, and white-label already attracts it), **Remix / Retool / Render** (occupied by large dev companies), **Rendition** (the US association is extraordinary rendition). **Not yet checked for domain or trademark availability.**
 
@@ -243,7 +243,7 @@ Customers agentically redesign white-label apps.
 
 **Status: recorded.** Timings below are measured off `Recompose-YcDemo-Jesse.mp3`, not estimated. Still a working surface, not frozen like the answers above.
 
-Concepts engaged: [[Full_Visual_Redesign]], [[Tokenized_Design_System]], [[Never_Touch_Their_Code]], [[Re_Derived_Not_Forked]], [[Integration_Surface]], [[Autonomous_Operation]].
+Concepts engaged: [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]], [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]], [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]].
 
 **What it is walked on:** the studio's three pages, now on `main` — Generate (customer, real), Onboard (admin, demo-ware) and Fleet (admin, demo-ware) — plus the before/after compare and the ballet app `secondposition` in `JsxMockUps`. The order is **customer first, platform second**: the buyer has to want the outcome before they will listen to how it is delivered.
 

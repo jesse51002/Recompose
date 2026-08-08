@@ -5,7 +5,7 @@
 **Mode:** Startup, external-critique-and-pushback session with strategy doc updates
 **Builds on:** Business/Office_Hours/2026-04-30-14-Office_Hours_Customizable_White_Label_Thesis.md, Business/Office_Hours/2026-05-01-15-Office_Hours_Marketplace_Pivot_and_Architecture_Refinement.md
 
-Concepts touched: [[AI_Design_Compression]], [[Modal_Coherence]], [[Orchestrator]], [[Brand_Is_Product]], [[Tokenized_Design_System]], [[Template_Marketplace]], [[Freelance_Conversion_Thesis]].
+Concepts touched: [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]], [[Concepts/Product/Mechanisms/Modal_Coherence|Modal_Coherence]], [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]], [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], [[Template_Marketplace]], [[Concepts/Business/Strategy/Freelance_Conversion_Thesis|Freelance_Conversion_Thesis]].
 
 > Third office hours session on this idea, and the first one shaped as an external critique rather than a generative exploration. The user opened by asking for a read of everything in the vault and a reaction to the business idea. The session has a different structure from the prior two: I delivered a five-point critique of the converged thinking, the user pushed back on three of the five points, two of those pushbacks materially corrected my read, one was held with refinement. The session then crystallized the design-vs-features positioning, surfaced peak-end celebration animations as the load-bearing design insight, and produced one new strategy doc (Business/Differentiation.md) plus three corrections to existing docs (Business/2026-08-02-distribution-architecture.md, Business/Pricing.md, Business/Idea_Summary.md). The user declined a proposed prototype task at session close, taking ownership of prototype scope themselves. Several decisions sharpened, one was reversed (Apple friction severity), one was held open (open-door vs. conversion ICP framing). Nothing was committed beyond what was already committed in the prior session.
 
@@ -33,8 +33,8 @@ These premises and framings survived this session intact and remain locked unles
 - The architectural thesis (fixed structure + AI-orchestrated styling layer at SaaS pricing) is the load-bearing claim.
 - The marketplace tier ($300/mo) + custom tier ($1,000+/mo) two-tier product model from the May 1 session.
 - Per-customer Apple Developer account distribution as the only architecture that scales for the "your real native app on the App Store" promise.
-- The [[Orchestrator|orchestration layer]] is the actual product; generation models are commoditizing primitives.
-- [[Modal_Coherence|cross-modal coherence]] is the hard problem and the moat.
+- The [[Concepts/Product/Mechanisms/Orchestrator|orchestration layer]] is the actual product; generation models are commoditizing primitives.
+- [[Concepts/Product/Mechanisms/Modal_Coherence|cross-modal coherence]] is the hard problem and the moat.
 - Sub-vertical lean: fitness creators with paid programs (FOR NOW, can change after first conversations).
 - Build philosophy: copy or simplify the functionality from the closest vertical incumbent; do not innovate on features.
 - Direct-to-end-user, single-vertical GTM. Agency-reseller layer deferred.
@@ -155,7 +155,7 @@ The hedge surfaced a real conflation that should be untangled and held cleanly:
 - **Customizability** is the *mechanism*: tokenized design system + orchestration pipeline + per-modality controls + brand-questionnaire-driven application across illustration, palette, typography, copy, motion, layout.
 - **Design quality** is the *outcome*: the buyer's first reaction is "this looks miles better than Trainerize."
 
-These are not two separate bets. They are the means and the end of one bet. Customizability without design quality is sliders and chaos (Lovable / Bolt failure mode: maximum creative latitude, low coherence). Design quality without customizability is one beautiful template that everyone shares (the templated-incumbent failure mode). The product wins specifically because the *combination* works, which is the [[Modal_Coherence|cross-modal coherence]] claim landing in production.
+These are not two separate bets. They are the means and the end of one bet. Customizability without design quality is sliders and chaos (Lovable / Bolt failure mode: maximum creative latitude, low coherence). Design quality without customizability is one beautiful template that everyone shares (the templated-incumbent failure mode). The product wins specifically because the *combination* works, which is the [[Concepts/Product/Mechanisms/Modal_Coherence|cross-modal coherence]] claim landing in production.
 
 The instinct to call the bet "customizability" is correct startup intuition. Customizability is demonstrable in a demo (here is the slider, here is the impact). Design quality is qualitative and harder to prove without showing actual output. So pitch the mechanism (customizable across every modality, illustration to motion to copy register), and the design quality lands experientially through the demo. The Build_Philosophy.md doc already captures this in the line: *"easy access to powerful customization controls, not AI magic with one button."*
 

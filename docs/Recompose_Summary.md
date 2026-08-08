@@ -6,7 +6,7 @@ date: 2026-07-28
 
 # Recompose — Orientation
 
-Concepts touched: [[Full_Visual_Redesign]], [[Tier_Unlock_ROI]], [[Closed_Design_To_Production_Loop]].
+Concepts touched: [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Product/Mechanisms/Closed_Design_To_Production_Loop|Closed_Design_To_Production_Loop]].
 
 > [!info] The two-minute read
 > This doc is **what** Recompose does and who it is for. It is kept deliberately light.

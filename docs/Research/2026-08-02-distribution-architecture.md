@@ -1,6 +1,6 @@
 # Distribution Architecture
 
-Concepts touched: [[Brand_Is_Product]].
+Concepts touched: [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]].
 
 ## Decision: per-customer Apple Developer accounts
 
@@ -17,7 +17,7 @@ Apple Rule 4.2.6 (introduced June 2017, revised December 2017) legitimizes only 
 
 There is no Apple-blessed third path of "platform submits hundreds of branded variants under platform's developer account."
 
-Picker apps (option 2) preserve SaaS economics (one binary, many clients) but cap the brand-depth promise: every customer is in the same shell, branded inside it, and the App Store listing belongs to the platform, not the customer. This is fundamentally inconsistent with the [[Brand_Is_Product]] thesis.
+Picker apps (option 2) preserve SaaS economics (one binary, many clients) but cap the brand-depth promise: every customer is in the same shell, branded inside it, and the App Store listing belongs to the platform, not the customer. This is fundamentally inconsistent with the [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]] thesis.
 
 PWAs sidestep Apple 4.2.6 entirely but lose the "real native app on the App Store" pitch. They are a fallback for customers who don't want or can't manage a developer account, not the primary architecture.
 

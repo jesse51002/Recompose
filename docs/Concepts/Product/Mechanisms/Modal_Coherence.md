@@ -5,7 +5,7 @@ aliases: [cross-modal coherence, design coherence, brand coherence, anti-samenes
 
 # Modal Coherence
 
-The property of having a tenant's customized surfaces — images, colours, fonts, copy (and, in time, iconography, motion, and layout) — feel like one designer made them, rather than like separate AI tools produced outputs that got stapled together. The quality the [[Orchestrator]] is built to protect.
+The property of having a tenant's customized surfaces — images, colours, fonts, copy (and, in time, iconography, motion, and layout) — feel like one designer made them, rather than like separate AI tools produced outputs that got stapled together. The quality the [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]] is built to protect.
 
 Each modality producing technically-correct output independently is solvable today (text-to-image generators for imagery, an LLM for the palette, Google-Fonts selection, LLMs for copy). What is not solved is whether the outputs, when composed, feel coherent. An app can have a perfect image set, a perfect palette, perfect typography, and perfect copy and still feel off because the imagery's energy doesn't match the type, or the copy voice doesn't match the brand archetype.
 
@@ -23,6 +23,6 @@ In the shipped pipeline, coherence is pursued **structurally rather than through
 
 ## Related concepts
 
-- [[Orchestrator]]
-- [[Brand_Is_Product]]
-- [[AI_Design_Compression]]
+- [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]]
+- [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]]
+- [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]]

@@ -6,7 +6,7 @@ date: 2026-08-02
 
 # Attach rate on the branded-app tier
 
-Concepts touched: [[Tier_Unlock_ROI]], [[Shopify_Pattern]], [[Brand_Is_Product]].
+Concepts touched: [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Business/Strategy/Shopify_Pattern|Shopify_Pattern]], [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]].
 
 How many of a platform's tenants actually buy the branded-app tier. This is the multiplier on every revenue estimate for Recompose and no vendor publishes it. One vertical has been measured independently; everything else is inference from price ratios. Compiled 2026-08-02.
 

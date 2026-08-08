@@ -6,7 +6,7 @@ date: 2026-08-02
 
 # How white-label platforms deliver design today
 
-Concepts touched: [[Tier_Unlock_ROI]], [[AI_Design_Compression]], [[Tokenized_Design_System]], [[Full_Visual_Redesign]], [[Freelance_Conversion_Thesis]].
+Concepts touched: [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Business/Strategy/Freelance_Conversion_Thesis|Freelance_Conversion_Thesis]].
 
 Extracted 2026-08-02 from two superseded strategy docs in the pre-Recompose lineage — `Business/Pricing.md` and `Business/Differentiation.md` in the AICustomizableWhiteLabeled vault (both April–May 2026), which are not carried here because their ICP and pricing positions are dead. Two things below survive the change of company: platforms already charge for design delivery, and the ones who charge most cannot build the replacement themselves. Read the prices as **revenue lines, not cost lines** — `Research/2026-08-02-enterprise-tier-anatomy.md` and `Research/2026-08-02-attach-rate.md` carry the correction.
 
@@ -49,7 +49,7 @@ It applies much more weakly to the mid-tier vertical white-label specialists —
 
 That is a 12–18 month architectural rebuild for an engineering org of roughly 20–40 people whose roadmap is already saturated with integration requests, App Store policy compliance, and feature-parity demands from existing tenants. The cheaper path available to them is bolting shallow AI onto the existing template system — AI logo generators, AI palette suggestions, AI bio writers, an AI-assisted theme picker. That is what they are most likely to ship, and it does not close the gap.
 
-Two caveats worth keeping honest. This argument was written in May 2026 by the founder as pushback in an office hours session (`Office_Hours/2026-05-01-18-Office_Hours_External_Critique_and_Peak_End_Design.md`), not from evidence about any specific platform's roadmap or engineering headcount — the 20–40 figure is an estimate, not a datum. And it was written when the scope was assets only; under [[Full_Visual_Redesign]] the build the platform would have to do is *larger*, not smaller, since it now includes the front-end engineering as well as the design, which strengthens the argument in the same direction it already points.
+Two caveats worth keeping honest. This argument was written in May 2026 by the founder as pushback in an office hours session (`Office_Hours/2026-05-01-18-Office_Hours_External_Critique_and_Peak_End_Design.md`), not from evidence about any specific platform's roadmap or engineering headcount — the 20–40 figure is an estimate, not a datum. And it was written when the scope was assets only; under [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]] the build the platform would have to do is *larger*, not smaller, since it now includes the front-end engineering as well as the design, which strengthens the argument in the same direction it already points.
 
 ## What this does not establish
 

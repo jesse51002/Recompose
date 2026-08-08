@@ -35,9 +35,9 @@ Underlying research: `Research/2026-08-02-features-vs-design.md`, `Research/2026
 
 ## What this does not change
 
-The product is untouched. The mechanism, [[Full_Visual_Redesign]], [[No_New_Requests_Invariant]], never writing to the platform's trunk, read access as the whole integration, UAT as the landing branch, the autonomy promise and the halt-rather-than-ship property all stand. Pricing remains undefined. This is a change in the evidence under the value argument and in the qualifying filter, not in what is being built.
+The product is untouched. The mechanism, [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]], never writing to the platform's trunk, read access as the whole integration, UAT as the landing branch, the autonomy promise and the halt-rather-than-ship property all stand. Pricing remains undefined. This is a change in the evidence under the value argument and in the qualifying filter, not in what is being built.
 
-[[No_New_Requests_Invariant]] is in fact **strengthened**: 13 of 19 platforms researched have no path by which a tenant gets net-new functionality at any price, so "no new features" is the answer the platform already gives its own tenants rather than a constraint Recompose imposes.
+[[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]] is in fact **strengthened**: 13 of 19 platforms researched have no path by which a tenant gets net-new functionality at any price, so "no new features" is the answer the platform already gives its own tenants rather than a constraint Recompose imposes.
 
 ## Downstream impact
 

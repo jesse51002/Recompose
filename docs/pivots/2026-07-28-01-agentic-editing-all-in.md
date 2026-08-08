@@ -12,7 +12,7 @@ date: 2026-07-28
 > [!warning] The promise stated here was reversed on 2026-07-30
 > The architecture below stands unchanged. What no longer holds is the **promise sold alongside it** — human leverage, "one person can manage a hundred at a time", and the error budget justified by *UAT and a human reviewer being the designed architecture*. UAT was corrected to a branch with no queue and no reviewer, and the promise is now autonomous operation with halting as what makes the budget survivable. Read the sentences about human review, UAT review and the error budget below as history. Per the never-edit-retroactively rule, nothing in this doc has been altered.
 
-Concepts touched: [[Full_Visual_Redesign]], [[No_New_Requests_Invariant]], [[Closed_Design_To_Production_Loop]], [[Re_Derived_Not_Forked]], [[Orchestrator]], [[Integration_Surface]], [[Tokenized_Design_System]], [[Modal_Coherence]].
+Concepts touched: [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]], [[Concepts/Product/Mechanisms/Closed_Design_To_Production_Loop|Closed_Design_To_Production_Loop]], [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]], [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]], [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], [[Concepts/Product/Mechanisms/Modal_Coherence|Modal_Coherence]].
 
 ## The decision
 
@@ -29,7 +29,7 @@ Two things.
 
 ## What it pivots to
 
-- **Free agency over layout, bounded by an invariant rather than by an enum.** The agent is not choosing from options; it is editing, constrained only by [[No_New_Requests_Invariant|nothing added, nothing removed]].
+- **Free agency over layout, bounded by an invariant rather than by an enum.** The agent is not choosing from options; it is editing, constrained only by [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|nothing added, nothing removed]].
 - **A JSX mirror that is explicitly visual, not functional.** Mockware — no features, no logic, no API calls, no state. This is what keeps the invariant enforceable at productionalize time, on production code, where the platform's own engineers can still verify it by diff.
 - **Screenshots as the design accept condition.** Not deterministic the way WCAG is, but an oracle where the prior pivot said there was none — and one that only exists cheaply in a browser.
 - **A productionalize agent as the load-bearing component.** Approved visual design in, production code out, invariant preserved. This is now understood to be where the product's difficulty and its defensibility both live.

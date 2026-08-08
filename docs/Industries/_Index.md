@@ -6,7 +6,7 @@ date: 2026-08-04
 
 # Industries — ranked by design demand
 
-Concepts touched: [[Brand_Is_Product]], [[Tier_Unlock_ROI]], [[Full_Visual_Redesign]], [[AI_Design_Compression]], [[Freelance_Conversion_Thesis]].
+Concepts touched: [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]], [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]], [[Concepts/Business/Strategy/Freelance_Conversion_Thesis|Freelance_Conversion_Thesis]].
 
 One file per vertical, numbered by rank so the folder sorts itself. Derived from the 108 platforms in `Research/2026-08-04-company-list-white-label.csv` (extracted from `Research/2026-08-04-company-list-white-label.md`), scored against the evidence in `Customer_ICP.md`, `Design_vs_Feature_Work.md` and `Research/2026-05-01-ai-brand-competitor-analysis.md`.
 

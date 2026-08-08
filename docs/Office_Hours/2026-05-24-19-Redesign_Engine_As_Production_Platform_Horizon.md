@@ -5,9 +5,9 @@
 **Mode:** Startup, future-horizon / decision-space mapping
 **Related:** `Business/Office_Hours/2026-05-24-18-Office_Hours_Pricing_Axis_Restructure.md`, `Business/pivots/2026-05-20-23-customization-pipeline-simplified-to-dependency-dag.md`
 
-Concepts touched: [[Orchestrator]], [[Tokenized_Design_System]], [[Modal_Coherence]], [[AI_Design_Compression]], [[Shopify_Pattern]].
+Concepts touched: [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], [[Concepts/Product/Mechanisms/Modal_Coherence|Modal_Coherence]], [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]], [[Concepts/Business/Strategy/Shopify_Pattern|Shopify_Pattern]].
 
-> A long-term option, not a plan. The idea: productize the [[Orchestrator|redesign engine]] itself and sell it to other white-label app companies, or to freelancers/agencies, as infrastructure. The engine is already app-agnostic by deliberate design (every app is one `apps/<app_id>/` folder), so the architectural option is being kept open cheaply while the gym business is built. This doc records the idea and Claude's analysis so the thinking survives to the moment it's actually picked up.
+> A long-term option, not a plan. The idea: productize the [[Concepts/Product/Mechanisms/Orchestrator|redesign engine]] itself and sell it to other white-label app companies, or to freelancers/agencies, as infrastructure. The engine is already app-agnostic by deliberate design (every app is one `apps/<app_id>/` folder), so the architectural option is being kept open cheaply while the gym business is built. This doc records the idea and Claude's analysis so the thinking survives to the moment it's actually picked up.
 
 ---
 
@@ -31,7 +31,7 @@ The adjacent space is in fact one of the most contested in software right now. "
 
 ### The moat is not the capability
 
-If this became possible "a month ago because the models got good," the capability is not defensible — the same models are in everyone's hands, the funded teams included. New-models-enabled means land-rush, not open field. This is consistent with the locked premise (the product is the [[Orchestrator|orchestration layer]], not the models): the defensibility, if any, is [[Modal_Coherence|coherence]], the quality/eval bar, the [[Tokenized_Design_System|tokenized]] structure, and the white-label workflow — never "we have image gen."
+If this became possible "a month ago because the models got good," the capability is not defensible — the same models are in everyone's hands, the funded teams included. New-models-enabled means land-rush, not open field. This is consistent with the locked premise (the product is the [[Concepts/Product/Mechanisms/Orchestrator|orchestration layer]], not the models): the defensibility, if any, is [[Concepts/Product/Mechanisms/Modal_Coherence|coherence]], the quality/eval bar, the [[Concepts/Product/Mechanisms/Tokenized_Design_System|tokenized]] structure, and the white-label workflow — never "we have image gen."
 
 ### The viewing roadblock is probably the wrong monster
 

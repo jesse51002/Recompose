@@ -5,7 +5,7 @@
 **Mode:** Startup, architecture-options exploration
 **Builds on:** Business/Office_Hours/2026-05-01-15-Office_Hours_Marketplace_Pivot_and_Architecture_Refinement.md, Business/Office_Hours/2026-04-30-14-Office_Hours_Customizable_White_Label_Thesis.md
 
-Concepts touched: [[Orchestrator]], [[Tokenized_Design_System]], [[Shopify_Pattern]], [[Brand_Is_Product]].
+Concepts touched: [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], [[Concepts/Business/Strategy/Shopify_Pattern|Shopify_Pattern]], [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]].
 
 > Focused architecture session, not a full strategic diagnostic. The founder asked an open-ended exploration question: how does a client view the generated presets and **edit them live, seeing the result in the real app**, in a way that scales when selling the customization service — not just by running the Flutter app directly. The session worked through the industry landscape (white-label app builders, Shopify/WordPress live preview, Appetize emulator streaming, server-driven UI, design tokens), challenged the founder's own "Figma-style design tool" idea, and converged on a clear MVP direction with one path explicitly parked for the future. Nothing here overturns a prior documented decision, so no pivot doc is written; this stands alone as the record of the reasoning. The parked native-stack path is also logged in `Future_Ideas_and_Explorations/customization_live_preview.md`.
 
@@ -15,9 +15,9 @@ Concepts touched: [[Orchestrator]], [[Tokenized_Design_System]], [[Shopify_Patte
 
 These premises survive untouched and frame this session:
 
-- The actual product is the [[Orchestrator|orchestration layer]] that produces coherent brand-applied output, not the generation models. (2026-05-01)
-- The [[Shopify_Pattern]] is the architectural analog: fixed structure, brand/style layer applied on top, premium customization as the upsell tier. (2026-04-30, 2026-05-01)
-- The customization the product sells is **token/asset-level** — palette, typography, iconography, illustration, motion presets, copy register, logo — *not* layout or structural redesign. ([[Tokenized_Design_System]])
+- The actual product is the [[Concepts/Product/Mechanisms/Orchestrator|orchestration layer]] that produces coherent brand-applied output, not the generation models. (2026-05-01)
+- The [[Concepts/Business/Strategy/Shopify_Pattern|Shopify_Pattern]] is the architectural analog: fixed structure, brand/style layer applied on top, premium customization as the upsell tier. (2026-04-30, 2026-05-01)
+- The customization the product sells is **token/asset-level** — palette, typography, iconography, illustration, motion presets, copy register, logo — *not* layout or structural redesign. ([[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]])
 - Default quality matters more than iteration UX, because marketplace-tier buyers ship with first output and won't fiddle deeply. (2026-05-01)
 - "I am not making a magic button, I am making an easy way to customize, not frictionless or instant." (2026-05-01) — the live editor is a *light-touch* preview-and-nudge surface, not a design studio.
 
@@ -70,7 +70,7 @@ This is the same pattern the white-label builders ship (GoHighLevel, AppMySite, 
 
 ### Mechanism 1 — Stream the real binary (the (A) answer)
 
-Appetize.io / BrowserStack App Live: upload the actual `.ipa`/`.apk`, boot a real iOS simulator / Android emulator in the cloud, stream the screen into an iframe with input piped back. Live-update loop relies on the app re-reading the brand config at runtime (which the [[Tokenized_Design_System|config layer]] already assumes): edit token → push config → running app refetches → re-renders.
+Appetize.io / BrowserStack App Live: upload the actual `.ipa`/`.apk`, boot a real iOS simulator / Android emulator in the cloud, stream the screen into an iframe with input piped back. Live-update loop relies on the app re-reading the brand config at runtime (which the [[Concepts/Product/Mechanisms/Tokenized_Design_System|config layer]] already assumes): edit token → push config → running app refetches → re-renders.
 
 - **Strengths:** pixel-perfect (it IS the real app); language-agnostic — works for Kotlin, Swift, Unity, anything; previews an app the founder doesn't own.
 - **Weaknesses:** metered streaming cost; "live" feels like remote-desktop (2–5s, not instant); **concurrency queues** on metered plans; and the hard dependency that the target app must hot-read config without a rebuild (if it reads config only at build time, you re-upload a binary per change — fatal).

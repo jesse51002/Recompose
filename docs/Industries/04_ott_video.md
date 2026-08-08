@@ -12,6 +12,6 @@ status: reasoned-not-validated
 
 A streaming service is judged against Netflix and Disney+ by every user who opens it — the harshest comparison set in the list, and the one vertical where *looks generic* is a phrase end users genuinely say. Design carries browse behaviour and play-through directly, so the stakes are commercial rather than cosmetic.
 
-**The catch.** Variety is high but not maximal. The grid-of-rows convention is strong enough that differentiation lives in typography, colour, motion and density rather than in structure — which is the deterministic half of the pipeline, not the agentic [[Full_Visual_Redesign]] half that is hard to build and hard to copy.
+**The catch.** Variety is high but not maximal. The grid-of-rows convention is strong enough that differentiation lives in typography, colour, motion and density rather than in structure — which is the deterministic half of the pipeline, not the agentic [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]] half that is hard to build and hard to copy.
 
 **No-shell platforms in this vertical:** VidApp, Muvi

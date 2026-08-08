@@ -4,7 +4,7 @@
 **Status:** DRAFT — initial idea-inception session, no decisions made
 **Mode:** Startup, idea-inception exploration
 
-Concepts touched: [[AI_Design_Compression]], [[Tokenized_Design_System]], [[Shopify_Pattern]], [[Freelance_Conversion_Thesis]], [[Brand_Is_Product]], [[Coach]], [[Content_Creator]], [[Course_Creator]], [[Membership_Operator]].
+Concepts touched: [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], [[Concepts/Business/Strategy/Shopify_Pattern|Shopify_Pattern]], [[Concepts/Business/Strategy/Freelance_Conversion_Thesis|Freelance_Conversion_Thesis]], [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]], [[Coach]], [[Content_Creator]], [[Course_Creator]], [[Membership_Operator]].
 
 > This is the first office hours session on this idea. The exploration covers the architectural thesis, the historical precedent (Shopify pattern), the competitive landscape across two candidate verticals (restaurants and creators), the freelance-conversion strategic frame, the coach-vs-influencer distinction, and the market sizing across creator sub-segments. No specific vertical has been committed to. No customer development has yet occurred. Everything below is reasoning from desk research and structural analysis, and is to be tested empirically before any premise here is locked.
 
@@ -27,7 +27,7 @@ There exists a structural gap in the SMB software market between two existing ca
 
 The gap between these two: customers who want their app to feel custom-built but can't afford the freelance route, and don't want the templated look that white-label products produce. Currently they pick the templated product, complain about how generic it looks, and either swallow the compromise or abandon the category.
 
-The thesis: [[AI_Design_Compression|AI design generation]] has compressed the cost of producing distinct visual identities from weeks of human labor to hours of prompting. That cost compression unlocks a third category — fixed structure, deeply customizable styling layer, SaaS pricing — that previously was structurally not viable because design was expensive labor.
+The thesis: [[Concepts/Business/Strategy/AI_Design_Compression|AI design generation]] has compressed the cost of producing distinct visual identities from weeks of human labor to hours of prompting. That cost compression unlocks a third category — fixed structure, deeply customizable styling layer, SaaS pricing — that previously was structurally not viable because design was expensive labor.
 
 ---
 
@@ -39,7 +39,7 @@ The structural insight: the *structure* of any vertical-specific app (the data m
 
 The *styling* of those apps — illustration style, iconography, motion personality, copy tone, typography, color system — is where customers want differentiation. It is also, historically, where differentiation was expensive (a custom illustration set used to mean a freelance designer for $5k-$15k).
 
-Build the structure on a [[Tokenized_Design_System|tokenized SVG-driven design system]] where every visual element is parameterized. Build a generation pipeline that produces coherent skin sets per customer using AI. Result: the same codebase produces apps that look genuinely different per customer, at SaaS marginal cost.
+Build the structure on a [[Concepts/Product/Mechanisms/Tokenized_Design_System|tokenized SVG-driven design system]] where every visual element is parameterized. Build a generation pipeline that produces coherent skin sets per customer using AI. Result: the same codebase produces apps that look genuinely different per customer, at SaaS marginal cost.
 
 The pitch language that surfaced: *"a freelancer who works for your brand."* It frames a software feature as a service relationship — the buyer gets, effectively, a designer-on-tap who customizes the app to their brand identity, but pays SaaS prices for it.
 
@@ -112,7 +112,7 @@ Common complaint across community/course platforms: the templated look. Skool es
 
 Shopify won ecommerce because of a strategic call most competitors didn't make: the structure of an ecommerce app (catalog, cart, checkout, inventory, payments) is *boring and the same everywhere*. The interesting part is the brand experience on top. So they built a rock-solid commerce engine, then built a theme system that let merchants express identity on top of it. Merchants didn't compete on whether they had a working checkout. They competed on brand. Shopify took the structure off the table, freed everyone to compete on the part customers actually feel, and won.
 
-The architecture thesis is the [[Shopify_Pattern|same move]] applied to a different vertical. Pick the structure (whatever vertical app), nail it once, then make the styling layer extreme — beyond what any 2024 white-label player could afford to ship, but trivially affordable in 2026 because AI compresses design generation to hours.
+The architecture thesis is the [[Concepts/Business/Strategy/Shopify_Pattern|same move]] applied to a different vertical. Pick the structure (whatever vertical app), nail it once, then make the styling layer extreme — beyond what any 2024 white-label player could afford to ship, but trivially affordable in 2026 because AI compresses design generation to hours.
 
 Shopify's market cap is roughly $200B. Not a guarantee that the same playbook works in every vertical, but a real existence proof that *when the playbook works, the company is enormous.*
 
@@ -120,7 +120,7 @@ Shopify's market cap is roughly $200B. Not a guarantee that the same playbook wo
 
 ## The Freelance-Conversion Strategic Frame
 
-A sharper filter than "biggest market" emerged during the session, the [[Freelance_Conversion_Thesis|freelance-conversion frame]]: **target the verticals where SMBs/individuals currently pay freelancers $10k-$50k+ for custom apps.** That population has explicit, dollar-validated willingness to pay for customization. They explicitly rejected templated white-label products and chose to pay extra for custom. They are getting overcharged because design used to be expensive labor, and the AI cost compression directly attacks that price gap.
+A sharper filter than "biggest market" emerged during the session, the [[Concepts/Business/Strategy/Freelance_Conversion_Thesis|freelance-conversion frame]]: **target the verticals where SMBs/individuals currently pay freelancers $10k-$50k+ for custom apps.** That population has explicit, dollar-validated willingness to pay for customization. They explicitly rejected templated white-label products and chose to pay extra for custom. They are getting overcharged because design used to be expensive labor, and the AI cost compression directly attacks that price gap.
 
 This frame is materially different from "biggest white-label market" because:
 - White-label customers already accepted generic. The thesis doesn't unlock new value for them; they're satisfied with templates.
@@ -195,7 +195,7 @@ A critical clarification surfaced late in the session: *coaches and influencers 
 - App needs: content delivery, fan community, premium tiers, push notifications, merch, monetization layers
 - Currently use: Patreon, YouTube Memberships, custom-built apps (top tier), Passion.io for fitness specifically
 - Top-tier creators (~8M globally earning $100k+/yr) are the realistic candidates
-- Brand-consciousness: extreme ([[Brand_Is_Product|their brand IS the product]])
+- Brand-consciousness: extreme ([[Concepts/Business/Strategy/Brand_Is_Product|their brand IS the product]])
 - Willingness to pay: variable, $50-$2000/mo, top tier commissions $50k-$500k custom builds
 - App is fundamentally a *fan engagement and monetization tool*
 

@@ -15,5 +15,5 @@ This frame is materially different from "biggest white-label market." White-labe
 
 ## Related concepts
 
-- [[AI_Design_Compression]]
-- [[Brand_Is_Product]]
+- [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]]
+- [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]]

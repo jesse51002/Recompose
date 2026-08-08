@@ -15,5 +15,5 @@ For these customers, brand-coherence in every digital surface is a primary comme
 
 ## Related concepts
 
-- [[Freelance_Conversion_Thesis]]
-- [[Shopify_Pattern]]
+- [[Concepts/Business/Strategy/Freelance_Conversion_Thesis|Freelance_Conversion_Thesis]]
+- [[Concepts/Business/Strategy/Shopify_Pattern|Shopify_Pattern]]

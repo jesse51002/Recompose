@@ -5,7 +5,7 @@
 **Mode:** Startup, architectural-decision session
 **Builds on:** Business/Office_Hours/2026-05-01-15-Office_Hours_Marketplace_Pivot_and_Architecture_Refinement.md
 
-Concepts touched: [[Orchestrator]], [[Modal_Coherence]], [[Tokenized_Design_System]], [[Shopify_Pattern]], [[AI_Design_Compression]]
+Concepts touched: [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]], [[Concepts/Product/Mechanisms/Modal_Coherence|Modal_Coherence]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], [[Concepts/Business/Strategy/Shopify_Pattern|Shopify_Pattern]], [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]]
 
 > Working session that locked the AI Gen pipeline's shape after several open architectural questions. Triggered by the user adding `Business/Research/2026-05-04-design-architecture-research.md`, an external competitive-architecture survey that compared the pipeline to ~50 shipped systems and the published research literature. The session resolved four open decisions, demoted one architectural element, and dropped one stage entirely. Not a pivot — the architecture was never set in stone — but several previously open questions converged here.
 
@@ -15,11 +15,11 @@ Concepts touched: [[Orchestrator]], [[Modal_Coherence]], [[Tokenized_Design_Syst
 
 Locked from the May 1 session and not reopened:
 
-- The product is the [[Orchestrator|orchestration layer]], not the underlying generation models.
+- The product is the [[Concepts/Product/Mechanisms/Orchestrator|orchestration layer]], not the underlying generation models.
 - Marketplace + custom tier as the customer journey ($300 / $1k tiers).
 - Per-customer Apple Developer account distribution.
 - Default quality is the product (most users won't iterate aggressively).
-- Cross-module [[Modal_Coherence|modal coherence]] is the actual hard problem and the moat.
+- Cross-module [[Concepts/Product/Mechanisms/Modal_Coherence|modal coherence]] is the actual hard problem and the moat.
 - MVP uses curated motion presets selected by brand archetype; full per-tenant motion generation is v2.
 - Iconography is half-solved at quantity; library-scoped selection works for MVP.
 - Build philosophy: copy + simplify + don't innovate the functionality.

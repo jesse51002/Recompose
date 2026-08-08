@@ -21,7 +21,7 @@ One narrow residual is recorded and not closed: **client-side role gating**. A c
 
 ## Related concepts
 
-- [[Full_Visual_Redesign]]
-- [[Re_Derived_Not_Forked]]
-- [[Integration_Surface]]
-- [[Orchestrator]]
+- [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]]
+- [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]]
+- [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]]
+- [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]]
