@@ -81,38 +81,41 @@ What to know about the state of the vault:
 - **This vault was created on 2026-07-28 by migrating the engine-lineage material out of CombatDen.** Only docs that are true for Recompose came over; the gym CRM strategy, sales, UX and market material was deliberately left behind and still lives in `/var/home/jm/Documents/CombatDen/docs`. If you need gym-era context, read it there — do not copy it here.
 - **The carried historical docs were written while the company was still a gym CRM.** The earliest office hours docs and pivots, and much of `Research/`, use gym framing as their working example, because that is when they were written. They are correct as history and are **never edited retroactively** (see the pivot and office hours conventions in `docs/CLAUDE.md`). Read them for the reasoning, not for the current buyer.
 
-## GBrain: semantic search over the vault and the code
+## GBrain: semantic search over the vault
 
-A local [gbrain](https://github.com/garrytan/gbrain) brain indexes this repo, so a question can be asked by meaning rather than by exact string. Engine is PGLite at `~/.gbrain/`, embeddings are `voyage:voyage-code-3` at 1024 dimensions, and it is local to this machine — nothing is uploaded.
+A local [gbrain](https://github.com/garrytan/gbrain) brain indexes the vault, so a question can be asked by meaning rather than by exact string. Engine is PGLite at `~/.gbrain/`, embeddings are `voyage:voyage-3-large` at 1024 dimensions, local to this machine — nothing is uploaded.
 
-**The vault is `default`; every subsystem is its own `rc-*` source.** All are federated, so a plain search spans prose and code together and one query can return the concept doc and the function that implements it. `gbrain sources list` is the authoritative listing.
-
-The vault is the source that earns its keep: it is past what fits in a context window, and most of it is `Office_Hours/` and `pivots/` that conventions forbid rewriting, so semantic search is the only cheap way to reach that history. The code sources add file-and-line granularity — results come back as `ThemeTree/executor/registry.py:86-240 function build_all`.
+**One source, `default`, and it holds prose only:** office hours, pivots, research, the strategy docs at the vault root, and `Industries/`. That is the material this exists for — roughly 155k words that do not fit in a context window, most of it history that conventions forbid rewriting.
 
 ```bash
-gbrain search "<terms>"                      # semantic, every source
-gbrain search "<terms>" --source default     # vault only
-gbrain query "<question>"                    # question-answering
+gbrain search "<terms>"      # semantic
+gbrain query "<question>"    # question-answering
 ```
 
-**Reach for it when you don't know the exact string yet** — "what did we decide about pricing", "where does the executor level the graph". Grep is still right for known identifiers, regex, and file globs.
+**What it is good at is discovery, not lookup.** It reliably tells you *which* documents argue a thing; it does not reliably return *the* passage. Measured on ten questions with known answers, roughly half land on the right document. Phrasing moves results more than it should — "what happens when an agent cannot satisfy the accept condition" returns the error-budget passage, while "what is the error budget" does not. **Treat a hit as a pointer to go read the doc, never as the answer itself.**
 
-**To refresh after meaningful changes**, re-run the one that changed. Both are idempotent — gbrain dedupes on content hash, so re-running over unchanged files is cheap.
+**Two things are deliberately NOT indexed.** Both were measured decisions, not oversights:
+
+- **Code.** The symbol graph that would justify it (`code-def`, `code-refs`, `code-callers`) does not work on this schema pack, so indexing code buys semantic search over a tree that Grep already searches exactly and never staler than the working copy. Code changed on every commit and would have needed a manual re-sync across eight sources. Grep is the tool for code here.
+- **`Concepts/`.** Concept files are short by convention — median 307 words — so their embeddings are dominated by the title and they won any topically adjacent query on the heading alone, crowding out the substantive doc. For a definition, read `docs/Concepts/_Index.md`: 1,143 words, one line per concept, complete. A glossary is a lookup table, not a retrieval target.
+
+**To refresh after meaningful vault changes**, re-import and then strip the concepts again — an import re-adds them, so the deletion is part of the loop, not a one-off:
 
 ```bash
-gbrain import docs                                  # the vault
-gbrain sync --strategy code --source rc-themetree   # one subsystem
+gbrain import docs
+find docs/Concepts -name '*.md' | sed 's|^docs/||; s|\.md$||' \
+  | tr '[:upper:]' '[:lower:]' | xargs -rn1 gbrain delete
 ```
 
 Five things that are true here and not in gbrain's general documentation. Each one cost a wrong turn to find:
 
-- **`gbrain import` only ingests markdown.** Pointing it at a code directory silently imports the `.md` files in it and nothing else — it reports `success` while importing zero source files. Code needs `gbrain sync --strategy code`, which is a different walker entirely.
-- **`--source-id <id>` does not create the source.** Importing into a source that does not exist yet fails every file with a foreign key violation and still exits `success`. Run `gbrain sources add <id> --path <dir>` first, and check `page_count` afterwards rather than trusting the exit status.
-- **Never point a code source at the repo root, and do not run `/sync-gbrain`.** The code walk prunes by directory *name* and never consults `.gitignore`, so at the root it descends into `apps/` — 3.4 GB of generated runs — and embeds hundreds of produced `output.yaml` files. **This is why there is one source per subsystem rather than one for the repo:** it scopes the walk so `apps/` is never reached. A new subsystem needs its own source; it will not be picked up otherwise.
-- **A new source is `isolated` until you federate it.** `sources add` defaults to isolated, which means it is only searched when named explicitly with `--source` — a plain search silently ignores it and looks like the index is missing. Run `gbrain sources federate <id>` after adding.
-- **`code-def` / `code-refs` / `code-callers` do not work.** They need a schema pack that extracts code symbols; this brain runs `gbrain-base-v2`, which does not. A `gbrain dream` cycle would complete and still leave the graph empty. Symbol lookup is Grep's job here.
+- **`gbrain import` only ingests markdown.** Pointing it at a code directory silently imports the `.md` files in it and nothing else — it reports `success` while importing zero source files. Code needs `gbrain sync --strategy code`, a different walker entirely.
+- **`--source-id <id>` does not create the source.** Importing into a source that does not exist fails every file with a foreign key violation and still exits `success`. Run `gbrain sources add <id> --path <dir>` first, and check `page_count` rather than trusting the exit status.
+- **You cannot exclude a subdirectory at import time.** `docs/` is inside a git tree, so gbrain enumerates through `git ls-files` and honours `.gitignore` — not `.gbrainignore`. Since `Concepts/` must stay tracked, the only route is import-then-delete.
+- **A new source is `isolated` until you federate it.** `sources add` defaults to isolated, meaning it is only searched when named with `--source`; a plain search silently ignores it and it reads as a missing index. Run `gbrain sources federate <id>`.
+- **The embedding model cannot be changed in place.** `gbrain config set embedding_model` is rejected outright: the field sizes the schema, so writing it to the DB would be a silent no-op. Switching means moving `~/.gbrain/brain.pglite` aside, re-running `gbrain init`, and reimporting.
 
-PGLite is also single-process: a live `gbrain serve` owns the database, so an import fails while one is running.
+Never point a code source at the repo root and do not run `/sync-gbrain`: the code walk prunes by directory *name* and never consults `.gitignore`, so at the root it descends into `apps/` — 3.4 GB of generated runs. PGLite is also single-process, so a live `gbrain serve` blocks any import.
 
 ## Subdirectory CLAUDE.md files
 
