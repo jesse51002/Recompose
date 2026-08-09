@@ -13,6 +13,9 @@
 #                 starts fine and 404s every design, so the studio comes up with
 #                 an empty catalogue and no error anywhere.
 #   node_modules  Six subsystems, each installing its own.
+#   .gbrain/      The vault's search index. Missing, every `gbrain think` in the
+#                 worktree answers "No brain configured" — loud, but it means no
+#                 grounding for any question about the product.
 #
 # It is idempotent — safe to re-run whenever main gains new runs.
 #
@@ -88,6 +91,31 @@ for app_dir in "$main"/apps/*/; do
   done
 done
 echo "  apps/*/*/       $linked run(s) linked"
+
+# --- 2b. The vault's brain --------------------------------------------------
+# SYMLINKED, like the runs: a derived index, hundreds of MB, identical across
+# worktrees because docs/ is tracked. Rebuilding one per worktree would cost a
+# full re-embed for a copy of the same thing.
+#
+# It follows that THE VAULT IS READ-ONLY IN A WORKTREE. The `vault` source's
+# local_path is absolute and points at main's docs/, so a sync run from here
+# would index main's vault no matter what this branch changed — and PGLite is
+# single-process, so two worktrees using the brain at once collide. Ask it
+# questions freely; edit docs/ in the main checkout.
+if [ -e "$here/.gbrain" ] || [ -L "$here/.gbrain" ]; then
+  echo "  .gbrain/        already here"
+elif [ -d "$main/.gbrain" ]; then
+  ln -s "$main/.gbrain" "$here/.gbrain"
+  echo "  .gbrain/        -> main (read-only: query here, edit the vault in main)"
+else
+  echo "  .gbrain/        NOT FOUND in main — see the gbrain-maintenance skill"
+fi
+
+# direnv keys its allow-list by the .envrc's absolute path, so a new worktree's
+# copy is unapproved even though the file is tracked and identical.
+if command -v direnv >/dev/null 2>&1; then
+  echo "  direnv          run 'direnv allow' once in this worktree"
+fi
 
 # --- 3. Dependencies --------------------------------------------------------
 if [ "${1:-}" = "--no-install" ]; then

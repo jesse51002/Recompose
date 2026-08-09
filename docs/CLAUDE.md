@@ -124,6 +124,12 @@ Reach for these rather than doing the work longhand. Each is invoked by name.
 
 Anything that changes the gbrain setup — reindexing, sources, models, the schema pack, a search returning nothing — is **`gbrain-maintenance`**.
 
+## The vault is edited only in the main checkout
+
+**Never edit `docs/` from a git worktree.** Ask the brain questions there freely — `./scripts/setup_worktree` links `.gbrain` so `think` works — but every write to the vault happens in the main checkout.
+
+The reason is that the index cannot follow you. The `vault` source's path is absolute and points at main's `docs/`, so a sync run from a worktree indexes main's vault regardless of what the branch changed; PGLite is single-process, so two worktrees touching the brain at once collide; and a vault edited on a branch would be answered for out of an index that never saw it. Read-only in a worktree keeps the brain and the vault the same thing.
+
 ## Every folder is a taxonomy entry
 
 **A page must live in a folder, and every folder must map to a page type.** When you add a top-level folder to the vault, add its prefix to the schema pack in the same change — the `gbrain-maintenance` skill has the command. A folder with no prefix gets typed by guesswork, which is how `Journey.md` once came back typed as a concept.
