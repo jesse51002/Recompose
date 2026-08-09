@@ -196,7 +196,7 @@ Re-run the script after generating through the UI if you want the new run
 visible to those too.
 
 
-**The vault is read-only in a worktree.** The script links `.gbrain` so `gbrain think` works, but every edit to `docs/` happens in the main checkout — the search index is absolute-pathed to main and cannot follow a branch. `docs/CLAUDE.md` has the reasoning.
+**The vault is read-only in a worktree.** A worktree resolves main's brain automatically, so `gbrain think` works there, but every edit to `docs/` happens in the main checkout — the index is main's and cannot follow a branch. `docs/CLAUDE.md` has the reasoning.
 ## Each subsystem owns its own dependencies
 
 Every subsystem stands alone: it declares what it depends on and installs on its

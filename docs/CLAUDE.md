@@ -126,7 +126,7 @@ Anything that changes the gbrain setup — reindexing, sources, models, the sche
 
 ## The vault is edited only in the main checkout
 
-**Never edit `docs/` from a git worktree.** Ask the brain questions there freely — `./scripts/setup_worktree` links `.gbrain` so `think` works — but every write to the vault happens in the main checkout.
+**Never edit `docs/` from a git worktree.** Ask the brain questions there freely — `.envrc` derives `GBRAIN_HOME` from git, so a worktree resolves main's brain with no setup — but every write to the vault happens in the main checkout.
 
 The reason is that the index cannot follow you. The `vault` source's path is absolute and points at main's `docs/`, so a sync run from a worktree indexes main's vault regardless of what the branch changed; PGLite is single-process, so two worktrees touching the brain at once collide; and a vault edited on a branch would be answered for out of an index that never saw it. Read-only in a worktree keeps the brain and the vault the same thing.
 
