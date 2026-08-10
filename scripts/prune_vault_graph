@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+#
+# Delete link-graph edges that no doc actually contains.
+#
+# gbrain's link extraction ONLY EVER INSERTS. Adding a wikilink creates an edge
+# on the next extract; removing that wikilink does not remove the edge. A full
+# 182-page re-extraction reports "created 0" and leaves the stale edge sitting
+# in the graph with the source file containing no reference to the target.
+#
+# That matters because `gbrain think --anchor` traverses these edges, so a
+# deleted or repointed link keeps dragging a page into results it no longer
+# references — and nothing reports it. `gbrain sources status` says 100% embed,
+# 0 fails while the graph is wrong: its health output covers import and
+# embedding, never graph correctness.
+#
+# The check is deliberately conservative. An edge is pruned only when the
+# source file EXISTS and contains no occurrence of the target path at all
+# (case-insensitively, since slugs are lowercased and paths are not). A doc
+# that merely mentions the path in prose is left alone. The failure direction
+# is under-pruning, never deleting a live edge.
+#
+# SEQUENTIAL ON PURPOSE. PGLite is single-process; concurrent gbrain calls
+# collide. Do not add xargs -P. ~2 minutes for this vault is the price.
+#
+# Usage:
+#   scripts/prune_vault_graph              find and unlink
+#   scripts/prune_vault_graph --dry-run    list only, change nothing
+
+set -uo pipefail
+
+DRY_RUN=0
+[ "${1:-}" = "--dry-run" ] && DRY_RUN=1
+
+# Same derivation as .envrc and docs/Makefile: --git-common-dir is the shared
+# .git, so its parent is the MAIN checkout. gbrain appends `.gbrain` itself.
+REPO="$(cd "$(dirname "$(cd "$(git rev-parse --git-common-dir)" && pwd)")" && pwd)"
+export GBRAIN_HOME="${GBRAIN_HOME:-$REPO}"
+VAULT="$REPO/docs"
+
+[ -d "$VAULT" ] || { echo "no vault at $VAULT" >&2; exit 1; }
+
+cd "$REPO"
+
+found=0
+pruned=0
+
+while read -r rel; do
+  target="docs/$rel"
+  # Inbound edges for this page, one source slug per line.
+  while read -r from; do
+    [ -n "$from" ] || continue
+    # Map the source slug back to a file. Slugs are lowercased; paths are not.
+    src=$(find docs -ipath "docs/${from#docs/}.md" -print -quit 2>/dev/null)
+    # No file to check against — cannot verify, so leave it alone.
+    [ -n "$src" ] || continue
+    # The edge is real if the source text references the target path anywhere.
+    grep -qiF "$rel" "$src" && continue
+
+    found=$((found + 1))
+    echo "  stale  $from  ->  $target"
+    if [ "$DRY_RUN" -eq 0 ]; then
+      # Extraction emits a prefixed and an un-prefixed candidate per wikilink,
+      # so both forms have to go.
+      gbrain unlink "$from" "$target"  >/dev/null 2>&1
+      gbrain unlink "$from" "$rel"     >/dev/null 2>&1
+      pruned=$((pruned + 1))
+    fi
+  done < <(gbrain backlinks "$target" 2>/dev/null \
+             | grep -oE '"from_slug": "[^"]*"' | sed 's/.*: "//;s/"//' | sort -u)
+done < <(find docs -name '*.md' | sed 's|^docs/||;s|\.md$||' | tr 'A-Z' 'a-z' | sort)
+
+if [ "$found" -eq 0 ]; then
+  echo "  no stale edges"
+elif [ "$DRY_RUN" -eq 1 ]; then
+  echo "  $found stale edge(s) — run without --dry-run to unlink"
+else
+  echo "  pruned $pruned stale edge(s)"
+fi

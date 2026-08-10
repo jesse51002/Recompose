@@ -105,9 +105,10 @@ One form, always — vault-root-relative path with a display alias. Any doc is a
 
 **Deleting a link does not delete the edge.** Extraction only ever inserts, so a
 wikilink removed from a doc leaves a phantom edge behind that `think --anchor`
-still traverses — verified by test, and nothing reports it. Rewriting a linked
-passage is therefore not symmetric with writing one: `gbrain unlink <from> <to>`
-is the only way back, and the `gbrain-maintenance` skill has the detail.
+still traverses — verified by test, and nothing reports it. `make -C docs brain`
+prunes them as its fourth step, which is the whole reason that step exists, so
+in normal use this is handled for you. It only becomes a live concern if you run
+the `gbrain` commands by hand instead.
 
 ## Concepts
 

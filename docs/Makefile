@@ -22,7 +22,7 @@ export GBRAIN_HOME
 LOAD_KEY = if [ -z "$$VOYAGE_API_KEY" ]; then . ~/.bashrc >/dev/null 2>&1 || true; fi
 
 help:
-	@echo "brain         sync + embed + extract + status — the whole refresh"
+	@echo "brain         sync + embed + extract + prune + status (~2 min)"
 	@echo "brain-status  lag, embed coverage, failures, queue"
 	@echo ""
 	@echo "Sync follows git commits, not the working tree — commit first."
@@ -30,14 +30,22 @@ help:
 	@echo ""
 	@echo "Brain: $(GBRAIN_HOME)/.gbrain"
 
-# Three steps, and skipping the second is the easy mistake: `sync` imports text
-# and leaves embeddings stale by design, so stopping there leaves `think` and
-# `query` answering off the previous vectors while looking healthy.
+# Four steps, and two of them exist because gbrain looks healthy while being
+# wrong. `sync` imports text and leaves embeddings stale by design, so stopping
+# before `embed` leaves think/query answering off the previous vectors. And
+# extraction only ever INSERTS, so a wikilink deleted from a doc leaves its edge
+# in the graph forever — `prune` is the only thing that removes it. Neither
+# failure shows up in `sources status`, which reports on import and embedding,
+# never on graph correctness. That is why status runs last rather than first.
+#
+# The prune is a ~2 minute sequential sweep. It stays in this target rather than
+# a separate one so the graph can never drift from the docs.
 brain:
 	@$(LOAD_KEY); \
 	  echo "==> sync"    && gbrain sync --source vault && \
 	  echo "==> embed"   && gbrain embed --stale && \
 	  echo "==> extract" && gbrain extract links --source db && \
+	  echo "==> prune"   && ../scripts/prune_vault_graph && \
 	  echo && echo "==> status" && gbrain sources status
 
 brain-status:

@@ -121,11 +121,26 @@ survives a full re-derivation because extraction only ever inserts.
 
 The consequence is that deleting or rewriting a linked passage leaves a
 phantom edge that `think --anchor` keeps traversing, and nothing anywhere
-reports it. The only remedy is manual:
+reports it.
 
-```bash
-gbrain unlink <from-slug> <to-slug>       # repeat for the un-prefixed variant
-```
+**`make -C docs brain` prunes these as its fourth step** — that is why the step
+exists, and why the target takes ~2 minutes. It shells out to
+`scripts/prune_vault_graph`, which walks every page's `backlinks`, maps each
+source slug back to its file, and unlinks any edge whose source text contains
+no occurrence of the target path. Both slug forms are unlinked per edge.
+
+The check is deliberately conservative: an edge survives if the source file is
+missing (unverifiable) or mentions the path anywhere, even in prose. It
+under-prunes rather than risk deleting a live edge. Validated by planting a
+known phantom with `gbrain link` and confirming it was the only thing found
+across 946 edges.
+
+**It is sequential on purpose — do not parallelise it.** PGLite is
+single-process and concurrent `gbrain` calls collide.
+
+To find them without changing anything: `scripts/prune_vault_graph --dry-run`.
+To remove one by hand: `gbrain unlink <from-slug> <to-slug>`, repeated for the
+un-prefixed variant.
 
 **Every wikilink produces two candidate edges** — one with the `docs/` prefix
 and one without, e.g. `strategy/journey` *and* `docs/strategy/journey`. Only
