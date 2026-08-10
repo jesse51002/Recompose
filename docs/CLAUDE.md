@@ -103,6 +103,12 @@ One form, always — vault-root-relative path with a display alias. Any doc is a
 
 **Bare `[[Basename]]` fails silently.** Obsidian resolves it; gbrain does not — it drops the edge as a "reference to a non-page" with no error and the doc quietly leaves the graph. This is the one linking mistake that costs something, and nothing warns you.
 
+**Deleting a link does not delete the edge.** Extraction only ever inserts, so a
+wikilink removed from a doc leaves a phantom edge behind that `think --anchor`
+still traverses — verified by test, and nothing reports it. Rewriting a linked
+passage is therefore not symmetric with writing one: `gbrain unlink <from> <to>`
+is the only way back, and the `gbrain-maintenance` skill has the detail.
+
 ## Concepts
 
 `Concepts/` is the glossary — the canonical short definition of each recurring term. [[Concepts/_Index|Concepts/_Index.md]] is the authoritative listing and holds proposals not yet approved; add every new concept to it. New concepts need explicit approval: propose, don't create.

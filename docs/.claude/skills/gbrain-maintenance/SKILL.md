@@ -112,6 +112,44 @@ The graph is what `gbrain think --anchor <slug>` traverses. It exists only becau
 - **A doc at the vault root cannot be linked at all** — a link with no slash is indistinguishable from a bare basename. This is why the strategy docs live in `Strategy/` rather than at the root. Anything new at the vault root is invisible to the graph.
 - Resolution is case-insensitive, so `Concepts/...` matches the lowercase slug.
 
+**The graph is append-only. Extraction never prunes.** Verified by controlled
+test: add a wikilink, commit, `make -C docs brain` — the edge appears
+(`created 2`). Remove that same wikilink, commit, run it again — extraction
+sweeps all pages, reports `created 0`, and **the edge is still in
+`backlinks`** with the source file containing no reference to the target. It
+survives a full re-derivation because extraction only ever inserts.
+
+The consequence is that deleting or rewriting a linked passage leaves a
+phantom edge that `think --anchor` keeps traversing, and nothing anywhere
+reports it. The only remedy is manual:
+
+```bash
+gbrain unlink <from-slug> <to-slug>       # repeat for the un-prefixed variant
+```
+
+**Every wikilink produces two candidate edges** — one with the `docs/` prefix
+and one without, e.g. `strategy/journey` *and* `docs/strategy/journey`. Only
+the prefixed one resolves to a real page; the bare one is part of the routinely
+skipped "references to non-pages". This is why a single added link reports
+`created 2`, and why `unlink` must be run for both forms.
+
+**`extract` is a full sweep, not an incremental one.** `sync` is the part that
+diffs git commits; extraction re-scans every page each run regardless of what
+changed. It is idempotent on insert, so re-running is safe and never
+duplicates.
+
+**`--dry-run` reports candidate writes, not new edges.** It says `would create
+1481` against a graph where a real run creates 0. Do not read it as a count of
+pending work.
+
+**`graph-query <slug> --direction out` silently returns nothing.** It is not a
+supported flag and fails the usual way — exit 0, empty result. To see a page's
+outbound edges, query `backlinks` on the targets instead.
+
+To audit the graph for phantom edges, cross-check each edge against the file it
+claims to come from — iterate `backlinks` over every page and grep the source
+file for the target path. Anything that does not appear in the file is stale.
+
 ## Dead ends — do not retry these
 
 Each was tried and does not work here. Retrying them costs time and finds the same wall.
