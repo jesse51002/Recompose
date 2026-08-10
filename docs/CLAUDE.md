@@ -177,10 +177,24 @@ gbrain query "<question>"           # ranked passages, free and fast
 **Keeping it current:**
 
 ```bash
+source ~/.bashrc; export GBRAIN_HOME=/var/home/jm/Documents/Recompose
 gbrain sync --source vault        # incremental, seconds
+gbrain embed --stale              # sync imports text only; this vectorises it
 gbrain extract links --source db  # rebuild the graph after content changes
 ```
 
-Sync follows git commits, not the working tree — commit, then sync.
+Sync follows git commits, not the working tree — commit, then sync. And `sync`
+leaves embeddings stale by design — it says so in its own last line — so a run
+that stops there leaves `think` and `query` answering off the previous
+vectors. **Sync, embed, extract; check the tail of each rather than its exit
+code.**
+
+**The first line is not optional from a tool-run shell, and both halves of it
+fail silently-ish.** A non-interactive shell gets no `direnv`, so `GBRAIN_HOME`
+is unset and every command answers `No brain configured` even though `.gbrain/`
+is right there — and it must be the **parent** directory, because gbrain
+appends `.gbrain` itself. `VOYAGE_API_KEY` lives in `~/.bashrc`, which
+non-interactive bash does not read, so `embed` stops and asks for a key that is
+in fact set. Neither is a broken brain; both look like one.
 
 **Anything beyond this — reindexing, adding a source, changing the model or schema pack, rebuilding the graph, or a search returning nothing — is the `gbrain-maintenance` skill.** It records every failure mode hit while setting this up, including several gbrain features that do not work on this vault and why. Read it before trying a gbrain feature for the first time; its central warning is that gbrain reports `success` while doing nothing, so changes must be verified by measurement.

@@ -24,7 +24,15 @@ Everything here was learned by hitting it. Each gotcha cost a wrong turn; severa
 
 The brain is **inside the repo** at `.gbrain/`, not in the home directory. `direnv` reads `.envrc` at the repo root and exports `GBRAIN_HOME`, so every gbrain command resolves the same brain from anywhere in the tree — repo root, `docs/`, a subsystem folder. Outside the repo the variable is unset and there is no `~/.gbrain` to fall back to, so gbrain fails loudly with `No brain configured`. That loudness is deliberate: the alternative is silently answering out of a different brain.
 
-**`GBRAIN_HOME` is a parent directory.** gbrain appends `.gbrain` itself — `GBRAIN_HOME=/x` means `/x/.gbrain`. Setting it to the `.gbrain` directory looks right and fails.
+**`GBRAIN_HOME` is a parent directory.** gbrain appends `.gbrain` itself — `GBRAIN_HOME=/x` means `/x/.gbrain`. Setting it to the `.gbrain` directory looks right and fails. It also *succeeds* at creating a nested `.gbrain/.gbrain/` stub on the way past, so the mistake leaves litter that looks like a second brain; there is one at the repo root from an earlier occurrence.
+
+**`direnv` does not reach a non-interactive shell**, which is what every agent tool-run gets. `GBRAIN_HOME` is unset there and gbrain answers `No brain configured` with the brain sitting in plain sight. Export it explicitly rather than concluding the brain is broken:
+
+```bash
+export GBRAIN_HOME=/var/home/jm/Documents/Recompose   # parent of .gbrain
+```
+
+**`VOYAGE_API_KEY` lives in `~/.bashrc`**, which non-interactive bash does not source, so `gbrain embed` reports the key missing when it is set. `source ~/.bashrc` first. The key is only needed for embedding — `sync --source vault --no-embed` imports text without it, which is the right move only if you then embed separately.
 
 **`config.json` stores an absolute `database_path`.** Moving the brain directory does not update it, and the symptom is `No brain configured` with the config sitting right there. Repoint it by hand after any move.
 
