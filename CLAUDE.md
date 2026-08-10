@@ -218,6 +218,11 @@ the root can fan out to all of them uniformly. Run `make help` anywhere to see w
 that subsystem offers; the root's `help` lists the subsystems and the common loops.
 Add a target to the subsystem that owns the work, never to the root.
 
+`docs/` owns a `Makefile` too, but it is **not** a subsystem and answers none of
+those verbs — it is the vault, and what it owns is the gbrain index over itself.
+Keep it out of the root's fan-out, where it would break `install`, `check` and
+`test`; it stays findable through the common loops instead.
+
 ## Python: a library and the API over it
 
 `ThemeTree/` and `Backend/` are separate top-level packages. Whether they

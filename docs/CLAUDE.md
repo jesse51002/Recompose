@@ -174,27 +174,32 @@ gbrain query "<question>"           # ranked passages, free and fast
 
 `gbrain search` is keyword-only and rarely what you want, despite gstack's docs calling it semantic. **Do not judge the brain by `query`** — on nine questions with known answers `query` put the right doc first six times and `think` answered all three misses correctly. Phrase questions the way the docs argue, not as labels.
 
-**Keeping it current:**
+**Keeping it current — one command:**
 
 ```bash
-source ~/.bashrc; export GBRAIN_HOME=/var/home/jm/Documents/Recompose
-gbrain sync --source vault        # incremental, seconds
-gbrain embed --stale              # sync imports text only; this vectorises it
-gbrain extract links --source db  # rebuild the graph after content changes
+make -C docs brain
 ```
 
-Sync follows git commits, not the working tree — commit, then sync. And `sync`
-leaves embeddings stale by design — it says so in its own last line — so a run
-that stops there leaves `think` and `query` answering off the previous
-vectors. **Sync, embed, extract; check the tail of each rather than its exit
-code.**
+Sync, embed, extract, then print status. `make -C docs help` lists the rest.
 
-**The first line is not optional from a tool-run shell, and both halves of it
-fail silently-ish.** A non-interactive shell gets no `direnv`, so `GBRAIN_HOME`
-is unset and every command answers `No brain configured` even though `.gbrain/`
-is right there — and it must be the **parent** directory, because gbrain
-appends `.gbrain` itself. `VOYAGE_API_KEY` lives in `~/.bashrc`, which
-non-interactive bash does not read, so `embed` stops and asks for a key that is
-in fact set. Neither is a broken brain; both look like one.
+Run it from anywhere in the tree, in any shell. **Do not run the three `gbrain`
+commands by hand** — the Makefile exists because that route has three separate
+ways to look like a broken brain when nothing is wrong. `GBRAIN_HOME` comes
+from `direnv`, which a tool-run shell never gets, so every command answers `No
+brain configured` with `.gbrain/` sitting right there; it has to be the
+**parent** directory, because gbrain appends `.gbrain` itself, and pointing it
+at `.gbrain/` looks correct and quietly creates a nested one. `VOYAGE_API_KEY`
+lives in `~/.bashrc`, which non-interactive bash does not source, so `embed`
+asks for a key that is set. The target supplies all of it.
+
+The third trap survives even a correct environment: **`sync` imports text and
+leaves embeddings stale by design.** It says so in its own last line. Stopping
+there leaves `think` and `query` answering off the previous vectors while
+`sync` reports success — which is the general rule with gbrain, that it
+reports `success` while doing nothing, so verify by measurement. The target
+ends on `sources status` for exactly that reason: read the embed and fails
+columns rather than the exit code.
+
+Sync follows git commits, not the working tree — **commit, then `make brain`.**
 
 **Anything beyond this — reindexing, adding a source, changing the model or schema pack, rebuilding the graph, or a search returning nothing — is the `gbrain-maintenance` skill.** It records every failure mode hit while setting this up, including several gbrain features that do not work on this vault and why. Read it before trying a gbrain feature for the first time; its central warning is that gbrain reports `success` while doing nothing, so changes must be verified by measurement.
