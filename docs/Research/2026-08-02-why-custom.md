@@ -152,17 +152,6 @@ I assembled roughly a dozen documented cases. The evidence is **thin and heavily
 
 ---
 
-## Recommendations
-
-1. **Do not attempt a precise SDK-based census.** For churches, community/creator, and fitness, the container/multi-tenant architecture means an app-store SDK count will systematically overstate the bespoke share. If you must run one, do it only in credit unions and restaurants, and treat the result as an *upper bound* on bespoke.
-2. **Anchor every vertical on vendor-disclosed tenant counts vs. an industry population figure**, prioritizing SEC filings (Toast, Olo, Alkami, Q2, ServiceTitan) over marketing pages (Trainerize, Subsplash, Vagaro, Mindbody). Where only marketing counts exist, label them unaudited.
-3. **If you need one defensible headline number, lead with credit unions** (~98–99.5% white-label/vendor), because it is the only vertical with both a hard denominator (NCUA ~4,300) and SEC-sourced vendor client counts.
-4. **For Q2, weight the reverse-migration cases heavily.** Red Lobster and the Bloomin'/Brinker/Papa Murphy's → Olo moves are the strongest evidence that stated build reasons (cost, control, functionality) often don't survive contact with multi-year maintenance and vendor product velocity.
-5. **Discount design-brand as a motive.** Any source claiming design alone drove a bespoke build should be treated as marketing. Benchmark to revisit: if you can find even two independent first-hand cases where design was the *sole* documented driver, revise this conclusion.
-6. **Thresholds that would change the picture:** (a) if a major white-label vendor moves fully to standalone per-tenant app-store publishing, SDK counting becomes viable; (b) if per-tenant platform pricing rises faster than in-house dev costs fall (AI-assisted development), expect more mid-market bespoke builds and fewer reversals.
-
----
-
 ## Caveats
 - **No precise split is measurable from public data in any vertical.** All eight figures are bounded estimates with the derivation shown; confidence is highest for credit unions and lowest for restaurants, real estate, and field service.
 - **Vendor tenant counts are mostly marketing figures** (Trainerize, Subsplash, Vagaro, Mindbody, Circle) and are typically global, not US-only; SEC-sourced counts (Toast, Olo, Alkami, Q2, ServiceTitan) are more reliable but also often global.

@@ -1,6 +1,6 @@
 # Website Builders Inside White-Label / Vertical SaaS Platforms
 
-**Bottom line:** Bundled website builders are common inside vertical SaaS and white-label platforms — but they are overwhelmingly shallow (template and section editors), and **not a single vertical-SaaS platform closes the loop between downstream business outcomes and the website**; the "self-improving website powered by full lifecycle data" that the user is most curious about does not yet exist in this category, and even the horizontal frontier (Coframe, Mutiny, Webflow Optimize) optimizes only on click-through/conversion, never on realized revenue. That gap is the clearest whitespace for Recompose.
+**Bottom line:** Bundled website builders are common inside vertical SaaS and white-label platforms — but they are overwhelmingly shallow (template and section editors), and **not a single vertical-SaaS platform closes the loop between downstream business outcomes and the website**; a "self-improving website powered by full lifecycle data" does not yet exist in this category, and even the horizontal frontier (Coframe, Mutiny, Webflow Optimize) optimizes only on click-through/conversion, never on realized revenue.
 
 ## TL;DR
 - **Prevalence is high in acquisition-driven verticals, near-zero depth in back-office ones.** Fitness, salon/spa, real estate, restaurants, home services, church, legal, associations, creator/courses, and sports/clubs almost all bundle a builder; property management, hotel-PMS, and ecommerce-app builders largely do not (or ship only a booking widget). The user's vertical hypothesis is **confirmed**.
@@ -224,20 +224,8 @@ Webflow Optimize,Horizontal frontier,yes,Webflow Optimize,A/B+personalization,L6
 - That "AI website builder" in this category means structural/layout generation — it is mostly copy/image generation on fixed templates.
 - That the frontier already closes the loop on revenue — it does not; Coframe/Mutiny/Webflow Optimize stop at click-through/conversion/pipeline.
 
-## Recommendations
-
-**Stage 1 — Aim Recompose at the L2–L3 majority in acquisition-driven verticals first.** The densest, most homogeneous target set is salon/spa, fitness, real estate, restaurants, home services, church, and associations, where builders are near-universal but stuck at template/section depth. A "full visual redesign" is most differentiated exactly where tenant sites visibly converge (Clio's 3 templates, Subsplash's "weakest link" builder, kvCORE's IDX-plus-CTA sameness). *Benchmark that would change this:* if a target platform is already Duda-powered (L4/L5), the redesign value is lower — deprioritize.
-
-**Stage 2 — Prioritize platforms with a UNIFIED app+web content model, because your prior reports were about app redesigns.** Subsplash, BoldTrail, and Kajabi drive both surfaces from one CMS — a redesign there can span app and web. Conversely, note that ecommerce app builders (Tapcart, Vajro) have **no web layer at all**, so "redesign their website builder" is a non-starter there; the web is Shopify. *Threshold:* confirm shared-CMS architecture before pitching a combined app+web redesign.
-
-**Stage 3 — Build the L6 capability nobody has: close the loop on lifecycle data.** The single most defensible wedge is precisely the thing the research proves is missing — using bookings/LTV/no-shows/repeat-rate to restructure the site, not just A/B a button. Position Recompose as the layer that turns the platform's siloed CRM data into an outcome-optimizing site. The frontier (Coframe) validates the mechanism (LLM + bandit feedback loop) but stops at CTR; vertical SaaS has the revenue data Coframe lacks. *Benchmark:* a credible pilot must demonstrate a change driven by a *downstream* outcome (e.g., repeat-rate or realized revenue), not click-through, to claim the L6 category.
-
-**Stage 4 — Decide build-vs-partner on the supply side.** Because platforms overwhelmingly either build in-house or embed Duda (no tuck-in M&A pattern), Recompose can position either as (a) a design/redesign service on top of existing builders, or (b) a Duda-competitor that adds the closed-loop layer Duda explicitly does not offer. *Threshold:* if a platform already runs Duda, sell the optimization layer; if in-house and shallow, sell the full redesign.
-
-**Commercial framing:** lead with the retention economics platforms already believe (Duda's 25%-lower-churn / 29%-higher-MRR narrative) — that is the language vertical-SaaS buyers respond to, and it reframes a redesign from cost to ARPU/retention driver.
-
 ## Caveats
-- **Attach rates are unknown.** No vendor discloses what % of tenants actually publish or customize the bundled site — a critical gap for Recompose's addressable-market sizing. The Housecall Pro deprecation and reviewer commentary suggest real-world attach/customization may be low ("sites that stay on defaults").
+- **Attach rates are unknown.** No vendor discloses what % of tenants actually publish or customize the bundled site. The Housecall Pro deprecation and reviewer commentary suggest real-world attach/customization may be low ("sites that stay on defaults").
 - **Vendor-claimed performance numbers** (Duda's churn/MRR figures; Coframe's 42%/352% CTR lifts; Cloudbeds' "25% more bookings"; "$1.5M incremental revenue" case studies) are marketing/PR, not independently audited, and several are explicitly projected/annualized.
 - **Non-US/EU/India/LATAM/APAC platforms were under-sampled** due to a hard research budget limit; likely additional platforms and possibly different depth norms exist there.
 - **Precise template counts are mostly undisclosed** ("hundreds"/"dozens"); only Clio's 3 is a firm number.

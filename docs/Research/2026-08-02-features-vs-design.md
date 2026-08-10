@@ -97,12 +97,6 @@ Legend: (a) self-serve extensibility · (b) partner-built · (c) platform-built,
 - Tithe.ly, Ministry Brands, BentoBox, Owner.com, Nudge Coach, Disciple Media, Arketa, Everfit, Zenoti, Boulevard, Apiture, Jobber, Whova/Cvent: not enough evidence gathered to characterize confidently. I flag these as unresearched rather than infer.
 - Team-size specifics for most design/PS sub-teams (Vagaro Studio 180, Toast, Olo, ServiceTitan, Mindbody, Q2, Banno) were not publicly available.
 
-## Recommendations
-1. **If you need net-new features built for you by the vendor, look to fintech-grade platforms.** Banno/Jack Henry (Custom Development team) and Backbase (Services org) are the only clear "platform-builds-it-for-you" models; Tapcart is the best consumer-commerce analog. Ask specifically for the SOW template, hourly/fixed pricing, minimum engagement, timeline, and — critically — whether the IP stays exclusive to you or folds into core.
-2. **If you only need branding, the design SKUs are cheap and productized.** Vagaro (~$499 one-time), Trainerize (one-time CBA fee), Mindbody, Circle Plus, Passion Plus deliver icons/splash/store assets. Do not expect these teams to change functionality.
-3. **If you expect to extend functionality yourself, prioritize API/SDK depth.** Banno Digital Toolkit and Q2 Caliper SDK (fintech), Tapcart App Studio/CLI (commerce), BuildFire/GoodBarber (horizontal) are the strongest self-serve escape hatches. Kajabi explicitly won't help with custom code — plan to hire a freelancer.
-4. **Benchmarks that should change your decision:** If a vendor's professional-services revenue is <3% of total and shrinking (Olo at 1.19%, Toast's combined line at 2.9%), assume they will steer you to self-serve/partners rather than build for you. If they staff a titled "Solutions Engineer" or "Custom Development team" (Tapcart, Banno, Backbase), category (c) is realistic — get it in writing.
-
 ## Caveats
 - Several pricing figures (Mighty Pro $3–5K/mo, Passion Plus $10–20K, ServiceTitan implementation $5–50K) are third-party estimates, not vendor-published; treat as directional.
 - Many job postings cited are expired/historical; titles and descriptions remain valid evidence of how roles are structured but headcounts may have changed.

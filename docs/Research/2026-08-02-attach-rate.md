@@ -8,7 +8,7 @@ date: 2026-08-02
 
 Concepts touched: [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Business/Strategy/Shopify_Pattern|Shopify_Pattern]], [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]].
 
-How many of a platform's tenants actually buy the branded-app tier. This is the multiplier on every revenue estimate for Recompose and no vendor publishes it. One vertical has been measured independently; everything else is inference from price ratios. Compiled 2026-08-02.
+How many of a platform's tenants actually buy the branded-app tier. No vendor publishes it. One vertical has been measured independently; everything else is inference from price ratios. Compiled 2026-08-02.
 
 ---
 
@@ -75,17 +75,13 @@ The second group's attach rate is effectively 100%, which is not a better conver
 
 Against a shell-model platform: Circle's ~5,000 creators at 1–3% is roughly 50–150 branded apps.
 
-## What this means for Recompose
+#### Regulatory constraint on the banking platforms
 
-**The addressable count per platform is far smaller than tenant counts suggest.** A platform's headline customer number is not the number of apps that exist to redesign. On a shell model it is 1–3% of it.
+The banking platforms carry the largest tenant counts in the table and the strongest documented pressure toward visual sameness. `Research/2026-05-01-ai-brand-competitor-analysis.md:45` records WCAG enforcement inside Alkami's Theme Builder, ADA-compliant outputs at Banno, SOC 2 review per change, Alkami's 240+ FI apps sharing visual DNA deliberately, and every banking AI announcement in 2024–2026 being end-user AI rather than design AI.
 
-**Volume is not at the bottom of the market.** Small tenants do not buy branded apps at any price — sub-200K-traffic Shopify stores stay on the shell regardless of what the upgrade costs. Compressing the design cost does not appear to move a tenant who was never going to buy the tier.
+#### Subsplash
 
-**The better ICP filter is "every tenant already has an app," not "the platform runs a design service."** It selects for the platforms where N is actually large and where a redesign has something to act on. It is also better evidenced than the design-service wedge, which rests on public pricing pages rather than counts.
-
-**The tension:** the largest-N targets are concentrated in banking, which `Research/2026-05-01-ai-brand-competitor-analysis.md:45` documents as actively resisting visual differentiation — WCAG enforcement inside Alkami's Theme Builder, ADA-compliant outputs at Banno, SOC 2 review per change, Alkami's 240+ FI apps sharing visual DNA deliberately, and every banking AI announcement in 2024–2026 being end-user AI rather than design AI. Highest tenant count, lowest appetite.
-
-**Subsplash clears both filters.** 20,000+ tenants each with their own app, no regulatory pressure toward visual sameness, an existing paid design and onboarding function, and a churn quote naming customization limits as the reason for leaving (`Research/2026-05-01-ai-brand-competitor-analysis-v2.md:29`). The open variable is the July 2025 Roper Technologies acquisition at $800M — Roper operates for margin, which could read either as receptiveness to cost structure or as no appetite for new vendors.
+20,000+ tenants each with their own app, no regulatory pressure toward visual sameness, and an existing paid design and onboarding function. A churn quote names customization limits as the reason for leaving (`Research/2026-05-01-ai-brand-competitor-analysis-v2.md:29`). Roper Technologies acquired Subsplash in July 2025 for $800M.
 
 ## How to measure this without vendor cooperation
 
