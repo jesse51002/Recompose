@@ -101,5 +101,4 @@ The banking platforms carry the largest tenant counts in the table and the stron
 
 - [[Strategy/Customer_ICP|Customer_ICP.md]]
 - [[Strategy/Competition|Competition.md]]
-- [[Strategy/Journey|Journey.md]]
 - [[Research/2026-08-02-enterprise-tier-anatomy|Research/2026-08-02-enterprise-tier-anatomy.md]]
