@@ -1,4 +1,4 @@
-.PHONY: help brain brain-status brain-graph
+.PHONY: help brain brain-status
 
 # The vault. Not a code subsystem — the root Makefile does not fan out to it,
 # and there is nothing here to install, typecheck or test. What it owns is the
@@ -22,9 +22,8 @@ export GBRAIN_HOME
 LOAD_KEY = if [ -z "$$VOYAGE_API_KEY" ]; then . ~/.bashrc >/dev/null 2>&1 || true; fi
 
 help:
-	@echo "brain         sync + embed + extract — the whole refresh, in order"
+	@echo "brain         sync + embed + extract + status — the whole refresh"
 	@echo "brain-status  lag, embed coverage, failures, queue"
-	@echo "brain-graph   rebuild the link graph alone"
 	@echo ""
 	@echo "Sync follows git commits, not the working tree — commit first."
 	@echo "The vault is edited ONLY in the main checkout; see docs/CLAUDE.md."
@@ -43,6 +42,3 @@ brain:
 
 brain-status:
 	@$(LOAD_KEY); gbrain sources status
-
-brain-graph:
-	@$(LOAD_KEY); gbrain extract links --source db
