@@ -1,7 +1,7 @@
 ---
 tags: [business, open-questions, validation, risk]
 status: live
-updated: 2026-07-28
+updated: 2026-08-10
 ---
 
 # Open Questions
@@ -12,7 +12,7 @@ Everything Recompose has not answered, carried forward from the open questions a
 
 Every entry states the question, why it matters, and what evidence would close it. Source tags in brackets (`T*`, `P*`, `OQ*`) point at the premise, test, or open question in the office hours doc.
 
-**The demand section leads because it is the only section where nothing at all has been attempted.** No platform has been contacted. There is no target list. The entire ICP is reasoned rather than validated.
+**The demand section leads because it is the only section where nothing has been attempted with an outside party.** The target list now exists — [[Research/2026-08-04-company-list-white-label|Research/2026-08-04-company-list-white-label.md]]. No platform on it has been contacted, no human at any of them has been named, and the entire ICP is still reasoned rather than validated.
 
 ---
 
@@ -26,13 +26,19 @@ No platform has been asked. The origin is a realization while building a white-l
 
 **What closes it:** a platform that keeps a second meeting, or asks what it costs, without being led there. Nothing built closes it.
 
-### 1.2 Can a named target platform and a named human at it be produced at all? [T2, assignment #2]
+### 1.2 Is there a named human at any target platform? [T2, assignment #2] — **narrowed 2026-08-04**
 
-The single biggest hole the founding session found, and it is unclosed. A category is not a target. Assignment item 2 is ten named platforms where **every tenant already has their own app**, with a named human at each — Subsplash, Passion.io, then the fintech four (Q2, Banno, Alkami, Backbase). On those the addressable app count equals the tenant count; on a shared-shell platform it is roughly a hundredth of it ([[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]]).
+The list half is done, and it overshot. [[Research/2026-08-04-company-list-white-label|Research/2026-08-04-company-list-white-label.md]] holds white-label and branded-app platforms with tenant counts, branded-tier price, app stack and a contact surface, well past the ten the assignment asked for. `Contact_Surface` names a channel, not a person.
 
-**Why it matters:** nothing else in the company moves until this list exists. It is also cheap — this is a research afternoon, not a project.
+**What is left is the person.** Assignment item 2 is ten platforms where **every tenant already has their own app**, *with a named human at each*, and no human has been named.
 
-**What closes it:** the list, written down, ten rows, each with a person.
+The sort also moved. It is on **shell model first, not tenant count**: on a no-shell platform the addressable app count equals the tenant count, and on a shared-shell platform it is roughly a hundredth of it ([[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]]). Subsplash sorts first on **inspectability** rather than size — hundreds of its church apps are installable from the App Store right now, and church content is the least login-gated in any vertical.
+
+**The fintech four are deprioritised** (L12, 2026-08-04). Q2, Banno, Alkami and Backbase each already own a mature extension SDK — Caliper, the Plugin Framework, Backbase's own — and that, not an AI budget, is what makes building this in-house cheap: Q2 wired Claude Code into Bedrock and shipped Q2 Code in April 2026 on top of an SDK that has existed since 2018. They are also public companies with procurement, vendor risk assessment and 6–18 month cycles.
+
+**Why it matters:** nothing else in the company moves until there is a person to send something to. Job postings supply the names, and it is an afternoon rather than a project.
+
+**What closes it:** ten rows, each with a person.
 
 ### 1.3 Will the founder run a validation assignment before building more? [carried from 2026-06-02]
 
@@ -180,6 +186,14 @@ The minor band is cosmetic by definition — annoying rather than breaking — a
 
 **What closes it:** build the diff gate against the existing CombatDen app — diff the API calls a generated variant makes against the baseline, fail the build on any addition — and run it on real variants before it is ever promised to a customer.
 
+### 2.2a Does anything catch a widget that is present but not visible? [T26] — **OPENED 2026-08-04**
+
+Zero-height, clipped, occluded, or inside a collapsed container. The element exists in the tree and the API call still fires, so **the functional-equivalence gate passes and the screen is broken.**
+
+**Why it matters:** it is the specific hole in the strongest claim in the pitch. 2.2 proves nothing was added or removed; it does not prove anything is reachable. A screenshot catches it only if the state that hides it is the state that got rendered.
+
+**What closes it:** decide whether the gate checks reachability as well as presence, and whether the mock's state coverage (2.1) is what supplies the states to check it in.
+
 ### 2.3 Does app-agnosticism survive contact with a foreign app? [T5]
 
 The engine is app-agnostic by construction: every app is one `apps/<app_id>/` folder and the pipeline knows nothing about any specific app. That has only ever been exercised on `apps/combatden/` and `apps/smoketest/` — both written by the founder, both ends of the contract included.
@@ -240,7 +254,17 @@ The cost of never touching their trunk is that no human who understands a change
 
 **Why it matters:** this is the accepted price of the core principle, and it is the failure mode that only appears over months rather than in a demo. Drift here is quiet.
 
-**What closes it:** running the fork against a real upstream repo with real churn for a sustained period. Not testable in an afternoon, which is exactly why it should be named now.
+**The hazard git will never flag, named 2026-08-04 [T23].** Semantic conflicts — changes that merge cleanly and break behaviour — are the textbook fork risk, and on a purely visual fork they are largely defanged, because a clean merge that breaks something breaks it *visually*. The real one is different: **upstream ships a new screen.** Nothing conflicts, because there is nothing to conflict with. The design fork simply has no design for that surface, so a brand-new screen appears in the platform's default styling inside a redesigned app. It is a coverage problem rather than a merge problem, and it scales with the platform's release cadence multiplied by the number of design forks. Every feature the platform ships silently degrades the coherence of every design in the fleet until it is redesigned.
+
+**What closes it:** point the re-derivation at a real, actively-shipping upstream mobile repo for 8–12 weeks and record four numbers — clean-merge rate, semantic-regression rate on clean merges, minutes per re-derive, and **how often upstream adds a surface no design covers.** Mostly wall-clock rather than effort, so it runs concurrently with outreach. No drift-rate or maintenance-burden data exists anywhere for this, because no such system is documented.
+
+### 2.10 What does a re-derivation cost, and how does that scale? [T25] — **OPENED 2026-08-04**
+
+Under the fork model, re-derivation is not a one-time onboarding cost. It fires on the platform's release train, across every design fork.
+
+**Why it matters:** inference gets cheaper, but re-derivation *frequency* is set by someone else's cadence and fork *count* grows with sales. This is cost that scales with success, which is the shape that quietly eats a margin. It also bounds §3.1 from below — a price cannot be set before the floor under it is known.
+
+**What closes it:** instrument the cost of one re-derive during T23, then multiply by a real release cadence.
 
 ---
 
@@ -256,6 +280,7 @@ What is known rather than decided:
 - **The anchor moved.** Because the product now replaces a designer *and* the front-end engineer who implements the design, the reference is a **services** line item — the $10–50k / 4–12 week custom build — not a software line item. That is roughly an order of magnitude higher than the theming budget it used to be compared against.
 - **The metering unit is undecided**: per branded tenant, per seat, platform licence, or revenue share on the premium tier the platform unlocks. The [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]] framing suggests pricing tied to what the tier earns them, but nothing is decided.
 - **No comparable exists in the nearest analog.** Gigacatalyst publishes no pricing.
+- **The floor is unmeasured.** Re-derivation cost recurs on the platform's release cadence across every design fork (2.10), so it sets a lower bound on any per-design price. Nobody has measured it.
 
 **Why it matters more than it first appeared:** the pitch is *"close enough at a fraction of the price."* **The ratio is the pitch, and it is meaningless until the fraction has a number.** Pricing is not a later problem; it is part of the value claim.
 
@@ -352,6 +377,22 @@ Replaced by free agentic editing bounded only by the arrangement-only invariant.
 **It does not, ever.** This is now a core principle rather than an implementation choice, and it collapsed the old 2.4 and 2.5 into a single answer. Two agent-maintained fork layers, changes landing on the `uat` branch, platform grants read access only.
 
 It killed the layout enum, which the founder had rated highest a day earlier, and it removed the largest named adoption blocker in the vault. The new question it created is 2.5.
+
+### Whether the mechanism extends to net-new features — resolved 2026-08-04
+
+**It does not,** and it closed on numbers rather than on preference. No documented case exists of an agent autonomously shipping a net-new user-facing feature into a production mobile codebase it did not author. The measured brownfield rate is ~65–70% *with a human requesting and reviewing every task*, and it falls below 10% once a patch touches three or more files — which is what a redesign always does. Extending would also inherit the security surface the visual scope avoids, moving the failure mode from *ugly* to *security incident*, which is the asymmetry that makes the visual half tractable for one person. The revisit condition is recorded in [[Strategy/Agentic_Code_Generation|Agentic_Code_Generation.md]].
+
+**Residual:** "why not features" is a question a platform will ask on a call, and like 1.7 what it needs is a prepared paragraph rather than more research.
+
+### Whether the company's surface is the website — resolved 2026-08-10
+
+A research cluster dated 2026-08-08 to 2026-08-10 in `Research/` examined a website layer embedded in vertical SaaS that rewrites the site against the tenant's realized business outcomes. **Not pursued.**
+
+Three independent reasons, each sufficient. The loop cannot reach statistical significance on small-business sites: published thresholds run to roughly 5,000 visitors and 1,000 conversions per variation, and realized revenue is a sparser and more lagged signal than that. The owner it would serve does not measure the outcome it optimises — unprompted complaints cluster on leads and time, first-year .com renewal sits in the mid-40s, and only ~18% of first-year domains are attached to any online presence. And the approval gate that would make it safe also makes it inert, because a bandit cannot run through an approval queue.
+
+No pivot doc: the direction was never adopted, so nothing reversed. Two findings were kept. **The buyer who pays for site work in this category is the platform, not the tenant** — done-for-you is a staffed line item at BentoBox, Vendasta, Yardi, Luxury Presence, Tebra and Housecall Pro — which is the same wedge the app product already selected, reached independently. And **no supplier in the embedded/white-label category ingests transactional data to decide site structure, or ships a native mobile app layer.**
+
+See [[Office_Hours/2026-08-10-19-Office_Hours_Website_Direction_Explored_And_Dropped|Office_Hours/2026-08-10-19-Office_Hours_Website_Direction_Explored_And_Dropped.md]].
 
 ---
 
