@@ -1,137 +1,128 @@
 ---
 tags: [business, strategy, architecture, thesis]
 status: current
+date: 2026-08-12
+source-pivot: pivots/2026-08-12-21-modular-feature-system-replaces-visual-redesign.md
 ---
 
 # Architecture Thesis
 
-Concepts touched: [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]], [[Concepts/Product/Mechanisms/Modal_Coherence|Modal_Coherence]], [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]], [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]], [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Product/Mechanisms/Closed_Design_To_Production_Loop|Closed_Design_To_Production_Loop]], [[Concepts/Business/Strategy/Shopify_Pattern|Shopify_Pattern]], Template_Marketplace, [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]], [[Concepts/Business/Strategy/Freelance_Conversion_Thesis|Freelance_Conversion_Thesis]].
+Concepts touched: [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]], [[Concepts/Product/Mechanisms/Modal_Coherence|Modal_Coherence]], [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]], [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]], [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]].
 
-> Rewritten for Recompose. The architectural reasoning below carried over from the pre-pivot version of this doc; the claim that the vertical is class-based gyms did not. Decision: [[pivots/2026-07-27-11-customization-engine-is-the-company|pivots/2026-07-27-11-customization-engine-is-the-company.md]]. Exploration: [[Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company|Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md]].
+> Rewritten 2026-08-12 for the modular feature system. Decision: [[pivots/2026-08-12-21-modular-feature-system-replaces-visual-redesign|pivots/2026-08-12-21-modular-feature-system-replaces-visual-redesign.md]]. Exploration: [[Office_Hours/2026-08-10-22-Office_Hours_Modular_Feature_System_And_The_Extension_Boundary|Office_Hours/2026-08-10-22-Office_Hours_Modular_Feature_System_And_The_Extension_Boundary.md]].
 
-## The load-bearing claim
+## The load-bearing claim, and it is the reverse of the previous one
 
-The structure of an app — data model, workflows, integrations, user flows — is hard to build well, broadly the same across the customers of any one platform, and not where those customers want to differentiate. The visual surface is where they want differentiation, and it is where AI compresses cost from weeks of human labor to hours of machine plus operator time. That is [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]] and it is the premise the whole company sits on.
+The previous version of this doc claimed that an app's structure is *not where a platform's customers want to differentiate*, and that the visual surface is. **The pivot reverses that**, and the reversal is the whole thesis, so it is stated first rather than buried:
 
-What the pivot changed is **who builds the structure**. The pre-pivot version of this thesis had us building both halves: a vertical app whose structure we owned and whose styling layer we parameterized. Recompose builds neither the structure nor the app. The platform already owns the app, the tenants, the release train, the store listings, and the customer relationship. **The only thing left to own is the transformation** — brand brief in, branded production app out, no human handoff in between ([[Concepts/Product/Mechanisms/Closed_Design_To_Production_Loop|Closed_Design_To_Production_Loop]]).
+**Tenants want functional differentiation, platforms structurally refuse to supply it, and that refusal is the market.**
 
-## The invariant moved: from structure-vs-style to functionality-vs-arrangement
+Thirteen of nineteen researched platforms have no path by which a tenant gets net-new functionality at any price — the answer is a public API you use yourself, a partner agency, or a roadmap board. The six that do supply it staff **named engineering organisations** and price behind sales: Banno's Custom Development team, Backbase's Services org, Tapcart's Solutions & Services Engineer. That is what per-tenant functionality costs when humans build it, and it is why almost nobody sells it.
 
-The old boundary was *code is fixed, tokens and assets vary*. The scope decision in the pivot moves it: the product is a [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]] — every screen, every asset, every surface, **including layout** — and the fixed thing is now **functionality, not code**.
+[[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]] survives as a *supporting* claim rather than the premise: AI compresses the cost of producing a coherent visual surface, which is why a generated module can look native for nearly nothing. It is no longer the reason anyone buys.
 
-The invariant, in the founder's tightened form (P14): a redesign changes **arrangement only**. No screen is merged or split, no functionality added, none removed. Every screen does what it did before and needs exactly the data it needed before, so the API surface is provably identical ([[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]]).
+**What has not changed is what is left to own.** The platform already owns the app, the tenants, the release train, the store listings and the customer relationship. Recompose owns **the transformation** — a tenant's request in, a working module out, no human handoff in between.
 
-This is a larger product surface and a **tighter** constraint at the same time, which is the unusual property of the pivot. It is checkable rather than argued: a platform's own engineers can diff the API calls a variant makes against the baseline and confirm nothing was added or removed, so their QA surface is unchanged by construction. It is also strictly tighter than Gigacatalyst operates under, since they generate new functionality against newly discovered APIs.
+## The invariant moved again: from arrangement to addition
 
-The gate has never been built or run. See T11 in the office hours doc.
+- **First form.** Code is fixed; tokens and assets vary.
+- **Second form (2026-07-27).** Functionality is fixed; arrangement varies. A redesign changes how the app is arranged and never what it does.
+- **Third form (2026-08-12).** **Existing code is fixed; new code is added beside it.** A module adds a screen, a widget, a workflow. It never edits, moves, merges, splits or removes anything already there.
 
-## Two parts: assets are data, layout is code
+Each form was checkable by the customer's own engineers, and that property is what makes any of them saleable. The third is checkable in the same way *for existing code* — a diff shows nothing was touched. **What it does not establish is that the added thing is correct**, and that is the gap the previous two forms did not have. See [[Strategy/Product_Boundaries|Product_Boundaries.md]].
 
-The architecture is explicitly two systems with a boundary between them, and the boundary is where determinism runs out.
+The upside of the trade is that the third form is the boundary the entire field already uses. Salesforce, ServiceNow, SAP, Shopify, Atlassian Forge, Q2's Caliper, Banno's Plugin Framework and Gigacatalyst converged on it independently, and the August 2026 research rates it load-bearing with high confidence. The previous invariant was unusual and had to be explained; this one is what a platform engineer already expects to hear.
 
-**Part one — the asset pipeline.** An app-agnostic dependency DAG resolves palette, typography, copy, icons, and images. Colour resolves four base OKLCH slots in one LLM call with WCAG AA enforced as an accept condition and the rest of the palette derived deterministically in Python; fonts are validated live against the Google Fonts catalogue; copy is length-bounded per slot; icons are matched against a curated set with generation as fallback. Coherence is achieved **structurally** — the shared derived palette feeds every image prompt and `depends_on` edges fold one slot's look into another's — not by a critique loop. The graph is validated before any paid call, cost per run is bounded and known, and a failed node skips only its transitive dependents. See `README.md`.
+## Two parts: assets are data, behaviour is code
 
-**Part two — the layout agent.** Layout is the surface no slot inventory can express, so an agent edits it under the invariant above. As of [[pivots/2026-07-28-01-agentic-editing-all-in|pivots/2026-07-28-01-agentic-editing-all-in.md]] this half is specified rather than merely named, and it is four steps:
+The two-system split survives the pivot and keeps doing the same job. Only the second half was replaced.
 
-1. **Tokenize** the platform's codebase agentically into the shared fork. Forward-deployed at MVP. This pass tokenizes every asset — images, colour, type become slot references — and does **not** mock anything; mocking belongs to the mirror.
-2. **Mirror** the codebase into a **JSX visual mock** — no features, no logic, no API calls, no state. Generated once per upstream release, per platform, amortized across every tenant. This is where the design agent works and where the end user watches it happen.
-3. **Design and validate** against screenshots. The agent has full freedom over arrangement; the validator loops with it until accepted.
-4. **Productionalize** — approved visual design in, production code out, invariant preserved — then a production validator, then sync on every upstream merge. Each design is **one fork carrying `uat` and `main`**; generation runs against `uat` because it is the branch that is ahead, and `main` fast-forwards off the existing history rather than being maintained separately.
+**Part one — the asset pipeline, unchanged and repurposed.** An app-agnostic dependency DAG resolves palette, typography, copy, icons and images. Colour resolves four base OKLCH slots in one LLM call with WCAG AA enforced as an accept condition and the rest derived deterministically in Python; fonts are validated live against the Google Fonts catalogue; copy is length-bounded per slot; icons match against a curated set with generation as fallback. Coherence is achieved **structurally** — a shared derived palette feeds every image prompt and `depends_on` edges fold one slot's look into another's — not by a critique loop. See `README.md`.
 
-Two properties of that shape are load-bearing. **The mirror is visual, never functional**, so the arrangement-only invariant never crosses a translation boundary; it is enforced at productionalize time on real production code, where the platform's own engineers can still verify it by diff. And **layout freedom is bounded by the invariant rather than by an enum** — structural presets were built, tested, and rejected because a bounded option set reproduces the platform's original design language however many options it exposes, which is a reskin.
+**Its job changed.** It no longer produces a redesign. It produces the [[Concepts/Product/Mechanisms/Tokenized_Design_System|token set]] a generated module renders against, so a module Recompose built is indistinguishable from one the platform built. That is the entire remaining role of theming: **no layout generation, no animation, no visual mirror, no screenshot oracle as a design accept condition.**
 
-The split is load-bearing twice over. Engineering: routing palette generation through a coding agent would be slower, more expensive, non-deterministic, and would throw away the WCAG and coherence guarantees the pipeline already provides. Positioning: one agent doing everything reads as a wrapper over a model, and "agentic coding agent" is a crowded shelf. **Deterministic where determinism is available, agentic only where it is required, reads as architecture.**
+**Part two — the module generator.** A tenant describes functionality; an agent produces an additive module against the platform's extension surface, wired to endpoints their API already exposes, rendered against their tokens.
 
-Two claims from the pre-pivot thesis survive unchanged. The product is the [[Concepts/Product/Mechanisms/Orchestrator|orchestration layer]], not the generation models — Recraft, FLUX, Firefly and their successors are commoditizing primitives anyone with an API key can call. And [[Concepts/Product/Mechanisms/Modal_Coherence|Modal_Coherence]] is the actual hard problem: each module producing technically-correct output independently is solved; outputs that compose into something that reads as one designer's work is not. The [[Concepts/Product/Mechanisms/Tokenized_Design_System|tokenized design system]] is the substrate that makes both possible, and it is now what we produce *inside someone else's app* rather than something we build for ourselves.
+**This half is specified as a direction and not as a mechanism.** Four things inside it are undecided and none may be invented:
 
-## There is no integration — that is the product
+1. **Compile-time or runtime.** Runtime is server-driven UI — the app ships a renderer and the server sends layout as data — proven at Airbnb, Lyft, Spotify and DoorDash. Compile-time is a per-tenant binary. Different asks of the platform.
+2. **The accept condition.** Read-only modules, generated tests through their CI, a bounded primitive vocabulary, or tenant approval on real data. None chosen.
+3. **What bounds the request.** *Describe what you need* is arbitrary software.
+4. **Where the admin surface lives.** A custom feature nobody can configure is dead on arrival.
 
-The engine does not run inside the platform's app, so the [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]] is satisfied by there being nothing to integrate rather than by an SDK. **The multi-language SDK roadmap is not the plan.**
+The split remains load-bearing for the same two reasons it always was. Engineering: routing palette generation through a coding agent would be slower, more expensive, non-deterministic and would throw away the WCAG and coherence guarantees the pipeline already provides. Positioning: **deterministic where determinism is available, agentic only where it is required, reads as architecture** — one agent doing everything reads as a wrapper over a model, and that shelf is crowded.
 
-Adoption was named as the biggest expected blocker in the founding pivot, and the Codex cold read located it precisely: messy design systems, hardcoded screens, QA ownership, and internal resistance to letting an external system drive production UI. Every one of those objections is about **an external system operating inside their codebase.**
+Two claims from every prior version survive untouched. The product is the [[Concepts/Product/Mechanisms/Orchestrator|orchestration layer]], not the generation models. And [[Concepts/Product/Mechanisms/Modal_Coherence|Modal_Coherence]] is the actual hard problem on the asset side — outputs that compose into something reading as one designer's work, rather than each module being independently correct.
 
-The fork model removes the premise rather than answering the objection. Recompose keeps its own tokenized fork of the platform's app and derives each design from it. The platform grants **read access**. There is no PR, no write, no library to adopt, no version to keep up with, and nothing to review.
+## Integration is now nonzero, and that is the cost of the pivot
 
-Two consequences worth stating plainly:
+The previous architecture satisfied [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]] by having **nothing to integrate**: read access, an external fork, no library, no API, no version to track. The organizational consequence was the point — write access needs engineering-leadership sign-off, read access needs nobody, and that decides *who has to say yes.*
 
-- **The organizational gate disappears, and that matters more than the engineering saving.** An external agent with write access to the trunk needs engineering leadership sign-off. Read access does not. This changes *who has to say yes*, which for a solo founder selling into a platform is the difference between a six-month procurement conversation and a demo.
-- **The benchmark stops applying.** Gigacatalyst publishes ~2 days to install and ~2 weeks to full integration, explicitly *"not an instant plug-and-play add-on"* — from a funded team of four. That was the bar to beat when there was something to install. There is no longer an installation step to measure, so T9 is no longer the right test. The remaining time cost is the forward-deployed tokenization pass, which is our work, not theirs.
+**A module has to run inside their app, so something has to accept it.** Two cases:
 
-What exists today is more than the earlier drafts of this doc credited, because a large body of work lived only on a worktree branch until 2026-07-28:
+- **The platform already runs an extension architecture.** Banno's Digital Toolkit and Plugin Framework, Backbase's SDK, Tapcart's App Studio with its CLI, Global Components and Configurable Blocks, BuildFire's MIT-licensed `buildfire.js`, GoodBarber's custom code and APIs. Recompose writes into a surface they already own, host, deploy and govern. The sign-off is small because the surface exists precisely to be written into, and the safety story is theirs rather than one Recompose has to invent.
+- **The platform has no such surface.** They add insertion points to their own app, which is exactly the sign-off the old principle avoided. Harder sale, and the reason the ICP moved.
 
-- **The read path.** A read-only FastAPI over the produced `output.yaml`, deployed on App Runner with assets served from a CDN.
-- **Two runtimes, not one.** `ThemeFlutter` (consumed live by the member app and the CRM) and **`ThemeReact`** — a built web runtime, the React mirror of ThemeFlutter, shipping as the `theme-react` library.
-- **A standalone theme browser**, `ThemeReact`'s app half: pages the catalog and previews any design in a phone frame, with an **Inspect** view showing every artifact a run produced (four colour roles and their 28 derivations, the flat palette, both typefaces set in themselves, generated copy, icons and imagery).
-- **A studio API**, `ThemeTree/studio` — brief service, run launcher, run registry, run reader, plus a brief-authoring agent. Local only by design (`make studio`, 127.0.0.1:8002); it spends real money per launch and is not deployed. The read-only API is the one that ships.
+**Which case is normal is unverified and is the first thing to check.** Banno's framework hosts web apps on the partner's own infrastructure; Tapcart's blocks live in its studio. If no existing surface reaches native UI inside an arbitrary existing screen, then the extension architectures buy the *budget line* but not the *integration*, and the harder sale is the normal one.
 
-**So the runtime path is not in question — it was extended to a second platform.** An earlier version of this section asked whether `ThemeFlutter` and the read API would still have a job once layout lives in a fork. A second runtime having been built answers it: the resolved-asset layer is being invested in, not retired. The open part is narrower and unchanged — whether assets are fetched at runtime or baked at build time once layout is code, with a hybrid the likely shape. "Nested HTML" remains undefined (Open Question 2.6).
+### The fork model is retired, and its hardest problem relocated rather than dying
 
-### The consequence nobody has priced: one design, one build
+Two agent-maintained fork layers, continuous re-derivation, landing on `uat` — all of it goes with the visual redesign. So does the whole class of fork hazards: divergence tax, semantic conflict on merge, and the undesigned-surface problem where upstream ships a new screen and it appears in default styling.
 
-This one is not resolved and should not be treated as settled. **Layout is code**, and each design is its own fork, so **each design is its own binary.** Under the old token-only model one binary could serve every tenant because a theme was data fetched at runtime. That is no longer true for the layout half.
+**What replaces it is quieter, not absent.** The fork concentrated all coupling into one place — a git merge — and made it *visible*: a conflict is an event and somebody is told. Modules distribute coupling across every dependency on the platform's API and make it **invisible**. A field that keeps its name and changes meaning passes cleanly and every module built on it is silently wrong, indefinitely, with nothing reporting it.
 
-This has teeth:
+A proxy that absorbs upstream API changes and only cascades on large ones is the working answer. It is an anti-corruption layer: it genuinely reduces fan-out by making one place responsible for the platform's data shape. It does not remove the dependency, it cannot see a semantic change, and deciding *"is this a big update"* is itself an unsolved judgement whose cheap-direction failure does not announce itself.
 
-- It puts a real filter on the buyer — a platform that ships **one** app for all tenants and themes it at runtime cannot consume per-design builds without changing how it releases, which is exactly the architectural change the core principle promises to avoid.
-- It partially resurrects the distribution question the founding pivot marked as *"largely stops being this product's problem."* That was true when the platform shipped one binary. Per-design builds mean per-design store submissions, which is Apple Rule 4.2.6 territory again, and it was never confirmed.
+### What distribution looks like now
 
-The honest position: never touching their code solved the codebase objection and moved the cost into the release pipeline, where it has not yet been examined. See Open Question 2.5.
+The previous model's per-design binary is gone. What ships depends on the compile-time/runtime decision above:
+
+- **Runtime** — layout arrives as data, so no new binary and no store submission. This is why Airbnb, Lyft, Spotify and DoorDash all run it. It requires the platform's app to carry a renderer.
+- **Compile-time** — a module is code in a build, so a tenant's app is a distinct binary, and per-tenant store submission returns as a question.
+
+Apple Rule 4.2.6 remains the platform's problem either way, because Recompose submits nothing. Confirming that with a real platform is still unclosed.
 
 ## Vertical-agnostic by intent, not just by construction
 
-The pipeline has always been app-agnostic **by construction**: nothing app-specific lives in Python, the slot inventory and `depends_on` edges live in `apps/<app_id>/` YAML, and a new app is one new folder rather than a code change ([[CLAUDE|CLAUDE.md]]).
+The asset pipeline has always been app-agnostic **by construction**: nothing app-specific lives in Python, the slot inventory and `depends_on` edges live in `apps/<app_id>/` YAML, and a new app is one folder rather than a code change.
 
-What changed is that this stopped being a nice property of the implementation and became **the shape of the company**. There is no chosen vertical. The buyer is any multi-tenant white-label platform, in any vertical, where **every tenant already has their own app** — Subsplash, Passion.io, Q2, Banno, Alkami and their peers — because the population a redesign can act on equals their tenant count rather than the 0.1–3% who take a branded-app upgrade on a shared-shell platform (P1a). Vertical is now a **targeting question, not an architectural one**. Where tenant-side willingness to pay concentrates is a separate and inherited hypothesis ([[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]]), unvalidated for this ICP and weakened by three independent findings — see below.
+The company is likewise vertical-agnostic. The buyer is any multi-tenant white-label platform **that already pays to build per-tenant functionality** — Banno, Backbase, Tapcart, Trainerize Enterprise, GoodBarber, BuildFire — with the previous filter kept as a secondary sort: platforms where every tenant already has their own app. Vertical is a targeting question, not an architectural one.
 
-CombatDen is `apps/combatden/` — the reference implementation, the demo canvas, and the eval bed. It is history and a fixture, not the product.
+CombatDen is `apps/combatden/` — reference implementation, demo canvas, eval bed. History and a fixture, not the product.
 
-Two honest limits on the agnosticism claim. It is unproven outside `apps/combatden/` and `apps/smoketest/` (T5). And the mirror has never been generated from a codebase the founder did not himself write (T16).
+**Two honest limits carry over unchanged.** App-agnosticism is unproven outside `apps/combatden/` and `apps/smoketest/`, both written by the founder with both ends of the contract included. And nothing has ever been generated against a codebase the founder did not write.
 
-**The stack filter moved, and it narrowed.** The 2026-05-25 session had the ICP potentially restricted to stacks that compile to web, because the live-preview path depended on it. The JSX visual mirror dissolves that for the *design* half: any stack can be mirrored into JSX, so preview and design no longer care what the production app is written in. What still depends on the stack is **production-side validation** — screenshot-diffing the shipped app requires it to render somewhere, which Flutter Web gives for free and native Kotlin/Swift would need a simulator for. So the constraint survives, but it applies to one step at the end rather than to the whole product, and it is a validation-tooling problem rather than an ICP boundary.
+**The stack question changed shape.** It used to be a validation-tooling problem attached to screenshot-diffing at the end. Now it is upstream: a module has to be written in whatever the platform's app is written in, and the extension surface it targets is theirs. React Native and Flutter remain the friendly cases; native Swift and Kotlin are the hard ones, and mobile is the worst-supported domain for agentic code generation in the field.
 
-## The four binding constraints, re-scored for the platform ICP
+## The four binding constraints, re-scored again
 
-[[Research/2026-05-01-ai-brand-competitor-analysis|Research/2026-05-01-ai-brand-competitor-analysis.md]] found that design labor was **one** of four constraints holding white-label apps at logo-and-colour, and not the most binding. That finding stands and it is the most useful thing in the research. Under the platform ICP all four are re-scored:
+[[Research/2026-05-01-ai-brand-competitor-analysis|Research/2026-05-01-ai-brand-competitor-analysis.md]] found design labour was one of four constraints holding white-label apps at logo-and-colour, and not the most binding. Under the module product all four move:
 
-- **Apple Rule 4.2.6 (distribution architecture)** — largely stops being this product's problem, because platform customers already ship their own apps under their own accounts. Flagged in the pivot as **needing confirmation**; the old distribution doc was left behind in the CombatDen vault and has no Recompose equivalent yet.
-- **Regression-test combinatorics** — returns, sharper. If each tenant's app is code-diverged, the platform can no longer ship one update to all tenants. The principle is settled: divergence must never accumulate, so a redesign is a repeatable transformation re-applied per version rather than a permanent branch ([[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]]). **The mechanism is deliberately undecided** and is the largest open architectural question — see below.
-- **Integration and onboarding labor** — named in the research as the constraint that dominated unit economics in the Bigtincan/Showpad/Twilio/Mendix cohort and the one AI does not compress. This is now the product rather than a footnote, and P14a is the bet that it compresses after all. It is also the premise most likely to be wrong; T4 is its falsification test.
-- **Weak end-user willingness-to-pay for brand depth** — not solved, made **irrelevant**. Per-tenant theming is not sold to satisfy end users; it is priced as a tier ([[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]]). Embedded-analytics vendors publish a level 1–4 white-label ladder in which level 3 is explicitly per-tenant theming for reseller scenarios. The tier exists and is expensive — but the premium prices in circulation (Mighty Pro, Circle Plus, Passion.io DFY) are **tier prices covering migration, a named strategist, App Store operations and higher limits**, set by the size of the tenant's business rather than by design cost. The design work itself is priced standalone at $99–$499 ([[Research/2026-08-02-enterprise-tier-anatomy|Research/2026-08-02-enterprise-tier-anatomy.md]]). What is scarce is not the money, it is the **3–6 week human turnaround** the tier runs on. The pitch is *"a price tier you can't currently sell at volume"* and *"the deals you lose on brand"* — never *"your tenants will love it,"* which the vault's own research disproves.
-
-Because the product now changes structure and not only assets, the labor removed is the designer **and** the front-end engineer implementing the design — the whole custom-build line item, $10–50k and 4–12 weeks in the agency market. The [[Concepts/Business/Strategy/Freelance_Conversion_Thesis|Freelance_Conversion_Thesis]] returns inverted: agencies are not the buyer, but agency-grade work is what the product replaces.
-
-## What survives of the Shopify read
-
-The deflationary [[Concepts/Business/Strategy/Shopify_Pattern|Shopify_Pattern]] finding — ~98.5% of Shopify merchants run stock themes, only ~1.5% truly custom — is one of three measurements from the same platform pointing the same way. The others: **1.73% of Shopify Plus stores run a mobile app builder, 0.10% across all Shopify stores**, with adoption spanning at least 70× across the tenant-size range at a single price. The pattern generalises past themes — depth of customization is bought by the largest tenants and almost nobody else, and it tracks tenant size rather than price.
-
-It remains a finding about **end businesses**, which under this ICP are the buyer's tenants, one level downstream of the customer. Two things follow.
-
-**Presets are the demo surface, not the architecture.** Pre-generated theme sets and mix-and-match combinations are how the output is shown in a sales call or an application video. They are not the mechanism, which is the two-part pipeline-plus-agent above. Whether the curated preset model is the platform's product or the platform's tenants' product is unexamined (Open Question 7).
-
-**Default quality is the product.** Most customers ship the first pass without iterating, so first-output quality is the real bar. The ambition raises that bar rather than relaxing it: a logo-and-palette swap fails invisibly and just looks generic, while a full redesign fails **visibly**, because the buyer's expectation is now "this was designed for us" and anything short reads as broken rather than plain.
-
-The quality target is *close enough at a fraction of the price*, not parity. What adding structure changed is the comparison target — from a generic template to a custom build — not the requirement, which was never to beat human designers.
+- **Apple Rule 4.2.6** — decided by the compile-time/runtime choice above rather than by the product. Runtime removes it entirely.
+- **Regression-test combinatorics** — **materially better.** This was the fork model's worst structural problem: code-diverged tenants mean the platform cannot ship one update to everyone. Additive modules do not diverge the base, so the platform ships its own updates exactly as before. This is the clearest architectural win in the pivot.
+- **Integration and onboarding labour** — **worse, and it is now the honest headline.** The previous product reduced this to granting read access. A module needs auth, session, user identity, tenant scoping, base data and RBAC inheritance wired against a production system nobody here wrote. That is most of the work and it is where the failures stop being cosmetic.
+- **Weak end-user willingness-to-pay for brand depth** — **no longer relevant to the pitch at all.** The product is not sold on brand. What replaces it as the demand question is whether refusing feature requests costs the *platform* anything measurable, which is unknown and is one question on one call.
 
 ## What this is and is not
 
-- **Not a horizontal AI app builder** (Lovable, Bolt, v0). Those build apps from nothing. This transforms an app that already exists and already ships.
-- **Not FlutterFlow.** App construction is not fleet rebranding — a correction the founder made to Claude's competitive claim, and it dropped a category from the set.
-- **Not a coding agent product.** The two-part split is what distinguishes it: pipeline where determinism exists, agent only where it does not.
-- **Not Gigacatalyst.** They change what the app does; this changes how it looks. Both are now code-modifying agents inside a host codebase, so the separation is *what each one changes*, not how either works. Their safety story does not transfer: everything they generate is **additive** and therefore separable by construction, which is why sandboxing works for them. A redesign modifies screens that already exist and cannot be sandboxed — which is exactly why the functional-equivalence gate has to carry that weight instead. *"Why isn't visual just their next feature"* is unanswered (Open Question 9).
-- **Not token tooling, a brand API, or a design tool.** They stop at tokens, at brand kits, and at a mockup a human still has to implement. Nobody found closes brief → coherent multi-modal asset set → store-ready production app across a fleet of tenants on a shared shell.
-- **Not defensible by moat.** The barrier is packaging, not difficulty, and the founder concedes platforms could build the pipeline themselves. Defence is being the default first plus coherence quality. Never make a moat claim.
+- **Not a horizontal AI app builder** (Lovable, Bolt, v0). Those build apps from nothing. This adds functionality to an app that already exists and already ships, under someone else's auth and data model.
+- **Not a coding agent product.** The two-part split is the distinction: pipeline where determinism exists, agent only where it does not.
+- **Not Q2 Code, and this is the load-bearing competitive line.** Q2 Code is a governed development environment that makes Q2's engineers and certified partners faster at writing SDK-compliant extensions. **This removes the developer**: a non-technical tenant describes what they need and gets it. If the product becomes a tool a developer drives, it is competing with something every Group A platform can build in-house — Q2 did it by wiring Claude Code into Bedrock on top of an SDK that had existed since 2018, and *the AI was the cheap part bolted onto the expensive part.*
+- **Not Gigacatalyst, and the comparison is now much closer than it was.** They build per-tenant functional customization inside a host SaaS; so does this. Two differences and both should be said plainly: they have no mobile frontend, which is why an API-composition sandbox suffices for them and a renderer has to live in the app here; and they are funded and shipping to Series B companies while this is a direction with nothing built.
+- **Not a design product.** Theming is a token layer in service of native-looking modules.
+- **Not defensible by moat.** The barrier is packaging, not difficulty — and the threat is sharper than under the visual product, because the chosen buyer is defined by already owning the extension architecture that makes building this cheap.
 
 ## Open architectural questions
 
-Named here because they are architecture, not strategy, and because none of them are answered.
+None of these are answered.
 
-1. **Productionalize is the hard part, and it is where the product actually lives.** Approved visual mock in, production code out, invariant preserved. It is the only step that must carry the invariant, the only translation whose output ships, and the one with no free oracle. The specific hazard: **the mock has no edge cases.** It does not know a list is paginated, a name can be 47 characters, a screen has loading, empty, error and overflow states — so the design agent designs against ideal data and productionalize must reconcile that against production code which is mostly edge cases. Two mitigations proposed and not yet built: have the mirror mock **every state** rather than the happy path only, and screenshot-diff the production build against the approved mock (T13).
-2. **What terminates the design validator loop.** Screenshots give an accept condition where there was none, which closes the older "layout has no accept condition" risk. They do not give a *stopping* condition, and an unbounded loop is unbounded cost. Whether a VLM screenshot judgement tracks human design judgement well enough to terminate is untested (T14).
-3. **The functional-equivalence gate is unbuilt.** P14 is strong precisely because it is checkable, and it has never been checked. Build it against CombatDen before it is ever promised to a customer (T11).
-4. **App-agnosticism unproven on a foreign app** (T5); the mirror unproven on one (T16).
-5. **The error budget has no denominator.** ~95/4/1 is the stated **target** — never measured — and per screen, per tenant-redesign or per sync operation differ by orders of magnitude in how often the halt path fires (T15). *What makes the budget acceptable is no longer open: the pipeline halts rather than ships ([[pivots/2026-07-30-22-autonomous-is-the-promise|pivots/2026-07-30-22-autonomous-is-the-promise.md]]). Who resolves a halt is.*
-6. **"Nested HTML" is undefined** (Open Question 1).
+1. **The accept condition for a generated feature.** No screenshot oracle, no equivalence diff. The single load-bearing gap.
+2. **Compile-time or runtime.** Decides what the platform must do and whether store submission returns.
+3. **How deep the existing extension surfaces actually go.** Answerable from public documentation, and it decides whether the sale is easy or hard.
+4. **What bounds a tenant's request**, and whether a bounded primitive vocabulary is the answer.
+5. **Contract drift.** The proxy's limits are known and its judgement rule is not designed.
+6. **The security surface, enumerated.** API discovery, approved-API scoping, schema validation, auth passthrough, RBAC inheritance, public-vs-private data classification. Currently a list, not a design.
+7. **Whether one person can carry three surfaces** — module, backend, admin — each with its own security surface.
+8. **What survives in code.** The asset pipeline, both theme runtimes and the studio were built for the previous product. The pipeline keeps its job; the rest needs an explicit decision rather than drift.
 
-**How a tenant's redesign stays current across platform releases:** agentic re-application on every upstream merge, landing on **`uat`** — the platform's own branch that is ahead of `main` — rather than on production. `uat` is a branch, not a review environment, and there is no approval queue. A re-application the agent cannot complete **halts** rather than landing unverified, which is what makes the stated error budget survivable without a reviewer. See [[pivots/2026-07-28-01-agentic-editing-all-in|pivots/2026-07-28-01-agentic-editing-all-in.md]] and [[pivots/2026-07-30-22-autonomous-is-the-promise|pivots/2026-07-30-22-autonomous-is-the-promise.md]].
-
-Pricing is not an architectural question, and the architecture does not decide it. **Pricing for this ICP is undefined.** The old gym-owner ladder is dead and does not transfer; the working figure in [[Strategy/YC_Application_F26|YC_Application_F26.md]] is a defended range, not a decision.
+Pricing is not an architectural question and the architecture does not decide it. **Pricing is undefined**, and it is undefined against a different buyer than last week.
