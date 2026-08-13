@@ -7,10 +7,10 @@ aliases: [closed loop, design-to-production loop, brief in app out, no human han
 
 # Closed Design-to-Production Loop
 
-> [!warning] Retired 2026-08-12 — the loop it closes is not the product
-> **The shape of the argument survives and should be reused**: everyone adjacent stops one step short, and closure is the differentiator. Repointed at the module product, the version that holds is that **a tenant's request goes in and working functionality comes out, with no developer in the middle.** Q2 Code stops at a faster developer; extension SDKs require one by design; every AI app builder is greenfield; Gigacatalyst closes it on web without a mobile frontend.
+> [!warning] Retired — this is not the loop the product closes
+> **The argument shape is reusable and the live version is:** a tenant's request goes in and working functionality comes out, with no developer in the middle. Q2 Code stops at a faster developer; extension SDKs require one by design; every AI app builder is greenfield; Gigacatalyst closes it on web without a mobile frontend.
 >
-> The empty space is real but **much smaller than the design one was**, because that category has funded incumbents in it. See [[Strategy/Competition|Competition.md]].
+> That gap is narrow — the category has funded incumbents in it. See [[Strategy/Competition|Competition.md]].
 
 A brand brief goes in; a store-ready branded production app comes out, with **no human handoff in the middle**. The closure is the differentiator — not any single generation capability, each of which is available somewhere else.
 

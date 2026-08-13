@@ -7,8 +7,8 @@ aliases: [mockup skill, per-app mockup skill, mock asset skill]
 
 # Mockup Skill
 
-> [!warning] Retired 2026-08-12 with the [[Concepts/Product/Mechanisms/Visual_Mirror|visual mirror]] it describes
-> **The underlying idea transfers and is worth keeping**: an agent given freedom needs a *specification*, not supervision. A module generator needs the same thing about the platform's app — what endpoints exist, what the data means, what the extension surface allows — and nothing currently produces it. That is the shape of [[Strategy/Open_Questions|Open_Questions.md]] §2.4, and Gigacatalyst built agentic API discovery to solve exactly it.
+> [!warning] Retired with the [[Concepts/Product/Mechanisms/Visual_Mirror|visual mirror]] it describes
+> **The idea is live and general: an agent given freedom needs a specification, not supervision.** A module generator needs one for the platform's app — what endpoints exist, what the data means, what the extension surface allows — and nothing produces it. See [[Strategy/Open_Questions|Open_Questions.md]] §2.4; Gigacatalyst built agentic API discovery to solve exactly this.
 
 A written description of a [[Concepts/Product/Mechanisms/Visual_Mirror|Visual_Mirror]] that ships **with** it, so an agent picking the mock up knows exactly what to expect and exactly how to edit it. Porting an app into a mock is not finished when the screens render — it is finished when that description exists.
 

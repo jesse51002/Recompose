@@ -7,10 +7,10 @@ aliases: [re-derived not forked, repeatable transformation, agent-maintained for
 
 # Re-Derived, Not Forked
 
-> [!warning] Retired 2026-08-12 — there is no fork in the module product
-> The constraint this existed to answer, **regression-test combinatorics**, is solved better by additive modules than it ever was by re-derivation: modules do not diverge the base, so the platform ships one update to everyone exactly as before. This is the clearest architectural gain in [[pivots/2026-08-12-21-modular-feature-system-replaces-visual-redesign|the pivot]].
+> [!warning] Retired — there is no fork
+> **Regression-test combinatorics**, the constraint this existed to answer, is solved structurally instead: additive modules do not diverge the base, so the platform ships one update to every tenant exactly as it does today.
 >
-> **The hazard relocated rather than dying.** A fork concentrated coupling into a git merge and made it *visible* — a conflict is an event and somebody is told. Modules distribute coupling across every API dependency and make it *invisible*: a field that keeps its name and changes meaning passes cleanly and every module built on it is silently wrong. See [[Strategy/Open_Questions|Open_Questions.md]] §2.5.
+> **The coupling hazard is quieter rather than absent.** A module's API dependency has no conflict and no event: a field that keeps its name and changes meaning passes cleanly and every module built on it is silently wrong. See [[Strategy/Open_Questions|Open_Questions.md]] §2.5.
 
 A tenant's redesign is a **continuously re-derived transformation, never a hand-maintained divergence**. Divergence in the git sense does exist — the design lives on a fork — but nothing in that fork is maintained by a person, so per-tenant divergence never accumulates as human work.
 

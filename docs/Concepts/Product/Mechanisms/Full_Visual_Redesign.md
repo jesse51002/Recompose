@@ -7,10 +7,8 @@ aliases: [full visual redesign, full visual overhaul, deep visual customization,
 
 # Full Visual Redesign
 
-> [!warning] Retired 2026-08-12 — this is no longer the product
-> [[pivots/2026-08-12-21-modular-feature-system-replaces-visual-redesign|The modular feature pivot]] replaced it with per-tenant feature modules. **Theming survives only as a token layer** whose job is making a generated module look native — no layout generation, no animation, no visual mirror, no screenshot oracle as a design accept condition.
->
-> The reason is not that this was infeasible. It is that design alone does not move the buyer, and there is no design budget line to sell into: the deliverable prices standalone at $99–499 and professional services runs 1–3% of revenue at the public companies. The definition below is kept because pivots and office hours reference it and those are never edited.
+> [!warning] Retired — not the product
+> Recompose builds per-tenant feature modules. **Theming is a token layer** whose job is making a generated module look native: no layout generation, no animation, no visual mirror, no screenshot oracle. Kept because the pivots and office hours reference it.
 
 The ambition level Recompose committed to between 2026-07-27 and 2026-08-12: a **complete visual overhaul of a white-label app — including layout — driven by the tenant, with no new features**. Every screen, asset, and surface reads as that tenant's brand rather than as the platform's app with a logo dropped in.
 

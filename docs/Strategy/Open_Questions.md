@@ -8,7 +8,7 @@ updated: 2026-08-12
 
 Concepts touched: [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]], [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]].
 
-Everything Recompose has not answered. Rewritten 2026-08-12 for [[pivots/2026-08-12-21-modular-feature-system-replaces-visual-redesign|the modular feature pivot]]; questions belonging to the retired visual product are in §5 rather than deleted, because a reader needs to know they were answered and then made irrelevant, not that they were never asked.
+Everything Recompose has not answered. §5 holds what is closed, so nobody re-opens it by accident.
 
 Every entry states the question, why it matters, and what evidence would close it. Source tags in brackets point at the premise, test, or open question in the office hours doc that raised it.
 
@@ -26,13 +26,13 @@ No platform has been asked. The origin is a realization while building a white-l
 
 **What closes it:** a platform that keeps a second meeting, or asks what it costs, without being led there. Nothing built closes it.
 
-### 1.2 Is there a named human at any target platform? [assignment #2] — **the ICP moved 2026-08-12**
+### 1.2 Is there a named human at any target platform? [assignment #2]
 
 The list half is done and overshot. `Contact_Surface` in the company-list research names a channel, not a person. **No human has been named**, in five consecutive sessions of the assignment saying so.
 
-**The sort inverted.** The filter is now *platforms that already fund per-tenant custom development* — Banno, Backbase, Tapcart, Trainerize Enterprise, GoodBarber, BuildFire — with the previous filter (every tenant already has their own app) kept as a secondary sort.
+**The filter is *platforms that already fund per-tenant custom development*** — Banno, Backbase, Tapcart, Trainerize Enterprise, GoodBarber, BuildFire — sorted within that by whether every tenant already has their own app.
 
-**The fintech deprioritisation is partly reversed.** Q2, Banno, Alkami and Backbase were deprioritised on 2026-08-04 for two reasons: they own mature extension SDKs, and their vertical resists visual differentiation. **The second reason no longer applies** — a feature product is not asking a bank to look different. The first reason is now *sharper*, because it is the build-versus-buy exposure and the chosen ICP is defined by it.
+**Fintech sorts high on fit and low on reachability.** Banno and Backbase have the strongest custom-development evidence in the research, and banking's resistance to visual differentiation is irrelevant because nothing here asks them to look different. What binds is procurement, vendor risk assessment and 6–18 month cycles — plus the sharpest build-versus-buy exposure, since owning a mature extension SDK is exactly what makes building this in-house cheap.
 
 **Banno is the only platform in both filters** and is the strongest target on the merits. It is also a public company with procurement and 6–18 month cycles, so **sort Tapcart and BuildFire ahead of it** on reachability.
 
@@ -60,33 +60,33 @@ The whole direction rests on tenant frustration at being told no. **The buyer is
 
 Nobody knows the composition of the refused-request pile. The split that matters is **a view of data the platform already holds** — a dashboard, a report, a filtered list, a calculator — versus **a workflow that writes something.**
 
-**Why it matters:** it decides the accept condition (§2.1), which decides whether one person can build this. Read-only modules keep *a bad output is ugly, not broken* literally true. Write modules do not.
+**Why it matters:** it decides the accept condition (§2.1), which decides whether one person can build this. A read-only module's worst failure is a wrong-looking screen; a writing module's is wrong data.
 
 **What closes it:** one question per call, and the answer is a ratio rather than a yes or no.
 
 ### 1.6 How many refused requests are the same request? [T30b] — **OPENED 2026-08-12**
 
-Under the visual product the unit economics were settled and elegant: one **design**, one fork, servable to forty tenants — the unit sold and the unit maintained were the same object. **A custom feature is for one tenant by construction**, so that leverage is not automatic.
+**A module is for one tenant by construction**, so nothing amortises unless requests repeat.
 
 **Why it matters:** it decides whether the business is pure bespoke (revenue and cost both scale with requests), a growing library (margin improves and the first customer is the most expensive), or a bounded vocabulary (best margin, smallest answerable set). This changes the economics more than anything else that is open.
 
 **What closes it:** asking a platform how much repetition is in its refused pile.
 
-### 1.7 Is the output close enough — and who decides? [T8, revised]
+### 1.7 Is the output close enough — and who decides? [T8]
 
-The bar is not parity: *close enough at a fraction of the price.* What changed with the pivot is the comparison target — **a contracted custom-development engagement** rather than a custom design build.
+The bar is not parity: *close enough at a fraction of the price.* The comparison target is **a contracted custom-development engagement**.
 
-**The person who decides changed, and this reverses a prior finding.** Under the design product the hostile evaluator usually did not exist; the roles were Solutions Consultants and Onboarding Specialists, so political risk was low and there was no advocate either. **Group A is defined by having a named engineering organisation doing this work** — Banno's Custom Development team, Backbase's Services org. They are the champion *and* the opponent, and their objections will be about real things: the security surface, API coupling, and whether generated code is correct inside their auth context.
+**Group A is defined by having a named engineering organisation doing this work** — Banno's Custom Development team, Backbase's Services org. They are the champion *and* the opponent, and their objections will be about real things: the security surface, API coupling, and whether generated code is correct inside their auth context.
 
 **What closes it:** a generated module put in front of the person who runs that team.
 
-### 1.8 "Why aren't you just Gigacatalyst?" [OQ9, reversed 2026-08-12]
+### 1.8 "Why aren't you just Gigacatalyst?" [OQ9]
 
-The question used to be *"why isn't visual just Gigacatalyst's next feature?"* and rested on features and visuals not competing for the same dollar. **The pivot removes that separation.** Both products now generate per-tenant functionality inside a host SaaS, on the host's APIs, governed by the host's auth.
+Both companies generate per-tenant functionality inside a host SaaS, on the host's APIs, governed by the host's auth. There is no clean separation to point at.
 
 The honest answer has two parts and only one is defensible ground: **they have no mobile frontend**, so an API-composition sandbox suffices for them while a mobile app needs a renderer in the build or in the app; and **they are funded, shipping and live with Series B companies** while this is a direction with nothing built.
 
-**Why it matters:** it is now the first question any informed person asks, and their omission from the YC competitor answer is no longer defensible on the old grounds.
+**Why it matters:** it is the first question any informed person asks, and the frozen YC application omits them from its competitor answer, which is visible to anyone who checks.
 
 **What closes it:** a written paragraph, prepared rather than improvised. Not research — a decision about what to say.
 
@@ -98,7 +98,7 @@ Gigacatalyst reports adoption rate, day-30 retention, pipeline unblocked, churn 
 
 ### 1.10 Does CombatDen keep running with real gyms? [OQ4]
 
-Offered in the founding session and never ruled on. A live multi-tenant fleet is a stronger artifact than a static demo — and it is also gym sales work, which is what the pivot moved away from. **It cannot be split down the middle without becoming two GTMs.**
+Offered in the founding session and never ruled on. A live multi-tenant fleet is a stronger artifact than a static demo — and it is gym sales work, which is a second GTM. **It cannot be split down the middle.**
 
 **What closes it:** a decision, not evidence.
 
@@ -108,22 +108,22 @@ Offered in the founding session and never ruled on. A live multi-tenant fleet is
 
 ### 2.1 What is the accept condition for a generated feature? [T33] — **the load-bearing one**
 
-**This is where the product lives now.** The visual product had two cheap conclusive oracles: a screenshot a human judges, and a diff proving the API surface is identical. **Neither exists for a feature.** Additive-only is diff-verifiable for *existing* code and says nothing about whether the added thing is correct.
+**This is where the product lives.** There is no cheap conclusive oracle: nothing a human reads at a glance, and no diff that proves correctness. Additive-only is diff-verifiable for *existing* code and says nothing about whether the added thing works.
 
 Four candidates, none chosen:
 
-- **Read-only modules first.** Reads through the platform's authenticated API and presents; never writes. The only candidate that restores *a bad output is ugly, not broken.* May exclude what tenants most often ask for — that is §1.5.
+- **Read-only modules first.** Reads through the platform's authenticated API and presents; never writes. The only candidate whose worst failure is cosmetic. May exclude what tenants most often ask for — that is §1.5.
 - **Generated tests through their CI.** Uses infrastructure they trust. Tests written by the agent that wrote the code verify what the agent *believed* it built; they catch regressions, not misunderstood requirements.
 - **A bounded module vocabulary.** Primitives — list, form, schedule, notify, report, chart — over endpoints their API already exposes. Each tested once, reused everywhere.
 - **Tenant approval on real data.** The tenant is the only party who knows what they meant, and will not exercise the empty state, the concurrent edit, the permission boundary or the five-hundredth row.
 
-**Why it matters:** without it there is no halt condition, and halting-rather-than-shipping is the entire reason [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]] was defensible. **Until it closes the autonomy claim cannot be made and no error budget may be quoted.**
+**Why it matters:** a promise of unattended operation needs a check the system can fail. **Until it closes, no autonomy claim may be made and no error budget may be quoted.** See [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]].
 
 **What closes it:** §1.5 supplies the input; then a decision.
 
 ### 2.2 How deep do the existing extension surfaces actually go? [T32] — **OPENED 2026-08-12**
 
-The pivot's central bet is that Group A platforms already own a surface to write into, which removes the insertion-point ask. **Unverified.** Banno's Plugin Framework hosts HTML/CSS/JS web apps on the *partner's* infrastructure. Tapcart's blocks live inside its own studio. BuildFire's SDK is open-source but its reach is unknown.
+The central bet is that Group A platforms already own a surface to write into, which removes the insertion-point ask. **Unverified.** Banno's Plugin Framework hosts HTML/CSS/JS web apps on the *partner's* infrastructure. Tapcart's blocks live inside its own studio. BuildFire's SDK is open-source but its reach is unknown.
 
 **Why it matters:** if none reaches native UI inside an arbitrary existing screen, Group A buys the budget line but not the integration, and the harder sale — the platform adds insertion points, needing engineering-leadership sign-off — becomes the normal one.
 
@@ -131,7 +131,7 @@ The pivot's central bet is that Group A platforms already own a surface to write
 
 ### 2.3 Compile-time or runtime insertion? — **OPENED 2026-08-12**
 
-Runtime is **server-driven UI**: the app ships a renderer, the server sends layout as data. Proven at Airbnb, Lyft, Spotify and DoorDash, and previously excluded by [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]] rather than by feasibility. Compile-time means a per-tenant binary.
+Runtime is **server-driven UI**: the app ships a renderer, the server sends layout as data. Proven at Airbnb, Lyft, Spotify and DoorDash. Compile-time means a per-tenant binary.
 
 **Why it matters:** it decides whether per-tenant App Store submission returns as a problem, what the platform has to do to adopt, and how fast a module can change after it ships.
 
@@ -139,7 +139,7 @@ Runtime is **server-driven UI**: the app ships a renderer, the server sends layo
 
 ### 2.4 The boundary: auth, identity, tenant scoping and base data — **OPENED 2026-08-12**
 
-**This is the actual hard part and it is not greenfield.** A module runs as the tenant's user inside the platform's auth context, reads the platform's base data, and must never see another tenant's. Getting any of it wrong is an incident rather than a bug.
+**This is the hard part, and it is not greenfield.** A module runs as the tenant's user inside the platform's auth context, reads the platform's base data, and must never see another tenant's. Getting any of it wrong is an incident rather than a bug.
 
 Four sub-problems, all unaddressed: auth and session passthrough; approved-API scoping and public-vs-private data classification; tenant scoping; and schema validation against an API that moves.
 
@@ -147,9 +147,9 @@ Four sub-problems, all unaddressed: auth and session passthrough; approved-API s
 
 **What closes it:** a written design, not a list. Currently a list.
 
-### 2.5 Contract drift — what replaced fork drift [T23, relocated 2026-08-12]
+### 2.5 Contract drift [T23]
 
-The fork concentrated all coupling into one place, a git merge, and made it **visible** — a conflict is an event and somebody is told. Modules distribute coupling across every API dependency and make it **invisible**: a field that keeps its name and changes meaning passes cleanly and every module built on it is silently wrong, indefinitely.
+A module depends on the platform's API and the dependency is **invisible**: a field that keeps its name and changes meaning passes cleanly, and every module built on it is silently wrong indefinitely. There is no conflict, no event, and no oracle.
 
 A **proxy** absorbing upstream API changes is the working answer. It is an anti-corruption layer and it genuinely reduces fan-out. It does not remove the dependency, it cannot see a semantic change, and *"is this a big update"* is an unsolved judgement whose cheap-direction failure does not announce itself.
 
@@ -159,13 +159,13 @@ A **proxy** absorbing upstream API changes is the working answer. It is an anti-
 
 Module, backend, admin dashboard. A custom feature nobody can configure is dead on arrival, so the admin surface is not optional, and each surface carries its own security surface.
 
-**Why it matters:** [[Strategy/Product_Boundaries|Product_Boundaries.md]] recorded that *a bad output for them is a security incident, a bad output here is ugly,* and that **that asymmetry is the reason the visual half is tractable for one person.** The asymmetry is spent. Whether the work still fits one person is now an open question rather than an assumption, and the vault has never assessed it.
+**Why it matters:** whether the work fits one person is an open question rather than an assumption, and the vault has never assessed it.
 
 **What closes it:** a scoped build plan for the first module, boundary included, with the security surface enumerated rather than waved at.
 
 ### 2.7 Does the asset pipeline survive contact with a foreign app? [T5]
 
-Unchanged by the pivot and still unproven. Every artifact to date is `apps/combatden/` or `apps/smoketest/` — both written by the founder, both ends of the contract included.
+Unproven. Every artifact to date is `apps/combatden/` or `apps/smoketest/` — both written by the founder, both ends of the contract included.
 
 **Why it matters:** the pipeline is the one thing that already works, and its new job is making generated modules look native inside someone else's app.
 
@@ -177,11 +177,11 @@ Sharper than it was. A module is written in whatever the platform's app is writt
 
 **What closes it:** whichever stack the first interested platform runs.
 
-### 2.9 What survives in code, and what gets retired?
+### 2.9 What job does each subsystem hold?
 
-The asset pipeline keeps its job. The Flutter and React theme runtimes, the studio, the JSX mock surfaces and the productionalize design were all built for the previous product.
+The asset pipeline's job is settled: it produces the tokens a module renders against. The Flutter and React theme runtimes, the studio and the JSX mock surfaces have no assigned role.
 
-**Why it matters:** letting this drift means carrying dead scaffolding and, worse, letting the retired product's shape quietly steer the new one.
+**Why it matters:** unassigned subsystems become dead scaffolding, and worse, quietly steer the architecture toward the shape they were built for.
 
 **What closes it:** an explicit decision per subsystem, taken once the mechanism settles — not before, and not by neglect.
 
@@ -191,11 +191,11 @@ The asset pipeline keeps its job. The Flutter and React theme runtimes, the stud
 
 ### 3.1 What is the price? [T7]
 
-**Pricing is undefined**, and it is now undefined against a different buyer *and* a different unit.
+**Pricing is undefined.**
 
 - **The old $100/$300/$500 ladder is dead.** Gym-owner pricing from the CRM prehistory.
-- **The $100/month per branded tenant in [[Strategy/YC_Application_F26|YC_Application_F26.md]] does not transfer.** It was priced against *designs*, and the unit is no longer a design.
-- **The anchor moved again.** The reference is a **contracted custom-development engagement** — a platform's engineers building one feature for one tenant. Nobody publishes rates, minimums or timelines; all of it is gated behind sales, which is itself informative.
+- **The $100/month per branded tenant in [[Strategy/YC_Application_F26|YC_Application_F26.md]] does not transfer.** It was priced against *designs*, and a module is not a design.
+- **The anchor is a services line.** The reference is a **contracted custom-development engagement** — a platform's engineers building one feature for one tenant. Nobody publishes rates, minimums or timelines; all of it is gated behind sales, which is itself informative.
 - **The metering unit is undecided** and §1.6 decides it: per module, per tenant, per platform licence, or a share of what the platform charges for the capability.
 - **The floor is unmeasured.** Cost per generated module, including the boundary work, has never been estimated.
 
@@ -203,9 +203,9 @@ The asset pipeline keeps its job. The Flutter and React theme runtimes, the stud
 
 **What closes it:** a platform stating what a custom build costs it today, in money and in weeks.
 
-### 3.2 The figures in the frozen YC application no longer describe the product
+### 3.2 Do not reuse any figure from the frozen YC application
 
-[[Strategy/YC_Application_F26|YC_Application_F26.md]] is the record of what was submitted and is not edited. Its $100/month figure, its 20% attach-rate benchmark and its market sizing were all computed for the design product. **None of it transfers**, and the corrections belong in that doc's corrections table rather than in a rewrite.
+[[Strategy/YC_Application_F26|YC_Application_F26.md]] is the record of what was submitted and is not edited. Its $100/month figure, its 20% attach-rate benchmark and the market sizing computed from them were all built on a design product and a per-design unit. **None of it transfers.** Corrections live in that doc's corrections tables.
 
 ---
 
@@ -213,9 +213,9 @@ The asset pipeline keeps its job. The Flutter and React theme runtimes, the stud
 
 ### 4.1 Is the organizational objection real? [T4]
 
-Codex's challenge, still live and now **more** live: adoption stalls organizationally, not technically — *"messy design systems, hardcoded one-off screens, asset assumptions, native build quirks, QA ownership, and internal resistance to giving an external system control over production UI."*
+Codex's challenge, live: adoption stalls organizationally, not technically — *"messy design systems, hardcoded one-off screens, asset assumptions, native build quirks, QA ownership, and internal resistance to giving an external system control over production UI."*
 
-The previous product answered the technical half by having nothing to integrate. **That answer is gone.** A module runs inside their app, under their auth, against their data.
+There is no architectural answer to it now: a module runs inside their app, under their auth, against their data. Where an extension surface already exists it is small; where it does not, the platform must restructure — and the founding rule says that is a product defect rather than an objection to argue past.
 
 **What closes it:** five platforms agreeing on value, then watching what happens to the first integration.
 
@@ -223,58 +223,58 @@ The previous product answered the technical half by having nothing to integrate.
 
 Every production system in the field keeps a human at the merge gate — Devin, Copilot CCA, SapFix, and even Uber's Piranha, a deterministic tool that only deletes stale feature flags and still routes its diff to the flag's author.
 
-**Why it matters:** it was already the hardest operational question and it is harder now, because a failure can be wrong data rather than a wrong-looking screen. If the answer is the platform's staff, then "no manual maintenance" is false.
+**Why it matters:** the hardest operational question, and a failure here can be wrong data rather than a wrong-looking screen. If the answer is the platform's staff, then "no manual maintenance" is false.
 
 **What closes it:** decide who owns it, and price it. Recompose resolving it is COGS; the platform resolving it is a broken promise.
 
 ### 4.3 Should the operational surface be built before the first call?
 
-Approval states, run history, QA, per-tenant status. Building it first is the comfortable move and resembles every prior phase.
+Approval states, run history, QA, per-tenant status. Building it first is the comfortable move and is what every prior phase did instead of selling.
 
 **What closes it:** let the first three calls decide it.
 
 ### 4.4 Apple Rule 4.2.6 and distribution
 
-Decided by 2.3 rather than by the product. Runtime insertion removes it entirely; compile-time returns it. Either way Recompose submits nothing, so it is the platform's problem — **still unconfirmed with any platform.**
+Decided by §2.3. Runtime insertion removes it entirely; compile-time brings per-tenant store submission with it. Either way Recompose submits nothing, so it is the platform's problem — **unconfirmed with any platform.**
 
 ---
 
-## 5. Resolved, retired, or made irrelevant
+## 5. Closed — do not re-open
 
-### Retired with the visual product — 2026-08-12
+### Questions that belong to a mechanism this product does not use
 
-These were answered, or open, under [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]]. They are recorded so nobody re-opens them and nobody mistakes their answers for current architecture.
+Recorded so nobody re-opens them and nobody mistakes their old answers for current architecture.
 
 - **Does productionalize work?** The approved-mock-in, production-code-out step, and its hazard that the mock has no edge cases. There is no mirror and no productionalize step.
 - **What terminates the design validator loop.** No design validator loop.
 - **Does the functional-equivalence gate pass on real variants?** The strongest claim in the previous pitch, never built. **Additive-only replaces it** and is weaker in one specific way: it proves nothing existing changed, not that the new thing is right.
 - **Does anything catch a widget present but not visible?** A question about a redesign's render tree.
 - **The error-budget denominator.** The ~95/4/1 target was never measured and does not transfer. Do not quote it.
-- **Does the agent-maintained fork survive upstream churn, and what does re-derivation cost?** No fork. **The hazard relocated rather than dying — see §2.5.**
+- **Does the agent-maintained fork survive upstream churn, and what does re-derivation cost?** There is no fork. **The coupling hazard is §2.5 instead, and it is quieter rather than absent.**
 - **How does a branded build reach the platform's release train?** Superseded by §2.3.
 - **Screenshot diffing is flaky; how stable is generation across runs?** The second half survives as a property of the asset pipeline; the first is gone.
 - **Whether presets are the platform's product or its tenants'.** A design question.
 - **"Nested HTML."** Never defined, and now moot — the integration surface is the platform's extension architecture.
 
-### Attach rate — made irrelevant rather than answered
+### Attach rate and design quality — no longer load-bearing
 
-T19, T20 and T21 asked whether attach rate responds to **design quality**, what the attach rate for a *redesign* is, and whether design drives platform switching. T19 was the largest open question in the vault on 2026-08-04.
+T19, T20 and T21 asked whether attach rate responds to **design quality**, what the attach rate for a *redesign* is, and whether design drives platform switching. Nothing in the value argument depends on any of them.
 
-**The pivot answers all three by not depending on them.** The measured findings stand — branded-app attach is 0.1–3% on shell platforms and tracks tenant *size* across a 70× range at one price — and they are now part of the *evidence for* the pivot rather than a risk to it. What replaces them is §1.4: does refusing feature requests cost the platform anything.
+The measurements stand and are worth knowing: branded-app attach is 0.1–3% on shell platforms and tracks tenant *size* across a 70× range at a single price. The equivalent live question is §1.4 — does refusing feature requests cost the platform anything.
 
-### Whether the mechanism extends to net-new features — **reversed 2026-08-12**
+### Whether the mechanism extends to net-new features — **yes, additively**
 
-Resolved 2026-08-04 as **no**, on measured numbers. **Reversed**, on the grounds that those numbers measure an agent *editing* an existing codebase and a module's interior is greenfield. The route moved from *contradicted by evidence* to *unevidenced in both directions*.
+The field's brownfield numbers measure an agent *editing* an existing codebase; a module's interior is greenfield and its boundary is integration work. Status is **unevidenced in both directions** rather than contradicted.
 
-**The reversal did not meet its own pre-registered conditions.** [[Strategy/Agentic_Code_Generation|Agentic_Code_Generation.md]] listed four: measured brownfield success clearing ~95%, a robust iOS benchmark, the equivalence gate proven first, **and a customer.** The first three were argued to measure the wrong task. The fourth was not addressed, and it is the one with a track record behind it.
+**One standing condition is unmet and should stay visible:** scope has been extended before a buyer existed in every prior phase of this project. Three calls with real platforms is the cheapest thing that changes that.
 
-### Whether Recompose writes to the customer's repository — **softened 2026-08-12**
+### Whether Recompose writes to the customer's repository — **never to their trunk**
 
-Was: **never, ever**, and integration was read access alone. Now: **never to their trunk**, with writes confined to an extension surface they own. This is weaker and it was given up knowingly — see [[Strategy/Product_Boundaries|Product_Boundaries.md]].
+Writes are confined to an extension surface the platform owns and governs. How much sign-off that needs depends on whether such a surface exists — §2.2, and [[Strategy/Product_Boundaries|Product_Boundaries.md]].
 
 ### Company name — resolved 2026-07-28
 
-**Recompose.** *Composition* named the arrangement-only invariant directly — **and that invariant no longer exists**, so the name's original justification is gone even though the name stands. Still provisional, still explicitly changeable, and **domain and trademark are still unchecked.**
+**Recompose.** Still provisional, still explicitly changeable, and **domain and trademark are still unchecked.** The name was chosen because *composition* is the design term for arrangement, which no longer describes what the product does — worth weighing if the name is ever revisited.
 
 ### Whether the company's surface is the website — resolved 2026-08-10
 
