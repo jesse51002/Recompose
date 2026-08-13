@@ -43,7 +43,13 @@ Plus, horizontally: Salesforce Agentforce Vibes (2025-10-01), ServiceNow Build A
 
 **Two competitors on the same day, three in one month, is a category event rather than a coincidence.** Every one of them owns the SDK, the auth model, the security review and the tenant relationship, and has now added the generation layer on top.
 
-**What is still unoccupied, and it is narrow.** Every product found is **developer-facing**: it makes an engineer or a certified partner faster at writing SDK-compliant extensions. None removes the developer. The [[Strategy/Product_Boundaries|tenant-facing loop]] survives a broad sweep, which is stronger evidence for it than existed before — and it is a thin strip of ground for one person to hold against a public company that just shipped the adjacent thing.
+**What is unoccupied is a category, not a feature.** Every product found is **developer-facing**: it makes an engineer or certified partner faster at writing SDK-compliant extensions. None removes the developer. That is the same distance as Claude Code to Lovable — comparable model capability, and the product decision separates a tool sold to developers from one sold to everybody. Q2 Code's users are a few hundred FI developers and partners; a tenant-facing version's users are every business person at all ~450 institutions, plus the work that currently never gets done at all.
+
+The [[Strategy/Product_Boundaries|tenant-facing loop]] survives a twenty-vertical sweep, which is the strongest evidence it has.
+
+**What stands between developer-facing and tenant-facing is the accept condition, not the idea.** Lovable's expansion worked because the output is a standalone app whose only stakeholder is its creator; if it breaks, it is your app and your problem. A module inside a bank's production app is the bank's problem and the regulator's. Nobody has shipped tenant-facing generation into a host product because there is no check that makes it safe — the same gap recorded as load-bearing in [[Strategy/Open_Questions|Open_Questions.md]] §2.1, seen from the other side.
+
+**That produces a target-selection consequence.** The best vertical for a tenant-facing loop is the one where a tenant-authored module is least dangerous — low-stakes data, and a bad module that is embarrassing rather than a regulatory event. Banking has the deepest surface in the survey and the worst risk profile for the one thing that differentiates this product.
 
 ## Cost of refusal: a null result, and what it does and does not mean
 
