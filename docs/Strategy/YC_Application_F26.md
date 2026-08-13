@@ -19,7 +19,9 @@ Concepts touched: [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]], [[C
 
 ## Corrections to state in the demo
 
-The application is frozen; the demo is where the record gets corrected. Each row is a place a submitted answer no longer matches the architecture as of [[pivots/2026-07-28-01-agentic-editing-all-in|pivots/2026-07-28-01-agentic-editing-all-in.md]]. Say the right thing out loud rather than hoping nobody reads closely.
+The application is frozen; the demo is where the record gets corrected. Each row is a place a submitted answer no longer matches reality. Say the right thing out loud rather than hoping nobody reads closely.
+
+The first table is architecture drift inside the product as submitted, as of [[pivots/2026-07-28-01-agentic-editing-all-in|pivots/2026-07-28-01-agentic-editing-all-in.md]]. **The second table is a different product** — read it before using anything in this file.
 
 | The submitted answer says | Say this instead | Why it changed |
 |---|---|---|
@@ -29,13 +31,26 @@ The application is frozen; the demo is where the record gets corrected. Each row
 | Mighty Pro charges $1,167/month (answer 6) | **"$1,000+/month"** — a range, never the precise figure. | Three conflicting figures across sources, none official. Mighty Pro is sales-led and does not publish, so more searching produces a fourth number rather than an answer. |
 | The founder video's "90% cheaper" | Do not repeat it. Current thinking is **per design, per month** — roughly $400 against ~$150 maintenance. | It contradicted answer 8's own $100/month figure, which that answer's notes call the platform's COGS rather than the end price. |
 
-**Two things the application does not contain that are now the strongest parts of the pitch**, and are worth volunteering unprompted:
+### The company pivoted on 2026-08-12 and the application now describes a product Recompose does not build
 
-1. **The enum finding.** Structural presets were built, tested, and rejected — a bounded option set reproduces the platform's original design language however many options it exposes. This is the only empirical result in the project, and it came from building rather than reasoning.
-2. **The promise: autonomy.** No PR into their trunk, no review queue, no integration work, no engineering sign-off. The ~95/4/1 error budget is a **target, never measured** — say it as a goal, not a rate. What makes it survivable is that **the pipeline halts rather than ships**: a stage that cannot satisfy its own checks stops and nothing deploys, so a significant failure is a stall, not an incident.
+[[pivots/2026-08-12-21-modular-feature-system-replaces-visual-redesign|The modular feature pivot]] replaced the visual redesign with per-tenant feature modules. **This is a larger gap than the rows above** — those were architecture corrections inside one product; this is a different product. Anyone reading the submitted application is reading the previous company.
 
-> [!warning] Do not answer this in a room: who resolves a halt
-> The autonomous promise depends on halting, and a halted design still has to be resolved by somebody. Leaning the platform's own staff; an FDE was considered and is blocked on lacking domain knowledge of an app they did not write. **If the answer is platform staff, the demo's "no manual maintenance" close is false.** Undecided — see [[Strategy/Open_Questions|Open_Questions.md]] §2.1c.
+| The submitted answer says | Say this instead | Why it changed |
+|---|---|---|
+| "Customers agentically redesign white-label apps" | **"Customers agentically extend white-label apps."** A tenant says what they need the app to *do*; a module is generated and inserted, carrying the platform's tokens so it looks native. Provisional wording. | Design alone does not move this buyer, and there is no design budget line — the deliverable prices standalone at $99–499 and professional services is 1–3% of revenue at the public companies. Per-tenant feature work is a named engineering org priced behind sales. |
+| A full visual redesign, every screen, no new features | **Features are the product.** Theming shrinks to a token layer whose job is making a generated module look native. | [[Strategy/Journey|Journey.md]] Phase 7. |
+| Arrangement-only functional equivalence is the safety property | **Additive-only.** A module adds; it never edits, moves, merges, splits or removes. Say plainly that this is weaker in one way: it proves nothing existing changed, not that the new thing is correct. | A feature product cannot hold arrangement-only. The additive boundary is what the whole field converged on and the previous product structurally could not have it. |
+| Two agent-maintained forks, read access is the entire integration | **No forks.** A module lands in the platform's own extension surface where one exists. Integration is nonzero now, and where no surface exists the platform must add insertion points. | The fork's hazards die; contract drift replaces them. |
+| The buyer is a platform where every tenant already has an app | **A platform that already funds per-tenant custom development** — Banno, Backbase, Tapcart, Trainerize Enterprise, GoodBarber, BuildFire. The old filter is a secondary sort. | The budget line already exists, so the value is read off a P&L. |
+| $100/month per branded tenant, 20% attach rate, and the market sizing from it | **Do not use any of it.** It was priced against *designs*; the unit is no longer a design and pricing is undefined. | The unit sold and the unit maintained are no longer the same object. |
+| Gigacatalyst is not a competitor because features and visuals do not compete for the same dollar | **They are now the closest company in the market.** The honest differences are that they have no mobile frontend, and that they are funded and shipping while this is a direction with nothing built. | The separation the omission rested on is gone. |
+
+> [!danger] Two things that must not be said in a room until they are decided
+> **Do not claim autonomous operation, and do not quote the ~95/4/1 error budget.** Both stood on *a bad output is ugly, not broken*, which a module that writes to a database does not satisfy. Halting needs an accept condition to halt against and a feature has none yet — no screenshot oracle, no equivalence diff. See [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]].
+>
+> **Do not claim this is easier than the redesign.** It is harder. Greenfield describes a module's interior; its boundary is auth, identity, tenant scoping and base data against a production system nobody here wrote, and the failure mode is a security incident rather than an ugly screen.
+
+**One thing the application does not contain that is still worth volunteering unprompted:** the **enum finding** — structural presets were built, tested and rejected, because a bounded option set reproduces the platform's original design language however many options it exposes. It remains the only empirical result in the project and it came from building rather than reasoning. **Do not carry its conclusion across to features**: it holds because design's value is unboundedness, and a bounded feature vocabulary limits what is buildable without collapsing into sameness.
 
 ---
 
