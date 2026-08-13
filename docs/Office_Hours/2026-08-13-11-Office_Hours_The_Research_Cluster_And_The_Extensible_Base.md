@@ -114,14 +114,36 @@ Late in the session the founder proposed something materially different: **an ex
 The argument, in the founder's terms:
 
 - Nobody uses Notion for everything, and the reason is a **config ceiling**, not a feature gap. People hit the edge of what the vendor pre-defined and go build their own dashboard.
+- **People run many tools because they have to, not because they want to.** The sprawl is itself the evidence of the unmet want, and collapsing it is the UX being sold.
 - Horizontal CRMs are too complex or too simple; vertical CRMs are locked to one industry.
 - **Notion and its peers are built for "simple but powerful, what you get is what you have." This would be built for "simple, then make it your own" — a different architecture from the ground up**, which an incumbent could not adopt without exposing internals it will never expose.
-- **The base is part of the moat.** Its polish is replicable in principle and expensive in practice, and open source does not remove a moat whose substance is ongoing maintenance plus a proprietary extension layer.
+- **The moat is the generation.** The base is not a moat and is not claimed as one. It is a product argument: good enough for most cases, and nobody spends weeks replicating it to production polish when an extensible version already runs. It holds only if extension is *easy* enough, which is where the bet on coding agents sits.
+- **"Moat" here means the installed base cannot follow — not that nobody can.** New entrants can and will copy this; that is assumed rather than denied. What is claimed is that existing software carries structural blockers it cannot remove.
 - Crowding is evidence of demand, not a disqualifier.
 
-**Three objections were raised and answered in session**, and the answers are recorded because they are load-bearing rather than rhetorical: that the market is crowded (crowding indicates demand); that technical founders can build it themselves (they can, and do not want to — and the base's polish is the barrier); and that open-sourcing the expensive layer inverts the platform-versus-AI cost lesson (the moat is maintenance and the proprietary extension mechanism, not the licence).
+**On the missing budget line — conceded, and answered by growing into one.** Technical founders have no line item. The answer is not to find one but to arrive before it exists: a cheap or free base, priced as the customer grows, entered *because* it can be expanded later — a capability purchase rather than a present-need purchase. First-time founders are the entry point and **enterprise is where the revenue is.** The ceiling becomes the pricing event, which is a monetization trigger a config-ceiling incumbent cannot offer.
 
-**The tension that was not resolved, and it belongs at the top of the next session:** every occupied cell in the market map has a developer in it because a developer is the accept condition. A technical founder who can read generated code **solves** the verification problem — and simultaneously moves the product into the occupied cell, against Cursor, Claude Code, Retool and every AI app builder. *If your user can read the code, what do you have that Cursor does not?*
+**Objections raised and answered in session**, recorded because they are load-bearing rather than rhetorical:
+
+- *The market is crowded.* Crowding indicates demand.
+- *Technical founders can build it themselves.* They can and will not — a running base beats a month of replication, in production especially.
+- *Open-sourcing the expensive layer inverts the platform-versus-AI cost lesson.* The licence is not where defensibility sits; the generation is.
+- *There is no budget line.* Correct, and answered above.
+- *People run many tools because specialization is efficient, not because they are blocked.* The have-to reading is the one being bet on.
+
+**What follows from those refinements, and is not yet answered:**
+
+- If the moat blocks incumbents but not entrants, **crowding stops being neutral evidence of demand and becomes a clock.** The competition was never Notion; it is every peer making the same bet, against whom none of the structural advantages apply. Speed and distribution then decide it rather than architecture.
+- **Land-and-expand carries a discontinuity in the middle.** What a solo founder buys — one tool, extended without help — is not what an enterprise buys, where sprawl is driven by departmental autonomy, procurement, compliance and specialists who will not surrender a tool. **The have-to argument is strongest where there is no money and weakest where the money is.**
+
+**The tension that was not resolved, and it belongs at the top of the next session:** every occupied cell in the market map has a developer in it because a developer is the accept condition. A technical founder who can read generated code appears to solve verification — but a user who reads every generated module has had the work **moved rather than removed**, and that fails somewhere well short of scale. The same technical user simultaneously moves the product into the occupied cell, against Cursor, Claude Code, Retool and every AI app builder. *If your user can read the code, what do you have that Cursor does not?*
+
+Two candidate answers exist and **neither has been argued**:
+
+1. **Owning the substrate makes the output mechanically checkable.** A coding agent generates against an unbounded codebase it does not control, so a human reader is the only accept condition available to it. A base you own is a bounded, versioned extension contract — data model, permission model, render surface, migrations — against which schema validity, permission conformance, no-write-to-core and migration reversibility are machine-decidable. That is the accept condition **L24** says nobody has, and it is available only to whoever owns the base.
+2. **Extensions survive the base moving.** A fork built with a coding agent leaves the customer owning the merge burden permanently. Owning both base and extension mechanism allows extensions to be carried forward across base upgrades — the shape already recorded as [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]].
+
+Both reframe the technical founder as a **beachhead** — reachable, tolerant, able to debug a failure — rather than as the permanent ICP.
 
 **No decision was taken.** The founder explicitly deferred it to its own session.
 
@@ -145,7 +167,9 @@ The argument, in the founder's terms:
 - **T36.** Is the non-technical cell empty because the verification problem is unsolved, or for a reason nobody has articulated? The supply brief explicitly declines to conclude. **Do not treat an empty cell as an opportunity without a reason it is empty.**
 - **T37.** Are generic-but-unbuilt gaps durable or imminent? ServiceTitan's tier-gating suggests durable; nothing measures it.
 - **T38.** What did the gym-era CRM interviewees actually say was missing? Recoverable from memory and notes, not from research.
-- **T39.** If the user can read generated code, what does this product have that a coding agent does not? The forcing question for the next session.
+- **T39.** If the user can read generated code, what does this product have that a coding agent does not? The forcing question for the next session. A technical reader is not a solved accept condition — it relocates the reading rather than removing it. Two candidate answers are on the table and unargued: mechanical checkability from owning the substrate, and extensions surviving base upgrades.
+- **T40.** How long does an incumbent-only moat last? The defensibility claim is explicitly against the installed base rather than against new entrants, so the window is bounded by a peer shipping rather than by Notion reacting. Nothing estimates it.
+- **T41.** Does the have-to reading of tool sprawl survive contact with a buyer, and does it survive moving upmarket? It is the most testable claim in the direction and the cheapest: *what did you build yourself, and why didn't the tool do it.*
 
 ---
 
@@ -177,6 +201,7 @@ Two things are cheap, neither is code, and both precede any decision:
 ## Open questions
 
 - **T39**, the coding-agent question, which decides whether the new direction is a company or a feature.
+- **T40** and **T41**, which arrived with the refinements: how long an incumbent-only moat lasts, and whether the have-to reading of tool sprawl survives a buyer and survives moving upmarket.
 - **T36**, whether the empty cells are empty for a reason.
 - The accept condition, unchanged and now understood as the market's organising constraint rather than one gap among several.
 - Pricing. Still undefined, and the only anchors found are seat-based developer-tool pricing that does not transfer.
