@@ -1,18 +1,18 @@
 ---
 tags: [business, open-questions, validation, risk]
 status: live
-updated: 2026-08-10
+updated: 2026-08-12
 ---
 
 # Open Questions
 
-Concepts touched: [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]], [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]], [[Concepts/Product/Mechanisms/Closed_Design_To_Production_Loop|Closed_Design_To_Production_Loop]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], Template_Marketplace, [[Concepts/Business/Strategy/Shopify_Pattern|Shopify_Pattern]].
+Concepts touched: [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]], [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]].
 
-Everything Recompose has not answered, carried forward from the open questions and named risks in [[Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company|Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md]] and [[pivots/2026-07-27-11-customization-engine-is-the-company|pivots/2026-07-27-11-customization-engine-is-the-company.md]]. Gym-specific questions from the CombatDen prehistory are not carried; see the last section for what was dropped and why.
+Everything Recompose has not answered. Rewritten 2026-08-12 for [[pivots/2026-08-12-21-modular-feature-system-replaces-visual-redesign|the modular feature pivot]]; questions belonging to the retired visual product are in §5 rather than deleted, because a reader needs to know they were answered and then made irrelevant, not that they were never asked.
 
-Every entry states the question, why it matters, and what evidence would close it. Source tags in brackets (`T*`, `P*`, `OQ*`) point at the premise, test, or open question in the office hours doc.
+Every entry states the question, why it matters, and what evidence would close it. Source tags in brackets point at the premise, test, or open question in the office hours doc that raised it.
 
-**The demand section leads because it is the only section where nothing has been attempted with an outside party.** The target list now exists — [[Research/2026-08-04-company-list-white-label|Research/2026-08-04-company-list-white-label.md]]. No platform on it has been contacted, no human at any of them has been named, and the entire ICP is still reasoned rather than validated.
+**The demand section leads because it is the only section where nothing has been attempted with an outside party.** The target list exists — [[Research/2026-08-04-company-list-white-label|Research/2026-08-04-company-list-white-label.md]]. No platform on it has been contacted, no human at any of them has been named, and the entire ICP is reasoned rather than validated.
 
 ---
 
@@ -20,285 +20,192 @@ Every entry states the question, why it matters, and what evidence would close i
 
 ### 1.1 Does any platform want this? [T1]
 
-No platform has been asked. The origin is a realization while building a white-labeled app — *"I just figured it out it could be useful when i was doing a different idea of building my own white lalbed app for class based gym"* — not a request from a buyer, and not a personal pain narrative. Everything downstream of that (the buyer profile, the two-sided ROI argument, the wedge) is reasoned from market evidence: published prices for the manual version, the level-1–4 white-label ladder, Gigacatalyst's traction shape.
+No platform has been asked. The origin is a realization while building a white-labeled app — *"I just figured it out it could be useful when i was doing a different idea of building my own white lalbed app for class based gym"* — not a request from a buyer.
 
-**Why it matters:** every other question in this doc is a refinement of a company nobody outside has responded to. Eight months, six strategic phases, zero paying customers, and **no outside party has ever responded to anything built.**
+**Why it matters:** every other question in this doc is a refinement of a company nobody outside has responded to. Nine months, **seven** strategic phases, zero paying customers, and **no outside party has ever responded to anything built.**
 
 **What closes it:** a platform that keeps a second meeting, or asks what it costs, without being led there. Nothing built closes it.
 
-### 1.2 Is there a named human at any target platform? [T2, assignment #2] — **narrowed 2026-08-04**
+### 1.2 Is there a named human at any target platform? [assignment #2] — **the ICP moved 2026-08-12**
 
-The list half is done, and it overshot. [[Research/2026-08-04-company-list-white-label|Research/2026-08-04-company-list-white-label.md]] holds white-label and branded-app platforms with tenant counts, branded-tier price, app stack and a contact surface, well past the ten the assignment asked for. `Contact_Surface` names a channel, not a person.
+The list half is done and overshot. `Contact_Surface` in the company-list research names a channel, not a person. **No human has been named**, in five consecutive sessions of the assignment saying so.
 
-**What is left is the person.** Assignment item 2 is ten platforms where **every tenant already has their own app**, *with a named human at each*, and no human has been named.
+**The sort inverted.** The filter is now *platforms that already fund per-tenant custom development* — Banno, Backbase, Tapcart, Trainerize Enterprise, GoodBarber, BuildFire — with the previous filter (every tenant already has their own app) kept as a secondary sort.
 
-The sort also moved. It is on **shell model first, not tenant count**: on a no-shell platform the addressable app count equals the tenant count, and on a shared-shell platform it is roughly a hundredth of it ([[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]]). Subsplash sorts first on **inspectability** rather than size — hundreds of its church apps are installable from the App Store right now, and church content is the least login-gated in any vertical.
+**The fintech deprioritisation is partly reversed.** Q2, Banno, Alkami and Backbase were deprioritised on 2026-08-04 for two reasons: they own mature extension SDKs, and their vertical resists visual differentiation. **The second reason no longer applies** — a feature product is not asking a bank to look different. The first reason is now *sharper*, because it is the build-versus-buy exposure and the chosen ICP is defined by it.
 
-**The fintech four are deprioritised** (L12, 2026-08-04). Q2, Banno, Alkami and Backbase each already own a mature extension SDK — Caliper, the Plugin Framework, Backbase's own — and that, not an AI budget, is what makes building this in-house cheap: Q2 wired Claude Code into Bedrock and shipped Q2 Code in April 2026 on top of an SDK that has existed since 2018. They are also public companies with procurement, vendor risk assessment and 6–18 month cycles.
-
-**Why it matters:** nothing else in the company moves until there is a person to send something to. Job postings supply the names, and it is an afternoon rather than a project.
+**Banno is the only platform in both filters** and is the strongest target on the merits. It is also a public company with procurement and 6–18 month cycles, so **sort Tapcart and BuildFire ahead of it** on reachability.
 
 **What closes it:** ten rows, each with a person.
 
 ### 1.3 Will the founder run a validation assignment before building more? [carried from 2026-06-02]
 
-The live behavioral risk to this phase, not a historical note. The 2026-06-02 validation assignment (define the bar, build the target list, pitch, measure commitment) **sat unexecuted for eight weeks** while rewards productionization, the member app, and Kiosk Mode all shipped. The founding session treats that as the most economical explanation for the whole CRM arc — a founder without conviction in the product does not make the hundredth cold call — and the session's closing observation is that whether this becomes the sixth phase or the last one is decided entirely by whether assignment items 2 and 3 happen **before any more code does.**
+The live behavioural risk, not a historical note. The 2026-06-02 validation assignment sat unexecuted for eight weeks while three product surfaces shipped. The founding session treats that as the most economical explanation for the whole CRM arc.
 
-**Why it matters:** the energy argument for this pivot is that the engine is the product the founder actually wants. That predicts the pattern breaks. It does not guarantee it, and the same prediction has never been tested.
+**It has now aged further.** The current assignment has been written identically in **five consecutive sessions** and executed zero times. Two of the last three sessions established, at depth, that directions *not* being pursued would not have worked.
 
-**What closes it:** a dated record of ten named targets and three live-theming calls, completed before the next feature ships. A second eight-week build stretch with no outside contact is the falsification.
+**The one thing that changed:** the founder ended the August 10 session saying the interviews come next rather than the build. That is the first time in five sessions the stated next step was a call.
 
-### 1.4 Does live in-call theming produce the reaction? [T3, assignment #3]
+**What closes it:** a dated record of ten named targets and three calls, completed before the next thing is built. Another build stretch with no outside contact is the falsification.
 
-The chosen validation instrument: pull a prospect's biggest customers off their own logo wall, theme the example app live in the call, and watch. The claim being demonstrated is **elapsed time** — an artifact sent by email shows the output; live generation shows the clock.
+### 1.4 Does refusing feature requests cost the platform anything? [T31] — **OPENED 2026-08-12**
 
-**Why it matters:** it is the only instrument proposed that tests demand and quality in the same motion, and the founder proposed it himself.
+The whole direction rests on tenant frustration at being told no. **The buyer is the platform**, and tenant frustration is not platform pain until it shows up as churn, a lost deal, or discount pressure.
 
-**What closes it:** three calls run. A reaction that converts into a next step, or three lukewarm ones.
+**Why it matters:** if the answer is "nothing," there is no budget to sell into and the direction is dead. It is the cheapest possible falsification in the vault — one question, one call.
 
-### 1.5 Is the output close enough to a custom build — and who gets to decide? [T8]
+**What closes it:** asking it. *What do tenants ask you to build that you say no to, and what does saying no cost you.*
 
-The bar is not parity: *"it deosnt have to clear it, and it likely never will but it has to be clsoe enough to it, wher eit can give very close to the quailty at a fraction of the price, we are not trying to beat actual designers here."* What changed when layout entered scope is the comparison target — a custom build rather than a generic template — not the requirement. The 76 generated themes have never been evaluated against a custom build.
+### 1.5 What do tenants actually request, and how much of it is read-only? [T30] — **OPENED 2026-08-12**
 
-**The half that is not a property of the output:** "close enough" is a judgment a person makes, and which person makes it decides the deal. A head of design would see the gap and be right that it exists; someone reading a delivery time against a queue of waiting tenants may not care.
+Nobody knows the composition of the refused-request pile. The split that matters is **a view of data the platform already holds** — a dashboard, a report, a filtered list, a calculator — versus **a workflow that writes something.**
 
-**That person frequently does not exist.** The client-facing roles at these platforms are Solutions Consultants, Client Implementation Managers, Customer Onboarding Specialists, Community Strategists and marketing designers; Circle's design department is ~4 people who primarily do Circle's own marketing. So the hostile-evaluator risk is small. What replaces it is worse in a quieter way: there is no internal owner whose job improves if the purchase succeeds, so the failure mode is a deal with neither opponent nor advocate, which stalls rather than losing.
+**Why it matters:** it decides the accept condition (§2.1), which decides whether one person can build this. Read-only modules keep *a bad output is ugly, not broken* literally true. Write modules do not.
 
-**What closes it:** a generated redesign put next to a real custom build for the same brand, judged by someone at a target platform who owns tenant throughput.
+**What closes it:** one question per call, and the answer is a ratio rather than a yes or no.
 
-### 1.6 Does throughput matter more than beauty to this buyer? [T6, OQ6]
+### 1.6 How many refused requests are the same request? [T30b] — **OPENED 2026-08-12**
 
-Codex's independent read: this should *"not optimize for beautiful one-off generations… It should optimize for platform onboarding, tenant throughput, review/approval, repeatability, QA."* The current asset optimizes for generation quality — 80 themes — not for operations.
+Under the visual product the unit economics were settled and elegant: one **design**, one fork, servable to forty tenants — the unit sold and the unit maintained were the same object. **A custom feature is for one tenant by construction**, so that leverage is not automatic.
 
-**Why it matters:** if true, the next build is approval states, run history, per-tenant status and QA surfaces, not more generation modalities. It changes what gets built next.
+**Why it matters:** it decides whether the business is pure bespoke (revenue and cost both scale with requests), a growing library (margin improves and the first customer is the most expensive), or a bounded vocabulary (best margin, smallest answerable set). This changes the economics more than anything else that is open.
 
-**What closes it:** what the first three prospects ask about unprompted. If the questions are about approval flow, rollback, and per-tenant status rather than about how good the themes look, throughput won.
+**What closes it:** asking a platform how much repetition is in its refused pile.
 
-### 1.6a Does attach rate respond to design quality at all? [T19] — **OPENED 2026-08-02, and it is the largest one**
+### 1.7 Is the output close enough — and who decides? [T8, revised]
 
-The whole value argument assumes that a better-looking app moves how many tenants take the branded tier, or what the platform can charge for it. The only measurement that exists says otherwise: on Shopify, mobile-app-builder adoption is **1.73% of Plus stores, 0.10% overall**, and it correlates with **tenant size** across at least a 70× range at a single price. If size is the binding variable, no design improvement changes it.
+The bar is not parity: *close enough at a fraction of the price.* What changed with the pivot is the comparison target — **a contracted custom-development engagement** rather than a custom design build.
 
-**Why it matters:** it is upstream of the pricing question, the ICP question and the product roadmap. If attach rate is set by tenant scale, Recompose sells throughput on an existing installed base and nothing else — which is a smaller and different business than "unlock a tier they can't currently sell."
+**The person who decides changed, and this reverses a prior finding.** Under the design product the hostile evaluator usually did not exist; the roles were Solutions Consultants and Onboarding Specialists, so political risk was low and there was no advocate either. **Group A is defined by having a named engineering organisation doing this work** — Banno's Custom Development team, Backbase's Services org. They are the champion *and* the opponent, and their objections will be about real things: the security surface, API coupling, and whether generated code is correct inside their auth context.
 
-**What closes it:** no amount of further research. A platform that has run both — a shallow branded tier and a genuinely differentiated one — and can say whether the take rate moved. Failing that, the first customer's own before-and-after.
+**What closes it:** a generated module put in front of the person who runs that team.
 
-### 1.6b What is the attach rate for a *redesign*, as opposed to a first app? [T20] — **OPENED 2026-08-02**
+### 1.8 "Why aren't you just Gigacatalyst?" [OQ9, reversed 2026-08-12]
 
-The measured numbers are for tenants buying their first branded app. Recompose's actual product is a redesign of an app the tenant already has. Nothing measures how many tenants of a no-shell platform (Subsplash, Alkami, Q2) would pay to have theirs redone, or how often.
+The question used to be *"why isn't visual just Gigacatalyst's next feature?"* and rested on features and visuals not competing for the same dollar. **The pivot removes that separation.** Both products now generate per-tenant functionality inside a host SaaS, on the host's APIs, governed by the host's auth.
 
-**Why it matters:** it is the multiplier on every revenue estimate, and it may be a recurring number rather than a one-time conversion.
+The honest answer has two parts and only one is defensible ground: **they have no mobile frontend**, so an API-composition sandbox suffices for them while a mobile app needs a renderer in the build or in the app; and **they are funded, shipping and live with Series B companies** while this is a direction with nothing built.
 
-**What closes it:** ask it on the call — *how many tenants have asked you to redo their app since launch.*
+**Why it matters:** it is now the first question any informed person asks, and their omission from the YC competitor answer is no longer defensible on the old grounds.
 
-### 1.6c Does design drive platform-to-platform switching? [T21] — **OPENED 2026-08-02**
+**What closes it:** a written paragraph, prepared rather than improvised. Not research — a decision about what to say.
 
-The lost-deals half of the value argument needs design to influence which platform a tenant picks. Across a dozen documented custom-build cases, design was **never the sole driver** and appears only as a co-driver. The two closest cases — Circle's *"how the platform looks and feels is really important to me"* and Mariana Tek's *"never puts its own branding in front of your clients"* — are vendor testimonials, and both are platform-to-platform switches rather than bespoke builds. That is the only evidence pointing at the mechanism.
+### 1.9 Should the traction metrics be borrowed, and is anything instrumented? [OQ11]
 
-**Why it matters:** [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]] has now taken three independent hits (`Research/2026-05-01-ai-brand-competitor-analysis.md:3`, `Research/2026-05-01-ai-brand-competitor-analysis-v2.md:47`, [[Strategy/Build_vs_Buy|Build_vs_Buy.md]]). Lost deals is the half that survives, and it rests on two testimonials.
+Gigacatalyst reports adoption rate, day-30 retention, pipeline unblocked, churn prevented, and engineering-hours saved. That is the vocabulary this buyer responds to, and **engineering-hours saved now applies directly** rather than by analogy. **Nothing here is instrumented to produce any of it.**
 
-**What closes it:** a platform naming a deal it lost on brand, or win/loss notes.
+**What closes it:** picking two and deciding what would have to be logged, before the first customer.
 
-### 1.6d Which app architecture is targeted — per-tenant binary or container? [T22] — **OPENED 2026-08-02**
+### 1.10 Does CombatDen keep running with real gyms? [OQ4]
 
-Subsplash runs both simultaneously: standalone apps under each church's own developer account, and "The Church App," a single container housing thousands of tenants under one listing. Planning Center, Tithe.ly and Pushpay do the same. A container tenant has no per-tenant binary.
+Offered in the founding session and never ruled on. A live multi-tenant fleet is a stronger artifact than a static demo — and it is also gym sales work, which is what the pivot moved away from. **It cannot be split down the middle without becoming two GTMs.**
 
-**Why it matters:** it changes what ships. A container tenant's redesign is runtime theming inside a shared shell, which may be easier, but the brand is capped by the container. It also breaks any app-store census as a measurement method.
-
-**What closes it:** a decision, once a target platform is named and its architecture is known.
-
-### 1.7 "Why isn't visual just Gigacatalyst's next feature?" [OQ9]
-
-Unanswered. Gigacatalyst (YC Spring 2026) already parses the host's **design system** so their generated apps look native. Reading a design system to conform to it is genuinely different from generating a new one, so the features-versus-visuals separation holds — but they have built plumbing adjacent to this, and anyone who knows them will ask.
-
-**Why it matters:** it is the one competitive question with a specific, funded, same-batch-adjacent name attached. Being surprised by it in a partner interview is worse than the answer being imperfect.
-
-**What closes it:** a written one-paragraph answer, prepared rather than improvised. Not research — a decision about what to say.
-
-### 1.8 Should the traction metrics be borrowed, and is anything instrumented to produce them? [OQ11]
-
-Gigacatalyst reports adoption rate, day-30 retention, pipeline unblocked, churn prevented, and engineering-hours saved. That is the metric vocabulary this buyer responds to. **Nothing here is currently instrumented to produce any of it.**
-
-**What closes it:** picking two of those metrics and deciding what would have to be logged to produce them, before the first customer rather than after.
-
-### 1.9 Does CombatDen keep running with real gyms? [OQ4]
-
-Offered in the founding session and not ruled on. `P5` makes CombatDen the reference implementation and demo canvas. A live multi-tenant fleet with real per-tenant themes is a materially stronger artifact than a static demo — for a platform buyer and for a YC partner — but it is also gym sales work, which is the thing the pivot moved away from.
-
-**Why it matters:** it is the only path to real per-tenant usage data, and it directly contradicts the reason for the pivot. It cannot be split down the middle without becoming two GTMs again.
-
-**What closes it:** a decision, not evidence. Nobody is going to hand this one an answer.
+**What closes it:** a decision, not evidence.
 
 ---
 
 ## 2. Architecture
 
-### 2.1 Does productionalize work? [T13] — the load-bearing one
+### 2.1 What is the accept condition for a generated feature? [T33] — **the load-bearing one**
 
-**This is where the product lives.** Approved visual mock in, production code out, [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|invariant]] preserved. It is the only step that must carry the invariant, the only translation whose output ships, and the one with no free oracle.
+**This is where the product lives now.** The visual product had two cheap conclusive oracles: a screenshot a human judges, and a diff proving the API surface is identical. **Neither exists for a feature.** Additive-only is diff-verifiable for *existing* code and says nothing about whether the added thing is correct.
 
-The specific hazard is that **the mock has no edge cases.** By design it has no features, no logic, no state — which is exactly what makes it cheap to generate and cheap to iterate on. It also means it does not know a list is paginated, a name can be 47 characters, or a screen has loading, empty, error and overflow states. The design agent therefore produces layouts that are correct against *ideal* data, and productionalize has to reconcile that against production code which is mostly edge cases.
+Four candidates, none chosen:
 
-Two mitigations proposed in the 2026-07-28 session, neither built:
-- **Mock every state, not just the happy path.** Mocking is the mirror's job — tokenization only tokenizes assets. If the mirror generates each screen's empty/loading/error/long-string/overflow variants rather than one ideal render, the design agent designs against realistic variance and productionalize stops being a reconciliation problem.
-- **Screenshot-diff the production build against the approved mock.** Flutter Web is canvas-painted and pixel-identical to mobile (2026-05-25), so the same oracle applies on both sides and the mirror's fidelity becomes measured rather than assumed.
+- **Read-only modules first.** Reads through the platform's authenticated API and presents; never writes. The only candidate that restores *a bad output is ugly, not broken.* May exclude what tenants most often ask for — that is §1.5.
+- **Generated tests through their CI.** Uses infrastructure they trust. Tests written by the agent that wrote the code verify what the agent *believed* it built; they catch regressions, not misunderstood requirements.
+- **A bounded module vocabulary.** Primitives — list, form, schedule, notify, report, chart — over endpoints their API already exposes. Each tested once, reused everywhere.
+- **Tenant approval on real data.** The tenant is the only party who knows what they meant, and will not exercise the empty state, the concurrent edit, the permission boundary or the five-hundredth row.
 
-**What closes it:** run productionalize by hand on one real CombatDen screen and count what breaks. An afternoon, and it is the single most informative thing available to build right now.
+**Why it matters:** without it there is no halt condition, and halting-rather-than-shipping is the entire reason [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]] was defensible. **Until it closes the autonomy claim cannot be made and no error budget may be quoted.**
 
-### 2.1a What terminates the design validator loop? [T14]
+**What closes it:** §1.5 supplies the input; then a decision.
 
-Screenshots give an **accept condition** where there previously was none — this closes the older "layout has no deterministic accept condition" risk, which is now in §5. They do not give a **stopping condition**. "Loops with the design agent until accepted" is unbounded, and unbounded loops are unbounded cost inside a fixed price.
+### 2.2 How deep do the existing extension surfaces actually go? [T32] — **OPENED 2026-08-12**
 
-**What closes it:** measure whether a VLM's screenshot judgement correlates with the founder's own on a set of generated variants, then set an iteration cap and see what fraction of runs hit it.
+The pivot's central bet is that Group A platforms already own a surface to write into, which removes the insertion-point ask. **Unverified.** Banno's Plugin Framework hosts HTML/CSS/JS web apps on the *partner's* infrastructure. Tapcart's blocks live inside its own studio. BuildFire's SDK is open-source but its reach is unknown.
 
-### 2.1b What unit is the error budget measured in? [T15]
+**Why it matters:** if none reaches native UI inside an arbitrary existing screen, Group A buys the budget line but not the integration, and the harder sale — the platform adds insertion points, needing engineering-leadership sign-off — becomes the normal one.
 
-The stated bar is roughly **95% clean, 4% minor error, 1% significant failure** — a **target, not a measurement.** But 95/4/1 per screen, per tenant-redesign, or per sync operation differ by orders of magnitude in resulting workload.
+**What closes it:** reading their public developer documentation. An afternoon, and it decides which product is being sold.
 
-What makes the budget acceptable is settled and is not this question: the pipeline **halts rather than ships**, so a significant failure is a stall and never reaches the branch ([[pivots/2026-07-30-22-autonomous-is-the-promise|pivots/2026-07-30-22-autonomous-is-the-promise.md]]). The denominator is what remains open.
+### 2.3 Compile-time or runtime insertion? — **OPENED 2026-08-12**
 
-**Why it matters:** the denominator sets how often the halt path fires, and the halt path is the whole basis of the budget. A rate that is fine per screen is unworkable per sync operation.
+Runtime is **server-driven UI**: the app ships a renderer, the server sends layout as data. Proven at Airbnb, Lyft, Spotify and DoorDash, and previously excluded by [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]] rather than by feasibility. Compile-time means a per-tenant binary.
 
-**What closes it:** pick the denominator, then instrument it from the very first customer.
+**Why it matters:** it decides whether per-tenant App Store submission returns as a problem, what the platform has to do to adopt, and how fast a module can change after it ships.
 
-### 2.1c Who resolves a halt? — **OPENED 2026-07-30**
+**What closes it:** a decision, informed by 2.2 and by whichever stack the first interested platform runs.
 
-The autonomous promise says nothing lands on the platform's desk, and the halt mechanism is what makes the error budget defensible. But a halted design has to be resolved by somebody, and the fleet surface already models this as a **Needs Human Help** state.
+### 2.4 The boundary: auth, identity, tenant scoping and base data — **OPENED 2026-08-12**
 
-Founder, 2026-07-30: *"likely the platform staff but maybe we will have an FDE that just goes and fixes error — but the problem with this is the lack of domain knowledge."*
+**This is the actual hard part and it is not greenfield.** A module runs as the tenant's user inside the platform's auth context, reads the platform's base data, and must never see another tenant's. Getting any of it wrong is an incident rather than a bug.
 
-**Why it matters:** this is the one question that can falsify the closing claim of the demo. If halts are resolved by the platform's staff, then *"essentially no manual integration and maintenance for a white-label platform"* is false, and the autonomous promise is autonomous only until it isn't. An FDE keeps the claim true and moves the cost onto Recompose — but an FDE lacks domain knowledge of an app they did not write, which is the same objection that makes the mirror unproven on a foreign app (§2.3).
+Four sub-problems, all unaddressed: auth and session passthrough; approved-API scoping and public-vs-private data classification; tenant scoping; and schema validation against an API that moves.
 
-**What closes it:** decide who owns the halt queue, and price it. A halt resolved by Recompose is COGS; a halt resolved by the platform is a broken promise.
+**Why it matters:** the greenfield argument covers the module's interior only. The boundary is most of the work and all of the risk, and Gigacatalyst built agentic API discovery as their entire first product to handle exactly this.
 
-### 2.1d How does the 4% minor get swept up? — **OPENED 2026-07-30**
+**What closes it:** a written design, not a list. Currently a list.
 
-The minor band is cosmetic by definition — annoying rather than breaking — and unlike the 1% it **does reach production**. Nothing currently catches it.
+### 2.5 Contract drift — what replaced fork drift [T23, relocated 2026-08-12]
 
-**Why it matters:** the halt path only defends against significant failures. A steady trickle of small visual defects into a hundred branded apps is the failure mode that erodes the product quietly rather than loudly, and it is invisible to the accept condition that makes the rest of the budget safe.
+The fork concentrated all coupling into one place, a git merge, and made it **visible** — a conflict is an event and somebody is told. Modules distribute coupling across every API dependency and make it **invisible**: a field that keeps its name and changes meaning passes cleanly and every module built on it is silently wrong, indefinitely.
 
-**What closes it:** a scheduled code review was floated as a candidate and is not a decision. Whatever it is has to run without a human, or the autonomous promise absorbs another exception.
+A **proxy** absorbing upstream API changes is the working answer. It is an anti-corruption layer and it genuinely reduces fan-out. It does not remove the dependency, it cannot see a semantic change, and *"is this a big update"* is an unsolved judgement whose cheap-direction failure does not announce itself.
 
-### 2.2 Does the functional-equivalence gate actually pass on real variants? [T11]
+**What closes it:** a design for what the proxy actually detects, and an honest statement of what it cannot.
 
-[[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]] is the safety architecture: a redesign changes **arrangement only** — no screen merged or split, no functionality added or removed, the API surface provably identical. It is a strong claim *because* it is checkable by the customer's own engineers. **It has never been checked.**
+### 2.6 Three surfaces, one founder [T35] — **OPENED 2026-08-12**
 
-**Why it matters:** it is the answer to "we don't want an external system driving our production UI," and it is a strictly tighter constraint than Gigacatalyst operates under. Promising it before building the gate would make it an assertion rather than a property.
+Module, backend, admin dashboard. A custom feature nobody can configure is dead on arrival, so the admin surface is not optional, and each surface carries its own security surface.
 
-**What closes it:** build the diff gate against the existing CombatDen app — diff the API calls a generated variant makes against the baseline, fail the build on any addition — and run it on real variants before it is ever promised to a customer.
+**Why it matters:** [[Strategy/Product_Boundaries|Product_Boundaries.md]] recorded that *a bad output for them is a security incident, a bad output here is ugly,* and that **that asymmetry is the reason the visual half is tractable for one person.** The asymmetry is spent. Whether the work still fits one person is now an open question rather than an assumption, and the vault has never assessed it.
 
-### 2.2a Does anything catch a widget that is present but not visible? [T26] — **OPENED 2026-08-04**
+**What closes it:** a scoped build plan for the first module, boundary included, with the security surface enumerated rather than waved at.
 
-Zero-height, clipped, occluded, or inside a collapsed container. The element exists in the tree and the API call still fires, so **the functional-equivalence gate passes and the screen is broken.**
+### 2.7 Does the asset pipeline survive contact with a foreign app? [T5]
 
-**Why it matters:** it is the specific hole in the strongest claim in the pitch. 2.2 proves nothing was added or removed; it does not prove anything is reachable. A screenshot catches it only if the state that hides it is the state that got rendered.
+Unchanged by the pivot and still unproven. Every artifact to date is `apps/combatden/` or `apps/smoketest/` — both written by the founder, both ends of the contract included.
 
-**What closes it:** decide whether the gate checks reachability as well as presence, and whether the mock's state coverage (2.1) is what supplies the states to check it in.
+**Why it matters:** the pipeline is the one thing that already works, and its new job is making generated modules look native inside someone else's app.
 
-### 2.3 Does app-agnosticism survive contact with a foreign app? [T5]
+**What closes it:** tokenizing a structurally foreign app end to end, aimed at whatever stack an interested party runs.
 
-The engine is app-agnostic by construction: every app is one `apps/<app_id>/` folder and the pipeline knows nothing about any specific app. That has only ever been exercised on `apps/combatden/` and `apps/smoketest/` — both written by the founder, both ends of the contract included.
+### 2.8 Which stack, and does it filter the buyer?
 
-**Why it matters:** the core claim of the [[Concepts/Product/Mechanisms/Closed_Design_To_Production_Loop|Closed_Design_To_Production_Loop]] is "point it at a different app and it customizes that app." Two self-authored apps do not prove it. This is also why the Theme Factory demo, however good, proves nothing new — it renders an app whose [[Concepts/Product/Mechanisms/Tokenized_Design_System|tokenization]] was written by the same person who wrote the pipeline.
+Sharper than it was. A module is written in whatever the platform's app is written in. React Native and Flutter are the friendly cases. **Native Swift and Kotlin are the hard ones, and mobile is the worst-supported domain in agentic code generation** — no robust iOS/Swift benchmark, and JS/TS the lowest-scoring language family.
 
-**What closes it:** the Second Shell — tokenize a structurally foreign app end to end. Deliberately sequenced *after* a real call, aimed at whatever stack an interested party actually runs.
+**What closes it:** whichever stack the first interested platform runs.
 
-### 2.4 How does a tenant's redesign stay current, and how does output reach the customer? — **RESOLVED 2026-07-28**
+### 2.9 What survives in code, and what gets retired?
 
-Both of these — the old 2.4 and 2.5 — collapsed into one answer: **Recompose never writes to the platform's trunk.**
+The asset pipeline keeps its job. The Flutter and React theme runtimes, the studio, the JSX mock surfaces and the productionalize design were all built for the previous product.
 
-Two fork layers, both kept current by an agent. A **shared tokenized fork** of the platform's app is Recompose's base, re-derived against their main as they ship. Each **design fork** — one per design, not per tenant — is re-derived against that base. Changes land on **`uat`**, the platform's own branch that is ahead of `main`, never straight to production. A re-derive the agent cannot complete halts rather than landing unverified. The platform grants read access; that is the entire integration.
+**Why it matters:** letting this drift means carrying dead scaffolding and, worse, letting the retired product's shape quietly steer the new one.
 
-The [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]] principle is satisfied in a way its name does not describe — divergence exists in the git sense, but nothing in it is hand-maintained, so it never accumulates as human work. The trade is that the maintenance burden moves to Recompose permanently, and absorbing it agentically is what [[Concepts/Business/Strategy/Autonomous_Operation|the autonomous promise]] claims.
-
-**Rejected in the same decision: the layout enum** — the option the founder rated highest as recently as 2026-07-27. It requires writing generated layout code into their trunk, which is incompatible with never touching it. Founder: *"just touching and maintaining their production code sounds like a mess. Agentic separate forks you essentially don't have to think about unless there is an error is better."*
-
-See [[pivots/2026-07-28-01-agentic-editing-all-in|pivots/2026-07-28-01-agentic-editing-all-in.md]].
-
-### 2.5 How does a branded build reach the platform's release train? [new, 2026-07-28]
-
-Created by the resolution above. If the source of truth for a tenant's design is a Recompose fork rather than the platform's repo, then the branded binary is built from our fork — so something has to connect it back into their pipeline. Either they build from our artifact, or we hand them builds.
-
-**Mostly closed 2026-07-28, as implementation rather than strategy.** Binaries scale with tenants and designs scale with variety, and those are independent numbers — so per-design layout adds no new distribution overhead to a platform already shipping per-tenant binaries, and Apple 4.2.6 stays their problem because Recompose submits nothing. What remains is the literal handoff: the platform either builds from our fork or takes an artifact. The founder rates this the easy part and it is not a direction question.
-
-**Why it matters:** *"we never touch your source"* is true and is the strongest thing in the integration story. *"We're not in your pipeline"* is not true, because the app has to ship from somewhere. A platform engineer will ask this first, and it should have an answer before a call rather than be discovered on one.
-
-**What closes it:** one paragraph naming who runs the build and where the artifact crosses over. The founder rates this the easy part — *"that's the easy part in all honesty, the real problem is getting them to trust it"* — which is likely right, but easy and answered are different states.
-
-### 2.6 What does "nested html" mean concretely? [OQ1, assignment #4]
-
-Raised by the founder as a candidate [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]] alongside the SDK and API. Read provisionally as embeddable web surfaces a platform drops in — an iframe-able theme picker or editor, webview components — **but that is inference, not a statement.** It is a materially different engineering commitment from an SDK plus an API.
-
-**What closes it:** one paragraph naming the surface, who embeds it, and what it replaces. Needs to exist before the phrase enters any roadmap.
-
-### 2.7 Is the stack an ICP filter? [OQ3] — **narrowed 2026-07-28**
-
-It used to gate the whole product: the 2026-05-25 session tied live preview to stacks that compile to web, which would have restricted the ICP to Flutter and React Native.
-
-**The JSX visual mirror dissolves that for the design half.** Any stack can be mirrored into JSX, so preview and design no longer care what the production app is written in.
-
-What survives is narrower and later: **production-side validation**. Screenshot-diffing the shipped app against the approved mock requires the real app to render somewhere. Flutter Web gives that free; native Swift or Kotlin would need a simulator. So the constraint is now a validation-tooling problem attached to one step at the end, not a boundary on who can be sold to.
-
-**What closes it:** whichever stack the first interested platform runs, plus a decision on simulator-based validation if that stack is native.
-
-### 2.8 How stable is generation across runs? [T12]
-
-Distinct from 2.1 — that asks whether output is *good*, this asks whether it is *repeatable*. Cheap to check: re-run an existing brand brief against the current CombatDen app and diff the result.
-
-**Why it matters:** it went up in priority on 2026-07-28. Under the fork model every upstream change re-derives designs continuously, so run-to-run instability is no longer a hypothetical concern about a regeneration model that might not be chosen — it is a property of the shipping architecture.
-
-**What closes it:** the diff. An afternoon.
-
-### 2.9 Does the agent-maintained fork survive real upstream churn? [T18]
-
-The cost of never touching their trunk is that no human who understands a change is in the loop when it is re-reconciled. A one-time tokenization PR into their main would have left tokens in code their own devs maintain naturally. An external fork means our agent re-reconciles against every structural change they make, forever.
-
-**Why it matters:** this is the accepted price of the core principle, and it is the failure mode that only appears over months rather than in a demo. Drift here is quiet.
-
-**The hazard git will never flag, named 2026-08-04 [T23].** Semantic conflicts — changes that merge cleanly and break behaviour — are the textbook fork risk, and on a purely visual fork they are largely defanged, because a clean merge that breaks something breaks it *visually*. The real one is different: **upstream ships a new screen.** Nothing conflicts, because there is nothing to conflict with. The design fork simply has no design for that surface, so a brand-new screen appears in the platform's default styling inside a redesigned app. It is a coverage problem rather than a merge problem, and it scales with the platform's release cadence multiplied by the number of design forks. Every feature the platform ships silently degrades the coherence of every design in the fleet until it is redesigned.
-
-**What closes it:** point the re-derivation at a real, actively-shipping upstream mobile repo for 8–12 weeks and record four numbers — clean-merge rate, semantic-regression rate on clean merges, minutes per re-derive, and **how often upstream adds a surface no design covers.** Mostly wall-clock rather than effort, so it runs concurrently with outreach. No drift-rate or maintenance-burden data exists anywhere for this, because no such system is documented.
-
-### 2.10 What does a re-derivation cost, and how does that scale? [T25] — **OPENED 2026-08-04**
-
-Under the fork model, re-derivation is not a one-time onboarding cost. It fires on the platform's release train, across every design fork.
-
-**Why it matters:** inference gets cheaper, but re-derivation *frequency* is set by someone else's cadence and fork *count* grows with sales. This is cost that scales with success, which is the shape that quietly eats a margin. It also bounds §3.1 from below — a price cannot be set before the floor under it is known.
-
-**What closes it:** instrument the cost of one re-derive during T23, then multiply by a real release cadence.
+**What closes it:** an explicit decision per subsystem, taken once the mechanism settles — not before, and not by neglect.
 
 ---
 
 ## 3. Pricing
 
-### 3.1 What is the price? [T7, OQ2]
+### 3.1 What is the price? [T7]
 
-**Pricing is undefined.** It has never been decided for this ICP, and nothing in the vault should be read as a pricing decision.
+**Pricing is undefined**, and it is now undefined against a different buyer *and* a different unit.
 
-What is known rather than decided:
+- **The old $100/$300/$500 ladder is dead.** Gym-owner pricing from the CRM prehistory.
+- **The $100/month per branded tenant in [[Strategy/YC_Application_F26|YC_Application_F26.md]] does not transfer.** It was priced against *designs*, and the unit is no longer a design.
+- **The anchor moved again.** The reference is a **contracted custom-development engagement** — a platform's engineers building one feature for one tenant. Nobody publishes rates, minimums or timelines; all of it is gated behind sales, which is itself informative.
+- **The metering unit is undecided** and §1.6 decides it: per module, per tenant, per platform licence, or a share of what the platform charges for the capability.
+- **The floor is unmeasured.** Cost per generated module, including the boundary work, has never been estimated.
 
-- **The old $100/$300/$500 ladder is dead.** It was gym-owner pricing from the CRM prehistory and does not transfer to a platform buyer.
-- **The anchor moved.** Because the product now replaces a designer *and* the front-end engineer who implements the design, the reference is a **services** line item — the $10–50k / 4–12 week custom build — not a software line item. That is roughly an order of magnitude higher than the theming budget it used to be compared against.
-- **The metering unit is undecided**: per branded tenant, per seat, platform licence, or revenue share on the premium tier the platform unlocks. The [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]] framing suggests pricing tied to what the tier earns them, but nothing is decided.
-- **No comparable exists in the nearest analog.** Gigacatalyst publishes no pricing.
-- **The floor is unmeasured.** Re-derivation cost recurs on the platform's release cadence across every design fork (2.10), so it sets a lower bound on any per-design price. Nobody has measured it.
+**Why it matters:** the pitch is *close enough at a fraction of the price*, and **the ratio is the pitch.** It is meaningless until the fraction has a number.
 
-**Why it matters more than it first appeared:** the pitch is *"close enough at a fraction of the price."* **The ratio is the pitch, and it is meaningless until the fraction has a number.** Pricing is not a later problem; it is part of the value claim.
+**What closes it:** a platform stating what a custom build costs it today, in money and in weeks.
 
-**What closes it:** a real platform stating what their design tier earns them and what the delivery costs them. Until then, any number is a placeholder.
+### 3.2 The figures in the frozen YC application no longer describe the product
 
-### 3.2 The $100/tenant figure in the YC application is a working number, not a decision
-
-[[Strategy/YC_Application_F26|YC_Application_F26.md]] answer 8 states a plan to charge platforms $100/month per customer running one of our designs, and sizes the market off it. The doc's own notes are explicit about the status: $100 is the **platform's COGS, not the end price**, positioned at the top of the defensible range, holding only if they price the tier at $300+; it is to be defended as *"the price at which the platform still keeps 70% on a tier they currently cannot scale,"* **never as a final number**. The 20% premium-tier attach rate underneath it is a generic white-label SaaS benchmark. Measured, it is **0.1–1.73%** on shell-model platforms ([[Research/2026-08-02-attach-rate|Research/2026-08-02-attach-rate.md]]), so the market size computed from it is wrong for any platform that sells a shared shell — and does not apply at all to a no-shell platform like Subsplash, where the open number is the redesign rate (T20).
-
-**What closes it:** a platform giving its real attach rate and its real tier price. Both numbers exist inside these companies; neither is public.
-
-### 3.3 Two fields of the application disagree on the discount
-
-The founder video says the customer pays **90% less** than the industry charges. Answer 8 prices this at $100/month to the platform, marked up and sold at $300–500. Against $1,000+/month that is 50–70% cheaper, not 90%.
-
-**Why it matters:** it is a precise number volunteered where none was required, in a field that is still undefined — the same failure mode as the stale Mighty Pro price and the colour-determinism claim. Two fields of one application contradicting each other is the kind of thing a partner catches.
-
-**What closes it:** pick one claim and hold it everywhere, or drop the percentage entirely until 3.1 is answered.
+[[Strategy/YC_Application_F26|YC_Application_F26.md]] is the record of what was submitted and is not edited. Its $100/month figure, its 20% attach-rate benchmark and its market sizing were all computed for the design product. **None of it transfers**, and the corrections belong in that doc's corrections table rather than in a rewrite.
 
 ---
 
@@ -306,103 +213,77 @@ The founder video says the customer pays **90% less** than the industry charges.
 
 ### 4.1 Is the organizational objection real? [T4]
 
-Codex's challenge, raised independently of Claude's and stronger than it: adoption stalls **organizationally**, not technically — *"messy design systems, hardcoded one-off screens, asset assumptions, native build quirks, QA ownership, and internal resistance to giving an external system control over production UI."*
+Codex's challenge, still live and now **more** live: adoption stalls organizationally, not technically — *"messy design systems, hardcoded one-off screens, asset assumptions, native build quirks, QA ownership, and internal resistance to giving an external system control over production UI."*
 
-Its own falsification test, kept verbatim because it is the sharpest one in the vault: *"5 real white-label SaaS platforms agree the value prop, but the first integration takes weeks, touches many screens, needs engineering refactors, or stalls in security/QA/app-store/build-process concerns. If that happens, tokenization was the product, not just onboarding."*
-
-**Why it matters:** the answer to the technical half is [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]] — adopt the engine without changing your architecture. The organizational half is not answered by architecture and remains live.
+The previous product answered the technical half by having nothing to integrate. **That answer is gone.** A module runs inside their app, under their auth, against their data.
 
 **What closes it:** five platforms agreeing on value, then watching what happens to the first integration.
 
-### 4.2 How long does the tokenization pass take? [T9, restated 2026-07-28]
+### 4.2 Who resolves a failure?
 
-**The original question is moot.** It asked whether integration could beat Gigacatalyst's public ~2 days to install and ~2 weeks to full platform integration. There is no longer an installation step to measure — the platform grants read access and Recompose forks ([[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]]), so their benchmark measures something this product does not do.
+Every production system in the field keeps a human at the merge gate — Devin, Copilot CCA, SapFix, and even Uber's Piranha, a deterministic tool that only deletes stale feature flags and still routes its diff to the flag's author.
 
-What survives is narrower and entirely on our side of the line: **how long the forward-deployed tokenization pass takes, and how fast it compresses.** That is the only labor left in onboarding, it is paid work rather than friction the customer absorbs, and compressing it is the stated roadmap priority.
+**Why it matters:** it was already the hardest operational question and it is harder now, because a failure can be wrong data rather than a wrong-looking screen. If the answer is the platform's staff, then "no manual maintenance" is false.
 
-**What closes it:** the first real tokenization of a foreign codebase, timed. Note this is the same unmeasured thing as T16 — nothing has been tokenized that the founder did not write.
+**What closes it:** decide who owns it, and price it. Recompose resolving it is COGS; the platform resolving it is a broken promise.
 
-### 4.3 Should the operational surface be built before the first call? [OQ6]
+### 4.3 Should the operational surface be built before the first call?
 
-Approval states, run history, QA, per-tenant status. This is the build-sequencing half of 1.6.
+Approval states, run history, QA, per-tenant status. Building it first is the comfortable move and resembles every prior phase.
 
-**Why it matters:** building it first is the comfortable move and resembles the last eight weeks. Not building it risks arriving at a serious conversation with a generator rather than a platform.
+**What closes it:** let the first three calls decide it.
 
-**What closes it:** 1.6. Let the first three calls decide it.
+### 4.4 Apple Rule 4.2.6 and distribution
 
-### 4.4 Does the curated preset model transfer to this ICP? [OQ7]
-
-The founder named *"a very broad preset themes"* as part of the value, and pre-generated presets and mix-and-match theme sets are now the **demo surface** rather than the architecture. What is unexamined: whether presets are the **platform's** product (a library the platform curates and sells) or the **tenants'** product (a starting point each tenant picks from). Those are different products with different owners.
-
-**Why it matters:** the [[Concepts/Business/Strategy/Shopify_Pattern|Shopify_Pattern]] read — ~98.5% of merchants use stock themes — says curated-set-plus-brand-overlay is the shape buyers actually want. Which side of the platform boundary that set lives on decides who reviews it and who is accountable for it.
-
-**What closes it:** asking a platform whether they would want to own the preset library or hand it to tenants.
-
-### 4.5 Apple Rule 4.2.6 and distribution [OQ8]
-
-Probably stops being this product's problem under the platform ICP, since platform customers already ship apps. **Probably is not confirmed.** The old distribution doc stayed in the CombatDen vault (per-customer developer accounts, CRM prehistory); a Recompose equivalent should be written only once this is confirmed.
-
-**What closes it:** confirming with one platform how they currently ship per-tenant apps, then rewriting the doc.
+Decided by 2.3 rather than by the product. Runtime insertion removes it entirely; compile-time returns it. Either way Recompose submits nothing, so it is the platform's problem — **still unconfirmed with any platform.**
 
 ---
 
-## 5. Resolved
+## 5. Resolved, retired, or made irrelevant
+
+### Retired with the visual product — 2026-08-12
+
+These were answered, or open, under [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]]. They are recorded so nobody re-opens them and nobody mistakes their answers for current architecture.
+
+- **Does productionalize work?** The approved-mock-in, production-code-out step, and its hazard that the mock has no edge cases. There is no mirror and no productionalize step.
+- **What terminates the design validator loop.** No design validator loop.
+- **Does the functional-equivalence gate pass on real variants?** The strongest claim in the previous pitch, never built. **Additive-only replaces it** and is weaker in one specific way: it proves nothing existing changed, not that the new thing is right.
+- **Does anything catch a widget present but not visible?** A question about a redesign's render tree.
+- **The error-budget denominator.** The ~95/4/1 target was never measured and does not transfer. Do not quote it.
+- **Does the agent-maintained fork survive upstream churn, and what does re-derivation cost?** No fork. **The hazard relocated rather than dying — see §2.5.**
+- **How does a branded build reach the platform's release train?** Superseded by §2.3.
+- **Screenshot diffing is flaky; how stable is generation across runs?** The second half survives as a property of the asset pipeline; the first is gone.
+- **Whether presets are the platform's product or its tenants'.** A design question.
+- **"Nested HTML."** Never defined, and now moot — the integration surface is the platform's extension architecture.
+
+### Attach rate — made irrelevant rather than answered
+
+T19, T20 and T21 asked whether attach rate responds to **design quality**, what the attach rate for a *redesign* is, and whether design drives platform switching. T19 was the largest open question in the vault on 2026-08-04.
+
+**The pivot answers all three by not depending on them.** The measured findings stand — branded-app attach is 0.1–3% on shell platforms and tracks tenant *size* across a 70× range at one price — and they are now part of the *evidence for* the pivot rather than a risk to it. What replaces them is §1.4: does refusing feature requests cost the platform anything.
+
+### Whether the mechanism extends to net-new features — **reversed 2026-08-12**
+
+Resolved 2026-08-04 as **no**, on measured numbers. **Reversed**, on the grounds that those numbers measure an agent *editing* an existing codebase and a module's interior is greenfield. The route moved from *contradicted by evidence* to *unevidenced in both directions*.
+
+**The reversal did not meet its own pre-registered conditions.** [[Strategy/Agentic_Code_Generation|Agentic_Code_Generation.md]] listed four: measured brownfield success clearing ~95%, a robust iOS benchmark, the equivalence gate proven first, **and a customer.** The first three were argued to measure the wrong task. The fourth was not addressed, and it is the one with a track record behind it.
+
+### Whether Recompose writes to the customer's repository — **softened 2026-08-12**
+
+Was: **never, ever**, and integration was read access alone. Now: **never to their trunk**, with writes confined to an extension surface they own. This is weaker and it was given up knowingly — see [[Strategy/Product_Boundaries|Product_Boundaries.md]].
 
 ### Company name — resolved 2026-07-28
 
-Open Question 5 (*"Company and product name. Nothing chosen."*) is **closed: Recompose.** Forced by drafting the founder video, which needed a name to say out loud. *Composition* is the design term for how elements are arranged on a screen, so re-compose names the arrangement-only invariant directly. Rejected: Overhaul + a second word (defaults to car repair), Repackage (the everyday meaning is the exact dismissal the pivot spends a page rejecting), Remix / Retool / Render (occupied by large dev companies), Rendition (US association is extraordinary rendition).
-
-**Residual, still open:** the name is **provisional and explicitly changeable**, and **domain and trademark are unchecked.**
-
-### Where the full-redesign scope stops — resolved 2026-07-27
-
-Open Question 10, resolved in the founding session. **Layout is in scope; information architecture is not.** Arrangement only: no screens merged or split, no functionality added or removed. That is the sentence to hand an engineering team.
-
-A corollary was retired with it: because no component crosses a screen boundary, the client-side role-gating residual (a role-conditional component surfacing where it should not) cannot occur.
-
-### How layout quality is judged — resolved 2026-07-28
-
-T10, the risk the founding pivot called its largest. **Screenshots are the accept condition.** Render the design and judge the image. Not deterministic the way WCAG is for colour, and not claimed to be — but an oracle where there was none, and the reason the JSX visual mirror earns its cost independently of preview.
-
-What replaced it is narrower and lives in 2.1a: an accept condition is not a *stopping* condition, and the validator loop still has no bound.
-
-### How structural variation is produced — resolved 2026-07-28
-
-**Not by presets or enums.** Tested and rejected: a bounded option set reproduces the platform's original design language however many options it exposes, because the options are drawn from that language. Founder: *"it's always going to be bounded by the design language originally... if it sticks to it it'll cease to be truly unique."*
-
-Replaced by free agentic editing bounded only by the arrangement-only invariant. Any future proposal to constrain layout by classification or a template set is re-opening a closed question and has to beat that test result.
-
-### Whether Recompose writes to the customer's repository — resolved 2026-07-28
-
-**It does not, ever.** This is now a core principle rather than an implementation choice, and it collapsed the old 2.4 and 2.5 into a single answer. Two agent-maintained fork layers, changes landing on the `uat` branch, platform grants read access only.
-
-It killed the layout enum, which the founder had rated highest a day earlier, and it removed the largest named adoption blocker in the vault. The new question it created is 2.5.
-
-### Whether the mechanism extends to net-new features — resolved 2026-08-04
-
-**It does not,** and it closed on numbers rather than on preference. No documented case exists of an agent autonomously shipping a net-new user-facing feature into a production mobile codebase it did not author. The measured brownfield rate is ~65–70% *with a human requesting and reviewing every task*, and it falls below 10% once a patch touches three or more files — which is what a redesign always does. Extending would also inherit the security surface the visual scope avoids, moving the failure mode from *ugly* to *security incident*, which is the asymmetry that makes the visual half tractable for one person. The revisit condition is recorded in [[Strategy/Agentic_Code_Generation|Agentic_Code_Generation.md]].
-
-**Residual:** "why not features" is a question a platform will ask on a call, and like 1.7 what it needs is a prepared paragraph rather than more research.
+**Recompose.** *Composition* named the arrangement-only invariant directly — **and that invariant no longer exists**, so the name's original justification is gone even though the name stands. Still provisional, still explicitly changeable, and **domain and trademark are still unchecked.**
 
 ### Whether the company's surface is the website — resolved 2026-08-10
 
-A research cluster dated 2026-08-08 to 2026-08-10 in `Research/` examined a website layer embedded in vertical SaaS that rewrites the site against the tenant's realized business outcomes. **Not pursued.**
-
-Three independent reasons, each sufficient. The loop cannot reach statistical significance on small-business sites: published thresholds run to roughly 5,000 visitors and 1,000 conversions per variation, and realized revenue is a sparser and more lagged signal than that. The owner it would serve does not measure the outcome it optimises — unprompted complaints cluster on leads and time, first-year .com renewal sits in the mid-40s, and only ~18% of first-year domains are attached to any online presence. And the approval gate that would make it safe also makes it inert, because a bandit cannot run through an approval queue.
-
-No pivot doc: the direction was never adopted, so nothing reversed. Two findings were kept. **The buyer who pays for site work in this category is the platform, not the tenant** — done-for-you is a staffed line item at BentoBox, Vendasta, Yardi, Luxury Presence, Tebra and Housecall Pro — which is the same wedge the app product already selected, reached independently. And **no supplier in the embedded/white-label category ingests transactional data to decide site structure, or ships a native mobile app layer.**
-
-See [[Office_Hours/2026-08-10-19-Office_Hours_Website_Direction_Explored_And_Dropped|Office_Hours/2026-08-10-19-Office_Hours_Website_Direction_Explored_And_Dropped.md]].
+**Not pursued.** The per-tenant outcome loop cannot reach statistical significance on small-business sites, the owner does not measure the outcome it optimises, and the approval gate that would make it safe also makes it inert. Two findings were kept: the buyer who pays for site work is the platform, not the tenant; and no supplier in the embedded category ingests transactional data to decide site structure or ships a native mobile app layer. See [[Office_Hours/2026-08-10-19-Office_Hours_Website_Direction_Explored_And_Dropped|Office_Hours/2026-08-10-19-Office_Hours_Website_Direction_Explored_And_Dropped.md]].
 
 ---
 
 ## Dropped: gym-specific questions not carried forward
 
-These were open in the CombatDen prehistory and are not Recompose's questions. They are recorded as dropped so nobody re-opens them by accident:
+Open in the CombatDen prehistory and not Recompose's questions. Recorded as dropped so nobody re-opens them by accident: the $100/$300/$500 gym-owner pricing ladder; the switch-friendly-CRM target list and commitment-to-switch bar; the unlimited-membership beachhead and booking-anchored engagement loop; and the autonomous agent layer for gym CRMs, withdrawn two days after it was written.
 
-- The $100/$300/$500 gym-owner pricing ladder and the ROI math underneath it.
-- The switch-friendly-CRM target list, the migration-friction workarounds, and the commitment-to-switch validation bar.
-- The unlimited-membership beachhead constraint and the booking-anchored engagement loop.
-- The autonomous agent layer for gym CRMs, withdrawn by the founder two days after it was written.
-
-The one thing carried out of that period is **behavioral, not strategic**: the pattern in 1.3. It survived every pivot so far, which is why it is filed under demand rather than under history.
+The one thing carried out of that period is **behavioural, not strategic**: the pattern in §1.3. It has survived every pivot so far, which is why it is filed under demand rather than under history.
