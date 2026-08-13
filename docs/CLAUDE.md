@@ -89,6 +89,16 @@ Write the location and the rule for finding the thing:
 
 Does not apply to counts inside a doc's own argument ("two things this costs," followed by the two things) or to cited figures in research. Those are content, not navigation — they are edited alongside what they describe.
 
+## Companies
+
+`Companies/` holds one page per company the repo tracks in depth — a competitor whose positioning bounds ours, a target buyer whose extension surface decides the sale, or a reference architecture worth copying. [[Companies/_Index|Companies/_Index.md]] is the authoritative listing and holds the page conventions.
+
+**A company page holds current facts about one entity; a research brief answers a question at a date; a strategy doc holds a position.** Where a strategy doc needs a company fact, it links to the company page rather than restating it — which is what stops the same company being described in six documents that drift apart.
+
+Every page carries a `verified` date, because company facts rot faster than anything else here. A page whose date is months old is one to re-check before quoting it on a call.
+
+The folder needs no schema-pack change: `companies/` is already a prefix on the `company` entity type, and gbrain matches path prefixes case-insensitively.
+
 ## Linking
 
 **Link a doc whenever you reference it.** Every link is an edge the retrieval graph traverses, and edges are what make the vault answerable rather than merely searchable.
