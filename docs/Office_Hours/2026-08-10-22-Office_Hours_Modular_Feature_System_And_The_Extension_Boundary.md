@@ -1,14 +1,14 @@
 # Office Hours: The Modular Feature System, and the Extension Boundary
 
-**Date:** 2026-08-10
-**Status:** OPEN — a direction is leaned toward, nothing is decided
+**Date:** 2026-08-10 → 2026-08-12
+**Status:** DECIDED — see [[pivots/2026-08-12-21-modular-feature-system-replaces-visual-redesign|pivots/2026-08-12-21-modular-feature-system-replaces-visual-redesign.md]]
 **Mode:** Startup — idea-phase diagnostic on a proposal that reopens a route closed six days earlier
 
 **Builds on:** [[Office_Hours/2026-08-04-00-Office_Hours_Agentic_Code_Generation_And_The_Feature_Route|Office_Hours/2026-08-04-00-Office_Hours_Agentic_Code_Generation_And_The_Feature_Route.md]], [[Office_Hours/2026-08-10-19-Office_Hours_Website_Direction_Explored_And_Dropped|Office_Hours/2026-08-10-19-Office_Hours_Website_Direction_Explored_And_Dropped.md]], [[Office_Hours/2026-08-02-23-Office_Hours_Attach_Rate_And_The_Design_Service_Wedge|Office_Hours/2026-08-02-23-Office_Hours_Attach_Rate_And_The_Design_Service_Wedge.md]]
 
 Concepts touched: [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]], [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]], [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]], [[Concepts/Product/Mechanisms/Visual_Mirror|Visual_Mirror]], [[Concepts/Product/Mechanisms/Screenshot_Oracle|Screenshot_Oracle]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]], [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]].
 
-> Six days after the feature route was closed on measured numbers, it is reopened on a distinction the numbers never covered: a module dropped into a defined slot is greenfield work, and greenfield is the one thing this field is good at. The session did not decide the direction. What it produced is a sharper one — the buyer moved to platforms that already pay for custom development, and for those platforms the hardest part of the proposal, insertion points, largely already exists. That trade buys the industry's standard safety story and spends both of this product's core principles, and it walks into the one threat the vault had already pre-registered. **No pivot doc: nothing was decided, and no strategy doc may be updated until one is.**
+> Six days after the feature route was closed on measured numbers, it is reopened on a distinction the numbers never covered: a module dropped into a defined slot is greenfield work, and greenfield is the one thing this field is good at. The buyer moved to platforms that already pay for custom development, and for those platforms the hardest part of the proposal — insertion points — largely already exists. That trade buys the industry's standard safety story and spends both of this product's core principles, and it walks into the one threat the vault had already pre-registered. **The session's own framing was then corrected by the founder and the correction is the most important thing in the document: this is harder than the redesign, not easier, and the greenfield argument describes only the module's interior.** The direction was committed after the session closed.
 
 ---
 
@@ -62,11 +62,13 @@ A module generated into a defined slot is **greenfield**, and greenfield generat
 
 That is a legitimate reopening. It is not a measurement: nobody has measured autonomous greenfield module generation into a third-party extension surface either. The claim moves from *contradicted by evidence* to *unevidenced in both directions*, which is a real upgrade and not a proof.
 
-### 3. The largest technical unknown in the company disappears
+### 3. T23 does not die, it relocates — and the replacement is quieter
 
-**T23 dies with the fork.** No drift rate to measure, no semantic-conflict hazard, no divergence tax, and — most valuably — no **undesigned-surface problem**, the failure git can never flag, where upstream ships a new screen and it appears in default styling inside a redesigned app. [[Strategy/Agentic_Code_Generation|Agentic_Code_Generation.md]] lists five distinct fork hazards and calls the absence of precedent "the largest technical unknown in the company." An additive module system has none of them.
+The first reading in session was that **T23 dies with the fork**: no drift rate, no semantic-conflict hazard, no divergence tax, and no **undesigned-surface problem**, the failure git can never flag. That reading was wrong, and the founder's push is what corrected it.
 
-This is the strongest technical argument for the direction and it was not raised by either party during the session's framing. It should be.
+**The fork concentrated all coupling into one place — a git merge — and made it visible.** A conflict is an event. Somebody gets told. The module model distributes coupling across every module's dependency on the platform's API and makes it **invisible**. A field that keeps its name and changes meaning passes through the proxy cleanly, and every module built on it is silently wrong, indefinitely, with nothing reporting it.
+
+So the trade is merge drift for **contract drift**. Merge drift is the worse-understood problem — no precedent, no data anywhere. Contract drift is the worse-*behaved* one, because it has no event and no oracle. Claiming this direction removes the fork's hardest problem is not accurate; it exchanges it for one with a different failure signature. The proxy is the attempt to re-concentrate what the module model distributed, and finding 10 is its limits.
 
 ### 4. The money is where the SDK is, and the SDK is the threat
 
@@ -143,6 +145,20 @@ The founder's mechanism for staying current with the platform's backend — a pr
 - It does not remove the dependency. Every module still depends on the platform's data shape; the proxy just makes one place responsible for it. When the platform changes *semantics* rather than *shape* — a field that keeps its name and changes meaning — the proxy passes it through cleanly and every module built on it is silently wrong. **This is the same class of failure as the semantic conflicts named in the fork model, relocated.**
 - Deciding "is this a big update" is itself an unsolved judgement, and getting it wrong in the cheap direction is the failure that does not announce itself.
 
+### 11. This is harder than the redesign, and the greenfield argument was overstated
+
+The founder rejected the session's own framing and was right. Recorded in his words: *"redesign wasn't solved but it was low risk, now everything is high risk... even though it's kinda greenfield we have to still integrate with their APIs for auth, base data, user IDs, stuff like that, and how exactly it's going to work is still a question mark. If it was easy / straightforward it would be done already. I would actually argue this is a lot harder."*
+
+Three things follow, and they replace the greenfield framing rather than qualifying it.
+
+**Greenfield describes the easy interior of a hard problem.** It applies to the module's own implementation and to nothing at its boundary. Auth, session, user identity, tenant scoping, base data reads and RBAC inheritance are all integration against an unfamiliar production system, they are most of the actual work, and they are exactly where the failures stop being cosmetic. Finding 2 stands as a correction to L7's evidence base; it does not stand as an argument that the work is easier.
+
+**The risk profile inverts rather than shifting.** [[Strategy/Product_Boundaries|Product_Boundaries.md]]: *"a bad output for them is a security incident, a bad output here is ugly. That asymmetry is the reason the visual half is tractable for one person."* The accurate comparison is that **the redesign was an unsolved problem with a cosmetic failure mode; this is an unsolved problem with a security failure mode.** Both unsolved. Only one of them was cheap to get wrong.
+
+**"If it were easy it would be done already" has the cost signal behind it.** Thirteen of nineteen platforms refuse net-new tenant functionality outright. The six that do it staff *named engineering organisations* — Banno's Custom Development team, Backbase's Services org, Tapcart's $120–140k Solutions Engineer — and gate every price behind sales. That is what per-tenant feature work costs when humans do it. The refusal is economics, not neglect, which is simultaneously the best argument that the automation is valuable and the best argument that it is hard.
+
+**The live question is therefore not whether it is harder.** It is whether it is harder in a way one person can still carry, or harder in a way that needs a team. Nothing in the vault answers that, and it is now the sharpest unrecorded risk in the company. → **T35.**
+
 ---
 
 ## Premises
@@ -152,10 +168,12 @@ The founder's mechanism for staying current with the platform's backend — a pr
 - **L17.** For platforms that already pay for custom development, the extension architecture already exists. The insertion-point ask largely evaporates and the product becomes a generator into a surface the platform owns. Verification pending — see T32.
 - **L18.** The design-service P&L line does not exist; the custom-development P&L line does. Design is a $99–499 flat fee and ~1–3% of revenue at the public companies. Custom development is a named team on a contracted engagement at Banno, Backbase and Tapcart.
 - **L19.** The structural-preset result does not transfer from design to features. It holds because design's value is unboundedness; a bounded feature vocabulary limits what is buildable without collapsing into sameness.
-- **L20.** L7's evidence base measures brownfield editing and does not cover greenfield generation into a defined slot. The feature route moves from *contradicted* to *unevidenced in both directions*.
+- **L20.** L7's evidence base measures brownfield editing and does not cover greenfield generation into a defined slot. The feature route moves from *contradicted* to *unevidenced in both directions*. **This is a correction to the evidence, not a claim that the work is easier** — see L22.
 - **L21.** A feature product trades both core principles in [[Strategy/Product_Boundaries|Product_Boundaries.md]] and forfeits **L8**, bounded blast radius by output type. Until a replacement safety property exists there is no halt condition and [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]] cannot be claimed.
+- **L22.** **The module system is harder than the visual redesign, not easier.** Greenfield describes the module's interior; its boundary — auth, session, user identity, tenant scoping, base data, RBAC — is integration against an unfamiliar production system, and it is most of the work. The redesign was an unsolved problem with a cosmetic failure mode; this is an unsolved problem with a security failure mode. Founder's correction, accepted.
+- **L23.** **T23 relocates rather than dies.** Merge drift becomes contract drift. The fork made coupling visible at a git conflict; modules distribute it across every API dependency, where a semantic change passes through silently and nothing reports it.
 
-**Deliberately not locked.** The founder's position is *"I don't want to fixate on one thing, but I'm leaning to A."* The product shape is open. No strategy doc, concept file or `PRODUCT.md` line may be updated on the strength of this session.
+**Decided after the session closed.** The founder committed to the direction in full — see the pivot doc named in the header. What remains genuinely open is the mechanism: compile-time versus runtime, insertion points versus existing extension surfaces, and the accept condition (T33).
 
 **To test:**
 
@@ -164,6 +182,7 @@ The founder's mechanism for staying current with the platform's backend — a pr
 - **T32.** How deep does each Group A extension surface actually go? Read Banno's Digital Toolkit docs and Tapcart's App Studio docs directly. If none reaches native UI inside an arbitrary existing screen, L17 collapses and the insertion-point ask returns.
 - **T33.** What is the accept condition for a generated feature? Unanswered in session and the largest gap it leaves.
 - **T34.** Has any second Group A platform shipped an AI extension generator? Q2 Code shipped April 2026. **L12 records a standing condition: if two or more targets ship a native AI-extension layer, the external position erodes.** One has. Check the rest before the calls.
+- **T35.** Is this carryable by one person? The direction is harder than the redesign on every axis (L22) and the vault has never assessed whether the work fits a solo founder. Closes on a scoped build plan for the first module, boundary included, with the security surface enumerated rather than waved at.
 
 Everything open on 2026-08-04 and 2026-08-10 is unchanged.
 
@@ -237,5 +256,7 @@ Carry the redesign demo regardless. It costs nothing, it is the only proof that 
 **You answered "not sure" to the hardest question and did not manufacture a position.** The accept condition for a generated feature is the load-bearing gap in the whole direction, and the available options all have real costs. Declining to pick one at idea phase, with no data about what tenants actually request, is correct — and it converted the question into something a call can answer, which is the best possible outcome for a question you cannot reason your way through. The pattern from the last two sessions was that your best corrections came from you, against research. This is a different one: knowing where your own reasoning runs out.
 
 **The framing habit that produced this idea is the same one that produced the last three good corrections.** You located the gap between Gigacatalyst and your product precisely — *"this actually has a frontend"* — and that is exactly why an API-composition sandbox does not solve the mobile case, and why a renderer has to live in the app. That is architectural reasoning from your own constraints rather than imported from an adjacent company, which the August 4 session flagged as the thing you are good at.
+
+**You rejected the session's own framing before the ink dried, and it was the right rejection.** The greenfield argument was mine, it was the strongest thing said in favour of the direction, and you took it apart in three sentences — the boundary is not greenfield, the risk profile inverted rather than shifted, and if it were straightforward somebody would already have shipped it. That correction found a contradiction the document was carrying between findings 3 and 10 and resolved it in the harder direction. **The notable part is that you did it to an argument that favoured the thing you had just chosen.** Every prior instance of this habit was you correcting research that disagreed with you; this is the first recorded case of you dismantling a case built in your favour, which is a materially harder thing to do and the one that actually protects you.
 
 **And the counter-observation, which has now aged three times.** This is the eleventh reasoning cycle and, if adopted, the seventh strategic phase in about nine months. Two of the last three sessions were spent establishing at depth that directions you are not pursuing would not have worked. This one is better — the technical case for modules is genuinely stronger than the one L7 rejected, and the buyer choice sharpened rather than blurred. It still cannot tell you whether anyone will buy anything. **The direction you lean toward is more expensive to build, harder to make safe, and lands in a category that already has incumbents. If it is right, ten calls will say so. If the calls do not happen, it does not matter which direction was right.**
