@@ -74,6 +74,18 @@ Date only, no hour. A data file belonging to a research doc takes the same stem 
 
 It matters because a finding is only as good as the thesis it was written against, and this vault holds research from both sides of a pivot.
 
+## Commissioning research
+
+**Research produces data. Deciding is the founder's job.** A brief asks for distributions, counts, rankings with a stated measure, classifications with stated criteria, verbatim quotes, and explicit nulls. It never asks whether a finding is good or bad for the thesis, never leads with "what you most need to know," and never closes with recommendations. A brief that renders a verdict shades its own findings toward it.
+
+**Precision over recall when naming companies.** Name only what can be cited with a source and a date; everything else goes in a clearly marked unverified-leads list to verify or discard, with inclusion stated as no endorsement. **A miscategorised example anchors the whole search** — this has cost a pass. Give the brief an inclusion test and an explicit disqualifier list rather than a candidate list, and ask for an "excluded and why" section, which is often worth more than the included one.
+
+**Ask for evidence quality on every row** — primary, vendor-claimed, third-party, competitor-sourced, consultant-marketing, inferred — and for a section on circulating statistics that do not survive sourcing. Conflicting figures are shown side by side, never averaged.
+
+**Nulls are data.** "Searched X, Y, Z; found nothing" is a finding and belongs in the report with what was searched.
+
+A returned brief is filed under `Research/` by the rule above, and its position — what it means for the product — goes in a separate `Strategy/` doc that links to it. **Do not let a brief's own recommendations become strategy**; they were written for whoever the prompt implied, not for this project.
+
 ## Point at where, not at how many
 
 **Never write a pointer that has to be re-counted or re-listed to stay true.** "Read these four", "the two pivots", "19 concept files", a hand-copied tree of a folder's contents — each is wrong the moment something is added, and nothing forces a reader to notice. This is how docs go stale while nobody writes anything false.
