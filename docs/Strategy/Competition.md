@@ -1,177 +1,136 @@
 ---
 tags: [business, competition, market, strategy]
 status: current
-date: 2026-07-28
+date: 2026-08-12
+source-pivot: pivots/2026-08-12-21-modular-feature-system-replaces-visual-redesign.md
 ---
 
 # Competition
 
-Concepts touched: [[Concepts/Product/Mechanisms/Closed_Design_To_Production_Loop|Closed_Design_To_Production_Loop]], [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]], [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], [[Concepts/Product/Mechanisms/Modal_Coherence|Modal_Coherence]], [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]], [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]], [[Concepts/Business/Strategy/Shopify_Pattern|Shopify_Pattern]], [[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]], [[Concepts/Business/Strategy/Freelance_Conversion_Thesis|Freelance_Conversion_Thesis]].
+Concepts touched: [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]], [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]], [[Concepts/Product/Mechanisms/Modal_Coherence|Modal_Coherence]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Business/Strategy/Freelance_Conversion_Thesis|Freelance_Conversion_Thesis]], [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]], [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]].
 
-The buyer is a multi-tenant white-label SaaS platform with real tenant volume. Every category below is judged against that buyer's actual question: *what do I do today when a customer wants their app to look like their brand, and what would I stop doing if I bought this?*
+The buyer is a multi-tenant white-label SaaS platform **that already funds per-tenant custom development**. Every category below is judged against that buyer's actual question: *what do I do today when a tenant asks for functionality we don't have, and what would I stop doing if I bought this?*
 
-Two things reset this document. First, the company changed: the class-based-gym CRM is now only the reference implementation, so gym CRMs (Mindbody, PushPress, Gymdesk, Zen Planner) are no longer the competitive set in any sense — they appear here only as examples of platforms that sell a branded-app service. See [[pivots/2026-07-27-11-customization-engine-is-the-company|pivots/2026-07-27-11-customization-engine-is-the-company.md]]. Second, scope moved from assets to assets **plus structure** ([[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]]), which changed who is being replaced: not a designer applying a brand, but the designer *and* the front-end engineer who implements the design — the whole custom-build line item. That promotes in-platform design services and agency builds to direct alternatives and demotes token tooling to a fraction of the surface.
+> [!warning] Rewritten 2026-08-12, and most of the previous competitive set left the document
+> [[pivots/2026-08-12-21-modular-feature-system-replaces-visual-redesign|The August 12 pivot]] moved the product from a visual redesign to per-tenant feature modules. Token tooling, brand APIs, AI design tools and in-platform design services were the alternatives to the *previous* product and are not in this market. What replaces them is a harder set: the platform's own services organisation, its extension SDK and partner network, and AI extension generators built on SDKs the platform already owns.
+>
+> **The competitive position got worse and the doc should not pretend otherwise.** The visual half was unoccupied. This one has funded incumbents in it.
 
 > [!note] Source provenance
-> **Every filename in `Research/` carries the date the research was done, and the date is what tells you which thesis it was written against.** The May 2026 files predate the pivot and argue for the *earlier* thesis — building our own vertical white-label app for creators; their factual surveys carry, their strategic recommendations do not, and the reader has to hold the two apart. The August 2026 files were written against the platform ICP and their recommendations are live. Competitive detail added outside `Research/` comes from [[Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company|Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md]].
+> **Every filename in `Research/` carries the date the research was done, and the date tells you which thesis it was written against.** The May 2026 files predate two pivots and argue for a vertical white-label app of our own. The August 2026 files were written against the platform ICP. **All of them were written against a design product**, so their competitive framing needs re-reading under the module thesis even where their facts hold.
 >
-> - [[Research/2026-05-01-ai-brand-competitor-analysis|Research/2026-05-01-ai-brand-competitor-analysis.md]], [[Research/2026-05-01-ai-brand-competitor-analysis-v2|Research/2026-05-01-ai-brand-competitor-analysis-v2.md]] — landscape surveys. Their recommendations (pick a vertical, price at $500–1,500/mo, PWA-first delivery) were written for a company we are no longer building.
-> - [[Research/2026-08-02-coach-and-influencer|Research/2026-08-02-coach-and-influencer.md]] — **read this as a customer list, not a competitor list.** It maps the multi-tenant white-label platforms (Passion.io, Mighty Pro, Disciple, Uscreen, Tapcart, GoodBarber, BuildFire, Nudge Coach, Trainerize, Circle, VidApp, Maestro) with pricing and tenant counts. Every one of them is the buyer now. Its market sizing is for the creator/coach ICP and is dead.
-> - [[Research/2026-08-02-incumbent-design-delivery|Research/2026-08-02-incumbent-design-delivery.md]] — what platforms charge for design and why the ones who charge can't build the replacement. Extracted 2026-08-02 from two lineage docs not carried here. Figures are May 2026 and some are stale; quote ranges.
-> - [[Research/2026-08-02-enterprise-tier-anatomy|Research/2026-08-02-enterprise-tier-anatomy.md]] — what the premium branded-app tier actually contains at Mighty Pro and Circle Plus, what the dedicated strategist does, and where design sits inside it. **Current as of 2026-08-02 and the only research here written against the platform ICP.** Read it before quoting any enterprise-tier price — it records how weakly sourced every figure in circulation is.
-> - [[Research/2026-08-02-distribution-architecture|Research/2026-08-02-distribution-architecture.md]] — Apple Rule 4.2.6, per-tenant binaries vs. picker apps, per-tenant App Review load. The Apple architecture facts are live industry structure. **Its "Decision: per-customer Apple Developer accounts" is not our decision** — Recompose does not ship to the App Store; the platform does. Read it as a description of the buyer's world.
-> - [[Research/2026-08-02-b2b2c-saas-sales-for-small-businesses|Research/2026-08-02-b2b2c-saas-sales-for-small-businesses.md]] — how vertical SaaS sells to SMBs (Toast, Square, Mindbody, Zenoti, ABC Fitness). The wrong buyer for us; useful as a description of the business our buyer is in.
-> - [[Research/2026-08-02-why-custom|Research/2026-08-02-why-custom.md]] and [[Research/2026-08-02-attach-rate|Research/2026-08-02-attach-rate.md]] — August 2026, written against the platform ICP. White-label dominates every vertical surveyed (93–99.5%), but **attach rate on the branded-app tier is 0.1–3% on shell-model platforms and tracks tenant size rather than price.** Read both before using any tenant count as an addressable number.
+> - [[Research/2026-08-02-features-vs-design|Research/2026-08-02-features-vs-design.md]] — **the load-bearing one now.** Which platforms build features for individual tenants, which refuse, and who staffs it. This is the competitive map.
+> - [[Research/2026-08-04-mobile-app-code-gen|Research/2026-08-04-mobile-app-code-gen.md]] — the state of agentic code generation, the additive-boundary finding, and the graveyard. Written to *close* the feature route; read it now as the constraint set the product has to beat.
+> - [[Research/2026-08-02-why-custom|Research/2026-08-02-why-custom.md]] — why anyone goes custom. Design never travels alone; a functional driver is always present. This is the evidence base for the pivot.
+> - [[Research/2026-08-04-company-list-white-label|Research/2026-08-04-company-list-white-label.md]] — the raw target list, with contact surfaces rather than people.
+> - The May 2026 brand-competitor surveys and the August design-delivery, attach-rate and enterprise-tier briefs remain accurate about the *design* market. That market is no longer the one being entered.
 
 ---
 
-## Token tooling
+## The platform's own services organisation — the direct alternative
 
-**What they do.** Tokens Studio ("design systems, fully automated"), Token Designer (AI token generation plus an MCP server), UXPin Merge (AI token sync, claims to halve engineering effort), Supernova, Style Dictionary, Knapsack. The W3C Design Tokens spec stabilised in October 2025, so a single token bundle can flow from Figma to web, iOS and Android.
+**What they do.** Build the feature, for that tenant, with their own engineers, as a priced engagement.
 
-**Where they stop.** At tokens. No app ever ships from any of them. They produce a well-managed variable layer and hand it to an engineering team, which is the expensive part.
+- **Banno (Jack Henry)** — a named **"Custom Development team."** *"Maybe your idea doesn't require a third-party — we build custom features, too… our custom integrations team is here to build it for you."* Work may involve an additional contract with the vendor and/or Jack Henry.
+- **Backbase** — a code-writing **"Services" organization** distinct from product R&D: *"your tailor-made code seamlessly integrates our products with customers' systems."* Alongside a mobile guild of 70+ engineers.
+- **Tapcart** — an **"Engineer, Solutions & Services"** at $120–140k *"building Custom Blocks and React web apps for existing and prospective clients,"* plus a Senior React Developer for App Studio Solutions.
+- **ABC Trainerize** — Enterprise *"custom-built widgets… non-standard functionality,"* gated to 5+ locations.
+- **GoodBarber** and **BuildFire** — custom development sold to their **reseller and agency base**, not to end tenants. Different shape; read carefully before counting them.
 
-**Real alternative for the buyer?** No, and less of one than a year ago. A platform that adopts token tooling still needs a designer to decide what the tokens should be per tenant and a front-end engineer to apply them — the exact two roles this replaces. Token tooling was the right comparison when the product was assets only; against a [[Concepts/Product/Mechanisms/Tokenized_Design_System|tokenized]] *plus* structural redesign it overlaps a fraction of the surface. It is closer to a component of the stack than a substitute for it.
+**Where they stop.** At engineering headcount, on a human schedule, with pricing gated behind sales. No platform publishes rates, minimums, timelines or IP terms — all of it is contact-sales, which is itself the signal that the work is expensive and scarce.
 
-## Brand APIs and brand-kit generators
+**Real alternative for the buyer?** **Yes, and it is the incumbent.** This is the line item being attacked, and unlike the design product there is genuinely money in it.
 
-**What they do.** Brand API 2.0 and Brand.dev serve logos, colours and fonts per company — Brand.dev's Styleguide API ($49/mo for 3,000 retrievals) extracts colours, typography hierarchy, spacing, shadows and component styles from any URL and explicitly markets "White-Label Product Customization." BrandForge is the closest *business-model* analog: AI white-label brand generation sold with full API access to hosts, registrars and agencies, advertising "signed contract to first customer in under 14 days." Zoviz/Visual DNA turns a URL into CSS variables or a shadcn theme; Figma ships an AI Brand Guidelines Generator.
+> [!warning] This is also the internal opponent, and it is new
+> Under the design product the finding was that the hostile evaluator usually did not exist — the client-facing roles were Solutions Consultants and Customer Onboarding Specialists, and nobody's team was on the line. **Group A is defined by having exactly the team whose work this automates**, and they are who the technical evaluation gets routed to. There is finally a champion who owns a queue and knows what it costs; there is also finally someone with standing to object, and they will be right about real things.
 
-**Where they stop.** Before any app ships. They emit a brand *description* — kits, palettes, style guides, sometimes a website — never a native app. BrandForge is the sharpest illustration: same buyer shape, same API-to-hosts motion, output that never reaches a mobile binary.
+## Extension SDKs and partner networks — the deliberate alternative
 
-**Real alternative for the buyer?** No. These are upstream inputs and plausible suppliers, not substitutes. A platform that buys Brand.dev has extracted a tenant's brand and still has to build the tenant's app.
+**What they do.** Refuse to build per-tenant features, and supply an architecture so someone else can.
 
-## AI design tools
+- **Q2 — Caliper SDK**, since 2018, plus certified third-party developers, with Q2 hosting and deploying: *"solutions developed in the Q2 SDK are deployed, hosted, and monitored by Q2."* Over 1,000 extensions running in product. Explicitly **not** a bespoke-build shop.
+- **Alkami** — APIs, an extensible SDK, prebuilt UI components, and a One-Click SDK Manager added in the Winter 2026 release.
+- **Banno Digital Toolkit** — Plugin Framework, Consumer API, Admin API. Plugins are HTML/CSS/JS web apps hosted on the **partner's** infrastructure.
+- **Tapcart** — App Studio, CLI, Global Components, Configurable Blocks, and an agency ecosystem building Custom Blocks.
+- **BuildFire** — a free MIT-licensed SDK (`buildfire.js`); keep a plugin proprietary by upgrading.
 
-**What they do.** Galileo AI, Figma First Draft and Stitch generate UI from prompts. v0, Lovable (Connected Design Systems) and Subframe generate greenfield projects with design-system constraints. Builder.io Visual Copilot enforces existing design tokens on AI-generated screens via CLI integration with Cursor, Windsurf and Claude Code. Adobe's Firefly Custom Models, Style Kits and Design Intelligence are the strongest evidence that AI can generate a coherent brand *language* at scale — Coca-Cola and Disney announced custom models at MAX 2025, and Firefly Services exposes it programmatically.
+**Where they stop.** At someone else having to do the work. The tenant still needs a developer, an agency, or a budget. Self-serve extensibility answers the platform's problem, not the tenant's.
 
-**Where they stop.** At a mockup, or at a new project, that a human still has to implement inside an existing production app. Firefly's output is creative collateral, not interactive product — nobody has wired Firefly Services to generate the per-tenant asset set for a multi-tenant app shell. Quality is also a live constraint on this whole tier: NN/g's 2024–25 evaluations found AI-generated UI tends toward "purple gradients and glossy cards — the unmistakable AI look," with multi-screen flows particularly weak, and a 2024 MDPI systematic review found homogenised layouts with missing elements and navigation inconsistencies.
+**Real alternative for the buyer?** **Yes, and it is the answer they already chose.** This is why the module product's differentiator has to be *removing the developer* rather than *supplying code faster*.
 
-**Real alternative for the buyer?** No. The buyer's problem is not "produce a design," it is "get a distinct design into N tenants' already-shipped app without hiring N designer-weeks." None of these operate per tenant across a fleet, and none of them touch a production codebase under a safety contract. Builder.io is the nearest miss — it enforces tokens on generated screens inside one team's workflow — but it is a tool a design team uses, not infrastructure a platform installs.
+**It is also the substrate.** Where a surface like this exists, Recompose writes into it and inherits its safety story. That is the pivot's central bet, and it is unverified: Banno's plugins run on the partner's own infrastructure and Tapcart's blocks live in its studio, so **whether any existing surface reaches native UI inside an arbitrary existing screen is not known.** Reading their public developer documentation is the cheapest high-value work available.
 
-## In-platform design services — the direct alternative
+## AI extension generators — the sharpest threat
 
-**What they do.** This is what platforms with tenant volume actually sell today when a customer wants a branded app, and it is a human design team behind a premium tier:
+**What they do.** **Q2 Code**, announced 2026-04-16: *"a governed AI-powered development environment… to build extensions and integrations on the Q2 Digital Banking Platform,"* built with Anthropic's Claude Code via Amazon Bedrock. Mid-Hudson Valley Federal Credit Union named as an Early Access adopter; the program expands through 2026.
 
-- **Mighty Pro Design Lab** — branded splash screens, store-listing assets, brand colours in light and dark, up to five fonts, delivered as a service tier.
-- **Passion.io** — Plus tier requires a **$10,000–$20,000 setup fee**; 15,000+ apps launched.
-- **BentoBox under Clover** — agency-priced design service (recorded in the office hours doc; not covered by the May research).
-- **Circle Plus Design Studio** — builds marketing screenshots, splash and icons over **4–6 weeks**, reportedly ~$30k/year.
-- **Mindbody**, **ABC Trainerize** (Studio CBA, ~four-week human turnaround), **Vagaro**, **Tapcart Ultimate** ($400+/mo with "Collaborative App Design Services" and a dedicated account manager), **Banno Visual Branding Services** in banking.
+**Where they stop.** At a developer. It is a governed environment for Q2's own engineers and certified partners writing SDK-compliant extensions. **It makes a developer faster; it does not remove one.** Adoption is also early — one named customer, Early Access.
 
-Across ~80 platforms surveyed in May 2026, custom illustrations, iconography and motion per customer sat at roughly **0%** adoption, custom typographic systems under 5%, and everything deeper than logo-plus-colours was gated behind $10k–$28k/year professional-services tiers. The price gap between the self-serve template tier and the feels-custom services tier is consistently **5–30×**.
+**Real alternative for the buyer?** **Yes, and it is the pre-registered kill condition.** Q2 did not build a coding agent; they wired Claude Code into Bedrock, and the only reason that was cheap is that **Caliper has existed since 2018.** *The AI was the cheap part bolted onto the expensive part* — and the chosen ICP is defined by owning the expensive part.
 
-**Where they stop.** At human throughput — **3–6 weeks per tenant**, consistently, everywhere a turnaround is published. That is the cap, and it is a capacity ceiling rather than a cost line. This is [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]] — a revenue tier the platform cannot scale, not an end-user satisfaction argument and not a payroll to eliminate.
+The standing condition from [[Strategy/Agentic_Code_Generation|Agentic_Code_Generation.md]]: **if two or more targets ship a native AI-extension layer, the external position erodes.** One has. Checking whether Banno, Backbase, Alkami or Tapcart has shipped or announced anything similar is a required pre-call task, and if a second one has, this direction needs re-examining rather than defending.
 
-**Real alternative for the buyer?** **Yes for the design line item, no for the tier around it.** At Mighty Pro the tier lists six deliverables — migration of members, courses and payments; a Community Design™ Plan; setup; design services; a membership; ongoing reporting — and design is one. The named human attached to these tiers is a launch project manager and business coach, not a designer: the Community Strategist job posting lists workshops on content cadence, training on member onboarding flows, and creative input on landing pages and email sequences. Recompose replaces one bullet. Full anatomy in [[Research/2026-08-02-enterprise-tier-anatomy|Research/2026-08-02-enterprise-tier-anatomy.md]].
+**The distinction to hold, and it is the whole product.** A non-technical tenant describes what they need and gets working functionality, with no developer anywhere in the loop. Nobody has shipped that. If the product drifts into being a tool a developer drives, it is competing head-on with something every Group A platform can build in-house.
 
-> [!danger] Do not build a cost-savings pitch here, and do not quote a tier price
-> The design functions are small and cheap. Circle's design department is ~4 people out of ~160 and primarily does Circle's own marketing; Vagaro's service is a $499 flat fee; ABC Trainerize prices the same class of deliverable standalone at **$99–$169 one-time**. Professional services runs 1.19% of revenue at Olo and 2.9% at Toast, and Olo's management said they would rather upsell platform modules than grow it. There is not enough cost to save.
->
-> Every premium-tier price in circulation is a third-party estimate of a contact-sales number. Mighty Pro appears as $1,167/mo, $3,000–5,000/mo, $28k/yr and $33k/yr; Circle Plus appears as both **~$30k/year** and **$10,000–$30,000 per month**. **Use ranges, never a precise figure, and never attribute a tier price to design.**
+## Gigacatalyst — no longer adjacent, now the closest company in the market
 
-> [!note] Who is in the room
-> There is usually no head of tenant design. The client-facing roles are Solutions Consultants, Client Implementation Managers, Customer Onboarding Specialists and marketing designers. Political risk is low — and so is the chance of an internal champion. A deal with no opponent and no advocate stalls rather than losing.
+**The company.** Giga Next Inc., **YC Spring 2026**. Founder Namanyay Goel, team of four, San Francisco. *"Customize your software to every user with AI."*
 
-## Agency and freelance custom builds
+**The mechanism.** Embeds inside a B2B SaaS product as a white-labeled feature. **Agentic API discovery** parses the host's endpoints, query parameters and data structures. Built *"on your APIs and design system and governed by your auth and security,"* with **"no changes to the host codebase required."** Generated code *"runs securely in isolated sandboxes,"* passes validation gates before deployment including compile checks, schema validation and security enforcement, and *"connects only through approved APIs."* Generated apps run beside the host product, inherit auth and RBAC, and carry versioning, audit trails and a sharing marketplace. An end user types *"build a KPI dashboard for maintenance performance"* and has a working app in about a minute.
 
-**What they do.** Build the app, or the branded front end, as a project. **$10–50k over 4–12 weeks** for a custom app build; the May survey puts full brand identity plus app design at agency comparables of **$25,000–150,000**. Platforms without a design service commonly send the customer here.
+**What changed on 2026-08-12.** Under the design product they were the *adjacent proof* — same buyer, same motion, different half of the problem, and the founder's read was accepted: *"I'm in visuals, they are in features, it's a different."* **That separation is gone.** Both products now generate per-tenant functionality inside a host SaaS.
 
-**Where they stop.** At project economics. Every build is bespoke, nothing amortises across tenants, and the platform captures none of it. The existence of a third-party re-skin economy is the tell — kvtemplates.com and cherieyoung.com sell named templates across kvCORE, Lofty, Sierra Interactive, Real Geeks and Boomtown because the platforms themselves cannot differentiate their tenants.
+**The two real differences, and both should be said plainly rather than argued around:**
 
-**Real alternative for the buyer?** **Yes, by displacement.** The budget being attacked is the custom-build budget, not the theming budget. This is the [[Concepts/Business/Strategy/Freelance_Conversion_Thesis|Freelance_Conversion_Thesis]] returning inverted: agencies were ruled out as the *buyer*, but agency-grade output is what the product sells, to platforms. [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]] is the reason the cost structure can differ by an order of magnitude.
+- **They have no mobile frontend.** API composition into a sandboxed micro-app is sufficient for a web product; a mobile app is compiled and shipped through app stores, so a renderer has to live inside the app or the module has to be in the build. That is a genuinely harder problem and it is the one piece of defensible ground.
+- **They are funded, shipping and live with Series B companies.** Recompose is a direction with nothing built. This asymmetry is the honest headline of the comparison.
 
-**The bar this sets, stated correctly.** Not parity. *Close enough at a fraction of the price* — the Squarespace, Canva and Shopify-themes shape, where the price difference makes the craft comparison stop mattering. What the structural scope change moved is the comparison target (a custom build rather than a generic template), not the requirement. The 76 generated brand themes have never been evaluated against a custom build, and "a fraction of the price" is meaningless until the fraction has a number — see *What is undefined* below.
+**Their integration numbers are the benchmark and they now apply directly.** ~2 days to install, ~2 weeks to full platform integration, publicly stated as *"not an instant plug-and-play add-on"* — from a funded team of four who built agentic API discovery. Under the previous product this benchmark stopped applying, because there was nothing to install. **It applies again**, and it is a floor rather than a ceiling.
+
+**Their traction vocabulary is what this buyer responds to**, and nothing here is instrumented to produce any of it: $1M+ pipeline unblocked, $100K churn prevented in six weeks, ~800 features shipped (~2,400 engineering-hours equivalent), 670+ microapps, 90.8% adoption across 946 users.
+
+**Their problem framing now applies unmodified.** *"You lose competitive deals — customers choose vendors that have the exact workflow they operate on."* Under the design product this had to be adapted by swapping *workflow* for *brand*. It needs no adaptation now — which makes it a better argument and a warning about who else is already making it.
+
+> [!danger] The question that needs a prepared answer, and it reversed
+> It used to be *"why isn't visual just Gigacatalyst's next feature?"* It is now **"why aren't you just Gigacatalyst?"** — asked by anyone who knows them, and the honest answer is mobile plus the tenant-facing loop, not a different problem. Write the paragraph before the first call rather than improvising it. The old omission of them from the YC competitor answer is no longer defensible on the grounds that features and visuals do not compete for the same dollar.
 
 ## Coding agents — the shelf this must not be filed on
 
-**What they are.** Claude Code, Codex, Cursor, and general AI app builders like Lovable and Bolt. In F26 specifically, "agentic coding agent" is a crowded shelf, and a reader who files the company there stops reading.
+**What they are.** Claude Code, Codex, Cursor, and greenfield app builders like Lovable, Bolt, v0, Base44 on web and a0.dev, Rork, Vibecode, FlutterFlow AI on mobile.
 
-**Where they stop.** They are general-purpose capability, not a product for this buyer. No per-tenant fleet model, no coherence guarantee across modalities, no accept condition on output, no invariant that makes the result safe to merge into a production app, no integration surface a platform can adopt. They are also *inputs here*: the layout agent runs on Codex and Claude Code headless.
+**Where they stop.** **Every AI app builder is a greenfield generator** — none modifies or extends a large existing production codebase under someone else's auth and data model. Brownfield agents work at roughly two-thirds with a human on every task, and collapse below 10% past three files. None has a per-tenant fleet model, an accept condition on output, or an integration surface a platform can adopt. They are also *inputs* here: the module generator runs on them.
 
-**Why this isn't one, and it is architectural rather than rhetorical.** The engine is explicitly two parts:
+**Why this isn't one, and it is architectural rather than rhetorical.** The engine is two parts with a boundary where determinism runs out — an app-agnostic dependency DAG for assets, with WCAG AA as an accept condition and coherence achieved structurally, and an agent only for the module code no slot inventory can express. Deterministic where determinism is available, agentic only where it is required. One agent doing everything reads as a wrapper over a model; two systems with a clear boundary reads as architecture.
 
-1. **Assets are data, so a pipeline generates them.** The app-agnostic dependency DAG ([[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]]) resolves palette, typography, copy, icons and images: four base OKLCH slots in a single call with **WCAG AA enforced as an accept condition** before the result is accepted, the rest of the palette derived deterministically in Python, fonts validated live against the Google Fonts catalogue, copy length-bounded, and [[Concepts/Product/Mechanisms/Modal_Coherence|coherence]] achieved structurally by feeding the shared derived palette into every image prompt and folding `depends_on` style references between slots. Cost is bounded and known per run; the graph is validated before any paid call; failures degrade gracefully.
-2. **Layout is code, so an agent writes it.** Layout is the one surface no slot inventory can express, so an agent edits the view layer directly in the platform's codebase — under [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|functional equivalence]]: arrangement only, no screen merged or split, no functionality added or removed, API surface provably identical.
+## Demoted, and recorded so they do not get re-added
 
-Deterministic where determinism is available, agentic only where it is required. One agent doing everything reads as a wrapper over a model; two systems with a clear boundary reads as architecture. It is also better engineering — routing palette generation through a coding agent would be slower, more expensive, non-deterministic, and would discard the WCAG and coherence guarantees the pipeline already provides.
+These were the competitive set for the visual redesign. **They are not in this market and should not appear in a pitch.**
 
-## Adjacent: the platforms themselves
+- **Token tooling** (Tokens Studio, Supernova, Style Dictionary, Knapsack, UXPin Merge) — stops at tokens. Now a component of the asset pipeline's world, not a competitor.
+- **Brand APIs and brand-kit generators** (Brand.dev, BrandForge, Zoviz) — emit a brand description, never an app.
+- **AI design tools** (Galileo, Figma First Draft, Stitch, Builder.io Visual Copilot, Adobe Firefly) — stop at a mockup a human implements.
+- **In-platform design services** (Mighty Pro Design Lab, Circle Plus Design Studio, Vagaro Studio 180, Passion.io DFY, Mindbody) — design-only, staffed by graphic designers, and the whole reason the company left this market: standalone the deliverable prices at **$99–499**, and professional services is 1.19% of revenue at Olo and 2.9% at Toast.
+- **Agency and freelance custom app builds** — still a real alternative for a *tenant*, but the budget being attacked is now the platform's development line, not the tenant's build.
+- **FlutterFlow** — app construction, not fleet customization. Removed by founder correction and kept out.
 
-**What they do.** Incumbents are absorbing the AI design layer inside their own products. Shopify Magic, Sidekick, the AI Store Builder and the Horizon theme generate themed storefronts from a brand prompt; Wix shipped Harmony in 2025; Toast added Branded Mobile Apps in late 2024 at $299/mo. In the Shopify-merchant app-builder segment specifically, AI design generation has already shipped: Taptool's "Theme AI" replicates a merchant's storefront onto a native shell, Fuego.io generates screens from prompts at $499–999/mo, Appbrew pairs its Milo agent with a human designer, and Themr produces full Liquid themes in roughly 60 seconds at $99/mo.
+## The empty space, read honestly — and it is smaller than the last one
 
-**Where they stop.** Inside their own vertical and their own shell. None of this is sold to *other* platforms as infrastructure, and the Shopify-side bar is "scan the merchant's existing site and replicate it" rather than generating an original design system per tenant. Outside Shopify e-commerce, the May survey found no AI-design-native white-label product in banking, loyalty, fitness, church, real estate, restaurant, telehealth, hotel, event, crypto, streaming, podcast, sports or nonprofit.
+**What nobody has shipped:** a path where a **non-technical tenant of a white-label platform describes functionality and receives it in their app, with no developer in the loop.** Q2 Code makes a developer faster. Gigacatalyst removes the developer on web, without a mobile frontend. Extension SDKs require a developer by design. Every AI app builder is greenfield.
 
-**Real alternative for the buyer?** Not as a purchase — but this is where the honest risk sits, and the ICP change inverted it. Under the old thesis these incumbents were competitors racing to absorb the layer first. Under the new one they are *the buyer*, and the risk becomes build-versus-buy. That risk is conceded rather than argued away: a platform could build this pipeline itself, and the barrier is packaging, not difficulty. The defence is being the default first plus coherence quality and a low-friction [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]] — **never a moat claim.** A read, not a finding: the Shopify app-builder segment is simultaneously the clearest proof the demand shape is real and the hardest place to sell, because it is the one vertical already served.
+**What makes that gap smaller than the design gap was:**
 
-## Explicitly not a competitor
+- **The category has funded incumbents.** The visual half was genuinely unoccupied. Forge, Caliper, Banno's Plugin Framework and Gigacatalyst are all in this one.
+- **The buyer can build it.** L12's filter now points at the chosen ICP rather than away from it, and Q2 has already demonstrated the build.
+- **The measured capability is not there yet.** No documented case exists of an agent autonomously shipping a net-new user-facing feature into a production mobile codebase it did not author. Not vendor-claimed, not measured. Mobile is the worst-supported domain in the field: no robust iOS/Swift benchmark, JS/TS the lowest-scoring language family.
+- **The graveyard is real.** Builder.ai raised ~$450M and went insolvent in May 2025. CodeParrot (YC W23) shut down in July 2025 because *"the generated code wasn't reliable enough for production. Teams still had to spend time fixing outputs, which erased the value."* CodeParrot died of cleanup economics, which is exactly what the undefined accept condition risks here.
 
-**FlutterFlow.** Removed from the set by founder correction: it is app *construction* — "like a Figma that makes live Flutter apps" — not fleet rebranding. It automates building an app from scratch and has nothing to do with theming an existing one. Its removal weakened the earlier "three converging categories" claim to two; recorded here so it does not get re-added.
-
----
-
-## Gigacatalyst — the adjacent proof
-
-**The company.** Giga Next Inc., **YC Spring 2026**. Founder Namanyay Goel, team of four, San Francisco. Tagline: *"Customize your software to every user with AI."*
-
-**The mechanism.** It embeds inside a B2B SaaS product as a white-labeled feature. **Agentic API discovery** parses the host's endpoints, query parameters and data structures automatically. Their phrasing: built *"on your APIs and design system and governed by your auth and security,"* with **"no changes to the host codebase required."** They generate real code but fence it — *"code runs securely in isolated sandboxes,"* generated apps *"pass validation gates before deployment"* including compile checks, schema validation and security enforcement, and they *"connect only through approved APIs."* Generated apps run beside the host product, inherit its auth and RBAC, and carry versioning, audit trails and a sharing marketplace. An end user types *"build a KPI dashboard for maintenance performance"* and has a working app in about a minute.
-
-**The integration numbers — the most useful data point available.** Their team installs in about **2 days**; **full platform integration takes about 2 weeks**, and they state publicly that it is *"not an instant plug-and-play add-on."* From a funded team of four who built agentic API discovery. Treat two weeks as the **floor, not the ceiling**, and treat *"no changes to the host codebase required"* as the achievable bar, since they hit it. This is the benchmark our own [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]] gets measured against.
-
-**Traction shape, and the metric vocabulary.** $1M+ pipeline unblocked and $100K churn prevented in six weeks; ~800 features shipped (~2,400 engineering-hours equivalent); 670+ microapps; 90.8% adoption across 946 users. Adoption rate, day-30 retention, pipeline unblocked, churn prevented, engineering-hours saved — that is what this buyer responds to, and **nothing here is currently instrumented to produce any of it.**
-
-**Their problem framing, which is better than ours was.** *"You lose competitive deals — customers choose vendors that have the exact workflow they operate on."* Loss-framed, and it lands with a sales leader rather than only a CFO. The visual analogue is direct — platforms lose deals to whoever's app can actually look like the prospect's brand — and it is now the second half of the value argument alongside [[Concepts/Business/Pricing/Tier_Unlock_ROI|tier-unlock]].
-
-### What they validate, and what they leave open
-
-They demonstrate the **functional half of exactly this shape**: per-tenant customization infrastructure embedded in a host SaaS, no changes to the host codebase, live with Series B companies. That validates **the buyer, the motion, and the architecture pattern** — without occupying the visual half. The founder's read, accepted: *"im in visuals they are in features, its a different."*
-
-It also reframes a crowded adjacent market as evidence of value rather than as a warning, and it normalises the forward-deployed first year: that is the standard shape for this product category, not a concession.
-
-### The visual half is the structurally easier half
-
-This is the load-bearing argument, and it is evidenced rather than assumed. Gigacatalyst generates **working software against live customer data**, with inherited auth and RBAC, sandboxing, versioning and audit trails. **A bad output for them is a security incident. A bad output here is ugly.** There is no data model to get wrong, no permissions to leak, no correctness contract to violate.
-
-Our constraint is also strictly **tighter** than theirs: they generate new functionality against newly discovered APIs, which is precisely why they need API discovery, approved-API scoping and schema validation. A redesign under [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|functional equivalence]] rearranges components already bound to existing data — nothing new is fetched, nothing new is written, and the entire class of problems their architecture exists to contain cannot occur. That asymmetry is the strongest available argument that the ambitious version of this ([[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]], layout included) is reachable.
-
-**What does not transfer.** Everything they generate is **additive** — a new dashboard, a new tab, a new view — which is *why* sandboxing works: the artifact is separable by construction and a broken one leaves the product untouched. A visual redesign is not additive; it modifies screens that already exist. You cannot sandbox a redesign of the host's own home screen. Their safety story does not carry over. Ours is two different things: functional equivalence a platform's own engineers can verify, and **never writing to their trunk at all** — Recompose maintains a tokenized fork as its base, and each tenant's design as a further fork, all kept current by an agent. The platform grants read access and nothing else.
-
-Where their answer to *"don't touch our code"* is separability, ours is that **there is no write**. On one axis that is a stronger claim than theirs, since read access does not need the engineering sign-off that write access does. On the other, note the asymmetry honestly: their additive output can be sandboxed and a redesign cannot, because it modifies screens that already exist. Neither story dominates; they solve the same objection from opposite directions.
-
-### The question that needs a prepared answer
-
-**"Why isn't visual just Gigacatalyst's next feature?"** They already parse the host's design system so their generated apps look native. Reading a design system in order to conform to it is genuinely different from generating a new one, so the distinction holds — but they have built plumbing adjacent to this, and the architectural distance narrowed once the mechanism here became a code-modifying agent inside a host codebase too. The separation is *what each one changes*, not how each one works. **This question is currently unanswered** and it will be asked by anyone who knows them. They were deliberately omitted from the YC competitor answer on the grounds that features and visuals are not competing for the same dollar; the omission is visible to any partner who knows the company.
-
----
-
-## The empty space, read honestly
-
-**No verified player closes the loop:** brand brief → coherent multi-modal asset set → **store-ready production app**, across a **fleet of tenants on a shared shell**. Token tooling stops at tokens. Brand APIs stop before any app ships. Design tools stop at a mockup a human implements. In-platform design services and agencies close the loop with people, one customer at a time. Both May surveys reached the same conclusion independently: every primitive has existed for 12–24 months, the loop is assemblable today by stitching six to eight vendors, and **the integrator has not been built.** That gap is [[Concepts/Product/Mechanisms/Closed_Design_To_Production_Loop|Closed_Design_To_Production_Loop]] and it is the whole company.
-
-**An empty space is evidence of an opportunity or evidence of a market nobody wants, and this has not been tested.** The May survey's own verdict was *"either evidence the structural barriers are larger than they look, or evidence the window is wide open. The honest read is: both, in different verticals."* That has not been resolved by anything since. What is on the record:
-
-- **Nobody has asked for this.** The origin is a realisation while building a white-label app, not a request from any platform.
-- **No named target platform and no named human at one exists yet.** This is the biggest open hole and nothing else moves until it closes.
-- **No outside party has responded to anything in roughly eight months across six strategic phases.** This competitive read is entirely desk research. The instrument that would test it is live theming of the example app against a prospect's own biggest customers, on a sales call — because the value claim is elapsed time, and elapsed time only proves itself in the room.
-
-Three of the four structural constraints the May survey named as things AI does *not* compress still apply, and only one is answered:
-
-| Constraint | Status |
-|---|---|
-| Integration/onboarding labor dominates unit economics | **Removed rather than absorbed** — as of 2026-07-28 there is nothing for the platform to integrate; they grant read access and Recompose forks ([[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]]). Gigacatalyst's ~2 weeks was the benchmark when an install step existed. The remaining labor is our forward-deployed tokenization pass. |
-| Regression-test combinatorics across N themes | **Answered 2026-07-28** — agent-maintained forks re-derived on every upstream change, landing on the `uat` branch ([[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]], [[Concepts/Product/Mechanisms/UAT_Sync|UAT_Sync]]). Divergence exists in git but never accumulates as human work. |
-| End-user willingness-to-pay for brand depth is weak | **Made irrelevant rather than fixed.** App-store reviews of Subsplash-, Mindbody- and Olo-powered apps complain about bugs and slow loading, never about looking generic. The pain is the B2B buyer's ([[Concepts/Business/Strategy/Brand_Is_Product|Brand_Is_Product]]), which is why the pitch is a price tier the platform cannot scale and the deals it loses on brand — **never** "your tenants will love it." |
-| Apple Rule 4.2.6 and per-customer developer accounts | **Probably no longer this product's problem** under the new ICP, since platform customers already ship apps. **Needs confirming.** The old distribution doc stayed behind in the CombatDen vault; there is no Recompose equivalent yet. |
-
-One more constraint the [[Concepts/Business/Strategy/Shopify_Pattern|Shopify_Pattern]] contributes and which is not answered: ~98.5% of Shopify merchants use stock themes despite a decade of theme infrastructure. Most buyers choose curation over a blank canvas. That is an argument for presets as the demo surface, and an open question about whether depth is what platforms will actually pay for.
+**What is on the record and has not changed across seven phases:** nobody has asked for this, no named human exists at any target platform, and **no outside party has responded to anything in roughly nine months.** This competitive read is entirely desk research.
 
 ## What is undefined
 
-State these as undefined rather than filling them in.
-
-- **Pricing for this ICP.** Undefined. The old $100/$300/$500 ladder was gym-owner pricing and is dead. [[Strategy/YC_Application_F26|YC_Application_F26.md]] proposes $100/month per branded tenant as the *platform's COGS* and its own notes hold it as the top of a defensible range rather than a decided number. Per-tenant, per-seat, platform license, revenue share — nothing is decided.
-- **The comparison ratio.** Because pricing is undefined, "close enough at a fraction of the price" has no fraction. That makes pricing more load-bearing than it first appeared: the ratio *is* the pitch.
-- **Gigacatalyst's pricing.** Not published, so there is no comparable in the nearest analog.
-- **Mighty Pro's current price.** Three conflicting figures across sources; unverified.
-- **Whether the output clears the bar.** The 76 generated themes have never been evaluated against a custom build, and "close enough" is a judgment made by a person whose identity decides the deal.
-- **Named targets.** Zero. Start with platforms where every tenant already has their own app — Subsplash, Passion.io, then the fintech four — because the addressable app count equals the tenant count rather than 0.1–3% of it.
+- **Pricing.** Undefined for this buyer and this product. The $100/month per branded tenant in [[Strategy/YC_Application_F26|YC_Application_F26.md]] was priced against designs and does not transfer.
+- **The comparison ratio.** *Close enough at a fraction of the price* has no fraction, and the ratio is the pitch.
+- **Gigacatalyst's pricing.** Not published, so the nearest analog gives no comparable.
+- **Whether existing extension surfaces are deep enough** to carry a real feature. Decides whether the sale is easy or hard.
+- **Whether a second Group A platform has shipped an AI extension layer.** L12's standing condition. One has.
+- **Named targets.** Still zero people. Group A first, Tapcart and BuildFire ahead of Banno on reachability.
