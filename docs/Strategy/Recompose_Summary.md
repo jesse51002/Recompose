@@ -15,8 +15,8 @@ Concepts touched: [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]],
 > **What was decided and when:** `pivots/`. **Why:** `Office_Hours/`. **Where it's been:** [[Strategy/Journey|Journey.md]].
 > **What exists in code right now:** `README.md` — and note that what exists was built for the previous product.
 
-> [!warning] This describes a direction decided on 2026-08-12, not a product that exists
-> The [[pivots/2026-08-12-21-modular-feature-system-replaces-visual-redesign|modular feature pivot]] replaced the visual redesign as the product. **Nothing in the new mechanism is built.** The asset pipeline, the theme runtimes and the studio are real and were built for the previous scope. Zero customers, no named target platform, no outside party has responded to anything.
+> [!warning] Nothing in the mechanism is built
+> The asset pipeline, the theme runtimes and the studio are real. The module system is a direction, not code. Zero customers, no named target platform, and no outside party has responded to anything.
 
 ## What it does
 
@@ -25,7 +25,7 @@ Concepts touched: [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]],
 A tenant on a white-labeled app says what they need it to *do*, and a module is generated and inserted into their app — carrying the platform's own design tokens, so it reads as part of the app rather than as something bolted on. The platform never builds it and never reviews it.
 
 > [!note] The one-line description is provisional
-> It mirrors the previous line — *"customers agentically redesign white-label apps"* — by swapping the verb. It has not been tested on anyone and it is the headline of [[Strategy/YC_Application_F26|YC_Application_F26.md]], so treat it as a draft rather than as settled copy.
+> It has not been tested on anyone. Treat it as a draft rather than as settled copy.
 
 ## Why features rather than design
 
@@ -45,9 +45,9 @@ Not agencies, not freelancers, not the end business.
 
 ## How it gets in
 
-**It never writes to their trunk.** Where a platform already runs an extension architecture — Banno's Plugin Framework, Backbase's SDK, Tapcart's App Studio and Configurable Blocks, BuildFire's open-source SDK — a module is written into a surface they already own, deploy and govern. That is the **additive boundary**, and it is what Salesforce, ServiceNow, SAP, Shopify, Atlassian Forge, Q2's Caliper and Gigacatalyst all converged on independently as the safety story for third-party code inside a host product.
+**It never writes to their trunk.** Where a platform already runs an extension architecture — Banno's Plugin Framework, Backbase's SDK, Tapcart's App Studio and Configurable Blocks, BuildFire's open-source SDK — a module is written into a surface they already own, deploy and govern. That is the **additive boundary**: Salesforce, ServiceNow, SAP, Shopify, Atlassian Forge, Q2's Caliper and Gigacatalyst all converged on it independently as the safety story for third-party code inside a host product.
 
-Where no such surface exists, the platform adds insertion points. That is a materially harder sale — it needs engineering-leadership sign-off — and it is why the buyer moved to platforms that have already built one.
+Where no such surface exists, the platform adds insertion points. That needs engineering-leadership sign-off, which makes it a materially harder sale — and it is why the buyer is a platform that has already built one.
 
 **Whether any existing surface is deep enough to carry a real feature is unverified.** Banno's framework hosts web apps on the partner's own infrastructure; Tapcart's blocks live inside its studio. Verifying this from public documentation is the first task in front of the direction.
 
@@ -59,12 +59,17 @@ The bar is **close enough at a fraction of the price**, not parity.
 
 ## What it promises
 
-**Nothing yet, and this is deliberate.**
+**Nothing yet, and that is deliberate.**
 
-The previous product promised [[Concepts/Business/Strategy/Autonomous_Operation|autonomous operation]], and what made that defensible was that a bad output was *ugly, not broken* — so an agent that could not satisfy its accept condition simply halted and nothing shipped.
+> [!danger] Do not claim autonomy and do not quote an error budget
+> A promise of unattended operation needs a failure the system can detect and stop on. A generated feature has no such check yet — no screenshot to judge, no diff that proves correctness — so there is nothing to halt against. See [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]].
 
-**That sentence stops being true the moment a module writes to a database.** Until a replacement safety property and an accept condition are chosen, the autonomy claim is not available and must not be made on a call. Candidates under consideration: read-only modules first, generated tests through the platform's own CI, a bounded module vocabulary over endpoints their API already exposes, or tenant approval against real data.
+Candidates for the accept condition, none chosen: read-only modules first, generated tests through the platform's own CI, a bounded module vocabulary over endpoints their API already exposes, or tenant approval against real data.
 
-## What this direction costs, stated plainly
+## How hard this is
 
-It is **harder** than the visual redesign, not easier. Greenfield describes a module's interior; its boundary is auth, session, user identity, tenant scoping, base data and RBAC inheritance against a production system nobody here wrote. The redesign was an unsolved problem with a cosmetic failure mode. This is an unsolved problem with a **security** failure mode, and whether one person can carry it is an open question rather than an assumption.
+Hard, and the difficulty sits at the boundary rather than in the code. A module's interior is new code in a defined slot. Its edges are auth, session, user identity, tenant scoping, base data and RBAC inheritance against a production system nobody here wrote — that is most of the work, and a mistake there is a security incident rather than an ugly screen.
+
+Thirteen of nineteen platforms refuse this work outright and the six that do it staff named engineering organisations with pricing behind sales. That is the cost of doing it with humans, and it is simultaneously the reason automating it is worth money and the reason it is not straightforward.
+
+Whether one person can carry three surfaces — module, backend, admin — each with its own security surface, is an open question rather than an assumption.
