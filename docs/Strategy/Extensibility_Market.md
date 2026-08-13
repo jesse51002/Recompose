@@ -2,14 +2,14 @@
 tags: [business, research-synthesis, market, competition, demand]
 status: current
 date: 2026-08-13
-source-research: Research/2026-08-13-why-businesses-switch-crms.md, Research/2026-08-13-agentically-extensible-platforms.md
+source-research: Research/2026-08-13-10-why-businesses-switch-crms.md, Research/2026-08-13-10-agentically-extensible-platforms.md
 ---
 
 # The extensibility market: demand and supply, read together
 
 Concepts touched: [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]], [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]].
 
-Two briefs commissioned the same day answer opposite halves of one question. [[Research/2026-08-13-why-businesses-switch-crms|Why businesses switch CRMs]] is the demand side; [[Research/2026-08-13-agentically-extensible-platforms|who lets a SaaS customer obtain functionality the host does not ship]] is the supply side. **Read separately each one misleads. Read together they say something neither says alone.**
+Two briefs commissioned the same day answer opposite halves of one question. [[Research/2026-08-13-10-why-businesses-switch-crms|Why businesses switch CRMs]] is the demand side; [[Research/2026-08-13-10-agentically-extensible-platforms|who lets a SaaS customer obtain functionality the host does not ship]] is the supply side. **Read separately each one misleads. Read together they say something neither says alone.**
 
 ---
 

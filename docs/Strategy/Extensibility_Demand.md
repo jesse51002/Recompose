@@ -2,14 +2,14 @@
 tags: [business, research-synthesis, extensibility, competition, icp]
 status: current
 date: 2026-08-12
-source-research: Research/2026-08-12-extensibility-demand-by-industry.md
+source-research: Research/2026-08-12-22-extensibility-demand-by-industry.md
 ---
 
 # Extensibility demand, read against the module product
 
 Concepts touched: [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]], [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]].
 
-Synthesis of [[Research/2026-08-12-extensibility-demand-by-industry|Research/2026-08-12-extensibility-demand-by-industry.md]], which scored white-label platforms across twenty verticals on refused-demand evidence, cost of refusal, extension-surface depth, custom-development budget, addressable app count, technical difficulty, reachability and build-versus-buy exposure. Detail and sourcing live there; this is the position.
+Synthesis of [[Research/2026-08-12-22-extensibility-demand-by-industry|Research/2026-08-12-22-extensibility-demand-by-industry.md]], which scored white-label platforms across twenty verticals on refused-demand evidence, cost of refusal, extension-surface depth, custom-development budget, addressable app count, technical difficulty, reachability and build-versus-buy exposure. Detail and sourcing live there; this is the position.
 
 > [!warning] Read this before the target list
 > The research does not confirm the ICP. It establishes one structural finding that reorders it, returns a null on the question the direction rests on, and shows the build-versus-buy condition firing across an entire cohort in a single month.

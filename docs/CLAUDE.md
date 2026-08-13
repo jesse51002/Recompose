@@ -65,12 +65,14 @@ Not every session produces a pivot. "No decision yet, need more data" is still a
 ## Research: dated filenames
 
 ```
-Research/YYYY-MM-DD-short-kebab-slug.md
+Research/YYYY-MM-DD-HH-short-kebab-slug.md
 ```
 
-Date only, no hour. A data file belonging to a research doc takes the same stem so the pair sorts together.
+Date and hour (CDT/CST), matching `pivots/` and `Office_Hours/`, because several briefs now land on the same day and the date alone no longer orders them. A data file belonging to a research doc takes the same stem so the pair sorts together.
 
 **The date is when the research was done, not when the file was created.** For anything commissioned here they match and `stat` is trustworthy. For anything carried in from elsewhere they do not — birth time is the migration date, and the real date must come from the original or the content. A wrong date in a filename is believed, so getting it wrong is worse than leaving it off.
+
+**The hour follows the same rule, and that is why some filenames carry one and others do not.** A brief commissioned here takes its hour from birth time. A brief carried in has a birth hour that records the migration, so it is omitted rather than invented — an hour is a claim about when the work was done, and a wrong one reads as true. Do not backfill the older files to make the folder look uniform.
 
 It matters because a finding is only as good as the thesis it was written against, and this vault holds research from both sides of a pivot.
 

@@ -6,7 +6,7 @@
 
 **Builds on:** [[Office_Hours/2026-08-10-22-Office_Hours_Modular_Feature_System_And_The_Extension_Boundary|Office_Hours/2026-08-10-22-Office_Hours_Modular_Feature_System_And_The_Extension_Boundary.md]], [[pivots/2026-08-12-21-modular-feature-system-replaces-visual-redesign|pivots/2026-08-12-21-modular-feature-system-replaces-visual-redesign.md]]
 
-**Research read:** [[Research/2026-08-12-extensibility-demand-by-industry|extensibility demand by industry]] · [[Research/2026-08-13-what-tenants-build-when-they-go-custom|what tenants build when they go custom]] · [[Research/2026-08-13-why-businesses-switch-crms|why businesses switch CRMs]] · [[Research/2026-08-13-agentically-extensible-platforms|who lets a SaaS customer obtain functionality the host does not ship]]
+**Research read:** [[Research/2026-08-12-22-extensibility-demand-by-industry|extensibility demand by industry]] · [[Research/2026-08-13-01-what-tenants-build-when-they-go-custom|what tenants build when they go custom]] · [[Research/2026-08-13-10-why-businesses-switch-crms|why businesses switch CRMs]] · [[Research/2026-08-13-10-agentically-extensible-platforms|who lets a SaaS customer obtain functionality the host does not ship]]
 
 Concepts touched: [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]], [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]].
 

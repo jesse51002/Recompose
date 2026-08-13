@@ -63,7 +63,7 @@ The founder added, unprompted: *"the loop is not all the way to automic edits, i
 
 This is consistent with **L11** from 2026-08-04 — [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]] means zero *platform* involvement, not zero human involvement — and with **L10**, where the tenant iterating on the mock is the aesthetic accept condition. The instinct is the same one and it was right there.
 
-**It does not survive the change from a project to a loop.** A redesign is a discrete event: the tenant approves once, and the approval is the product. A continuously optimising site requires approval forever, which is not a product, it is a subscription to a chore. Sold to someone that [[Research/2026-08-10-smb-website-choice|Research/2026-08-10-smb-website-choice.md]] measures spending under five hours a week on all marketing combined.
+**It does not survive the change from a project to a loop.** A redesign is a discrete event: the tenant approves once, and the approval is the product. A continuously optimising site requires approval forever, which is not a product, it is a subscription to a chore. Sold to someone that [[Research/2026-08-10-17-smb-website-choice|Research/2026-08-10-17-smb-website-choice.md]] measures spending under five hours a week on all marketing combined.
 
 Three consequences, and each one is independently sufficient:
 
@@ -75,13 +75,13 @@ Three consequences, and each one is independently sufficient:
 
 The founder read it correctly off the research: *"Do they care about ranking and all that stuff that much? For the way the reserach looks seems like they dont care that deeply at all."*
 
-[[Research/2026-08-10-smb-website-choice|Research/2026-08-10-smb-website-choice.md]] is decisive. Owners mention design mainly when prompted; unprompted, complaints cluster on leads and time. Decision drivers are price, ease and speed, and "it came free with something else." First-year .com renewal sits in the mid-40s and only about 18% of first-year domains are attached to any online presence at all. Wix's AI builder showed 73 live sites of 277,432 ever built. Housecall Pro *discontinued* its self-serve builder and replaced it with a managed service capped at fifteen pages with no self-editing.
+[[Research/2026-08-10-17-smb-website-choice|Research/2026-08-10-17-smb-website-choice.md]] is decisive. Owners mention design mainly when prompted; unprompted, complaints cluster on leads and time. Decision drivers are price, ease and speed, and "it came free with something else." First-year .com renewal sits in the mid-40s and only about 18% of first-year domains are attached to any online presence at all. Wix's AI builder showed 73 live sites of 277,432 ever built. Housecall Pro *discontinued* its self-serve builder and replaced it with a managed service capped at fifteen pages with no self-editing.
 
 The report's own headline finding is that stated preference and revealed behaviour diverge sharply, and revealed behaviour says the site is a set-and-forget or substitutable asset. **A value proposition built on outcome lift is being sold to someone who will not measure it.**
 
 ### 6. An internal contradiction in the research that has to be resolved before any website ICP could be chosen
 
-[[Research/2026-08-08-bundled-website-builders|The bundled-builders brief]] reports high builder prevalence in "acquisition-driven" verticals — salon, fitness, restaurant, home services, real estate. [[Research/2026-08-10-smb-website-choice|The SMB brief]] reports that those same verticals acquire through marketplaces: Fresha, Vagaro, Booksy, Mindbody, DoorDash, Google Business Profile, Zillow.
+[[Research/2026-08-08-bundled-website-builders|The bundled-builders brief]] reports high builder prevalence in "acquisition-driven" verticals — salon, fitness, restaurant, home services, real estate. [[Research/2026-08-10-17-smb-website-choice|The SMB brief]] reports that those same verticals acquire through marketplaces: Fresha, Vagaro, Booksy, Mindbody, DoorDash, Google Business Profile, Zillow.
 
 Both cannot be right about where the customer comes from. If discovery lives in a marketplace, the bundled site is a brochure with a booking widget *because it is not the acquisition channel* — and optimising a channel that is not the channel produces no revenue signal to optimise against. The tension is unresolved and is recorded here rather than smoothed over.
 

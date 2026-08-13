@@ -82,4 +82,4 @@ Note that [[Strategy/YC_Application_F26|the frozen YC application]] omits them f
 
 ## Sources
 
-Company homepage (fetched 2026-08-13), YC company and Launch pages, Product Hunt founder comments, founder blog, HokAI aggregator, TechCrunch on UpKeep's Series B. Full sourcing in [[Research/2026-08-13-agentically-extensible-platforms|Research/2026-08-13-agentically-extensible-platforms.md]]. **Every traction and integration figure is vendor-claimed and none is independently verified.**
+Company homepage (fetched 2026-08-13), YC company and Launch pages, Product Hunt founder comments, founder blog, HokAI aggregator, TechCrunch on UpKeep's Series B. Full sourcing in [[Research/2026-08-13-10-agentically-extensible-platforms|Research/2026-08-13-10-agentically-extensible-platforms.md]]. **Every traction and integration figure is vendor-claimed and none is independently verified.**
