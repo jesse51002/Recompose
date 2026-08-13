@@ -5,7 +5,14 @@ aliases: [tier unlock, tier-unlock ROI, a price tier you can't currently sell, a
 
 # Tier-Unlock ROI
 
-The shape of the value argument: sell a platform a **revenue tier it cannot currently scale**, not end-user satisfaction. The constraint being removed is elapsed human time per tenant — 3–6 weeks wherever a turnaround is published — which caps how many branded apps a platform can sell regardless of demand. Nothing in the argument depends on tenants liking their app more.
+The shape of the value argument: sell a platform a **revenue tier it cannot currently staff**, not end-user satisfaction. Nothing in the argument depends on tenants liking their app more.
+
+> [!note] Repointed 2026-08-12 — the shape survives, the referent changed
+> It used to point at **design**: 3–6 weeks of elapsed human time per tenant, capping how many branded apps a platform could sell. [[pivots/2026-08-12-21-modular-feature-system-replaces-visual-redesign|The modular feature pivot]] points it at **functionality**, and it gets stronger in the move.
+>
+> **Because there is a real line item on the other side.** Thirteen of nineteen platforms refuse per-tenant feature requests outright; the six that accept them staff named engineering organisations — Banno's Custom Development team, Backbase's Services org, Tapcart's Solutions Engineer at $120–140k — and gate every price behind sales. Supply is bounded by engineers rather than by designers, and engineers are the expensive constraint.
+>
+> **This resolves the tension the paragraph below records.** Under design there was capacity but no cost to point at, which is why cost-savings was prohibited. Under features there is both, so the argument can be made either way — but throughput is still the safer one, because no platform publishes what a custom build costs it.
 
 Per-tenant theming is already sold as a priced tier: the embedded-analytics white-label ladder makes level 3 explicitly per-tenant theming for reseller scenarios. That matters because the vault's competitor research establishes that **end users do not pay for brand depth** — app-store reviews of Subsplash, Mindbody and Olo apps complain about bugs and slowness, never about looking generic. Pricing it as a tier makes that finding irrelevant rather than damaging.
 

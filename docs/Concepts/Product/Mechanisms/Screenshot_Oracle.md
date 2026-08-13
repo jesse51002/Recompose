@@ -1,9 +1,16 @@
 ---
-tags: [concept, product, mechanism, validation, quality]
+tags: [concept, product, mechanism, validation, quality, retired]
+status: retired
+retired: 2026-08-12
 aliases: [screenshot oracle, screenshot validation, visual accept condition, VLM judge]
 ---
 
 # Screenshot Oracle
+
+> [!warning] Retired 2026-08-12 as the product's accept condition
+> This solved the accept-condition problem for *design*. **A feature has no equivalent** — rendering a module and looking at it proves it looks right, not that it works right. Finding the replacement is the load-bearing open question, [[Strategy/Open_Questions|Open_Questions.md]] §2.1.
+>
+> One finding here still transfers and is worth keeping: **VLMs rank reliably and score unreliably** (r = 0.93 pairwise, 32–34% exact agreement on absolute scores). Any future use of a model as a judge should generate candidates and rank them, never generate one and ask whether it is good enough.
 
 Design output is judged by rendering it and looking at the image, not by evaluating a rule set. A VLM inspects the screenshot and accepts or rejects.
 

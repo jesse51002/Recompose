@@ -1,9 +1,14 @@
 ---
-tags: [concept, product, mechanism, design, architecture]
+tags: [concept, product, mechanism, design, architecture, retired]
+status: retired
+retired: 2026-08-12
 aliases: [visual mirror, jsx mirror, mockware, the mirror]
 ---
 
 # Visual Mirror
+
+> [!warning] Retired 2026-08-12 with the visual redesign
+> There is no design agent and no mirror in the module product. The `JsxMockUps` subsystem still exists in code; whether it keeps a job is an explicit open decision in [[Strategy/Open_Questions|Open_Questions.md]] §2.9, not something to let drift.
 
 A JSX copy of the platform's app that is **mockware only** — no features, no business logic, no API calls, no state. It exists to be looked at and edited. The design agent works here; the tenant watches here.
 

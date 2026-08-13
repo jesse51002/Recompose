@@ -1,11 +1,18 @@
 ---
-tags: [concept, product, mechanism, scope, design]
+tags: [concept, product, mechanism, scope, design, retired]
+status: retired
+retired: 2026-08-12
 aliases: [full visual redesign, full visual overhaul, deep visual customization, complete visual overhaul, arrangement-only redesign]
 ---
 
 # Full Visual Redesign
 
-The ambition level Recompose commits to: a **complete visual overhaul of a white-label app — including layout — driven by the tenant, with no new features**. Every screen, asset, and surface reads as that tenant's brand rather than as the platform's app with a logo dropped in.
+> [!warning] Retired 2026-08-12 — this is no longer the product
+> [[pivots/2026-08-12-21-modular-feature-system-replaces-visual-redesign|The modular feature pivot]] replaced it with per-tenant feature modules. **Theming survives only as a token layer** whose job is making a generated module look native — no layout generation, no animation, no visual mirror, no screenshot oracle as a design accept condition.
+>
+> The reason is not that this was infeasible. It is that design alone does not move the buyer, and there is no design budget line to sell into: the deliverable prices standalone at $99–499 and professional services runs 1–3% of revenue at the public companies. The definition below is kept because pivots and office hours reference it and those are never edited.
+
+The ambition level Recompose committed to between 2026-07-27 and 2026-08-12: a **complete visual overhaul of a white-label app — including layout — driven by the tenant, with no new features**. Every screen, asset, and surface reads as that tenant's brand rather than as the platform's app with a logo dropped in.
 
 The scope is deliberate and its boundaries are set in both directions. It is **more than theming** — the pivot doc is emphatic that the product is *not* "we tokenize your app and swap a palette," and it is not [[Concepts/Product/Mechanisms/Tokenized_Design_System|tokenizing]] either, which is the prerequisite that makes a surface parameterizable rather than the product itself. It is also **less than a rebuild**: layout is in scope, information architecture is not. Per the tightened arrangement-only invariant, no screens are merged or split and no functionality is added or removed — a generated variant changes how existing elements are arranged on the screens that already exist, and nothing else. That is the one sentence to hand an engineering team.
 

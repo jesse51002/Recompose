@@ -7,7 +7,14 @@ aliases: [integration surface, low-friction integration, adoption without archit
 
 The claim that a platform must be able to adopt the engine **without changing its architecture**. Integrating into a customer's existing setup was named as the biggest expected blocker to adoption, so whatever removes that blocker is as much the product as the generation pipeline is.
 
-**The answer is "there is nothing to integrate."** Recompose keeps its own tokenized fork and derives every design from it; the platform grants read access and adopts no library, no API and no version to track. Its architecture is not merely unchanged, it is untouched — see [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]].
+> [!warning] The answer changed on 2026-08-12 and got weaker
+> It used to be **"there is nothing to integrate"** — read access, an external fork, no library, no API, no version to track, the platform's architecture not merely unchanged but untouched. [[pivots/2026-08-12-21-modular-feature-system-replaces-visual-redesign|The modular feature pivot]] gave that up: a module runs inside their app, so something has to accept it.
+>
+> **The principle survives, conditionally.** Where a platform already runs an extension architecture — Banno's Plugin Framework, Backbase's SDK, Tapcart's App Studio, BuildFire's `buildfire.js` — adoption still changes nothing structural, because the surface exists to be written into. Where none exists, the platform adds insertion points, which *is* an architectural change and needs engineering-leadership sign-off. **That is why the ICP moved to platforms that already have one.**
+>
+> Whether any existing surface is deep enough to carry a real feature is unverified and is the first thing to check — [[Strategy/Open_Questions|Open_Questions.md]] §2.2. The rule the founding session set still binds: **if adoption requires the customer to restructure, that is a product defect, not an objection to argue past.**
+
+The original answer, and the reasoning that produced it, is kept below because it is what the pivots and office hours reference. Recompose kept its own tokenized fork and derived every design from it; the platform granted read access and adopted no library, no API and no version to track — see [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]].
 
 The premise was reversed twice inside the 2026-07-27 session and the final position is stronger than either earlier one. The founder first argued tokenization is not hard, only unpackaged; after an independent cold read raised the objection from an organizational angle (QA ownership, security review, reluctance to hand production UI to an external system), he reversed to *"tokenizaion is going to be a blocker because i havwe to integrate into their architecture, and this might be the biggest blocker."* Naming integration as the blocker is what promoted the surface to product.
 

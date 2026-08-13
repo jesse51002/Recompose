@@ -5,17 +5,28 @@ aliases: [autonomous operation, autonomy, the promise, nothing waits to be appro
 
 # Autonomous Operation
 
-The promise Recompose sells is that **a redesign runs to production without anyone being asked about it.** No PR into the platform's trunk, no review queue, no integration work, no engineering sign-off. The intended trend is toward zero human involvement as agent capability and the review scaffolding around it improve.
+> [!danger] Suspended 2026-08-12 — this claim may not be made until an accept condition exists
+> The promise was defensible because of a chain that [[pivots/2026-08-12-21-modular-feature-system-replaces-visual-redesign|the modular feature pivot]] broke at its first link. **Do not describe Recompose as autonomous, and do not quote any error budget, until the chain is rebuilt.**
 
-This is possible only because of [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|the fork model]]. While Recompose was going to edit the platform's own repository, every change created review work for their engineers. On a Recompose-managed fork there is no PR and no queue on their side, so nothing about the architecture requires a person in the normal path.
+## Why it is suspended, and the chain that broke
 
-## What makes it defensible: halting, not reviewing
+The promise stood on three things in order:
 
-The stated error budget is roughly **95% clean, 4% minor, 1% significant** — a **target that has never been measured.** It must never be quoted as an observed rate.
+1. **A bad output is ugly, not broken** — no data model to corrupt, no permission to leak, no correctness contract to violate.
+2. **Therefore halting is sufficient.** A stage that cannot satisfy its accept condition stops and nothing deploys, so a significant failure costs a delay rather than a brand.
+3. **Therefore nothing lands on the platform's desk.**
 
-What makes it survivable is that **the pipeline halts rather than ships.** A stage that cannot satisfy its own accept condition stops, and nothing deploys — so a significant failure costs a delay rather than a brand. This is the replacement for the human reviewer the budget used to rest on, and it is what the fleet surface already implements as its **Needs Human Help** state.
+**A module that writes to a database fails at step 1**, and steps 2 and 3 do not survive it. Worse, step 2 needs an accept condition to halt *against*, and a feature has neither of the visual product's two oracles — no screenshot a human can judge, and no diff proving the API surface is unchanged. **There is currently nothing to halt on.** Four candidates are recorded in [[Strategy/Product_Boundaries|Product_Boundaries.md]] and none is chosen.
 
-The **4% minor band is cosmetic by definition** — annoying rather than breaking — and unlike the 1% it *does* reach production. Nothing currently catches it. That is the quiet failure mode of this promise: not a loud incident, but a slow accumulation of small visual defects across a hundred branded apps, invisible to the check that makes the rest of the budget safe.
+## The error budget does not transfer
+
+Roughly **95% clean, 4% minor, 1% significant** was a **target that was never measured** under the previous product, and it described *cosmetic* defects in a *redesign*. It has no meaning for generated functionality. **Do not quote it, do not adapt it, and do not treat its absence as a gap to fill with a new number before anything is measured.**
+
+## What survives
+
+The half of the claim that never depended on output type: **zero *platform* involvement** — no PR into their trunk, no review queue, no engineering sign-off — as distinct from zero human involvement. That distinction was established on 2026-08-04 and it still holds, because the tenant being in the loop was always compatible with the platform not being.
+
+**Who resolves a failure remains the unresolved question, and it got harder.** Every production system in the field keeps a human at the merge gate — Devin, Copilot CCA, SapFix, and even Uber's Piranha, a deterministic tool that only deletes stale feature flags and still routes its diff to the flag's author. If failures land on the platform's staff, "no manual maintenance" is false. A failure resolved by Recompose is COGS; one resolved by the platform is a broken promise. **A failure that is wrong data rather than a wrong-looking screen is a third case nobody has priced.**
 
 ## The unresolved question inside it
 

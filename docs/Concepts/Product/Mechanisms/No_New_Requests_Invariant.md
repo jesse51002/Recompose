@@ -1,9 +1,18 @@
 ---
-tags: [concept, product, mechanism, safety, architecture]
+tags: [concept, product, mechanism, safety, architecture, retired]
+status: retired
+retired: 2026-08-12
 aliases: [no-new-requests invariant, no new requests, functional equivalence, arrangement-only invariant, P14]
 ---
 
 # No New Requests Invariant
+
+> [!warning] Retired 2026-08-12 — do not describe this as a live safety property
+> [[pivots/2026-08-12-21-modular-feature-system-replaces-visual-redesign|The modular feature pivot]] replaced arrangement-only with **additive-only**: a module adds; it never edits, moves, merges, splits or removes anything that exists. A feature product cannot hold this invariant, because adding functionality is the product.
+>
+> **What was lost, precisely.** Additive-only is diff-verifiable for *existing* code — a diff shows nothing was touched — but it says nothing about whether the added thing is **correct**. This invariant proved both at once, which is why it was the strongest claim in the previous pitch. Its replacement is weaker and the gap is the accept condition, recorded as open in [[Strategy/Product_Boundaries|Product_Boundaries.md]].
+>
+> The definition below is kept because pivots and office hours reference it and those are never edited. **The gate was never built**, so nothing here was ever demonstrated.
 
 Generated code is **view-layer only** and may not add API calls or reach new data. Every screen does exactly what it did before and needs exactly the data it needed before, so the API surface after a redesign is provably identical to the one before it.
 
