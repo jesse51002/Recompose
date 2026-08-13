@@ -39,7 +39,7 @@ Meanwhile the money is on the other side. Design services are priced standalone 
 
 **Multi-tenant white-label SaaS platforms that already pay to build per-tenant functionality** — Jack Henry's Banno, Backbase, Tapcart, ABC Trainerize at Enterprise, GoodBarber and BuildFire. They have the budget line, they know what it costs, and they can read the value off a P&L rather than imagining it.
 
-The secondary sort is the previous filter, kept rather than dropped: **platforms where every tenant already has their own app**, because the population a module can act on equals their tenant count. **Banno satisfies both** and is the best target on the merits — and the worst on reachability, being a public company with procurement and 6–18 month cycles.
+The secondary sort is **platforms where every tenant already has their own app**, because the population a module can act on equals their tenant count. **Banno satisfies both** and is the best target on the merits — and the worst on reachability, being a public company with procurement and 6–18 month cycles.
 
 Not agencies, not freelancers, not the end business.
 

@@ -26,13 +26,7 @@ The **95% clean / 4% minor / 1% significant** figure in circulation was a target
 
 **Zero *platform* involvement** — no PR into their trunk, no review queue, no engineering sign-off — as distinct from zero human involvement. The tenant being in the loop has always been compatible with the platform not being.
 
-**Who resolves a failure is unresolved.** Every production system in the field keeps a human at the merge gate — Devin, Copilot CCA, SapFix, and even Uber's Piranha, a deterministic tool that only deletes stale feature flags and still routes its diff to the flag's author. If failures land on the platform's staff, "no manual maintenance" is false. A failure resolved by Recompose is COGS; one resolved by the platform is a broken promise, and **a failure that is wrong data rather than a wrong-looking screen is a third case nobody has priced.**
-
-## The unresolved question inside it
-
-**Who resolves a halt.** The halt mechanism is what makes the budget defensible, but a halted design still has to be resolved by somebody. Leaning the platform's own staff; a forward-deployed engineer was considered and the objection against it is lack of domain knowledge of an app they did not write.
-
-This is the one question that can falsify the promise. If halts land on the platform's staff, then "no manual integration and maintenance" is false and the autonomy holds only until it doesn't. A halt resolved by Recompose is COGS; a halt resolved by the platform is a broken promise.
+**Who resolves a failure is unresolved, and it is the one question that can falsify the promise.** The candidates are the platform's own staff, or a forward-deployed engineer who lacks domain knowledge of an app they did not write. Every production system in the field keeps a human at the merge gate — Devin, Copilot CCA, SapFix, and even Uber's Piranha, a deterministic tool that only deletes stale feature flags and still routes its diff to the flag's author. If failures land on the platform's staff, "no manual maintenance" is false. A failure resolved by Recompose is COGS; one resolved by the platform is a broken promise, and **a failure that is wrong data rather than a wrong-looking screen is a third case nobody has priced.**
 
 ## Shows up in
 
