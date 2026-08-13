@@ -1,7 +1,7 @@
 ---
 tags: [business, competition, platform, design, features]
 status: current
-date: 2026-08-02
+date: 2026-08-12
 ---
 
 # Design work vs. feature work at white-label platforms
@@ -78,13 +78,20 @@ This is the financial signature of a function that exists to enable subscription
 
 ## What this means for Recompose
 
-**The no-new-features invariant matches a line these organizations already draw.** [[Concepts/Product/Mechanisms/No_New_Requests_Invariant|No_New_Requests_Invariant]] is not a constraint being imposed on the buyer — design and feature work are already separate teams, separate SKUs and separate budgets almost everywhere. A platform adopting [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual_Redesign]] does not have to reorganize anything, and the deliverable slots into a boundary that already exists. That removes an objection at the [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]].
+> [!warning] This section was rewritten on 2026-08-12 and its conclusion reversed
+> The same findings previously supported the *no-new-features invariant*: design and feature work being separate budgets meant a visual product slotted into a line the buyer already drew. [[pivots/2026-08-12-21-modular-feature-system-replaces-visual-redesign|The modular feature pivot]] reads the identical evidence the other way round. **The facts below did not change. What changed is which side of the line the product sits on.**
 
-**"No new features" is already the platform's own answer to its tenants.** At 13 of 19 platforms there is no way for a tenant to get functionality built, at any price. So a tenant who asks Recompose for a feature and is refused gets exactly the answer their platform already gives them. The invariant does not create a new disappointment; it inherits an existing one. Where category (c) *does* exist — Banno, Backbase, Tapcart, GoodBarber, BuildFire, Trainerize Enterprise — those requests have a paid path to be routed to, which makes the line easier to hold rather than harder.
+**The design budget is the small one, and this research is where that becomes undeniable.** Professional services runs **1.19% of revenue at Olo** and 2.9% at Toast; Olo's management said outright they would rather upsell platform modules than grow it. Vagaro's design package is a **$499 one-time fee**; ABC Trainerize prices the same class of deliverable at **$99–169 one-time**. Circle's Design Studio is ~4 people out of ~160 doing Circle's own *marketing*. There was never enough money on the design side to build a company against.
 
-**Fintech is where (c) concentrates, and it is also where visual differentiation is resisted.** `Research/2026-05-01-ai-brand-competitor-analysis.md:45` records WCAG enforcement baked into Alkami's Theme Builder, ADA-compliant outputs at Banno, SOC 2 review per change, Alkami's 240+ FI apps sharing visual DNA on purpose, and every banking AI announcement 2024–2026 being end-user AI rather than design AI. Best custom-dev muscle, weakest appetite for the product.
+**The feature budget is real, staffed and priced behind sales.** Banno's named **Custom Development team** with an additional contract; Backbase's code-writing **Services organization** distinct from product R&D; Tapcart's **Solutions & Services Engineer** at $120–140k building custom blocks for clients. Nobody publishes rates, minimums, timelines or IP terms, which is itself the signal: this work is expensive and scarce enough to gate.
 
-**There is rarely a person whose team is being replaced.** `Open_Questions.md:57` anticipated a lukewarm technical review from someone with a reason to find fault. On this evidence that person often does not exist — the roles are Solutions Consultants, Client Implementation Managers, Customer Onboarding Specialists, and marketing designers. Lower political risk, but also no internal owner who wants the purchase to succeed.
+**The refusal is the market, not the invariant's cover.** Thirteen of nineteen platforms have no path by which a tenant gets functionality built at any price, and Kajabi says so outright. Read as demand suppression rather than as a boundary to inherit, that is standing unmet demand at the majority of the surveyed field. **Both readings are available from the same sentence** and the vault has now held each of them; which one is right is an empirical question — *does refusing cost the platform anything measurable* — and nobody has asked it.
+
+**Fintech has the best custom-dev muscle, and the visual objection no longer applies to it.** `Research/2026-05-01-ai-brand-competitor-analysis.md:45` records WCAG enforcement in Alkami's Theme Builder, SOC 2 review per change, and 240+ Alkami FI apps sharing visual DNA on purpose. That was the reason to deprioritise Banno and Backbase under a design product. **A feature product is not asking them to look different**, so the appetite objection drops away and what remains is procurement, vendor risk assessment and 6–18 month cycles — a reachability problem rather than a fit problem.
+
+**There is now a person whose team is being replaced, and that reverses cleanly.** Under the design product the finding was that the hostile evaluator usually did not exist — the roles were Solutions Consultants, Client Implementation Managers and Customer Onboarding Specialists — which meant low political risk and no internal advocate either, so a deal stalled rather than losing. Category (c) platforms are *defined* by having a named engineering organisation doing this work. **That supplies a champion who owns a queue and knows what it costs, and simultaneously an opponent with the standing to object and real things to object about.**
+
+**The build-versus-buy exposure is highest at exactly these platforms.** Category (c) correlates almost perfectly with owning a mature extension SDK — Caliper since 2018, Banno's Plugin Framework, Backbase's own. Q2 shipped **Q2 Code** in April 2026 by wiring Claude Code into Bedrock on top of Caliper; the AI was the cheap part bolted onto the expensive part. Selling into Group A means selling the cheap part to people who own the expensive part.
 
 ## What is not established
 
