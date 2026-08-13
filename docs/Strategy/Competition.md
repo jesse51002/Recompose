@@ -72,23 +72,20 @@ The standing condition from [[Strategy/Agentic_Code_Generation|Agentic_Code_Gene
 
 ## Gigacatalyst — the closest company in the market
 
-**The company.** Giga Next Inc., **YC Spring 2026**. Founder Namanyay Goel, team of four, San Francisco. *"Customize your software to every user with AI."*
+**Facts, sourcing and the positioning timeline live in [[Companies/Gigacatalyst|Companies/Gigacatalyst.md]].** The competitive position, in short:
 
-**The mechanism.** Embeds inside a B2B SaaS product as a white-labeled feature. **Agentic API discovery** parses the host's endpoints, query parameters and data structures. Built *"on your APIs and design system and governed by your auth and security,"* with **"no changes to the host codebase required."** Generated code *"runs securely in isolated sandboxes,"* passes validation gates before deployment including compile checks, schema validation and security enforcement, and *"connects only through approved APIs."* Generated apps run beside the host product, inherit auth and RBAC, and carry versioning, audit trails and a sharing marketplace. An end user types *"build a KPI dashboard for maintenance performance"* and has a working app in about a minute.
+They are the **only company found anywhere** occupying non-technical end-user generation of functionality inside a third party's production SaaS — the cell this product aims at — and **their live positioning has moved to demos, POCs and implementation workspaces** while their YC page still carries the original framing.
 
-**Both companies generate per-tenant functionality inside a host SaaS, on the host's APIs, governed by the host's auth.** There is no clean separation to point at. The two real differences should be said plainly rather than argued around:
+Three things separate the products, and only the first is structural:
 
-- **They have no mobile frontend.** API composition into a sandboxed micro-app is sufficient for a web product; a mobile app is compiled and shipped through app stores, so a renderer has to live inside the app or the module has to be in the build. That is a genuinely harder problem and it is the one piece of defensible ground.
-- **They are funded, shipping and live with Series B companies.** Recompose is a direction with nothing built. This asymmetry is the honest headline of the comparison.
+- **No native mobile.** Every native-mobile cell in the market map is empty at every driver level. This is the defensible ground.
+- **Their published customers are modern SaaS with clean APIs.** Agentic API discovery is tuned for well-documented REST.
+- **They are funded, shipping and have a named production customer** against a direction with nothing built.
 
-**Their integration numbers are the benchmark.** ~2 days to install, ~2 weeks to full platform integration, publicly stated as *"not an instant plug-and-play add-on"* — from a funded team of four who built agentic API discovery. Treat it as a floor rather than a ceiling.
-
-**Their traction vocabulary is what this buyer responds to**, and nothing here is instrumented to produce any of it: $1M+ pipeline unblocked, $100K churn prevented in six weeks, ~800 features shipped (~2,400 engineering-hours equivalent), 670+ microapps, 90.8% adoption across 946 users.
-
-**Their problem framing is the one this product uses too.** *"You lose competitive deals — customers choose vendors that have the exact workflow they operate on."* A strong argument, and a warning about who else is already making it.
+Their problem framing is the one this product uses too — *"you lose competitive deals — customers choose vendors that have the exact workflow they operate on"* — which makes it a strong argument and a warning about who is already making it.
 
 > [!danger] The question that needs a prepared answer
-> **"Why aren't you just Gigacatalyst?"** — asked by anyone who knows them. The honest answer is mobile plus the tenant-facing loop, not a different problem. Write the paragraph before the first call rather than improvising it; the frozen YC application omits them from its competitor answer, which is visible to anyone who checks.
+> **"Why aren't you just Gigacatalyst?"** Do not overclaim their repositioning: it is a homepage change with no stated rationale, no date, and a persisting production customer.
 
 ## Coding agents — the shelf this must not be filed on
 
@@ -108,10 +105,14 @@ Each of these answers a design question. **None is an alternative to a feature p
 - **In-platform design services** (Mighty Pro Design Lab, Circle Plus Design Studio, Vagaro Studio 180, Passion.io DFY, Mindbody) — design-only, staffed by graphic designers. Standalone the deliverable prices at **$99–499**, and professional services is 1.19% of revenue at Olo and 2.9% at Toast: there is no budget line here.
 - **Agency and freelance custom app builds** — a real alternative for a *tenant*. The budget being attacked is the platform's development line, not the tenant's build.
 - **FlutterFlow** — app construction, not fleet customization. Removed by founder correction and kept out.
+- **Internal-tools and embedded low-code** (Retool, Superblocks, Appsmith, Budibase, ToolJet, Noloco, Glide, Unqork, Betty Blocks, Creatio) — verified against primary docs rather than assumed. "Embedded" here means embedding **developer-built** apps in a portal, not end-customer generation. Retool and Superblocks are real and shipping; they are not in this market.
+- **Salesforce Agentforce Vibes** — a VS Code extension generating Apex for developers building *on* Salesforce. Not a third party embedding per-tenant generation into someone else's product.
 
 ## The empty space, read honestly
 
 **What nobody has shipped:** a path where a **non-technical tenant of a white-label platform describes functionality and receives it in their app, with no developer in the loop.** Q2 Code makes a developer faster. Gigacatalyst removes the developer on web, without a mobile frontend. Extension SDKs require a developer by design. Every AI app builder is greenfield.
+
+**The map, from [[Strategy/Extensibility_Market|Extensibility_Market.md]]: every occupied cell has a developer or an admin in it.** Q2 Code, Alkami Code Studio, Temenos Copilot, ServiceNow Build Agent, Salesforce Agentforce Vibes — eight-plus data points, no exceptions. **A developer is an accept condition**, and it is the only one anyone has shipped.
 
 **Four reasons that gap is narrow:**
 

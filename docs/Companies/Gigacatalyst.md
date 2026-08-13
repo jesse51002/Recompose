@@ -1,67 +1,85 @@
 ---
 tags: [company, competitor, per-tenant-customization, yc]
 relationship: competitor
-verified: 2026-08-12
+verified: 2026-08-13
 aliases: [Giga, Giga Next, gigacatalyst]
 ---
 
 # Gigacatalyst
 
-**Giga Next Inc.** YC Spring 2026. Founder Namanyay Goel, team of four, San Francisco. Tagline: *"Customize your software to every user with AI."*
+**Giga Next Inc.** YC Spring 2026 (P26 batch), founded 2025, San Francisco, team of four. Founder/CEO Namanyay Goel; YC primary partner Andrew Miklas.
 
-**The closest company in the market to what Recompose is building**, and the comparison is now direct rather than adjacent.
+**The only company found anywhere occupying the cell Recompose is aiming at** — non-technical end-user generation of functionality inside a third party's production SaaS — and **its live positioning has moved off it.**
 
-## What they do
+## What they built
 
-Embeds inside a B2B SaaS product as a white-labeled feature. **Agentic API discovery** parses the host's endpoints, query parameters and data structures automatically. Built *"on your APIs and design system and governed by your auth and security,"* with **"no changes to the host codebase required."**
+An embedded AI layer performs **agentic API discovery** of the host's endpoints, query parameters and data structures, then translates natural-language requests into sandboxed "microapps" that inherit the host's auth and RBAC, with *"no changes to the host codebase required."* Generated code passes validation gates before deployment — compile checks, schema validation, security enforcement — and *"connects only through approved APIs."* Microapps run beside the host product with versioning, audit trails and a sharing marketplace.
 
-Generated code is fenced rather than trusted: it *"runs securely in isolated sandboxes,"* passes validation gates before deployment including compile checks, schema validation and security enforcement, and *"connects only through approved APIs."* Generated apps run beside the host product, inherit its auth and RBAC, and carry versioning, audit trails and a sharing marketplace.
+Founder, on the coupling problem: *"we create a proxied, pinned API layer that can handle the base API changing."* [vendor-claimed] That is an anti-corruption layer, and it is the same answer to contract drift that [[Strategy/Open_Questions|Open_Questions.md]] §2.5 records as the working idea here.
 
-**The loop is tenant-facing.** An end user types *"build a KPI dashboard for maintenance performance"* and has a working app in about a minute. [vendor-claimed]
+**Integration benchmark:** ~2 days to install, ~2 weeks to full platform integration, publicly stated as *"not an instant plug-and-play add-on."* From a funded team of four who built the API discovery. Treat as a floor. [vendor-claimed]
 
-## Why they matter here
+## The repositioning, which is the most important fact on this page
 
-**They occupy the architecture Recompose arrived at**, not a neighbouring one: a separate UI surface alongside the host product, integrated through the host's API, inheriting the host's auth, generated per tenant, driven by a non-technical user.
+**As of 2026-08-13 the homepage leads with a sales-enablement motion, not a production one.**
 
-The separation the vault previously relied on — *"I'm in visuals, they are in features"* — is gone, and so is the developer-facing/tenant-facing distinction that separates Recompose from Q2 Code and every extension SDK. **Gigacatalyst is already tenant-facing.**
+> "Stop burning hours on demo and POC setup / Turn customer requirements into configured demos, POCs, and implementation workspaces, using your existing product APIs." [primary, live, fetched 2026-08-13]
 
-**Two differences survive and both should be said plainly rather than argued around:**
+**The YC company page still carries the original framing:** *"Let software users build new features with our in-app AI agents."* [primary, fetched 2026-08-12] The YC Launch post is more explicit still — *"Gigacatalyst allows sales and CS teams to build missing features that customers need,"* with examples including a KPI dashboard in about a minute and an OCR photo-upload tab.
 
-- **No mobile frontend.** API composition into a sandboxed micro-app is sufficient for a web product. A mobile app is compiled and shipped through app stores, so a renderer has to live inside the app or the module has to be in the build. This is the one piece of genuinely defensible ground.
-- **Funded, shipping, live with Series B companies**, against a direction with nothing built. This asymmetry is the honest headline of any comparison.
+**The shift is bracketed, not dated.** Wayback snapshots for the domain could not be retrieved (rate-limited), no pivot post exists on the founder's blog or X, and the company has published no rationale. What is established is a before/after between Spring 2026 YC copy and the August 2026 homepage. The social-preview asset is versioned `?v=5`, implying several prior homepage revisions.
 
-**A third, if it holds:** their published customers are **modern Series B SaaS with clean, documented APIs**. Agentic API discovery is tuned for well-documented REST. Vertical and enterprise platforms with older stacks and worse documentation are a different buyer, and the payoff for reading a bad API is higher than for reading a good one.
+**Production use has not obviously stopped.** The current homepage carries a testimonial from **Ryan Chan, CEO of UpKeep** — *"Over 1,000 UpKeep customers use it daily."* [vendor-claimed] UpKeep is a field-service and maintenance-management SaaS (YC W17) that raised a $36M Series B in May 2020 led by Insight Partners, $48.8M total. No other customer is named publicly.
 
-## Integration benchmark
+### Why they moved, and the two readings are not exclusive
 
-**~2 days to install; ~2 weeks to full platform integration**, publicly stated as *"not an instant plug-and-play add-on."* From a funded team of four who built agentic API discovery. **Treat it as a floor rather than a ceiling.** [vendor-claimed]
+The evidence supports **"the buying motion is easier upstream"** — demos, POCs and implementation workspaces carry no production consequence. It does **not** establish **"production per-tenant extension proved too hard"**: the company has never said so, and UpKeep persists.
 
-## Traction, and the metric vocabulary
+**But the two readings collapse into one when read from the buyer's side.** The upstream motion is easier *precisely because* a prototype carries no correctness requirement, no security surface and no data risk. Whatever the internal reason, the observable pattern is a company retreating from the surface where generated software has to be right, toward the one where it does not.
 
-$1M+ pipeline unblocked and $100K churn prevented in six weeks; ~800 features shipped (~2,400 engineering-hours equivalent); 670+ microapps; 90.8% adoption across 946 users. [vendor-claimed]
+That is the same pattern as every platform-native generator being developer-facing, and as [[Strategy/Extensibility_Market|the empty cells in the market map]].
 
-**Adoption rate, day-30 retention, pipeline unblocked, churn prevented, engineering-hours saved** — that is the vocabulary this buyer responds to, and **nothing at Recompose is instrumented to produce any of it.**
+## Where they collide with Recompose, and where they do not
 
-## Their problem framing, which applies here unmodified
+**Collides.** Separate UI surface alongside the host product, integrated through the host's API, inheriting the host's auth, generated per tenant, drivable by a non-technical user. That is the architecture, not a neighbouring one. The developer-facing/tenant-facing distinction that separates Recompose from Q2 Code does not separate it from Gigacatalyst as originally positioned.
 
-> "You lose competitive deals — customers choose vendors that have the exact workflow they operate on."
+**Does not collide.**
 
-Loss-framed, and it lands with a sales leader where a margin argument only lands with a CFO. It required adaptation while Recompose sold design. It needs none now — which makes it a strong argument and a warning about who is already making it.
+- **No native mobile.** API composition into a sandboxed micro-app suffices for a web product. A native mobile app is a compiled binary shipped through store review, so a renderer has to live in the app or the module has to be in the build. **Nobody in the surveyed market does per-tenant generation into native mobile** — every cell of that row is empty. This is the one piece of structurally defensible ground.
+- **Their published customers are modern SaaS with clean APIs.** Agentic API discovery is tuned for well-documented REST. Older vertical stacks with worse documentation are a different problem, and the payoff for reading a bad API is higher than for reading a good one.
+- **They are funded, shipping and have a named production customer**, against a direction with nothing built. This asymmetry is the honest headline of any comparison.
+- **They have vacated the cell, at least in how they sell.** How durable that is, nobody outside knows.
+
+## Traction figures, which do not reconcile
+
+Shown side by side rather than averaged. All **vendor-claimed**, none independently verified.
+
+| Claim | Source |
+|---|---|
+| $1M+ pipeline unblocked in 6 weeks · 70% day-30 retention · $100K churn prevented · 800+ features shipped in 6 weeks | YC Launch post |
+| 2,500 apps built already | Product Hunt, founder comment |
+| 90.8% adoption · 89% day-30 retention · 670 microapps | HokAI (third-party aggregator, self-describes as *"a preliminary assessment based on limited publicly available information"*) |
+
+Day-30 retention appears as both 70% and 89%; the artifact count as 670, 800+ and 2,500. **No figure has a named customer attached to it.** Do not quote any of them.
+
+The vocabulary is still worth noting — adoption rate, day-30 retention, pipeline unblocked, churn prevented, engineering-hours saved. That is what this buyer responds to, and **nothing at Recompose is instrumented to produce any of it.**
 
 ## The question that needs a prepared answer
 
-**"Why aren't you just Gigacatalyst?"** — the first question any informed person asks. The honest answer is mobile plus vertical depth, not a different problem. Write the paragraph before the first call rather than improvising it.
+**"Why aren't you just Gigacatalyst?"** The answer is now stronger than it was on 2026-08-12, and it has three parts: native mobile, which nobody does; vertical and older stacks rather than clean Series B APIs; and the fact that their own live positioning has moved upstream to demos and POCs.
 
-Note that [[Strategy/YC_Application_F26|the frozen YC application]] omits them from its competitor answer, on grounds that no longer hold. That omission is visible to anyone who checks.
+**Do not overclaim the third part.** It is a homepage change with no stated rationale, a persisting production customer, and no date attached.
 
-## Unverified, and one of these is load-bearing
+Note that [[Strategy/YC_Application_F26|the frozen YC application]] omits them from its competitor answer, on grounds that no longer hold.
 
-- **Whether they have repositioned.** Founder's read, 2026-08-13, not yet corroborated: they moved toward **prototypes for winning new users** rather than production per-tenant extension. **If true, the reason matters more than the fact** — a funded team either found production extension too hard, which would be the accept-condition problem again, or found the sales motion easier upstream of it. Either answer is worth more than most of what research has produced.
-- **Pricing.** Not published, so the nearest analog gives no comparable.
-- **Their actual ICP boundary.** "Series B SaaS" is inferred from published customers rather than stated.
-- **How they resolve a generated app that is wrong rather than broken.** Sandboxing, compile checks and schema validation catch code that fails. Nothing published says what catches code that runs and computes the wrong answer — the same gap recorded in [[Strategy/Open_Questions|Open_Questions.md]] §2.1.
-- **Whether the mobile gap is deliberate or unbuilt.**
+## Unverified
+
+- **The date and stated rationale of the repositioning.** The single most valuable missing fact about this company.
+- **Whether production per-tenant extension remains a live offering** alongside the demo motion.
+- **Pricing.** Custom, contact-sales, no public tiers. No comparable exists.
+- **Their ICP boundary.** "Series B SaaS" is inferred from published customers, not stated.
+- **How they resolve a microapp that runs and computes the wrong answer.** Sandboxing, compile checks and schema validation catch code that *fails*. Nothing published says what catches code that *works and is wrong* — the same gap in [[Strategy/Open_Questions|Open_Questions.md]] §2.1.
 
 ## Sources
 
-Company site and YC listing; founder's public material. **All traction and integration figures above are vendor-claimed and none has been independently verified.**
+Company homepage (fetched 2026-08-13), YC company and Launch pages, Product Hunt founder comments, founder blog, HokAI aggregator, TechCrunch on UpKeep's Series B. Full sourcing in [[Research/2026-08-13-agentically-extensible-platforms|Research/2026-08-13-agentically-extensible-platforms.md]]. **Every traction and integration figure is vendor-claimed and none is independently verified.**
