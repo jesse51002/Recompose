@@ -5,28 +5,28 @@ aliases: [autonomous operation, autonomy, the promise, nothing waits to be appro
 
 # Autonomous Operation
 
-> [!danger] Suspended 2026-08-12 — this claim may not be made until an accept condition exists
-> The promise was defensible because of a chain that [[pivots/2026-08-12-21-modular-feature-system-replaces-visual-redesign|the modular feature pivot]] broke at its first link. **Do not describe Recompose as autonomous, and do not quote any error budget, until the chain is rebuilt.**
+> [!danger] Suspended — this claim may not be made until an accept condition exists
+> **Do not describe Recompose as autonomous, and do not quote any error budget.**
 
-## Why it is suspended, and the chain that broke
+## Why it is suspended
 
-The promise stood on three things in order:
+The claim needs three things in order, and it currently fails at the first:
 
-1. **A bad output is ugly, not broken** — no data model to corrupt, no permission to leak, no correctness contract to violate.
-2. **Therefore halting is sufficient.** A stage that cannot satisfy its accept condition stops and nothing deploys, so a significant failure costs a delay rather than a brand.
+1. **A check the system can fail.** A generated feature has none — nothing a human reads at a glance, and no diff that proves correctness rather than absence of change. Four candidates are recorded in [[Strategy/Product_Boundaries|Product_Boundaries.md]] and none is chosen.
+2. **Therefore halting is sufficient.** A stage that cannot satisfy its accept condition stops and nothing deploys, so a significant failure costs a delay rather than a brand. **There is nothing to halt on.**
 3. **Therefore nothing lands on the platform's desk.**
 
-**A module that writes to a database fails at step 1**, and steps 2 and 3 do not survive it. Worse, step 2 needs an accept condition to halt *against*, and a feature has neither of the visual product's two oracles — no screenshot a human can judge, and no diff proving the API surface is unchanged. **There is currently nothing to halt on.** Four candidates are recorded in [[Strategy/Product_Boundaries|Product_Boundaries.md]] and none is chosen.
+A module that writes to a database also fails differently from a cosmetic system: the failure is wrong data or a permission leak, so even a working check has to cover more than "does it look right."
 
-## The error budget does not transfer
+## No error budget may be quoted
 
-Roughly **95% clean, 4% minor, 1% significant** was a **target that was never measured** under the previous product, and it described *cosmetic* defects in a *redesign*. It has no meaning for generated functionality. **Do not quote it, do not adapt it, and do not treat its absence as a gap to fill with a new number before anything is measured.**
+The **95% clean / 4% minor / 1% significant** figure in circulation was a target that was never measured, and it described *cosmetic* defects. It has no meaning for generated functionality. **Do not quote it, do not adapt it, and do not fill its absence with a new number before anything is measured.**
 
-## What survives
+## What the claim can still say
 
-The half of the claim that never depended on output type: **zero *platform* involvement** — no PR into their trunk, no review queue, no engineering sign-off — as distinct from zero human involvement. That distinction was established on 2026-08-04 and it still holds, because the tenant being in the loop was always compatible with the platform not being.
+**Zero *platform* involvement** — no PR into their trunk, no review queue, no engineering sign-off — as distinct from zero human involvement. The tenant being in the loop has always been compatible with the platform not being.
 
-**Who resolves a failure remains the unresolved question, and it got harder.** Every production system in the field keeps a human at the merge gate — Devin, Copilot CCA, SapFix, and even Uber's Piranha, a deterministic tool that only deletes stale feature flags and still routes its diff to the flag's author. If failures land on the platform's staff, "no manual maintenance" is false. A failure resolved by Recompose is COGS; one resolved by the platform is a broken promise. **A failure that is wrong data rather than a wrong-looking screen is a third case nobody has priced.**
+**Who resolves a failure is unresolved.** Every production system in the field keeps a human at the merge gate — Devin, Copilot CCA, SapFix, and even Uber's Piranha, a deterministic tool that only deletes stale feature flags and still routes its diff to the flag's author. If failures land on the platform's staff, "no manual maintenance" is false. A failure resolved by Recompose is COGS; one resolved by the platform is a broken promise, and **a failure that is wrong data rather than a wrong-looking screen is a third case nobody has priced.**
 
 ## The unresolved question inside it
 

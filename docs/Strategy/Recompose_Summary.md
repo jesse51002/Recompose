@@ -13,7 +13,7 @@ Concepts touched: [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]],
 > This doc is **what** Recompose does and who it is for. It is kept deliberately light.
 > **How it works:** [[Strategy/Product_Boundaries|Product_Boundaries.md]], then [[Strategy/Architecture_Thesis|Architecture_Thesis.md]].
 > **What was decided and when:** `pivots/`. **Why:** `Office_Hours/`. **Where it's been:** [[Strategy/Journey|Journey.md]].
-> **What exists in code right now:** `README.md` — and note that what exists was built for the previous product.
+> **What exists in code right now:** `README.md`. Only the asset pipeline has an assigned job in the current mechanism.
 
 > [!warning] Nothing in the mechanism is built
 > The asset pipeline, the theme runtimes and the studio are real. The module system is a direction, not code. Zero customers, no named target platform, and no outside party has responded to anything.
