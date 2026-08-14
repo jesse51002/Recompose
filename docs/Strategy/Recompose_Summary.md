@@ -61,7 +61,7 @@ This is a deliberate choice with a known cost: scoped read plus unrestricted egr
 
 The accept condition for a shared artifact, where the person harmed is not the person who accepted the risk. Whether the marketplace is a curated store or a public index. Sync conflict resolution. Pricing. Whether a raise is required before the product exists, which is expected. And the contradiction between a free-form marketplace and the bounded contract that makes output checkable — both cannot be held in full.
 
-There are zero customers and no conversation has ever been had with anyone outside this project. [[Strategy/Open_Questions|Open_Questions.md]] is the live list.
+There are zero customers, and no conversation has been had with anyone outside this project about any direction since the gym product. The gym-era CRM was taken to customers at volume and produced a verbal yes at price; nothing since has been carried to a person. [[Strategy/Open_Questions|Open_Questions.md]] is the live list.
 
 ## What is not carried forward
 
