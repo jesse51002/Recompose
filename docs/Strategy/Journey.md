@@ -146,8 +146,4 @@ The CRM was not abandoned at a low point. It was **fully built, and the founder 
 
 ---
 
-## The CombatDen build record
-
-CombatDen's build milestones — the rewards system, the member app, Kiosk Mode — live in that repo's own journey at `/var/home/jm/Documents/CombatDen/docs/Journey.md`. They are the build record of what is now the reference implementation, not company direction, and they are not duplicated here.
-
-*Last updated: August 14, 2026 — phases compressed, the structural-lessons section removed, the CombatDen build record moved to its own vault, and the Phase 1 outreach recorded: 20+ gyms, 5+ interviews, two yeses, one lost to migration friction.*
+*Last updated: August 14, 2026 — phases compressed, the structural-lessons section and the CombatDen build record removed, and the Phase 1 outreach recorded: 20+ gyms, 5+ interviews, two yeses, one lost to migration friction.*
