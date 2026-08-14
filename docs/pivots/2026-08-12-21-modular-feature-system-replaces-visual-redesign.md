@@ -1,7 +1,7 @@
 # Pivot: the modular feature system replaces the visual redesign
 
 **Date:** 2026-08-12
-**Status:** DECIDED
+**Status:** Superseded by [[pivots/2026-08-13-22-extensible-workspace-replaces-per-tenant-modules|pivots/2026-08-13-22-extensible-workspace-replaces-per-tenant-modules.md]]
 
 ## The decision
 
