@@ -7,7 +7,7 @@ aliases: [never touch their code, no write access, read-only integration, we don
 
 **Recompose does not write to the platform's trunk. Ever.** A module lands in an extension surface — a plugin registry, an SDK-compliant package, a bundle their own pipeline picks up — never on their main branch.
 
-This is one of the two core principles, alongside [[Strategy/Product_Boundaries|additive-only]]. The two answer different objections: additive-only is what makes the product *safe to accept*, and this is what makes it *possible to say yes to*.
+This is one of the two core principles, alongside the additive-only principle. The two answer different objections: additive-only is what makes the product *safe to accept*, and this is what makes it *possible to say yes to*.
 
 The reason it works is organizational before it is technical: an external party writing to a trunk needs engineering-leadership sign-off, and that decides who has to say yes. **How much sign-off is needed depends on which case a platform is in**, and they are different sales:
 
@@ -20,7 +20,6 @@ What it does **not** solve is the QA and correctness objection. They still ship 
 
 ## Shows up in
 
-- [[Strategy/Product_Boundaries|Product_Boundaries.md]]
 - [[pivots/2026-07-28-01-agentic-editing-all-in|pivots/2026-07-28-01-agentic-editing-all-in.md]]
 - [[Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture|Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture.md]]
 - [[Strategy/Architecture_Thesis|Architecture_Thesis.md]]

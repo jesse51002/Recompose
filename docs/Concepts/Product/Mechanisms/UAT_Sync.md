@@ -24,7 +24,6 @@ That free promotion rests on uat being strictly ahead of main, which holds under
 
 - [[pivots/2026-07-28-01-agentic-editing-all-in|pivots/2026-07-28-01-agentic-editing-all-in.md]]
 - [[Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture|Office_Hours/2026-07-28-01-Office_Hours_Agentic_Editing_Architecture.md]]
-- [[Strategy/Product_Boundaries|Product_Boundaries.md]]
 - `Recompose_Flow.mermaid`
 
 ## Related concepts

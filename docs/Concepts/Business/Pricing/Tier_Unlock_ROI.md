@@ -17,14 +17,13 @@ The shape of the value argument: sell a platform a **revenue tier it cannot curr
 
 **The sharpest wedge is platforms that already fund per-tenant custom development** — Banno, Backbase, Tapcart, Trainerize Enterprise, GoodBarber, BuildFire — sorted within that by whether every tenant already has their own app. The budget being attacked is a **development** line item, not a theming one.
 
-**Recompose's own pricing is undefined.** Per module, per tenant, platform licence, or a share of what the platform charges — all unresolved, and Gigacatalyst publishes no pricing, so the nearest analog gives no comparable. The $100/month per branded tenant in [[Strategy/YC_Application_F26|YC_Application_F26.md]] was priced against designs and does not transfer; the $100/$300/$500 gym-owner ladder is dead. **This concept is the shape of the ROI argument, not a price.**
+**Recompose's own pricing is undefined.** Per module, per tenant, platform licence, or a share of what the platform charges — all unresolved, and Gigacatalyst publishes no pricing, so the nearest analog gives no comparable. The $100/month per branded tenant figure was priced against designs and does not transfer; the $100/$300/$500 gym-owner ladder is dead. **This concept is the shape of the ROI argument, not a price.**
 
 ## Shows up in
 
 - [[pivots/2026-07-27-11-customization-engine-is-the-company|pivots/2026-07-27-11-customization-engine-is-the-company.md]]
 - [[pivots/2026-08-02-23-icp-filter-moves-to-tenants-who-already-have-apps|pivots/2026-08-02-23-icp-filter-moves-to-tenants-who-already-have-apps.md]]
 - [[Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company|Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md]] (§3, §11d, P1a, P2, T7, T8)
-- [[Strategy/YC_Application_F26|YC_Application_F26.md]] (answers 6 and 8)
 - [[Research/2026-05-01-ai-brand-competitor-analysis|Research/2026-05-01-ai-brand-competitor-analysis.md]]
 - [[Research/2026-08-02-attach-rate|Research/2026-08-02-attach-rate.md]]
 - [[Research/2026-08-02-enterprise-tier-anatomy|Research/2026-08-02-enterprise-tier-anatomy.md]]

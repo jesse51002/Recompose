@@ -37,7 +37,7 @@ The evidence supports **"the buying motion is easier upstream"** — demos, POCs
 
 **But the two readings collapse into one when read from the buyer's side.** The upstream motion is easier *precisely because* a prototype carries no correctness requirement, no security surface and no data risk. Whatever the internal reason, the observable pattern is a company retreating from the surface where generated software has to be right, toward the one where it does not.
 
-That is the same pattern as every platform-native generator being developer-facing, and as [[Strategy/Extensibility_Market|the empty cells in the market map]].
+That is the same pattern as every platform-native generator being developer-facing, and as the empty cells in the market map.
 
 ## Where they collide with Recompose, and where they do not
 
@@ -70,7 +70,7 @@ The vocabulary is still worth noting — adoption rate, day-30 retention, pipeli
 
 **Do not overclaim the third part.** It is a homepage change with no stated rationale, a persisting production customer, and no date attached.
 
-Note that [[Strategy/YC_Application_F26|the frozen YC application]] omits them from its competitor answer, on grounds that no longer hold.
+Note that the frozen YC application omitted them from its competitor answer, on grounds that no longer hold.
 
 ## Unverified
 

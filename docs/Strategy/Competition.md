@@ -1,133 +1,100 @@
 ---
-tags: [business, competition, market, strategy]
-status: current
-date: 2026-08-12
-source-pivot: pivots/2026-08-12-21-modular-feature-system-replaces-visual-redesign.md
+tags: [strategy, competition, recompose]
+status: living
+verified: 2026-08-13
 ---
 
 # Competition
 
-Concepts touched: [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]], [[Concepts/Product/Mechanisms/Never_Touch_Their_Code|Never_Touch_Their_Code]], [[Concepts/Product/Mechanisms/Orchestrator|Orchestrator]], [[Concepts/Product/Mechanisms/Modal_Coherence|Modal_Coherence]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Business/Strategy/Freelance_Conversion_Thesis|Freelance_Conversion_Thesis]], [[Concepts/Business/Strategy/AI_Design_Compression|AI_Design_Compression]], [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]].
-
-The buyer is a multi-tenant white-label SaaS platform **that already funds per-tenant custom development**. Every category below is judged against that buyer's actual question: *what do I do today when a tenant asks for functionality we don't have, and what would I stop doing if I bought this?*
-
-> [!warning] This is a category with funded incumbents in it
-> The platform's own services organisation, its extension SDK and partner network, AI extension generators built on SDKs the platform already owns, and Gigacatalyst. Nothing on the design side is an alternative to a feature product; the list at the bottom of this doc records which categories those are so they do not get added back.
-
-> [!note] Source provenance
-> **Every filename in `Research/` carries the date the research was done, and the date tells you which thesis it was written against.** The May 2026 files predate two pivots and argue for a vertical white-label app of our own. The August 2026 files were written against the platform ICP. **All of them were commissioned against a design product**, so read their facts and discard their framing.
->
-> - [[Research/2026-08-02-features-vs-design|Research/2026-08-02-features-vs-design.md]] — **the load-bearing one.** Which platforms build features for individual tenants, which refuse, and who staffs it. This is the competitive map.
-> - [[Research/2026-08-04-mobile-app-code-gen|Research/2026-08-04-mobile-app-code-gen.md]] — the state of agentic code generation, the additive-boundary finding, and the graveyard. The constraint set this product has to beat.
-> - [[Research/2026-08-02-why-custom|Research/2026-08-02-why-custom.md]] — why anyone goes custom. Design never travels alone; a functional driver is always present.
-> - [[Research/2026-08-04-company-list-white-label|Research/2026-08-04-company-list-white-label.md]] — the raw target list, with contact surfaces rather than people.
-> - The May 2026 brand-competitor surveys and the August design-delivery, attach-rate and enterprise-tier briefs describe the *design* market, which is not this one. Their facts hold; their recommendations do not apply.
+The field, and where this sits in it. Grounded in [[Research/2026-08-13-21-ai-native-workspace-landscape|the AI-native workspace landscape brief]] and [[Research/2026-08-13-12-spreadsheet-to-application-field|the spreadsheet-to-application field brief]]. Figures carry the dates they were captured on; this page rots faster than anything else in the vault.
 
 ---
 
-## The platform's own services organisation — the direct alternative
+## The axis that separates products
 
-**What they do.** Build the feature, for that tenant, with their own engineers, as a priced engagement.
+Three questions, asked of everything. Nothing else discriminates as well.
 
-- **Banno (Jack Henry)** — a named **"Custom Development team."** *"Maybe your idea doesn't require a third-party — we build custom features, too… our custom integrations team is here to build it for you."* Work may involve an additional contract with the vendor and/or Jack Henry.
-- **Backbase** — a code-writing **"Services" organization** distinct from product R&D: *"your tailor-made code seamlessly integrates our products with customers' systems."* Alongside a mobile guild of 70+ engineers.
-- **Tapcart** — an **"Engineer, Solutions & Services"** at $120–140k *"building Custom Blocks and React web apps for existing and prospective clients,"* plus a Senior React Developer for App Studio Solutions.
-- **ABC Trainerize** — Enterprise *"custom-built widgets… non-standard functionality,"* gated to 5+ locations.
-- **GoodBarber** and **BuildFire** — custom development sold to their **reseller and agency base**, not to end tenants. Different shape; read carefully before counting them.
+1. **Who can change what the product does** — any end user, a designated admin, or only a professional developer?
+2. **What the artifact is** — stored configuration interpreted by the vendor's runtime, a restricted scripting language, or general-purpose code the user can read and take elsewhere?
+3. **Does AI produce that artifact** — no AI, AI that writes content, or AI that produces working functionality?
 
-**Where they stop.** At engineering headcount, on a human schedule, with pricing gated behind sales. No platform publishes rates, minimums, timelines or IP terms — all of it is contact-sales, which is itself the signal that the work is expensive and scarce.
+| | Who authors | Artifact | AI produces it |
+|---|---|---|---|
+| Notion | End users; admins gate agents | Config, plus external coding agents since 2026 | Agents, database views, automations |
+| Airtable | End users | Config — bases, interfaces, automations | Omni produces working apps |
+| Coda | End users | Config plus formula language | Content and formulas |
+| Confluence | End users; HTML macro admin-gated | Config | Content; Rovo agents |
+| Glean · Dust · Onyx | Admins and end users | Persisted agents over external data | Agents, not interfaces |
+| Retool · Superblocks | Developers and admins | Config plus JS/SQL; no code export | AppGen produces apps |
+| Claude Artifacts · v0 | End users | **General code, user-readable** | Working functionality |
+| **This** | **End users** | **General code the user owns** | **Working functionality** |
 
-**Real alternative for the buyer?** **Yes, and it is the incumbent.** This is the line item being attacked, and there is genuinely money in it.
+**The cell nothing occupies is code-you-own inside a workspace.** Artifacts and v0 produce readable code and are not workspaces. Every workspace produces configuration.
 
-> [!warning] This is also the internal opponent
-> **Group A is defined by having exactly the team whose work this automates**, and they are who the technical evaluation gets routed to. That supplies a champion who owns a queue and knows what it costs, and someone with standing to object who will be right about real things.
+---
 
-## Extension SDKs and partner networks — the deliberate alternative
+## The verified nulls
 
-**What they do.** Refuse to build per-tenant features, and supply an architecture so someone else can.
+Two findings the field-level briefs were commissioned to test, both clean across roughly forty products.
 
-- **Q2 — Caliper SDK**, since 2018, plus certified third-party developers, with Q2 hosting and deploying: *"solutions developed in the Q2 SDK are deployed, hosted, and monitored by Q2."* Over 1,000 extensions running in product. Explicitly **not** a bespoke-build shop.
-- **Alkami** — APIs, an extensible SDK, prebuilt UI components, and a One-Click SDK Manager added in the Winter 2026 release.
-- **Banno Digital Toolkit** — Plugin Framework, Consumer API, Admin API. Plugins are HTML/CSS/JS web apps hosted on the **partner's** infrastructure.
-- **Tapcart** — App Studio, CLI, Global Components, Configurable Blocks, and an agency ecosystem building Custom Blocks.
-- **BuildFire** — a free MIT-licensed SDK (`buildfire.js`); keep a plugin proprietary by upgrading.
+**Nothing outputs exportable general-purpose code.** For the open-source products the escape hatch is *self-hosting the vendor's own engine*, not owning the application. Proprietary products export CSV and never the app. Retool apps serialise to JSON and are Git-syncable when self-hosted, and still require a Retool runtime.
 
-**Where they stop.** At someone else having to do the work. The tenant still needs a developer, an agency, or a budget. Self-serve extensibility answers the platform's problem, not the tenant's.
+**Nothing has shipped a correctness oracle.** No product differentially tests or reconciles generated output against a source of truth. Every builder gates go-live with a human publish step. Verification, where it exists anywhere in the wider field, checks policy compliance or that code loads — never that the thing is right.
 
-**Real alternative for the buyer?** **Yes, and it is the answer they already chose.** This is why the module product's differentiator has to be *removing the developer* rather than *supplying code faster*.
+"Leave with your data **and your app**" is unmatched. So is any mechanical accept condition.
 
-**It is also the substrate.** Where a surface like this exists, Recompose writes into it and inherits its safety story. That is the central bet, and it is unverified: Banno's plugins run on the partner's own infrastructure and Tapcart's blocks live in its studio, so **whether any existing surface reaches native UI inside an arbitrary existing screen is not known.** Reading their public developer documentation is the cheapest high-value work available.
+---
 
-## AI extension generators — the sharpest threat
+## Established workspaces
 
-**What they do.** **Q2 Code**, announced 2026-04-16: *"a governed AI-powered development environment… to build extensions and integrations on the Q2 Digital Banking Platform,"* built with Anthropic's Claude Code via Amazon Bedrock. Mid-Hudson Valley Federal Credit Union named as an Early Access adopter; the program expands through 2026.
+**Notion.** ~$500M annualized by September 2025. AI Agent September 2025, **Custom Agents 2026-02-24**, gated to Business and Enterprise; the standalone AI add-on retired May 2025 and is now bundled. Databases cap at 250,000 rows and 500 properties.
 
-**Where they stop.** At a developer. It is a governed environment for Q2's own engineers and certified partners writing SDK-compliant extensions. **It makes a developer faster; it does not remove one.** Adoption is also early — one named customer, Early Access.
+**And the fact that dents the structural argument: Notion opened to external coding agents — Cursor, Claude Code, Codex — as native agents in 2026.** They cannot ship free-form code without exposing internals, so they found a third route: let someone else's agent operate in the workspace. Their own objects remain configuration and there is no executable marketplace, so the argument is dented rather than broken. **"They cannot follow" should never be said without that qualification.**
 
-**Real alternative for the buyer?** **Yes, and it is the pre-registered kill condition.** Q2 did not build a coding agent; they wired Claude Code into Bedrock, and the only reason that was cheap is that **Caliper has existed since 2018.** *The AI was the cheap part bolted onto the expensive part* — and the chosen ICP is defined by owning the expensive part.
+**Airtable** relaunched as an AI-native platform, with **Omni generally available 2025-06-24** on every plan including free, marketed as producing "production-ready apps." Its own documentation concedes Omni "cannot perform complex calculations or compute statistical analyses such as sums, averages, or variances." Independent review: Omni "assembles interfaces from Airtable's prebuilt blocks, so what you get is a rearrangement of existing components," and it is for "quick scaffolding and data insights rather than as a primary building tool." Record caps run 1,000 Free to ~500,000 Enterprise Scale, cumulative per base, with an API limit of five requests per second.
 
-The standing condition from [[Strategy/Agentic_Code_Generation|Agentic_Code_Generation.md]]: **if two or more targets ship a native AI-extension layer, the external position erodes.** One has. Checking whether Banno, Backbase, Alkami or Tapcart has shipped or announced anything similar is a required pre-call task, and if a second one has, this direction needs re-examining rather than defending.
+**The category leader announced this thesis and shipped a product structurally incapable of delivering it.** Configuration is a bounded vocabulary and no model quality exceeds it. Fourteen months on, **Airtable has published no Omni usage figure at all.**
 
-**The distinction to hold, and it is the whole product.** A non-technical tenant describes what they need and gets working functionality, with no developer anywhere in the loop. Nobody has shipped that. If the product drifts into being a tool a developer drives, it is competing head-on with something every Group A platform can build in-house.
+**Coda** was acquired by Grammarly in December 2024; the parent rebranded to Superhuman in October 2025 and Coda Brain was folded into Superhuman Go. **Confluence** ships Rovo, GA October 2025, now bundled with non-subscribers at $5/user/month, and **disables its HTML macro by default for cross-site-scripting reasons** — see [[Strategy/Trust_And_Safety|Trust_And_Safety.md]].
 
-## Gigacatalyst — the closest company in the market
+## Company brain
 
-**Facts, sourcing and the positioning timeline live in [[Companies/Gigacatalyst|Companies/Gigacatalyst.md]].** The competitive position, in short:
+They sell into "the central hub of company information" — the destination budget line — with enterprise trust already established.
 
-They are the **only company found anywhere** occupying non-technical end-user generation of functionality inside a third party's production SaaS — the cell this product aims at — and **their live positioning has moved to demos, POCs and implementation workspaces** while their YC page still carries the original framing.
+**Glean.** $100M ARR in Q4 FY25, **doubled to $200M by December 2025**. $7.2B valuation, ~$765M raised. **Glean Agents shipped early 2025**, powering "more than 100 million agent actions annually." **Dust.** 3,000+ organisations, 41,000 MAU, **over 300,000 agents deployed**, $40M Series B May 2026 with Sequoia. **Onyx.** MIT-licensed, self-hostable, air-gappable; 14,000+ at Netflix, 37,000 at UC San Diego.
 
-Three things separate the products, and only the first is structural:
+**They crossed from retrieval into durable creation during 2025 — and they create agents, not interfaces.** Nobody in this band makes a rich interactive page. That is the gap, and it is narrower than the category being open. It is also the band to watch: if Glean starts building dashboards, it is the same product arriving with the distribution and the budget line already in hand.
 
-- **No native mobile.** Every native-mobile cell in the market map is empty at every driver level. This is the defensible ground.
-- **Their published customers are modern SaaS with clean APIs.** Agentic API discovery is tuned for well-documented REST.
-- **They are funded, shipping and have a named production customer** against a direction with nothing built.
+## Artifact surfaces
 
-Their problem framing is the one this product uses too — *"you lose competitive deals — customers choose vendors that have the exact workflow they operate on"* — which makes it a strong argument and a warning about who is already making it.
+**Claude Artifacts** is the closest thing that exists. Publishable artifacts June 2025, **persistent storage and MCP 2025-10-21** at 20MB per artifact on paid plans, public sharing with multiplayer editing by July 2026. It runs general code in a sandboxed iframe with browser storage APIs prohibited outright. Unpublishing permanently destroys the stored data.
 
-> [!danger] The question that needs a prepared answer
-> **"Why aren't you just Gigacatalyst?"** Do not overclaim their repositioning: it is a homepage change with no stated rationale, no date, and a persisting production customer.
+**It is technically capable and not a project centre** — no workspace, no organisation, no returning to it tomorrow. That gap is where a product gets built, and it is wide.
 
-## Coding agents — the shelf this must not be filed on
+**v0**: ~$50M annualized by April 2026 with **over half of revenue from Teams and Enterprise**, 4M+ users, exportable React and Next.js. **Gamma**: $100M ARR, 70M users, **profitable since early 2024 on roughly fifty people**, $2.1B valuation.
 
-**What they are.** Claude Code, Codex, Cursor, and greenfield app builders like Lovable, Bolt, v0, Base44 on web and a0.dev, Rork, Vibecode, FlutterFlow AI on mobile.
+**ChatGPT Canvas is being sunset from GPT-5.5 models** (~late May 2026), folded back into inline writing and code blocks. OpenAI built a dedicated canvas surface and decided the separate surface was not worth keeping. **Tome**, an AI-deck rival with $43M raised, pivoted out. The artifact-surface category is churning.
 
-**Where they stop.** **Every AI app builder is a greenfield generator** — none modifies or extends a large existing production codebase under someone else's auth and data model. Brownfield agents work at roughly two-thirds with a human on every task, and collapse below 10% past three files. None has a per-tenant fleet model, an accept condition on output, or an integration surface a platform can adopt. They are also *inputs* here: the module generator runs on them.
+## Coding agents
 
-**Why this isn't one, and it is architectural rather than rhetorical.** The engine is two parts with a boundary where determinism runs out — an app-agnostic dependency DAG for assets, with WCAG AA as an accept condition and coherence achieved structurally, and an agent only for the module code no slot inventory can express. Deterministic where determinism is available, agentic only where it is required. One agent doing everything reads as a wrapper over a model; two systems with a clear boundary reads as architecture.
+Not competitors under this architecture — **the substrate consumes them.** A vault of files on disk means Cursor, Claude Code and Codex operate on the workspace natively, and the power user's own subscription pays for the generation.
 
-## Not in this market, recorded so they do not get added
+What they do not do: run anything, hold data, manage permissions, or survive their own output going stale. **Retool's CEO states the case better than we could** — "AI has dropped the bar to prototype, but the bar to ship hasn't moved" — while selling it as a reason to land in Retool.
 
-Each of these answers a design question. **None is an alternative to a feature product, and none should appear in a pitch.**
+## Retool, and why it is not a substrate
 
-- **Token tooling** (Tokens Studio, Supernova, Style Dictionary, Knapsack, UXPin Merge) — stops at tokens. Now a component of the asset pipeline's world, not a competitor.
-- **Brand APIs and brand-kit generators** (Brand.dev, BrandForge, Zoviz) — emit a brand description, never an app.
-- **AI design tools** (Galileo, Figma First Draft, Stitch, Builder.io Visual Copilot, Adobe Firefly) — stop at a mockup a human implements.
-- **In-platform design services** (Mighty Pro Design Lab, Circle Plus Design Studio, Vagaro Studio 180, Passion.io DFY, Mindbody) — design-only, staffed by graphic designers. Standalone the deliverable prices at **$99–499**, and professional services is 1.19% of revenue at Olo and 2.9% at Toast: there is no budget line here.
-- **Agency and freelance custom app builds** — a real alternative for a *tenant*. The budget being attacked is the platform's development line, not the tenant's build.
-- **FlutterFlow** — app construction, not fleet customization. Removed by founder correction and kept out.
-- **Internal-tools and embedded low-code** (Retool, Superblocks, Appsmith, Budibase, ToolJet, Noloco, Glide, Unqork, Betty Blocks, Creatio) — verified against primary docs rather than assumed. "Embedded" here means embedding **developer-built** apps in a portal, not end-customer generation. Retool and Superblocks are real and shipping; they are not in this market.
-- **Salesforce Agentforce Vibes** — a VS Code extension generating Apex for developers building *on* Salesforce. Not a third party embedding per-tenant generation into someone else's product.
+Growing ~39% year on year at $120M ARR in October 2025, with no priced round since a $3.2B valuation in July 2022 — and lapped: Lovable reached $120M in about a year, Cursor $500M by May 2025, Replit ~$253M. It is repositioning at non-engineers with an AWS collaboration behind it.
 
-## The empty space, read honestly
+**Its Acceptable Use Policy forecloses building on it.** Reselling and sublicensing are prohibited, the licence is non-sublicensable and non-transferable, and a separate clause forbids using the service "in order to build a similar or competitive product or service." External Apps is for exposing your own applications to your own customers.
 
-**What nobody has shipped:** a path where a **non-technical tenant of a white-label platform describes functionality and receives it in their app, with no developer in the loop.** Q2 Code makes a developer faster. Gigacatalyst removes the developer on web, without a mobile frontend. Extension SDKs require a developer by design. Every AI app builder is greenfield.
+Its module system is worth knowing for a different reason: **"all apps that contain the module use the live version. Different apps cannot use different versions of the same module."** The most mature modular platform in the field has no per-consumer version pinning. Nobody has solved the problem this product has to solve.
 
-**The map, from [[Strategy/Extensibility_Market|Extensibility_Market.md]]: every occupied cell has a developer or an admin in it.** Q2 Code, Alkami Code Studio, Temenos Copilot, ServiceNow Build Agent, Salesforce Agentforce Vibes — eight-plus data points, no exceptions. **A developer is an accept condition**, and it is the only one anyone has shipped.
+---
 
-**Four reasons that gap is narrow:**
+## What the field cannot tell you
 
-- **The category has funded incumbents.** Forge, Caliper, Banno's Plugin Framework and Gigacatalyst are all in it.
-- **The buyer can build it.** The build-versus-buy filter points squarely at the chosen ICP, and Q2 has already demonstrated the build.
-- **The measured capability is not there yet.** No documented case exists of an agent autonomously shipping a net-new user-facing feature into a production mobile codebase it did not author. Not vendor-claimed, not measured. Mobile is the worst-supported domain in the field: no robust iOS/Swift benchmark, JS/TS the lowest-scoring language family.
-- **The graveyard is real.** Builder.ai raised ~$450M and went insolvent in May 2025. CodeParrot (YC W23) shut down in July 2025 because *"the generated code wasn't reliable enough for production. Teams still had to spend time fixing outputs, which erased the value."* CodeParrot died of cleanup economics, which is exactly what the undefined accept condition risks here.
+**No independent build-versus-buy frequency data exists.** No survey with a disclosed method and a stated denominator, no non-vendor category ranking, no coded distribution of what people leave when they build. Every quantified figure in circulation traces to a vendor selling build-side tooling. **This market cannot be sized from non-vendor data, and any market-size claim made in a pitch would be quoting a vendor.**
 
-**What is on the record:** nobody has asked for this, no named human exists at any target platform, and **no outside party has responded to anything in roughly nine months across seven strategic phases.** This competitive read is entirely desk research.
+**Statistics that do not survive sourcing**, and must not be used: Gartner's "70% of new applications low-code by 2025," "citizen developers 4:1," "80% by 2024" — all forecasts repeated as measurement. "500 million new apps by 2023" is an IDC forecast, reframed by Microsoft into a low-code figure IDC never published. "88% of spreadsheets contain errors" is a misquotation conflating a sample of 88 spreadsheets with a percentage; the real finding is a range of 86–94%. Notion's "100 million users" traces to stat-aggregator sites rather than any disclosure, and its revenue figures conflict across sources by more than 2×.
 
-## What is undefined
-
-- **Pricing.** Undefined for this buyer and this unit. The $100/month per branded tenant in [[Strategy/YC_Application_F26|YC_Application_F26.md]] was priced against designs and does not transfer.
-- **The comparison ratio.** *Close enough at a fraction of the price* has no fraction, and the ratio is the pitch.
-- **Gigacatalyst's pricing.** Not published, so the nearest analog gives no comparable.
-- **Whether existing extension surfaces are deep enough** to carry a real feature. Decides whether the sale is easy or hard.
-- **Whether a second Group A platform has shipped an AI extension layer.** A standing condition: if two or more do, the external position erodes. One has.
-- **Named targets.** Still zero people. Group A first, Tapcart and BuildFire ahead of Banno on reachability.
+**One statistic is clean and it is the one that matters.** Stack Overflow's 2025 survey, n≈49,000, method disclosed, no vendor stake: **84% use or plan to use AI tools while trust in their accuracy fell to 29% from 40%; 46% actively distrust the output and 3% highly trust it.** Adoption rising, trust falling, measured independently.

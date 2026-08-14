@@ -1,75 +1,70 @@
 ---
-tags: [business, summary, orientation, recompose]
-status: current
-date: 2026-08-12
-source-pivot: pivots/2026-08-12-21-modular-feature-system-replaces-visual-redesign.md
+tags: [strategy, summary, recompose]
+status: living
 ---
 
-# Recompose — Orientation
+# Recompose
 
-Concepts touched: [[Concepts/Business/Pricing/Tier_Unlock_ROI|Tier_Unlock_ROI]], [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]], [[Concepts/Product/Mechanisms/Tokenized_Design_System|Tokenized_Design_System]], [[Concepts/Product/Mechanisms/Integration_Surface|Integration_Surface]].
+**One line, provisional: "A workspace you can extend with real code, by asking."**
 
-> [!info] The two-minute read
-> This doc is **what** Recompose does and who it is for. It is kept deliberately light.
-> **How it works:** [[Strategy/Product_Boundaries|Product_Boundaries.md]], then [[Strategy/Architecture_Thesis|Architecture_Thesis.md]].
-> **What was decided and when:** `pivots/`. **Why:** `Office_Hours/`. **Where it's been:** [[Strategy/Journey|Journey.md]].
-> **What exists in code right now:** `README.md`. Only the asset pipeline has an assigned job in the current mechanism.
+Untested on anyone. The name is provisional and domain and trademark are unchecked.
 
-> [!warning] Nothing in the mechanism is built
-> The asset pipeline, the theme runtimes and the studio are real. The module system is a direction, not code. Zero customers, no named target platform, and no outside party has responded to anything.
+Decided [[pivots/2026-08-13-22-extensible-workspace-replaces-per-tenant-modules|2026-08-13]]. The reasoning is in [[Office_Hours/2026-08-13-22-Office_Hours_Every_Substrate_Closed|Every Substrate Closed]] and [[Office_Hours/2026-08-13-22-Office_Hours_The_Extensible_Workspace|The Extensible Workspace]].
 
-## What it does
+---
 
-**Customers agentically extend white-label apps.**
+## What it is
 
-A tenant on a white-labeled app says what they need it to *do*, and a module is generated and inserted into their app — carrying the platform's own design tokens, so it reads as part of the app rather than as something bolted on. The platform never builds it and never reviews it.
+A deliberately simplified Notion-shaped workspace — documents, tables, workflows — with one capability nothing else in its field has: **real HTML and JavaScript are first-class content inside it.** Authored by prompting, installed from a marketplace, and modified freely afterward.
 
-> [!note] The one-line description is provisional
-> It has not been tested on anyone. Treat it as a draft rather than as settled copy.
+The founder's own statement of it is the tightest available: *the same thing everyone else is doing, except we integrate with HTML and JS and give freedom.*
 
-## Why features rather than design
+**The differentiator is one thing, deliberately.** Everything else is parity, and parity is most of the build.
 
-Design alone does not move this buyer, and the vault's own evidence says so three times over. Across a dozen documented custom-build cases, design has **never once** been the sole reason anyone built bespoke — it always travels with a functional driver. App-store reviews of white-labeled apps complain about bugs, never about looking generic. And branded-app attach rate correlates with **tenant size**, not with design quality.
+## Why now
 
-Meanwhile the money is on the other side. Design services are priced standalone at **$99–499** and professional services runs **1.19% of revenue at Olo, 2.9% at Toast** — there is not enough cost there to save. Per-tenant feature work at the platforms that do it is a named engineering organisation on a contracted engagement with pricing gated behind sales.
+HTML and JavaScript inside a workspace were worthless while authoring them was expensive, because almost nobody wanted to hand-write them in a document tool. AI made authoring nearly free, so a capability that was previously not worth having became worth building around.
 
-**And the refusal is the demand signal.** Thirteen of nineteen researched platforms have no path by which a tenant gets net-new functionality at any price. Kajabi says so outright.
+The second half matters as much: people now **hold** AI-generated artifacts and have nowhere coherent to keep them beside their notes and their data. The gap is not distribution — GitHub Pages, Vercel, Val Town, CodePen and Claude's own publishing all exist. **The gap is that none of them is where the rest of your work lives.**
 
-## Who buys it
+## The three things a coding agent cannot do
 
-**Multi-tenant white-label SaaS platforms that already pay to build per-tenant functionality** — Jack Henry's Banno, Backbase, Tapcart, ABC Trainerize at Enterprise, GoodBarber and BuildFire. They have the budget line, they know what it costs, and they can read the value off a P&L rather than imagining it.
+Each is a property of owning the base, which is why every attempt to build on someone else's product closed.
 
-The secondary sort is **platforms where every tenant already has their own app**, because the population a module can act on equals their tenant count. **Banno satisfies both** and is the best target on the merits — and the worst on reachability, being a public company with procurement and 6–18 month cycles.
+1. **Verification.** An agent generating against an unbounded codebase leaves a human reader as the only accept condition. A base we own is a bounded, versioned contract, and rollback is guaranteed rather than hoped for.
+2. **Extensions surviving the base moving.** A fork built with an agent leaves the customer owning the merge burden permanently. [[Concepts/Product/Mechanisms/Re_Derived_Not_Forked|Re_Derived_Not_Forked]] names the shape, and no product in any surveyed ecosystem has it.
+3. **It runs.** An agent hands you code and you still have to provision, deploy, secure, back up and pay for a database. The workspace hands you a running one with no operations. This is the most legible of the three to someone who has never read a diff.
 
-Not agencies, not freelancers, not the end business.
+## The buyer
 
-## How it gets in
+Small teams and early-stage companies first; the enterprise information-hub budget line as the destination. Full treatment in [[Strategy/Customer_ICP|Customer_ICP.md]].
 
-**It never writes to their trunk.** Where a platform already runs an extension architecture — Banno's Plugin Framework, Backbase's SDK, Tapcart's App Studio and Configurable Blocks, BuildFire's open-source SDK — a module is written into a surface they already own, deploy and govern. That is the **additive boundary**: Salesforce, ServiceNow, SAP, Shopify, Atlassian Forge, Q2's Caliper and Gigacatalyst all converged on it independently as the safety story for third-party code inside a host product.
+The line being sold into already exists and is funded — Confluence occupies it and Atlassian bills billions against it. That is a material improvement over the previous direction, which had no budget line at all.
 
-Where no such surface exists, the platform adds insertion points. That needs engineering-leadership sign-off, which makes it a materially harder sale — and it is why the buyer is a platform that has already built one.
+## The architecture, in one paragraph
 
-**Whether any existing surface is deep enough to carry a real feature is unverified.** Banno's framework hosts web apps on the partner's own infrastructure; Tapcart's blocks live inside its studio. Verifying this from public documentation is the first task in front of the direction.
+**Files local, data server-side, execution local**, each placed for a different reason. A vault of files on disk means Claude Code, Cursor and Codex operate on the workspace natively with no integration built. Data lives in a per-workspace database on the server because collaboration is impossible without it. Execution stays on the user's machine because a hosted runtime for arbitrary user processes is an unbounded liability under a freedom-first policy. Decisions **D1–D6** and their costs are in [[Strategy/Architecture_Thesis|Architecture_Thesis.md]].
 
-## What it replaces
+## Freedom is the position
 
-The per-tenant custom development engagement: a platform's own engineers building one feature for one tenant, as a priced, contracted, human-scheduled piece of work — or the flat refusal that thirteen of nineteen platforms give instead.
+Capability-scoped access to internal data, and **no restriction on calling public APIs.** The risk is accepted rather than engineered away, and the product selects for users who accept it too.
 
-The bar is **close enough at a fraction of the price**, not parity.
+This is a deliberate choice with a known cost: scoped read plus unrestricted egress makes the read scope advisory rather than enforced. What that obliges is honesty about what is promised — see [[Strategy/Trust_And_Safety|Trust_And_Safety.md]], which also carries the reason no other workspace allows user HTML and what it costs to allow it.
 
-## What it promises
+## The two hardest things
 
-**Nothing yet, and that is deliberate.**
+**Parity.** The differentiator is a small fraction of the build and the workspace underneath it is the rest. Every simplified-Notion in the field failed on that half rather than on the idea. "Deliberately simplified" has to be an enforced constraint, not a preference.
 
-> [!danger] Do not claim autonomy and do not quote an error budget
-> A promise of unattended operation needs a failure the system can detect and stop on. A generated feature has no such check yet — no screenshot to judge, no diff that proves correctness — so there is nothing to halt against. See [[Concepts/Business/Strategy/Autonomous_Operation|Autonomous_Operation]].
+**Cold start.** A tool for building tools has an empty empty-state, and every new user is handed a blank canvas plus homework. Where extension requires code, roughly two percent of users author anything; where the barrier is low and private, the median Home Assistant install carries fourteen automations. **Most users will install rather than author**, so first run must be *pick something that nearly works*, never *here is your empty workspace* — and seeding the marketplace is a prerequisite rather than a later phase.
 
-Candidates for the accept condition, none chosen: read-only modules first, generated tests through the platform's own CI, a bounded module vocabulary over endpoints their API already exposes, or tenant approval against real data.
+## Undefined, and not to be invented
 
-## How hard this is
+The accept condition for a shared artifact, where the person harmed is not the person who accepted the risk. Whether the marketplace is a curated store or a public index. Sync conflict resolution. Pricing. Whether a raise is required before the product exists, which is expected. And the contradiction between a free-form marketplace and the bounded contract that makes output checkable — both cannot be held in full.
 
-Hard, and the difficulty sits at the boundary rather than in the code. A module's interior is new code in a defined slot. Its edges are auth, session, user identity, tenant scoping, base data and RBAC inheritance against a production system nobody here wrote — that is most of the work, and a mistake there is a security incident rather than an ugly screen.
+There are zero customers and no conversation has ever been had with anyone outside this project. [[Strategy/Open_Questions|Open_Questions.md]] is the live list.
 
-Thirteen of nineteen platforms refuse this work outright and the six that do it staff named engineering organisations with pricing behind sales. That is the cost of doing it with humans, and it is simultaneously the reason automating it is worth money and the reason it is not straightforward.
+## What is not carried forward
 
-Whether one person can carry three surfaces — module, backend, admin — each with its own security surface, is an open question rather than an assumption.
+Nothing about operating inside someone else's product survives, because there is no longer a host. The engine in this repo — the pipeline, the API, the theme runtimes, the mock surfaces, the studio — has **no assigned job in this direction**, which is an open decision rather than something to let drift.
+
+CombatDen remains a separate repo and is not part of this.

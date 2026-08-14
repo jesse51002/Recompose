@@ -177,7 +177,9 @@ The point is that nothing lives somewhere you cannot find it by opening a folder
 
 **[[Strategy/Recompose_Summary|Recompose_Summary.md]] and [[Strategy/Journey|Journey.md]], both.** The summary is what the company *is* now; the journey is how it got there. The summary alone reads as arbitrary; the journey alone leaves you reconstructing the current position from its history.
 
-Then work backwards from the newest doc in `pivots/`, as far as the question needs — each pivot names the office hours doc that explored it, and that is where the reasoning lives. Two anchors do not move: [[pivots/2026-07-27-11-customization-engine-is-the-company|the founding pivot]], which everything since amends rather than replaces, and [[Strategy/YC_Application_F26|YC_Application_F26.md]], the tightest single statement of the company.
+Then work backwards from the newest doc in `pivots/`, as far as the question needs — each pivot names the office hours doc that explored it, and that is where the reasoning lives. **Read the newest one first and check its status line**, because a pivot that has been superseded says so at the top and pointing at the next one is the only navigation that stays true.
+
+**Every `Strategy/` doc describes the current direction only.** Where a direction was abandoned, its strategy doc was deleted rather than annotated — the history is in `pivots/`, `Office_Hours/` and [[Strategy/Journey|Journey.md]], which is where to go when you need to know what a decision replaced.
 
 **This vault was migrated out of CombatDen on 2026-07-28.** Only what was true for Recompose came over; the gym CRM strategy, sales, UX and market material stayed behind and still lives in `/var/home/jm/Documents/CombatDen/docs`. Read it there if you need gym-era context — do not copy it here. The earliest office hours docs and pivots, and much of `Research/`, still use gym framing because that is when they were written. Read them for the reasoning, not the current buyer.
 

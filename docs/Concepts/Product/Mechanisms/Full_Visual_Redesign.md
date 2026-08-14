@@ -22,7 +22,6 @@ Delivery status is uneven and should not be overstated: the asset half (palette,
 
 - [[pivots/2026-07-27-11-customization-engine-is-the-company|pivots/2026-07-27-11-customization-engine-is-the-company.md]]
 - [[Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company|Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md]]
-- [[Strategy/YC_Application_F26|YC_Application_F26.md]]
 
 ## Related concepts
 

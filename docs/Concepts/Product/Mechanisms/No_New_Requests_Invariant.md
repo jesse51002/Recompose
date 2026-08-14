@@ -8,7 +8,7 @@ aliases: [no-new-requests invariant, no new requests, functional equivalence, ar
 # No New Requests Invariant
 
 > [!warning] Retired — do not present this as a live safety property
-> The product's invariant is **additive-only**: a module adds; it never edits, moves, merges, splits or removes. See [[Strategy/Product_Boundaries|Product_Boundaries.md]].
+> The product's invariant is **additive-only**: a module adds; it never edits, moves, merges, splits or removes.
 >
 > **The gate described below was never built**, so nothing in it was ever demonstrated. Kept because the pivots and office hours reference it.
 
@@ -24,7 +24,6 @@ One narrow residual is recorded and not closed: **client-side role gating**. A c
 
 - [[pivots/2026-07-27-11-customization-engine-is-the-company|pivots/2026-07-27-11-customization-engine-is-the-company.md]]
 - [[Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company|Office_Hours/2026-07-27-11-Office_Hours_Customization_Engine_As_The_Company.md]]
-- [[Strategy/YC_Application_F26|YC_Application_F26.md]]
 
 ## Related concepts
 

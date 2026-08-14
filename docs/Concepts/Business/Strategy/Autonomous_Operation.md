@@ -12,7 +12,7 @@ aliases: [autonomous operation, autonomy, the promise, nothing waits to be appro
 
 The claim needs three things in order, and it currently fails at the first:
 
-1. **A check the system can fail.** A generated feature has none — nothing a human reads at a glance, and no diff that proves correctness rather than absence of change. Four candidates are recorded in [[Strategy/Product_Boundaries|Product_Boundaries.md]] and none is chosen.
+1. **A check the system can fail.** A generated feature has none — nothing a human reads at a glance, and no diff that proves correctness rather than absence of change. Four candidates were recorded and none was chosen.
 2. **Therefore halting is sufficient.** A stage that cannot satisfy its accept condition stops and nothing deploys, so a significant failure costs a delay rather than a brand. **There is nothing to halt on.**
 3. **Therefore nothing lands on the platform's desk.**
 
@@ -31,10 +31,8 @@ The **95% clean / 4% minor / 1% significant** figure in circulation was a target
 ## Shows up in
 
 - [[pivots/2026-07-30-22-autonomous-is-the-promise|pivots/2026-07-30-22-autonomous-is-the-promise.md]]
-- [[Strategy/Product_Boundaries|Product_Boundaries.md]]
 - [[Strategy/Recompose_Summary|Recompose_Summary.md]]
 - [[Strategy/Open_Questions|Open_Questions.md]]
-- [[Strategy/YC_Application_F26|YC_Application_F26.md]]
 
 ## Related concepts
 
