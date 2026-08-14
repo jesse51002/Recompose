@@ -134,40 +134,15 @@ Concepts touched: [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual
 
 ---
 
-## Key structural lessons from the whole arc
+## The conviction filter
 
-1. **Cold CRM *replacement* is dead — becoming the operational layer is not.** Asking a gym running on PushPress/Mindbody to switch its billing fails on migration friction; that's structural. But that is *cold rip-and-replace*, not a permanent law. The June 2 correction found a third path: replacement targeted only at gyms whose incumbent CRM is switch-friendly, where migration friction is low by construction.
-2. **Layered architecture has a real value-add ceiling.** Coach-dependent features are structurally hard without an adoption hook the layered app doesn't own.
-3. **Features added from thinness anxiety don't survive first principles.** Messaging was added and cut same-day precisely because the discipline held.
-4. **The unit economics had to be fixed, not just the product.** The merge solved a structural problem that better retention software alone couldn't fix.
-5. **The design bet needs to actually be miles better, not marginally better.** The thesis rested on first-pass output producing a "whoa" in 5 seconds. That's the engineering bar, and it was never validated at scale.
+**Founder conviction is a hard constraint, not a soft preference — and the filter is sharper than "boring vs. fun."**
 
-### What the whole arc teaches Recompose (added 2026-07-28)
+The CRM was not abandoned at a low point. It was **fully built, and the founder was roughly a week from taking it to customers** when he stopped. Not from avoidance, from comparison: *"I was legit a week from going to customers, I had the whole thing built, but I realized I really don't care about it, and this idea is what made me realize that."*
 
-6. **Reasoning has been the only instrument since the gym product, and that is the actual failure pattern.** Six phases, roughly eight months, zero paying customers, and no outside party has responded to anything built since Phase 1. **The gym CRM was carried to 20+ gyms and 5+ interviews and produced two yeses; every direction after it was reasoned to and never carried to a person.** So the pattern is not that the founder does not sell — he sold when he knew the buyer and stopped when he did not. Every phase since cleared an intellectual bar and none cleared a market one.
-7. **Build-instead-of-sell is how each phase actually ended.** The June 2 validation assignment sat unexecuted for eight weeks while rewards productionization, the member app and Kiosk Mode all shipped. Each was good work. None tested demand.
-8. **Founder conviction is a hard constraint, not a soft preference — and the filter is sharper than "boring vs. fun."** The CRM was not abandoned at a low point; it was **fully built, and the founder was roughly a week from taking it to customers** when he stopped. Not from avoidance, from comparison: *"I was legit a week from going to customers, I had the whole thing built, but I realized I really don't care about it."*
+**In his words: boring is fine if the base of what you're building is fun and impactful.** The test is not how much of the work is tedious — it is *where the interesting thing sits relative to what the buyer is actually buying.* At CombatDen the video engine and the theme service were the parts he cared about, and neither was the main selling point, so the boring work only led to more boring work. The acceptable shape is inverted: *"get through the boring to make the fun vision come true, instead of get past the boring to have a little fun on the side."*
 
-    **The filter, in his words: boring is fine if the base of what you're building is fun and impactful.** The test is *where the interesting thing sits relative to what the buyer is actually buying.* The acceptable shape is *"get through the boring to make the fun vision come true, instead of get past the boring to have a little fun on the side."* Run this over every future idea **before** the market analysis.
-9. **The one durable asset produced in eight months was infrastructure, not product.** Five gym-facing product theses were discarded; the app-agnostic generation pipeline survived all of them and became the company. When output is discarded that fast, notice what keeps getting reused.
-10. **Take the ambition that raises scope without raising risk.** Phase 6 went from theming to a full visual redesign — a materially bigger claim — while getting a *tighter* safety story. Most scope increases trade safety away. The ones that don't are the credible ones.
-
-### What Phase 7 adds (2026-08-12)
-
-11. **Phase 7 is the counter-example to lesson 10, taken deliberately.** It raises scope *and* risk: the failure mode goes from cosmetic to security, three surfaces replace one, and the accept condition that made the autonomy promise defensible no longer exists. That is allowed, but it is the opposite trade from the one lesson 10 identifies as credible, and it should be named as such rather than dressed up.
-12. **Follow the budget line, not the pain.** Five phases were spent finding a problem people complained about. What moved the company was noticing which complaint has a **staffed engineering team and a contracted price** attached. Ask what a company already pays a human to do before asking what annoys them.
-13. **The most valuable correction is the one that damages your own case.** The greenfield argument was the strongest point in favour of Phase 7, and the founder took it apart within minutes of choosing the direction. Every prior instance of this habit was correcting research that disagreed with him; dismantling an argument built in your own favour is the rarer and more protective version.
-
-### What Phase 8 adds (2026-08-13)
-
-14. **Commission the replication before you believe the finding.** The spreadsheet wedge was the best evidence this project had produced, and it was killed within hours by a brief deliberately designed to exclude the corpus that generated it. **The first genuine falsification in the whole arc**, and it cost one brief.
-15. **Closing a door counts as progress.** Three directions ended the day weaker than they began it, and each closure narrowed the field rather than costing anything.
-16. **The same unsolved problem appearing five times is a signal, not a coincidence.** Surviving concurrent change showed up as Retool's module versioning, marketplace forking, extension breakage everywhere surveyed, sync conflict, and edit-versus-regeneration drift. When a problem recurs at every level of a design, it is the design's actual centre.
-17. **Check whether the buyer is reachable before choosing the buyer.** Seven sessions were spent with an assignment that could not be executed because it required a named human at a company that does not answer email.
-
-### What August 14 adds
-
-18. **Your strongest material arrives sideways.** The two best findings in the project both came out in passing while explaining something else — the preset enums failing, and *"the html was the doc."* Neither was flagged at the time. When something lands mid-sentence and moves on, stop and write it down.
+**Run this over every future idea before the market analysis, not after it.**
 
 ---
 
@@ -175,4 +150,4 @@ Concepts touched: [[Concepts/Product/Mechanisms/Full_Visual_Redesign|Full_Visual
 
 CombatDen's build milestones — the rewards system, the member app, Kiosk Mode — live in that repo's own journey at `/var/home/jm/Documents/CombatDen/docs/Journey.md`. They are the build record of what is now the reference implementation, not company direction, and they are not duplicated here.
 
-*Last updated: August 14, 2026 — Phase 8 compressed, the CombatDen build record moved to its own vault, and the Phase 1 outreach recorded: 20+ gyms, 5+ interviews, two yeses, one lost to migration friction.*
+*Last updated: August 14, 2026 — phases compressed, the structural-lessons section removed, the CombatDen build record moved to its own vault, and the Phase 1 outreach recorded: 20+ gyms, 5+ interviews, two yeses, one lost to migration friction.*
